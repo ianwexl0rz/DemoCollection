@@ -9,23 +9,33 @@ ModelImporter:
     100002: Eyes
     100004: Hair
     100006: //RootNode
+    100008: Eye_L
+    100010: Eye_R
     400000: Body
     400002: Eyes
     400004: Hair
     400006: //RootNode
+    400008: Eye_L
+    400010: Eye_R
     2300000: Body
     2300002: Eyes
     2300004: Hair
+    2300006: Eye_L
+    2300008: Eye_R
     3300000: Body
     3300002: Eyes
     3300004: Hair
+    3300006: Eye_L
+    3300008: Eye_R
     4300000: Hair
     4300002: Body
     4300004: Eyes
+    4300006: Eye_L
+    4300008: Eye_R
     7400000: Default Take
     9500000: //RootNode
   materials:
-    importMaterials: 0
+    importMaterials: 1
     materialName: 0
     materialSearch: 1
   animations:
