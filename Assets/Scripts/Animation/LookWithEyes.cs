@@ -12,7 +12,7 @@ using UnityEngine;
 [ExecuteInEditMode]
 public class LookWithEyes : MonoBehaviour {
 
-	#region PUBLIC_VARIABLES
+	#region SERIALIZED_VARIABLES
 	[SerializeField]
 	private Transform face = null;
 
@@ -20,47 +20,70 @@ public class LookWithEyes : MonoBehaviour {
 	private List<Transform> eyes = null;
 
 	[SerializeField]
-	private Transform focus = null;
+	private float hFov = 90f;
 
 	[SerializeField]
-	private float transitionTime = 0.25f;
+	private float vFov = 50f;
+
+	[SerializeField]
+	private float lookSpeed = 360f;
+
+	[Header("Debug")]
+	[SerializeField]
+	private Transform debugTarget = null;
 	#endregion
 
-	#region PRIVATE VARIABLES
-	private float ease = 0;
+	#region PRIVATE_VARIABLES
+	private Transform focus = null;
 	#endregion
 
 	#region UNITY_METHODS
 	private void Update ()
 	{
-		if(face == null || focus == null || eyes.Count == 0) { return; }
+		if(face == null || eyes.Count == 0) { return; }
+
+		// For testing purposes only!
+		focus = debugTarget;
+
+		// If we have a target, make sure it's still valid.
+		if(focus != null && !ValidateFocus(focus))
+		{
+			// Set the focus to null if it's invalid.
+			focus = null;
+		}
 
 		foreach(Transform eye in eyes)
 		{
-			// Rotation from the eye to the focus.
-			var rotation = Quaternion.LookRotation(focus.position - eye.position);
-
-			// How much I am facing the focal point.
-			var t = Quaternion.Dot(face.rotation, rotation);
-
-			// Squaring the dot product makes it 0-1 regardless of direction.
-			t *= t;
-
-			// If we are facing the focus...
-			if(t > 0.5f)
-			{
-				// Ramp up our attention.
-				ease = Mathf.Min(ease + Time.deltaTime, transitionTime);
-			}
-			else
-			{
-				// Diminish our attention.
-				ease = Mathf.Max(ease - Time.deltaTime, 0f);
-			}
-
-			// Diminish the intensity of the look based on facing angle.
-			eye.rotation = Quaternion.Slerp(face.rotation, Quaternion.LookRotation(focus.position - eye.position), t * t * ease / transitionTime);
+			// Rotate the eyes as needed.
+			Quaternion targetRotation = focus != null ? Quaternion.LookRotation(focus.position - eye.position) : face.rotation;
+			eye.rotation = Quaternion.RotateTowards(eye.rotation, targetRotation, lookSpeed * Time.deltaTime);
 		}
+	}
+	#endregion 
+
+	#region PRIVATE_METHODS
+	private bool ValidateFocus(Transform target)
+	{
+		// Get the vector to the object
+		var toFocus = (target.position - face.position).normalized;
+
+		// The object must be in front of us.
+		if(toFocus.z > 0)
+		{
+			// Check if the object is in our horizontal FOV.
+			float hAngle = 90f - Mathf.Abs(Mathf.Atan(toFocus.z / toFocus.x) * Mathf.Rad2Deg);
+			if(hAngle < hFov * 0.5f)
+			{
+				// Check if the object is also in our vertical FOV.
+				float vAngle = 90f - Mathf.Abs(Mathf.Atan(toFocus.z / toFocus.y) * Mathf.Rad2Deg);
+				if(vAngle < vFov * 0.5f)
+				{
+					// The target is valid.
+					return true ;
+				}
+			}
+		}
+		return false;
 	}
 	#endregion
 }
