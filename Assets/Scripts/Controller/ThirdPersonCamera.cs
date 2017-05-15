@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class ThirdPersonCamera : MonoBehaviour {
+	public bool lockCursor;
     public float mouseSensitivity = 10;
     public Transform target;
     public float dstFromTarget = 2;
@@ -14,10 +15,16 @@ public class ThirdPersonCamera : MonoBehaviour {
     float yaw; //rotation on the y axis
     float pitch; //rotation on the x axis
     
+	void Start(){
+		if (lockCursor){
+			Cursor.lockState = CursorLockMode.Locked;
+			Cursor.visible = false;
+		}
 
+	}
 	
 	// Update is called once per frame
-	void Update () {
+	void LateUpdate () {
         yaw += Input.GetAxis("Mouse X") * mouseSensitivity;
         pitch -= Input.GetAxis("Mouse Y") * mouseSensitivity; //+= would invert
 		pitch = Mathf.Clamp(pitch, pitchMinMax.x, pitchMinMax.y);

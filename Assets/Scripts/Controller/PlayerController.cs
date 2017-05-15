@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour {
     //animations are called in unity blend tree so don't need to be named within this script. they will be triggered based on movement speed
-    public float walkSpeed = 4;
+    
+	public float walkSpeed = 4;
     public float runSpeed = 20;
 
     public float turnSmoothTime = 0.2f; //time it takets from angle to go from current value to target value
@@ -16,6 +17,7 @@ public class PlayerController : MonoBehaviour {
 
     Animator animator;
 	Transform cameraT;
+
 
 	// Use this for initialization
 	void Start () {
