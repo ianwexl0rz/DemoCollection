@@ -91,11 +91,9 @@ half4 CustomLighting (half3 diffColor, half3 shadowColor, half3 specColor, half 
 	float fresnel = smoothstep(0.8, 0.4, nv);
 	float edgelight = saturate(nl - nv) * fresnel;
 
-	float diffuseTerm = smoothstep(-.3, 0.0, nlUnclamped) * 0.45;
+	float diffuseTerm = smoothstep(-.3, 0.0, nlUnclamped) * 0.3;
 			diffuseTerm += smoothstep(-.3, 1, nlUnclamped) * 0.1;
-			diffuseTerm += smoothstep(0.2, .5, nlUnclamped) * 0.45;
-			
-
+			diffuseTerm += smoothstep(0.2, .5, nlUnclamped) * 0.6;
 	
 	// Diffuse term
 	/*
@@ -150,7 +148,7 @@ half4 CustomLighting (half3 diffColor, half3 shadowColor, half3 specColor, half 
 	*/
 
 	half3 color =   diffColor * (gi.diffuse + light.color * diffuseTerm)
-					+ diffColor * shadowColor * saturate(1 - light.color * diffuseTerm) * light.color
+					+ shadowColor * (1 - light.color * diffuseTerm) * light.color
                     + max(edgelight * edgeLightStrength * 3.0, specularTerm) * light.color * FresnelTerm (specColor, lh)
                     + surfaceReduction * gi.specular * FresnelLerp (specColor, grazingTerm, nv);
 

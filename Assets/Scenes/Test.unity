@@ -230,7 +230,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   lockCursor: 1
   mouseSensitivity: 10
-  target: {fileID: 2083161626}
+  target: {fileID: 1546532178}
   dstFromTarget: 2.5
   pitchMinMax: {x: -40, y: 85}
   rotationSmoothTime: 0.12
@@ -491,7 +491,7 @@ Light:
   serializedVersion: 8
   m_Type: 1
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Intensity: 0.7
+  m_Intensity: 0.75
   m_Range: 10
   m_SpotAngle: 30
   m_CookieSize: 10
@@ -499,7 +499,7 @@ Light:
     m_Type: 2
     m_Resolution: 3
     m_CustomResolution: -1
-    m_Strength: 1
+    m_Strength: 0.65
     m_Bias: 0.025
     m_NormalBias: 0.4
     m_NearPlane: 0.2
@@ -644,7 +644,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1460896109}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9a67f68fcd6514dd2b7733d06827c987, type: 3}
   m_Name: 
@@ -653,6 +653,11 @@ MonoBehaviour:
   runSpeed: 4
   turnSmoothTime: 0.2
   speedSmoothTime: 0.1
+--- !u!4 &1546532178 stripped
+Transform:
+  m_PrefabParentObject: {fileID: 4380757859617666, guid: 1447690b66c3cbd4390ad0df5ef89106,
+    type: 2}
+  m_PrefabInternal: {fileID: 1648195163}
 --- !u!1001 &1648195163
 Prefab:
   m_ObjectHideFlags: 0
