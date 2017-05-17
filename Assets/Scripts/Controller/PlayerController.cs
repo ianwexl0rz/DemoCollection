@@ -41,14 +41,24 @@ public class PlayerController : MonoBehaviour {
 
         }
         bool running = Input.GetKey(KeyCode.LeftShift); //hold down shift key to run
-        float targetSpeed = ((running) ? runSpeed : walkSpeed) * inputDir.magnitude; //if we are running the speed = runspeed outwise speed = walk speed. *magnitude determines that if there's no input, magnitude will be 0 so character wont move at 0
+        float targetSpeed = (running ? runSpeed : walkSpeed) * inputDir.magnitude; //if we are running the speed = runspeed outwise speed = walk speed. *magnitude determines that if there's no input, magnitude will be 0 so character wont move at 0
         currentSpeed = Mathf.SmoothDamp(currentSpeed, targetSpeed, ref speedSmoothVelocity, speedSmoothVelocity);
         //move character
         transform.Translate(transform.forward * currentSpeed * Time.deltaTime, Space.World);
 
-        //control speed percent in animator so that character walks or runs depending on speed
-        float animationSpeedPercent = ((running) ? 1:.5f) *inputDir.magnitude;     //if running = 1 otherwise .5.  ? and : seems to be shorthand for if/else
-        //reference for animator
-        animator.SetFloat("speedPercent", animationSpeedPercent, speedSmoothTime, Time.deltaTime);
+		if(animator != null)
+		{
+			//control speed percent in animator so that character walks or runs depending on speed
+			float animationSpeedPercent = inputDir.magnitude;
+
+			if(!running)
+			{
+				// If not running, slow down the animation proportionally
+				animationSpeedPercent *= walkSpeed / runSpeed;
+			}
+
+			//reference for animator
+			animator.SetFloat("speedPercent", animationSpeedPercent, speedSmoothTime, Time.deltaTime);
+		}
     }
 }

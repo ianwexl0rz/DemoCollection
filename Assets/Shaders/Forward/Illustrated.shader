@@ -3,24 +3,26 @@ Shader "Illustrated" {
 	Properties {
 		[HDR]
 	    _Color ("Main Color", Color) = (1,1,1,1)
+		[HDR]
 	    _ShadowColor ("Shadow Color", Color) = (0,0,0,1)
+		[HDR]
 	    _SpecColor ("Specular Color", Color) = (0.5, 0.5, 0.5, 1)
 		_Shininess ("Shininess", Range (0, 1)) = 0.09
-		_ColorMult ("Overbright", Range (0, 1)) = 0
 	    _MainTex ("Base (RGB)", 2D) = "white" {}
 	    _BumpMap ("Bumpmap", 2D) = "bump" {}
 	}
-	
+
 	SubShader {
 	    Tags { "RenderType" = "Opaque" }
 		
 		CGPROGRAM
-		#pragma surface surf Ramp fullforwardshadows
-		#pragma target 3.0
+		#pragma surface surf Ramp
+
+		//#pragma target 3.0
+		
 				
 		float4 _Color;
 		float4 _ShadowColor;
-		half _ColorMult;
 		half _Shininess;
 		sampler2D _MainTex;
 		sampler2D _BumpMap;
@@ -29,6 +31,8 @@ Shader "Illustrated" {
 		    float2 uv_MainTex;
 		    float2 uv_BumpMap;
 		};
+
+		
 		
 		void surf (Input IN, inout SurfaceOutput o) {
 		
@@ -39,7 +43,6 @@ Shader "Illustrated" {
 			o.Alpha = tex.a * _Color.a;
 			o.Specular = _Shininess;
 			o.Normal = UnpackNormal (tex2D (_BumpMap, IN.uv_BumpMap));
-			o.Emission  = o.Albedo * _ColorMult;
 		}
 		
 		half4 LightingRamp (SurfaceOutput s, half3 lightDir,  half3 viewDir, half atten) {
@@ -79,5 +82,4 @@ Shader "Illustrated" {
 	}
 	
 	Fallback " Glossy", 0
-
 }

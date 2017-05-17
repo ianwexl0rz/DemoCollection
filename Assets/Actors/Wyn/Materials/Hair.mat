@@ -7,7 +7,7 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: Hair
-  m_Shader: {fileID: 4800000, guid: 389e463db67b99b4ca6e773951ef75dc, type: 3}
+  m_Shader: {fileID: 4800000, guid: 811e8972b8e0eac48934e7e9b636adb9, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -57,18 +57,27 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _ShadowTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SpecGlossMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     m_Floats:
     - _BumpScale: 1
     - _ColorMult: 0
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
+    - _EdgeLight: 1
     - _Fresnel: 3
     - _FresnelBias: 0
     - _GlossMapScale: 1
-    - _Glossiness: 0.452
+    - _Glossiness: 0.45
     - _GlossyReflections: 1
-    - _Metallic: 0.357
+    - _Metallic: 0.21
     - _Mode: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.02
@@ -80,7 +89,7 @@ Material:
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:
-    - _Color: {r: 0, g: 0.54274476, b: 0.722, a: 1}
+    - _Color: {r: 0.171981, g: 0.5216453, b: 0.591, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _ShadowColor: {r: 0.048529364, g: 0, b: 0.24264705, a: 1}
-    - _SpecColor: {r: 0, g: 0.44852936, b: 0.07733266, a: 1}
+    - _ShadowColor: {r: 0.06487889, g: 0.11454481, b: 0.35294116, a: 1}
+    - _SpecColor: {r: 0.22491348, g: 0.2769359, b: 0.29411763, a: 1}

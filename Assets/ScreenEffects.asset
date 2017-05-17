@@ -43,7 +43,7 @@ MonoBehaviour:
     m_Enabled: 1
     m_Settings:
       intensity: 0.25
-      radius: 0.1
+      radius: 0.13
       sampleCount: 10
       downsampling: 1
       forceForwardCompatibility: 0
@@ -101,9 +101,9 @@ MonoBehaviour:
     m_Settings:
       bloom:
         intensity: 0.5
-        threshold: 1.24
-        softKnee: 0.5
-        radius: 4
+        threshold: 2
+        softKnee: 0.81
+        radius: 2.86
         antiFlicker: 0
       lensDirt:
         texture: {fileID: 0}

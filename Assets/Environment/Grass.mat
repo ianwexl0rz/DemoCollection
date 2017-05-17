@@ -7,7 +7,7 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: Grass
-  m_Shader: {fileID: 4800000, guid: 389e463db67b99b4ca6e773951ef75dc, type: 3}
+  m_Shader: {fileID: 4800000, guid: 811e8972b8e0eac48934e7e9b636adb9, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -53,14 +53,23 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _ShadowTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SpecGlossMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     m_Floats:
     - _BumpScale: 1
     - _ColorMult: 0
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
+    - _EdgeLight: 0.27
     - _GlossMapScale: 1
-    - _Glossiness: 0.601
+    - _Glossiness: 0.4
     - _GlossyReflections: 1
     - _Metallic: 0
     - _Mode: 0
@@ -73,7 +82,7 @@ Material:
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:
-    - _Color: {r: 0.2666, g: 0.43, b: 0, a: 1}
+    - _Color: {r: 0.4305778, g: 0.766, b: 0.28954804, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _ShadowColor: {r: 0, g: 0.39893082, b: 0.503, a: 1}
-    - _SpecColor: {r: 0.4472852, g: 0.541, b: 0.29834557, a: 1}
+    - _ShadowColor: {r: 0, g: 0.19827574, b: 0.25, a: 1}
+    - _SpecColor: {r: 0.54142666, g: 0.5955882, b: 0.3889191, a: 1}

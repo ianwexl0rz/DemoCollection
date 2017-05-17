@@ -28,6 +28,9 @@ public class LookWithEyes : MonoBehaviour {
 	[SerializeField]
 	private float lookSpeed = 360f;
 
+	[SerializeField]
+	private bool frontFocusOnly = true;
+
 	[Header("Debug")]
 	[SerializeField]
 	private Transform debugTarget = null;
@@ -65,10 +68,10 @@ public class LookWithEyes : MonoBehaviour {
 	private bool ValidateFocus(Transform target)
 	{
 		// Get the vector to the object
-		var toFocus = (target.position - face.position).normalized;
+		var toFocus = transform.InverseTransformDirection((target.position - face.position).normalized);
 
 		// The object must be in front of us.
-		if(toFocus.z > 0)
+		if(!frontFocusOnly || toFocus.z > 0)
 		{
 			// Check if the object is in our horizontal FOV.
 			float hAngle = 90f - Mathf.Abs(Mathf.Atan(toFocus.z / toFocus.x) * Mathf.Rad2Deg);
