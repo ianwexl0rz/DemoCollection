@@ -114,8 +114,8 @@ half3 Albedo(float4 texcoords)
 
 half3 Shadow(float4 texcoords)
 {
-	half3 shadow = _ShadowColor.rgb * tex2D(_ShadowTex, texcoords.xy).rgb;
-	return shadow;
+    half3 shadow = _ShadowColor.rgb * tex2D(_ShadowTex, texcoords.xy).rgb;
+    return shadow;
 }
 
 half Alpha(float2 uv)

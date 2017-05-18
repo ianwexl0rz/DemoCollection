@@ -88,7 +88,7 @@ half4 CustomLighting (half3 diffColor, half3 shadowColor, half3 specColor, half 
 
 	//half diffuseTerm = DisneyDiffuse(nv, nl, lh, perceptualRoughness) * nl;
 
-	float fresnel = smoothstep(0.8, 0.4, nv);
+	float fresnel = smoothstep(0.5, 0.3, nv);
 	float edgelight = saturate(nl - nv) * fresnel;
 
 	float diffuseTerm = smoothstep(-.3, 0.0, nlUnclamped) * 0.3;
@@ -148,8 +148,8 @@ half4 CustomLighting (half3 diffColor, half3 shadowColor, half3 specColor, half 
 	*/
 
 	half3 color =   diffColor * (gi.diffuse + light.color * diffuseTerm)
-					+ shadowColor * (1 - light.color * diffuseTerm) * light.color
-                    + max(edgelight * edgeLightStrength * 3.0, specularTerm) * light.color * FresnelTerm (specColor, lh)
+					+ shadowColor * (1 - light.color * diffuseTerm) * diffColor * 2 * light.color
+                    + max(edgelight * edgeLightStrength * 8.0, specularTerm) * light.color * FresnelTerm (specColor, lh)
                     + surfaceReduction * gi.specular * FresnelLerp (specColor, grazingTerm, nv);
 
     return half4(color, 1);
@@ -170,6 +170,7 @@ half4 CalculateLight (unity_v2f_deferred i)
 	half4 gbuffer0 = tex2D (_CameraGBufferTexture0, uv);
 	half4 gbuffer1 = tex2D (_CameraGBufferTexture1, uv);
 	half4 gbuffer2 = tex2D (_CameraGBufferTexture2, uv);
+
 	CustomData data = CustomDataFromGbuffer(gbuffer0, gbuffer1, gbuffer2);
 	//UnityStandardData data = UnityStandardDataFromGbuffer(gbuffer0, gbuffer1, gbuffer2);
 
