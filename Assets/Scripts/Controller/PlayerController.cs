@@ -18,11 +18,13 @@ public class PlayerController : MonoBehaviour {
     Animator animator;
 	Transform cameraT;
 
-
 	// Use this for initialization
-	void Start () {
-        animator = GetComponent<Animator>();
+	void Awake () {
+        animator = GetComponentInChildren<Animator>();
 		cameraT = Camera.main.transform;
+
+		// Let the camera control character switching.
+		enabled = false;
 	}
 	
 	// Update is called once per frame
@@ -46,7 +48,7 @@ public class PlayerController : MonoBehaviour {
         //move character
         transform.Translate(transform.forward * currentSpeed * Time.deltaTime, Space.World);
 
-		if(animator != null)
+		if(animator != null && animator.runtimeAnimatorController != null)
 		{
 			//control speed percent in animator so that character walks or runs depending on speed
 			float animationSpeedPercent = inputDir.magnitude;
