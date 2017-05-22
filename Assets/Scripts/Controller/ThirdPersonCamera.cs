@@ -51,16 +51,17 @@ public class ThirdPersonCamera : MonoBehaviour {
 		if(Cursor.lockState != CursorLockMode.Locked)
 		{
 			Cursor.visible = true;
-			return;
+		}
+		else
+		{
+			yaw += Input.GetAxis("Mouse X") * mouseSensitivity;
+			pitch -= Input.GetAxis("Mouse Y") * mouseSensitivity; //+= would invert
+			pitch = Mathf.Clamp(pitch, pitchMinMax.x, pitchMinMax.y);
+
+			currentRotation = Vector3.SmoothDamp(currentRotation, new Vector3(pitch, yaw), ref rotationSmoothVelocity, rotationSmoothTime);
+			transform.eulerAngles = currentRotation;
 		}
 
-		yaw += Input.GetAxis("Mouse X") * mouseSensitivity;
-        pitch -= Input.GetAxis("Mouse Y") * mouseSensitivity; //+= would invert
-		pitch = Mathf.Clamp(pitch, pitchMinMax.x, pitchMinMax.y);
-
-		currentRotation = Vector3.SmoothDamp(currentRotation, new Vector3(pitch, yaw), ref rotationSmoothVelocity, rotationSmoothTime);
-		transform.eulerAngles = currentRotation;
-
-        transform.position = (target.position + offset) - transform.forward * dstFromTarget;
+        transform.position = target.position + target.rotation * offset - transform.forward * dstFromTarget;
 	}
 }
