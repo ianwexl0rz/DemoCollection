@@ -4,6 +4,7 @@ Shader "Custom/Custom (Metallic setup)"
 {
 	Properties
 	{
+		[HDR]
 		_Color("Color", Color) = (1,1,1,1)
 		_MainTex("Albedo", 2D) = "white" {}
 

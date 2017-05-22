@@ -646,10 +646,10 @@ void fragDeferred (
     CustomData data;
     data.diffuseColor   = s.diffColor;
     data.occlusion      = occlusion;
-        data.specularColor = s.specColor;
+    data.specularColor  = s.specColor;
     data.smoothness     = s.smoothness;
     data.normalWorld    = s.normalWorld;
-        data.shadowColor = s.shadowColor;
+    data.shadowColor    = s.shadowColor;
     data.edgeLight      = s.edgeLight;
 
     CustomDataToGbuffer(data, outGBuffer0, outGBuffer1, outGBuffer2);
