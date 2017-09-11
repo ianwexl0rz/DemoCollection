@@ -11,6 +11,7 @@ Shader "Custom/Custom (Specular setup)"
 		_ShadowColor("Shadow", Color) = (0,0,0,1)
 		_ShadowTex("Shadow", 2D) = "white" {}
 
+		_Translucency("Translucency", Range(0.0, 1.0)) = 0.0
 		_EdgeLight("Edge Light", Range(0.0, 1.0)) = 0.0
 		
 		_Cutoff("Alpha Cutoff", Range(0.0, 1.0)) = 0.5

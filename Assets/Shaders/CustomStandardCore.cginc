@@ -170,7 +170,7 @@ struct FragmentCommonData
     half3 diffColor, specColor, shadowColor;
     // Note: smoothness & oneMinusReflectivity for optimization purposes, mostly for DX9 SM2.0 level.
     // Most of the math is being done on these (1-x) values, and that saves a few precious ALU slots.
-    half edgeLight, oneMinusReflectivity, smoothness;
+    half translucency, edgeLight, oneMinusReflectivity, smoothness;
     half3 normalWorld, eyeVec, posWorld;
     half alpha;
 
@@ -199,8 +199,9 @@ inline FragmentCommonData SpecularSetup (float4 i_tex)
 
     FragmentCommonData o = (FragmentCommonData)0;
     o.diffColor = diffColor;
-    o.specColor = specColor;
+    o.specColor = specColor; 
     o.shadowColor = shadowColor;
+    o.translucency = _Translucency;
 	o.edgeLight = _EdgeLight;
     o.oneMinusReflectivity = oneMinusReflectivity;
     o.smoothness = smoothness;
@@ -222,6 +223,8 @@ inline FragmentCommonData MetallicSetup (float4 i_tex)
     o.diffColor = diffColor;
     o.specColor = specColor;
     o.shadowColor = shadowColor;
+    o.translucency = _Translucency;
+    o.edgeLight = _EdgeLight;
     o.oneMinusReflectivity = oneMinusReflectivity;
     o.smoothness = smoothness;
     return o;
@@ -604,6 +607,7 @@ void fragDeferred (
 #if defined(SHADOWS_SHADOWMASK) && (UNITY_ALLOWED_MRT_COUNT > 4)
     ,out half4 outShadowMask : SV_Target4       // RT4: shadowmask (rgba)
 #endif
+    , UNITY_VPOS_TYPE screenPos : SV_Position
 )
 {
     #if (SHADER_TARGET < 30)
@@ -644,12 +648,33 @@ void fragDeferred (
     #endif
 
     CustomData data;
-    data.diffuseColor   = s.diffColor;
+
+    #ifndef CUSTOM_USE_YCOCG
+        data.diffuseColor = s.diffColor;
+        data.specularColor  = s.specColor;
+    #else
+        bool evenPixel = fmod(screenPos.y, 2) == fmod(screenPos.x, 2);
+
+        // choose spec or translucency
+        //float3 spec = s.edgeLight > 0 ? s.specColor : s.shadowColor;
+
+        float3 spec = RGBToYCoCg(s.specColor);
+        float3 shadow = RGBToYCoCg(s.shadowColor);
+
+        float3 choose = half3(spec.r, s.translucency == 0 ? spec.gb : shadow.gb);
+
+        //float3 choose = half3(spec.r, lerp(spec.gb,shadow.gb, shadow.r));
+
+
+        data.diffuseColor = half3(evenPixel ? RGBToYCoCg(s.diffColor).rg : RGBToYCoCg(s.diffColor).rb, 0);
+        data.specularColor = half3(evenPixel ? choose.rg : choose.rb, 0);
+    #endif
     data.occlusion      = occlusion;
-    data.specularColor  = s.specColor;
+    
     data.smoothness     = s.smoothness;
     data.normalWorld    = s.normalWorld;
     data.shadowColor    = s.shadowColor;
+    data.translucency   = s.translucency;
     data.edgeLight      = s.edgeLight;
 
     CustomDataToGbuffer(data, outGBuffer0, outGBuffer1, outGBuffer2);

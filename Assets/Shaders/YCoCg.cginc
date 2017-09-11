@@ -1,40 +1,12 @@
-inline half mod(half x, half y)
+inline half3 RGBToYCoCg(half3 c)
 {
-    // This has the same sign as y, unlike fmod which has the same sign as x.
-    return x - y * floor(x / y);
+    return half3(0.25 * c.r + 0.5 * c.g + 0.25 * c.b, 0.5 * c.r - 0.5 * c.b + 0.5, -0.25 * c.r + 0.5 * c.g - 0.25 * c.b + 0.5);
 }
 
-inline half2 ForwardLift(half x, half y)
+inline half3 YCoCgToRGB(half3 c)
 {
-    half diff = mod(y - x, 256);
-    half average = mod(x + floor(diff * 0.5), 256);
-    return half2(average, diff);
-}
+    c.y -= 0.5;
+    c.z -= 0.5;
+    return half3(c.r + c.g - c.b, c.r + c.b, c.r - c.g - c.b);
 
-inline half2 ReverseLift(half average, half diff)
-{
-    half2 o;
-    o.x = mod(average - floor(diff * 0.5), 256);
-    o.y = mod(o.x + diff, 256);
-    return o;
-}
-
-inline half3 RGBToYCoCg(half3 color)
-{
-    color = round(color * 255);
-
-    half4 ycocg;
-    ycocg.ag = ForwardLift(color.r, color.b);
-    ycocg.rb = ForwardLift(color.g, ycocg.a);
-    return ycocg.rgb / 255;
-}
-
-inline half3 YCoCgToRGB(half3 ycocg)
-{
-    ycocg = round(ycocg * 255);
-
-    half4 color;
-    color.ga = ReverseLift(ycocg.r, ycocg.b);
-    color.rb = ReverseLift(color.a, ycocg.g);
-    return color.rgb / 255;
 }

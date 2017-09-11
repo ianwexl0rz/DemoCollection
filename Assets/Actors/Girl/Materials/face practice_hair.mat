@@ -7,10 +7,11 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: face practice_hair
-  m_Shader: {fileID: 4800000, guid: 811e8972b8e0eac48934e7e9b636adb9, type: 3}
+  m_Shader: {fileID: 4800000, guid: 289f6d7fd8e4d0542b05fb923a2492d0, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
   stringTagMap: {}
   disabledShaderPasses: []
@@ -67,9 +68,9 @@ Material:
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
-    - _EdgeLight: 0.579
+    - _EdgeLight: 0.223
     - _GlossMapScale: 1
-    - _Glossiness: 0.328
+    - _Glossiness: 0.208
     - _GlossyReflections: 1
     - _Metallic: 0
     - _Mode: 0
@@ -80,10 +81,11 @@ Material:
     - _SpecSize: 1
     - _SpecularHighlights: 1
     - _SrcBlend: 1
+    - _Translucency: 0
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:
-    - _Color: {r: 0.9338235, g: 0.71410036, b: 0.7913823, a: 1}
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _ShadowColor: {r: 0.4627163, g: 0.22577854, b: 0.6397059, a: 1}
+    - _ShadowColor: {r: 0.53103447, g: 0, b: 1, a: 1}
     - _SpecColor: {r: 0.19852942, g: 0.19852942, b: 0.19852942, a: 1}

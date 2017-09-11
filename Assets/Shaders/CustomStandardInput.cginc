@@ -25,7 +25,8 @@ half        _Cutoff;
 sampler2D   _ShadowTex;
 half4       _ShadowColor;
 
-half        _EdgeLight;
+half _Translucency;
+half _EdgeLight;
 
 sampler2D   _MainTex;
 float4      _MainTex_ST;

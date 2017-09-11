@@ -58,7 +58,7 @@ public class LookWithEyes : MonoBehaviour {
 		foreach(Transform eye in eyes)
 		{
 			// Rotate the eyes as needed.
-			Quaternion targetRotation = focus != null ? Quaternion.LookRotation(focus.position - eye.position) : face.rotation;
+			Quaternion targetRotation = focus != null ? Quaternion.Lerp(face.rotation, Quaternion.LookRotation(focus.position - eye.position), 0.6f) : face.rotation;
 			eye.rotation = Quaternion.RotateTowards(eye.rotation, targetRotation, lookSpeed * Time.deltaTime);
 		}
 	}

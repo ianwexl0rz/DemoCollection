@@ -9,11 +9,10 @@
 //  b) GGX
 // * Smith for Visiblity term
 // * Schlick approximation for Fresnel
-half4 CustomLighting (half3 diffColor, half3 shadowColor, half3 specColor, half edgeLightStrength, half oneMinusReflectivity, half smoothness,
+half4 CustomLighting (half3 diffColor, half3 shadowColor, half3 specColor, half3 translucency, half edgeLightStrength, half oneMinusReflectivity, half smoothness,
     half3 normal, half3 viewDir,
     UnityLight light, UnityIndirect gi)
 {
-	//normal = half3(1,1,1);
 
     half perceptualRoughness = SmoothnessToPerceptualRoughness (smoothness);
     half3 halfDir = Unity_SafeNormalize (light.dir + viewDir);
@@ -46,14 +45,15 @@ half4 CustomLighting (half3 diffColor, half3 shadowColor, half3 specColor, half 
     half lv = saturate(dot(light.dir, viewDir));
     half lh = saturate(dot(light.dir, halfDir));
 
-	//half diffuseTerm = DisneyDiffuse(nv, nl, lh, perceptualRoughness) * nl;
+    half diffuseTerm = DisneyDiffuse(nv, nl, lh, perceptualRoughness) * nl;
 
-    float fresnel = smoothstep(0.6, 0.4, nv);
-    float edgelight = saturate(nl - nv) * fresnel;
+    #if defined(POINT) || defined(POINT_COOKIE) || defined(SPOT)
+    #else
+    diffuseTerm = smoothstep(0, 0.2, diffuseTerm) * 0.7 + smoothstep(0, light.color, diffuseTerm) * 0.3;
 
-	float diffuseTerm = smoothstep(-.3, 0.0, nlUnclamped) * 0.3;
-	//diffuseTerm += smoothstep(-.3, 1, nlUnclamped) * 0.1;
-    diffuseTerm += smoothstep(0.1, .5, nlUnclamped * saturate(nv + 0.25)) * 0.7;
+    float fresnel = smoothstep(0.8, 0.2, nv);
+    float edgelight = saturate((nl - nv) * 4) * fresnel;
+    #endif
 
     // Specular term
     // HACK: theoretically we should divide diffuseTerm by Pi and not multiply specularTerm!
@@ -65,13 +65,14 @@ half4 CustomLighting (half3 diffColor, half3 shadowColor, half3 specColor, half 
     half D = GGXTerm (nh, roughness);
 #else
     // Legacy
-    half V = SmithBeckmannVisibilityTerm (nl, nv, roughness);
+    half V = SmithBeckmannVisibilityTerm(nl, nv, roughness);
     half D = NDFBlinnPhongNormalizedTerm (nh, PerceptualRoughnessToSpecPower(perceptualRoughness));
 #endif
 
-    half specularTerm = V*D * UNITY_PI; // Torrance-Sparrow model, Fresnel is applied later
+    half specularTerm = V * D * UNITY_PI; // Torrance-Sparrow model, Fresnel is applied later
 
-    if (specularTerm < 1.5) specularTerm = smoothstep(.4, 1.5, specularTerm) * 1.5;
+    specularTerm *= smoothstep(0.4, 1, specularTerm);
+
 
 #   ifdef UNITY_COLORSPACE_GAMMA
         specularTerm = sqrt(max(1e-4h, specularTerm));
@@ -82,8 +83,6 @@ half4 CustomLighting (half3 diffColor, half3 shadowColor, half3 specColor, half 
 #if defined(_SPECULARHIGHLIGHTS_OFF)
     specularTerm = 0.0;
 #endif
-
-    //specularTerm = min(2, specularTerm);
 
     // surfaceReduction = Int D(NdotH) * NdotH * Id(NdotL>0) dH = 1/(roughness^2+1)
     half surfaceReduction;
@@ -103,13 +102,38 @@ half4 CustomLighting (half3 diffColor, half3 shadowColor, half3 specColor, half 
                     + surfaceReduction * gi.specular * FresnelLerp (specColor, grazingTerm, nv);
 	*/
 
-    shadowColor *= smoothstep(-0.8, 0, nlUnclamped);
+    half fLTDistortion = 0.5;
+    half iLTPower = 12;
+    half fLTScale = 1;
 
-    half3 color = diffColor * (gi.diffuse + light.color * diffuseTerm)
-                + diffColor * shadowColor * (1 - diffuseTerm * saturate(light.color)) * light.color
-                + max(edgelight * edgeLightStrength * 8.0, specularTerm) * light.color * FresnelTerm(specColor, lh)
-                + surfaceReduction * gi.specular * FresnelLerp(specColor, grazingTerm, saturate(-saturate(-nlUnclamped) * smoothness + nv));
-    ;
+    //half3 vLTLight = light.dir + normal.xyz * fLTDistortion;
+    //half fLTDot = pow(saturate(dot(viewDir, -vLTLight)), iLTPower) * fLTScale;
+    //half3 fLT = fLightAttentuation * (fLTDot + fLTAmbient.rgb) * fLTThickness;
+    //half3 color = shadowColor * saturate(nlUnclamped + 1) * (1 - diffuseTerm) * light.color;
+
+    //original
+    //float3 H = normalize(light.dir + normal * fLTDistortion);
+    //float I = pow(saturate(dot(viewDir, -H)), iLTPower) * fLTScale;
+
+    //float3 H = normalize(light.dir + normal * translucency);
+    //float sss = saturate(dot(viewDir, -H));
+
+    half3 color =
+#if defined(POINT) || defined(POINT_COOKIE) || defined(SPOT)
+                diffColor * (gi.diffuse + light.color * diffuseTerm)
+                + specularTerm * light.color * FresnelTerm(specColor, lh)
+#else
+    //*/
+                diffColor * (gi.diffuse + lerp(light.color * diffuseTerm, 1, pow(translucency, 2)))
+                * lerp(1, shadowColor, smoothstep(0.5, -0.25, min(nlUnclamped, nh) * light.color) * (1 - step(translucency, 0)))
+                + diffColor * shadowColor * smoothstep(-0.25, 0.25, max(nlUnclamped, nh)) * (1 - diffuseTerm) * translucency * light.color
+
+    //*/
+                //+ diffColor * (fLTDot) * shadowColor
+                + max(edgelight * edgeLightStrength * 6 * (specColor + specColor * diffColor * 4), specularTerm * FresnelTerm(specColor, lh)) * light.color
+                #endif
+
+                + surfaceReduction * gi.specular * FresnelLerp(specColor, grazingTerm, pow(nv, 1 + edgeLightStrength));
 
     return half4(color, 1);
 }
