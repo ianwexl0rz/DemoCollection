@@ -877,8 +877,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9a67f68fcd6514dd2b7733d06827c987, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _brain: {fileID: 11400000, guid: 197438d32256b794faf42212dfaf46b5, type: 2}
   _mesh: {fileID: 4856745508032878}
+  lastPos: {x: 0, y: 0, z: 0}
+  _brain: {fileID: 11400000, guid: 197438d32256b794faf42212dfaf46b5, type: 2}
   isAwake: 1
   lockOnTarget: {fileID: 0}
   abilities: []

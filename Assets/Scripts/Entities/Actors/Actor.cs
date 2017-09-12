@@ -2,13 +2,12 @@
 using System;
 using System.Collections.Generic;
 
-public class Actor : MonoBehaviour
+public class Actor : Entity
 {
 	[SerializeField]
 	protected ActorBrain _brain = null;
 
-	[SerializeField]
-	protected Transform _mesh = null;
+	
 
 	public bool isAwake = false;
 
@@ -18,11 +17,9 @@ public class Actor : MonoBehaviour
 
 	public Transform lockOnTarget = null;
 
-	public Rigidbody rb { get; private set; }
 	public Animator animator { get; private set; }
 
 	public ActorBrain brain { get { return _brain; } private set { _brain = value; } }
-	public Transform mesh { get { return _mesh; } private set { _mesh = value; } }
 
 	public Action OnResetAbilities = null;
 	public Action UpdateAbilities = null;
@@ -32,60 +29,32 @@ public class Actor : MonoBehaviour
 	public List<ActorAbility> abilities = new List<ActorAbility>();
 
 	// Use this for initialization
+	protected override void Awake()
+	{
+		base.Awake();
+		animator = GetComponentInChildren<Animator>();
+	}
+
+	protected override void OnEnable()
+	{
+		base.OnEnable();
+		OnUpdate += GetInput;
+	}
+
+	protected override void OnDisable()
+	{
+		base.OnDisable();
+		OnUpdate -= GetInput;
+	}
+
 	private void Start()
 	{
-		animator = GetComponentInChildren<Animator>();
-
-		rb = GetComponent<Rigidbody>();
 		look = transform.forward;
 
 		if(brain != null)
 		{
 			brain.Init(this);
 		}
-		OnAwake();
-	}
-
-	private void OnEnable()
-	{
-		GameManager.I.AddActor(this);
-	}
-
-	private void OnDisable()
-	{
-		if(GameManager.I) GameManager.I.RemoveActor(this);
-	}
-
-	public void UpdateActor()
-	{
-		GetInput();
-		OnUpdate();
-		if(UpdateAbilities != null)
-		{
-			UpdateAbilities();
-		}
-		
-	}
-
-	private void FixedUpdate()
-	{
-		OnFixedUpdate();
-		if(FixedUpdateAbilities != null)
-		{
-			FixedUpdateAbilities();
-		}
-	}
-
-	protected virtual void OnUpdate()
-	{
-	}
-
-	protected virtual void OnFixedUpdate()
-	{
-	}
-
-	protected virtual void OnAwake()
-	{
 	}
 
 	private void GetInput()

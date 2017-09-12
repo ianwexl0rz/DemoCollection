@@ -42,7 +42,7 @@ MonoBehaviour:
   ambientOcclusion:
     m_Enabled: 1
     m_Settings:
-      intensity: 0.7
+      intensity: 0.84
       radius: 0.3
       sampleCount: 16
       downsampling: 1
@@ -120,12 +120,12 @@ MonoBehaviour:
         neutralWhiteLevel: 4.87
         neutralWhiteClip: 8.35
       basic:
-        postExposure: 0
+        postExposure: 0.6
         temperature: 0
         tint: 0
         hueShift: 0
         saturation: 1
-        contrast: 1
+        contrast: 0.855
       channelMixer:
         red: {x: 1, y: 0, z: 0}
         green: {x: 0, y: 1, z: 0}
@@ -134,13 +134,13 @@ MonoBehaviour:
       colorWheels:
         mode: 0
         log:
-          slope: {r: 1, g: 1, b: 1, a: 0.11789474}
-          power: {r: 1, g: 1, b: 1, a: -0.48127022}
-          offset: {r: 1, g: 1, b: 1, a: 0.022346368}
+          slope: {r: 1, g: 1, b: 1, a: 0.05620609}
+          power: {r: 1, g: 1, b: 1, a: 0}
+          offset: {r: 1, g: 1, b: 1, a: 0}
         linear:
-          lift: {r: 1, g: 1, b: 1, a: 0.000000001094059}
-          gamma: {r: 1, g: 1, b: 1, a: -0.050526306}
-          gain: {r: 1, g: 1, b: 1, a: 0.43107322}
+          lift: {r: 1, g: 1, b: 1, a: -0.018735362}
+          gamma: {r: 1, g: 1, b: 1, a: -0.14269257}
+          gain: {r: 1, g: 1, b: 1, a: 0.16284573}
       curves:
         master:
           curve:
@@ -150,13 +150,19 @@ MonoBehaviour:
               time: 0
               value: 0
               inSlope: 0
-              outSlope: 1.0908813
+              outSlope: 0.95247066
               tangentMode: 0
             - serializedVersion: 2
-              time: 0.6331361
-              value: 0.75
+              time: 0.53812635
+              value: 0.52272725
               inSlope: 1.3758718
               outSlope: 1.3758718
+              tangentMode: 0
+            - serializedVersion: 2
+              time: 0.7908497
+              value: 0.96818185
+              inSlope: 1.2450378
+              outSlope: 1.2450378
               tangentMode: 0
             - serializedVersion: 2
               time: 1
@@ -181,6 +187,12 @@ MonoBehaviour:
               outSlope: 1
               tangentMode: 0
             - serializedVersion: 2
+              time: 0.7690632
+              value: 0.7690632
+              inSlope: 1
+              outSlope: 1
+              tangentMode: 0
+            - serializedVersion: 2
               time: 1
               value: 1
               inSlope: 1
@@ -188,7 +200,7 @@ MonoBehaviour:
               tangentMode: 0
             m_PreInfinity: 2
             m_PostInfinity: 2
-            m_RotationOrder: 4
+            m_RotationOrder: 0
           m_Loop: 0
           m_ZeroValue: 0
           m_Range: 1
@@ -290,7 +302,7 @@ MonoBehaviour:
     m_Enabled: 0
     m_Settings:
       spectralTexture: {fileID: 0}
-      intensity: 0
+      intensity: 1
   grain:
     m_Enabled: 0
     m_Settings:
@@ -302,7 +314,7 @@ MonoBehaviour:
     m_Enabled: 1
     m_Settings:
       mode: 0
-      color: {r: 0.6102941, g: 0.6102941, b: 0.6102941, a: 1}
+      color: {r: 0.52205884, g: 0.52205884, b: 0.52205884, a: 1}
       center: {x: 0.5, y: 0.5}
       intensity: 0.5
       smoothness: 0.75

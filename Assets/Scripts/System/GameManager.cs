@@ -1,12 +1,15 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using InControl;
+using System;
+using System.Collections;
 
 public class GameManager : MonoBehaviour
 {
 	public Player activePlayer;
 	public ControlSettings controlSettings = null;
 	public ThirdPersonCamera mainCamera = null;
+	public GameObject pausePrefab = null;
 
 	[Space]
 	[Header("Actor Brains")]
@@ -15,7 +18,10 @@ public class GameManager : MonoBehaviour
 
 	private int targetIndex = 0;
 	private List<Player> playerCharacters;
-	private List<Actor> actors = new List<Actor>();
+	private List<Entity> entities = new List<Entity>();
+
+	public Action<bool> OnSetPaused = delegate (bool value) { };
+	private bool gamePaused = false;
 
 	private static GameManager _instance;
 	public static GameManager I
@@ -37,7 +43,10 @@ public class GameManager : MonoBehaviour
 		{
 			targetIndex = playerCharacters.IndexOf(activePlayer);
 		}
+	}
 
+	private void Start()
+	{
 		SetActivePlayer(playerCharacters[targetIndex]);
 
 		foreach(Player p in playerCharacters)
@@ -46,18 +55,39 @@ public class GameManager : MonoBehaviour
 		}
 	}
 
+	private void FixedUpdate()
+	{
+		if(!gamePaused)
+		{
+			entities.ForEach(entity => entity.OnFixedUpdate());
+		}
+	}
+
 	private void Update()
 	{
-		// Swap characters
-		if(InputManager.ActiveDevice.Action4.WasPressed)
+		if(InputManager.ActiveDevice.MenuWasPressed)
 		{
-			I.CyclePlayer();
+			// Pause or unpause the game
+			SetPaused(!gamePaused);
 		}
 
-		mainCamera.UpdateRotation(); // Update camera rotation first so player input direction is correct
-		UpdateActors();
-		mainCamera.UpdatePosition(); // Update camera position
+		if(!gamePaused)
+		{
+			// Hold the right bumper for slow-mo!
+			Time.timeScale = InputManager.ActiveDevice.RightBumper.IsPressed ? 0.25f : 1f;
+
+			// Swap characters
+			if(InputManager.ActiveDevice.Action4.WasPressed)
+			{
+				I.CyclePlayer();
+			}
+
+			mainCamera.UpdateRotation(); // Update camera rotation first so player input direction is correct
+			entities.ForEach(entity => entity.OnUpdate()); // Update all the things!
+			mainCamera.UpdatePosition(); // Update camera position
+		}
 	}
+
 	#endregion
 
 	#region PUBLIC_METHODS
@@ -83,30 +113,31 @@ public class GameManager : MonoBehaviour
 		return null;
 	}
 
-	public void AddActor(Actor actor)
+	public void AddEntity(Entity entity)
 	{
-		actors.Add(actor);
+		entities.Add(entity);
 	}
 
-	public void RemoveActor(Actor actor)
+	public void RemoveEntity(Entity entity)
 	{
-		actors.Remove(actor);
+		entities.Remove(entity);
 	}
 	#endregion
 
 	#region PRIVATE_METHODS
+
+	private void SetPaused(bool paused)
+	{
+		Time.timeScale = paused ? 0f : 1f;
+		OnSetPaused(paused);
+		pausePrefab.SetActive(paused);
+		gamePaused = paused;
+	}
+
 	private void CyclePlayer()
 	{
 		targetIndex = (targetIndex + 1) % playerCharacters.Count;
 		SetActivePlayer(playerCharacters[targetIndex]);
-	}
-
-	private void UpdateActors()
-	{
-		foreach(Actor actor in actors)
-		{
-			actor.UpdateActor();
-		}
 	}
 
 	private void SetActivePlayer(Player newTarget)

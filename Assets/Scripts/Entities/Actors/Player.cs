@@ -28,11 +28,21 @@ public class Player : Actor
 	public bool run { get; set; }
 	public bool jump { get; set; }
 
-	//public Vector3 smoothPos = Vector3.zero;
-	//public Vector3 trackingOffset = Vector3.zero;
-	//public Vector3 trackingOffsetVelocity = Vector3.zero;
+	protected override void OnEnable()
+	{
+		base.OnEnable();
+		OnUpdate += ProcessInput;
+		OnFixedUpdate += ProcessPhysics;
+	}
 
-	protected override void OnFixedUpdate()
+	protected override void OnDisable()
+	{
+		base.OnDisable();
+		OnUpdate -= ProcessInput;
+		OnFixedUpdate -= ProcessPhysics;
+	}
+
+	private void ProcessPhysics()
 	{
 		RaycastHit hitInfo;
 		grounded = Physics.SphereCast(transform.position + Vector3.up * 0.55f, 0.5f, Vector3.down, out hitInfo, 0.1f);
@@ -92,7 +102,7 @@ public class Player : Actor
 		}
 	}
 
-	protected override void OnUpdate()
+	private void ProcessInput()
 	{
 		if(jump)
 		{
@@ -140,7 +150,7 @@ public class Player : Actor
 
 		//if(grounded) // No directional control in the air
 		{
-			mesh.eulerAngles = new Vector3(mesh.eulerAngles.x, Quaternion.AngleAxis(smoothLook, Vector3.up).eulerAngles.y, mesh.eulerAngles.z);
+			mesh.rotation = Quaternion.AngleAxis(smoothLook, Vector3.up);
 		}
 
 		if(animator != null && animator.runtimeAnimatorController != null)
