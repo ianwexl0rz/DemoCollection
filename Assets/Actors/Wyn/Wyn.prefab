@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4789593107262562}
   - component: {fileID: 33049975838506278}
   - component: {fileID: 23738240746076248}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Eye_R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -39,7 +39,7 @@ GameObject:
   - component: {fileID: 33606645634952464}
   - component: {fileID: 183733304648163522}
   - component: {fileID: 137599980671570226}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Hair
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -56,7 +56,7 @@ GameObject:
   - component: {fileID: 4163349175298750}
   - component: {fileID: 33791463946041678}
   - component: {fileID: 23250407752136516}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Eye_L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -72,7 +72,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4190621614929432}
   - component: {fileID: 95618513340415722}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: WynMesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -87,7 +87,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4380757859617666}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Eyes
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -107,7 +107,7 @@ GameObject:
   - component: {fileID: 114169830198121924}
   - component: {fileID: 114104967303299580}
   - component: {fileID: 114189782331923418}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Wyn
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -124,7 +124,7 @@ GameObject:
   - component: {fileID: 4587362283662126}
   - component: {fileID: 33089783160804130}
   - component: {fileID: 137686722947522872}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Body
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -150,7 +150,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1593254748832098}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: -0.04, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -418,7 +418,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _mesh: {fileID: 4190621614929432}
-  lastPos: {x: 0, y: 0, z: 0}
   _brain: {fileID: 11400000, guid: 197438d32256b794faf42212dfaf46b5, type: 2}
   isAwake: 1
   lockOnTarget: {fileID: 0}
@@ -426,7 +425,8 @@ MonoBehaviour:
   minSpeed: 0.25
   walkSpeed: 3
   runSpeed: 5
-  jumpStrength: 4
+  jumpHeight: 1.5
+  gravityMult: 2.5
   speedSmoothTime: 0.05
   turnSmoothTime: 0.06
   aimingMode: 0
@@ -440,7 +440,7 @@ CapsuleCollider:
   m_Material: {fileID: 13400000, guid: 2797b4925bfa04d4a8a2d446c2a60cbc, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.5
+  m_Radius: 0.25
   m_Height: 1.8
   m_Direction: 1
   m_Center: {x: 0, y: 0.9, z: 0}

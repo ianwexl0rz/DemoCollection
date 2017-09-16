@@ -8,7 +8,8 @@ public class Player : Actor
 	public float minSpeed = 1f;
 	public float walkSpeed = 2f;
 	public float runSpeed = 4f;
-	public float jumpStrength = 4f;
+	public float jumpHeight = 4f;
+	public float gravityMult = 1f;
 	public float speedSmoothTime = 0.1f;
 	public float turnSmoothTime = 0.2f; //time it takets from angle to go from current value to target value
 
@@ -42,13 +43,37 @@ public class Player : Actor
 		OnFixedUpdate -= ProcessPhysics;
 	}
 
+	private void OnDrawGizmosSelected()
+	{
+		// Draw foot collider
+		Gizmos.DrawSphere(transform.position + Vector3.up * 0.25f + Vector3.down * 0.1f, 0.2f);
+	}
+
 	private void ProcessPhysics()
 	{
-		RaycastHit hitInfo;
-		grounded = Physics.SphereCast(transform.position + Vector3.up * 0.55f, 0.5f, Vector3.down, out hitInfo, 0.1f);
-		//grounded &= rb.velocity.y < jumpStrength * 0.5f; // We're not grounded if we're jumping into an incline
+		RaycastHit[] hits = Physics.SphereCastAll(transform.position + Vector3.up * 0.25f, 0.2f, Vector3.down, 0.1f, ~LayerMask.GetMask("Player"));
 
-		Vector3 groundNormal = grounded ? hitInfo.normal.normalized : Vector3.up;
+		Vector3 groundNormal = Vector3.down;
+
+		if(hits.Length > 0)
+		{
+			RaycastHit groundHit = hits[0];
+
+			for(int i = 1; i < hits.Length; i++)
+			{
+				if(hits[i].normal.y > groundHit.normal.y)
+				{
+					groundHit = hits[i];
+				}
+			}
+
+			groundNormal = groundHit.normal.normalized;
+			grounded = true;
+		}
+		else
+		{
+			grounded = false;
+		}
 
 		// Get the ground incline (positive = uphill, negative = downhill)
 		float incline = Vector3.Dot(groundNormal, -currentSpeed.normalized);
@@ -65,11 +90,14 @@ public class Player : Actor
 		// If we queued a jump but we are not grounded, forget it!
 		queueJump &= grounded || doubleJumpOK;
 
+		float yVelocity = rb.velocity.y;
+
 		// Did we queue a jump?
 		if(queueJump)
 		{
 			// jump!
-			rb.velocity = new Vector3(rb.velocity.x, jumpStrength, rb.velocity.z);
+			//yVelocity = -gravity * timeToApex;
+			yVelocity = Mathf.Sqrt(2 * -Physics.gravity.y * gravityMult * jumpHeight);
 			queueJump = false;
 
 			doubleJumpOK = grounded; // Set double jump is OK if this is our first jump
@@ -90,7 +118,7 @@ public class Player : Actor
 				rb.velocity = Vector3.Cross(groundNormal, cross) * currentSpeed.magnitude;
 
 				// Make the move speed a bit faster or slower depending on the incline
-				//rb.velocity *= 1 - incline * 0.5f;
+				rb.velocity *= 1 - incline * 0.5f;
 			}
 
 			// Counteract gravity (so we don't slide on an incline!)
@@ -98,7 +126,8 @@ public class Player : Actor
 		}
 		else
 		{
-			rb.velocity = new Vector3(currentSpeed.x, rb.velocity.y, currentSpeed.z);
+			rb.velocity = new Vector3(currentSpeed.x, yVelocity, currentSpeed.z);
+			rb.velocity += Physics.gravity.y * (gravityMult - 1f) * Vector3.up * Time.fixedDeltaTime;
 		}
 	}
 

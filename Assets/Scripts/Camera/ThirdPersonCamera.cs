@@ -178,8 +178,10 @@ public class ThirdPersonCamera : MonoBehaviour
 		distance = Mathf.SmoothDamp(distance, desiredDistance, ref distanceVelocity, dragTime);
 		transform.position = trackPos + screenRotation * (offset + dragVector) - transform.forward * distance;
 
+		/*
 		Debug.DrawLine(trackPos, trackPos + screenRotation * dragVector, Color.white);
 		Debug.DrawLine(Vector3.Scale(transform.position, Vector3.one - Vector3.up), trackPos, Color.red);
 		Debug.DrawLine(Vector3.Scale(transform.position, Vector3.one - Vector3.up), trackPos + screenRotation * dragVector, Color.blue);
+		*/
 	}
 }

@@ -19,7 +19,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4732327667105422}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: waist
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -35,7 +35,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4793196371697694}
   - component: {fileID: 137103586764986586}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: GirlHair
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -54,7 +54,7 @@ GameObject:
   - component: {fileID: 54696462898229844}
   - component: {fileID: 114310520992421260}
   - component: {fileID: 114246714986836600}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Girl
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -69,7 +69,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4528002602862128}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: shin_L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -84,7 +84,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4819832301946256}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: uppderArm_L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -99,7 +99,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4618397932570506}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: foreArm_R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -114,7 +114,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4922278473386554}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: thigh_L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -130,7 +130,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4117343673004422}
   - component: {fileID: 137408793336668134}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: GirlHead
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -145,7 +145,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4330327223343816}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: toes_R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -160,7 +160,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4904470662064628}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: head
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -176,7 +176,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4286063248909862}
   - component: {fileID: 137851708574302068}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: GirlBody
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -191,7 +191,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4623947538361496}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: hand_L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -206,7 +206,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4736627679275628}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: foot_R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -221,7 +221,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4797534377411352}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: rootBone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -236,7 +236,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4237455339847498}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: foreArm_L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -251,7 +251,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4910598910305108}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: GirlArmature
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -266,7 +266,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4988294074551818}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: hand_R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -281,7 +281,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4431659186393630}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: chest
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -296,7 +296,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4469909370941464}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: shoulder_L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -312,7 +312,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4010999946637572}
   - component: {fileID: 137625248303940310}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: GirlClothes
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -327,7 +327,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4518652618229696}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: foot_L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -342,7 +342,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4888154642391844}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: shin_R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -357,7 +357,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4555922723599956}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: thigh_R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -372,7 +372,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4007789626491642}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: uppderArm_R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -387,7 +387,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4767855756096398}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: shoulder_R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -402,7 +402,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4634521518851890}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: toes_L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -418,7 +418,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4856745508032878}
   - component: {fileID: 95125567746834200}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: GirlMesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -878,7 +878,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _mesh: {fileID: 4856745508032878}
-  lastPos: {x: 0, y: 0, z: 0}
   _brain: {fileID: 11400000, guid: 197438d32256b794faf42212dfaf46b5, type: 2}
   isAwake: 1
   lockOnTarget: {fileID: 0}
@@ -886,7 +885,8 @@ MonoBehaviour:
   minSpeed: 0.25
   walkSpeed: 2
   runSpeed: 4
-  jumpStrength: 4
+  jumpHeight: 1.5
+  gravityMult: 1
   speedSmoothTime: 0.05
   turnSmoothTime: 0.06
   aimingMode: 0
@@ -900,7 +900,7 @@ CapsuleCollider:
   m_Material: {fileID: 13400000, guid: 2797b4925bfa04d4a8a2d446c2a60cbc, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.5
+  m_Radius: 0.3
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 1, z: 0}

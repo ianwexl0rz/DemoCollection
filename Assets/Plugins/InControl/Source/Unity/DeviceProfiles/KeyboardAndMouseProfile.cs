@@ -62,6 +62,12 @@ namespace CustomProfileExample
 					Target = InputControlType.Action4,
 					Source = KeyCodeButton( KeyCode.Tab )
 				},
+				new InputControlMapping
+				{
+					Handle = "Pause",
+					Target = InputControlType.Menu,
+					Source = KeyCodeButton( KeyCode.P )
+				},
 			};
 
 			AnalogMappings = new[]
