@@ -33,13 +33,13 @@ namespace CustomProfileExample
 			{
 				new InputControlMapping
 				{
-					Handle = "Jump - Mouse",
-					Target = InputControlType.Action1,
+					Handle = "Attack",
+					Target = InputControlType.Action3,
 					Source = MouseButton0
 				},
 				new InputControlMapping
 				{
-					Handle = "Jump - Keyboard",
+					Handle = "Jump",
 					Target = InputControlType.Action1,
 					// KeyCodeButton fires when any of the provided KeyCode params are down.
 					Source = KeyCodeButton( KeyCode.Space )

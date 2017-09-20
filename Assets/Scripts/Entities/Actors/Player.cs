@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using InControl;
+using System.Linq;
 
 public class Player : Actor
 {
@@ -16,6 +17,9 @@ public class Player : Actor
 	public bool aimingMode = false;
 	public bool recenter = false;
 
+	public GameObject attackBox = null;
+
+	private Collider attackCollider = null;
 	private Vector3 currentSpeed;
 
 	private bool grounded = false;
@@ -28,6 +32,19 @@ public class Player : Actor
 
 	public bool run { get; set; }
 	public bool jump { get; set; }
+	public bool attack { get; set; }
+
+	private bool attackInProgress = false;
+	private bool cancelOK = true;
+
+	private List<AttackTimer> attackQueue = new List<AttackTimer>();
+
+	protected override void Awake()
+	{
+		base.Awake();
+		attackBox.SetActive(false);
+		attackCollider = attackBox.GetComponent<Collider>();
+	}
 
 	protected override void OnEnable()
 	{
@@ -51,8 +68,9 @@ public class Player : Actor
 
 	private void ProcessPhysics()
 	{
-		RaycastHit[] hits = Physics.SphereCastAll(transform.position + Vector3.up * 0.25f, 0.2f, Vector3.down, 0.1f, ~LayerMask.GetMask("Player"));
+		if(stunTime > 0f) { return; }
 
+		RaycastHit[] hits = Physics.SphereCastAll(transform.position + Vector3.up * 0.25f, 0.2f, Vector3.down, 0.1f, ~LayerMask.GetMask("Player"));
 		Vector3 groundNormal = Vector3.down;
 
 		if(hits.Length > 0)
@@ -182,6 +200,11 @@ public class Player : Actor
 			mesh.rotation = Quaternion.AngleAxis(smoothLook, Vector3.up);
 		}
 
+		if(attack)
+		{
+			attackQueue.Add(new AttackTimer(AttackType.Light, 0.5f));
+		}
+
 		if(animator != null && animator.runtimeAnimatorController != null)
 		{
 			//control speed percent in animator so that character walks or runs depending on speed
@@ -190,5 +213,78 @@ public class Player : Actor
 			//reference for animator
 			animator.SetFloat("speedPercent", animationSpeedPercent, speedSmoothTime, Time.deltaTime);
 		}
+
+		UpdateAttackBuffer();
+	}
+
+	protected void UpdateAttackBuffer()
+	{
+		for(int i = attackQueue.Count - 1; i >= 0; i--)
+		{
+			AttackTimer actionTimer = attackQueue[i];
+			AttackType attackType = actionTimer.attackType;
+
+			if(cancelOK)
+			{
+				switch(attackType)
+				{
+					case AttackType.Light:
+						animator.SetTrigger("lightAttack");
+						break;
+				}
+				attackQueue.RemoveAt(i);
+			}
+			else
+			{
+				// Decrement time.
+				actionTimer.time -= Time.deltaTime;
+
+				if(actionTimer.time <= 0)
+				{
+					// Valid window has expired!
+					attackQueue.RemoveAt(i);
+				}
+			}
+		}
+	}
+
+	public void SetCancelOK()
+	{
+		cancelOK = true;
+	}
+
+	public IEnumerator Attack(AttackData data)
+	{
+		attackBox.SetActive(true);
+		attackInProgress = true;
+		cancelOK = false;
+
+		List<Actor> hitEnemies = new List<Actor>();
+
+		while(attackInProgress)
+		{
+			Collider[] enemies = Physics.OverlapBox(attackBox.transform.position, attackCollider.bounds.extents, attackBox.transform.rotation, LayerMask.GetMask("Enemy", "Player"));
+
+			foreach(Collider enemyCollider in enemies)
+			{
+				Actor enemy = enemyCollider.GetComponent<Actor>();
+				if(enemy == null || enemy == this) { continue; }
+
+				if(!hitEnemies.Contains(enemy))
+				{
+					enemy.GetHit(transform.position, data);
+					hitEnemies.Add(enemy);
+				}
+			}
+
+			yield return null;
+		}
+
+		attackBox.SetActive(false);
+	}
+
+	public void EndHit()
+	{
+		attackInProgress = false;
 	}
 }

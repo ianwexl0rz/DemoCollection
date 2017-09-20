@@ -12,6 +12,10 @@ public class GameManager : MonoBehaviour
 	public GameObject pausePrefab = null;
 
 	[Space]
+	[Header("UI")]
+	public RectTransform healthBarFill = null;
+
+	[Space]
 	[Header("Actor Brains")]
 	public PlayerBrain playerBrain = null;
 	public ActorBrain followerBrain = null;
@@ -73,14 +77,27 @@ public class GameManager : MonoBehaviour
 
 		if(!gamePaused)
 		{
-			// Hold the right bumper for slow-mo!
-			Time.timeScale = InputManager.ActiveDevice.RightBumper.IsPressed ? 0.25f : 1f;
-
 			// Swap characters
 			if(InputManager.ActiveDevice.Action4.WasPressed)
 			{
 				I.CyclePlayer();
 			}
+
+			// Hold the right bumper for slow-mo!
+			Time.timeScale = InputManager.ActiveDevice.RightBumper.IsPressed ? 0.25f : 1f;
+
+
+			if(Input.GetKeyDown(KeyCode.RightBracket))
+			{
+				activePlayer.health = Mathf.Min(activePlayer.health + 5f, activePlayer.maxHealth);
+			}
+
+			if(Input.GetKeyDown(KeyCode.LeftBracket))
+			{
+				activePlayer.health = Mathf.Max(activePlayer.health - 5f, 0f);
+			}
+
+			healthBarFill.anchorMax = new Vector2(activePlayer.health / activePlayer.maxHealth, healthBarFill.anchorMax.y);
 
 			mainCamera.UpdateRotation(); // Update camera rotation first so player input direction is correct
 			entities.ForEach(entity => entity.OnUpdate()); // Update all the things!

@@ -26,6 +26,7 @@ public class PlayerBrain : ActorBrain
 			player.recenter = playerInput.RightStickButton.WasPressed;
 			player.run = playerInput.RightTrigger.IsPressed || playerInput.Action2.IsPressed;
 			player.jump = playerInput.Action1.WasPressed || playerInput.LeftBumper.WasPressed;
+			player.attack = playerInput.Action3.WasPressed || Input.GetKeyDown(KeyCode.M);
 		}
 
 		/*

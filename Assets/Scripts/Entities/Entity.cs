@@ -38,7 +38,25 @@ public class Entity : MonoBehaviour
 		OnUpdate -= SaveTransformPosition;
 	}
 
-	public void SaveTransformPosition()
+	protected void SetFrozen(bool value)
+	{
+		if(value)
+		{
+			savedVelocity = rb.velocity;
+			savedAngularVelocity = rb.angularVelocity;
+			rb.Sleep();
+
+			transform.position = savedPosition;
+		}
+		else
+		{
+			rb.WakeUp();
+			rb.AddForce(savedVelocity, ForceMode.VelocityChange);
+			rb.AddTorque(savedAngularVelocity, ForceMode.VelocityChange);
+		}
+	}
+
+	private void SaveTransformPosition()
 	{
 		if(Time.timeScale != 0f)
 		{
@@ -48,19 +66,6 @@ public class Entity : MonoBehaviour
 
 	public void OnSetPaused(bool paused)
 	{
-		if(paused)
-		{
-			savedVelocity = rb.velocity;
-			savedAngularVelocity = rb.angularVelocity;
-			rb.Sleep();
-
-			transform.position = savedPosition; 
-		}
-		else
-		{
-			rb.WakeUp();
-			rb.AddForce(savedVelocity, ForceMode.VelocityChange);
-			rb.AddTorque(savedAngularVelocity, ForceMode.VelocityChange);
-		}
+		SetFrozen(paused);
 	}
 }
