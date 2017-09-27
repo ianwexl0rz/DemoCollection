@@ -36,39 +36,39 @@ half3 distanceFromAABB(half3 p, half3 aabbMin, half3 aabbMax)
 	return max(max(p - aabbMax, aabbMin - p), half3(0.0, 0.0, 0.0));
 }
 
-float filter(float2 a0, float2 a1, float2 a2, float2 a3, float2 a4)
+//Returns the missing chrominance (Co or Cg) of a pixel.
+//a1-a4 are the 4 neighbors of the center pixel a0.
+float2 filter(float3 a0, float4 a1, float4 a2, float4 a3, float4 a4, float b0, float b1, float b2, float b3, float b4)
 {
 	float4 lum = float4(a1.x, a2.x , a3.x, a4.x);
 	float4 w = 1.0 - step(30.0/255.0, abs(lum - a0.x));
 
-	//don't blend if luma is zero
+	// don't blend if luma is zero
 	w *= float4(a1.x, a2.x , a3.x, a4.x) > 0;
 
 	float W = w.x + w.y + w.z + w.w;
-	//handle the special case where all the weights are zero
+	// handle the special case where all the weights are zero
 	w.x = (W==0.0)? 1.0: w.x; W = (W==0.0)? 1.0: W;
 
-	return half(w.x*a1.y+w.y*a2.y+w.z*a3.y+w.w*a4.y) / W;
-}
+	float diffChroma = half(w.x * a1.y + w.y * a2.y + w.z * a3.y + w.w * a4.y) / W;
 
-float filter(float2 a0, float2 a1, float2 a2, float2 a3, float2 a4, float b0, float b1, float b2, float b3, float b4)
-{
-	float4 lum = float4(a1.x, a2.x , a3.x, a4.x);
-	float4 w = 1.0 - step(30.0/255.0, abs(lum - a0.x));
+	// Next get the missing chroma for spec / translucent
+	lum = float4(a1.z, a2.z , a3.z, a4.z);
+	w = 1.0 - step(30.0/255.0, abs(lum - a0.z));
 
-	//don't blend if luma is zero
-	w *= float4(a1.x, a2.x , a3.x, a4.x) > 0;
+	// don't blend if luma is zero
+	w *= float4(a1.z, a2.z , a3.z, a4.z) > 0;
 
-	//only blend if chroma is same type (spec/translucent)
+	// only blend if chroma is same type
 	w *= b0 > 0 == float4(b1, b2, b3, b4) > 0;
 
-	float W = w.x + w.y + w.z + w.w;
-	//handle the special case where all the weights are zero
+	W = w.x + w.y + w.z + w.w;
+	// handle the special case where all the weights are zero
 	w.x = (W==0.0)? 1.0: w.x; W = (W==0.0)? 1.0: W;
 
-	return half(w.x*a1.y+w.y*a2.y+w.z*a3.y+w.w*a4.y) / W;
+	float specChroma = half(w.x * a1.w + w.y * a2.w+w.z * a3.w+w.w * a4.w) / W;
+	return float2(diffChroma, specChroma);
 }
-
 
 half4 frag (unity_v2f_deferred i, UNITY_VPOS_TYPE screenPos : SV_Position) : SV_Target
 {
@@ -102,14 +102,13 @@ half4 frag (unity_v2f_deferred i, UNITY_VPOS_TYPE screenPos : SV_Position) : SV_
 	half3 unpackDiffuse = gbuffer0.rgg;
 	half3 unpackSpec = gbuffer0.baa;
 
-	unpackDiffuse.b = !evenPixel ? unpackDiffuse.g : filter(gbuffer0,a1.xy,a2.xy,a3.xy,a4.xy);
-	unpackDiffuse.g = evenPixel ? unpackDiffuse.g : filter(gbuffer0,a1.xy,a2.xy,a3.xy,a4.xy);
-	//unpackDiffuse.rgb = YCoCgToRGB(unpackDiffuse.rgb);
+	half2 unfilteredChroma = filter(gbuffer0, a1, a2, a3, a4, gbuffer1.r, b1, b2, b3, b4);
 
-	unpackSpec.b = !evenPixel ? unpackSpec.g : filter(gbuffer0,a1.zw,a2.zw,a3.zw,a4.zw, gbuffer1.g, b1, b2, b3, b4);
-	unpackSpec.g = evenPixel ? unpackSpec.g : filter(gbuffer0,a1.zw,a2.zw,a3.zw,a4.zw, gbuffer1.g, b1, b2, b3, b4);
+	unpackDiffuse.b = !evenPixel ? unpackDiffuse.g : unfilteredChroma.x;
+	unpackDiffuse.g = evenPixel ? unpackDiffuse.g : unfilteredChroma.x;
 
-	//unpackSpec.rgb = YCoCgToRGB(unpackSpec.rgb);
+	unpackSpec.b = !evenPixel ? unpackSpec.g : unfilteredChroma.y;
+	unpackSpec.g = evenPixel ? unpackSpec.g : unfilteredChroma.y;
 	#endif
 
 	// gbuffer0.b is the luma component

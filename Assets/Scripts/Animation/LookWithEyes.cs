@@ -68,7 +68,7 @@ public class LookWithEyes : MonoBehaviour {
 	private bool ValidateFocus(Transform target)
 	{
 		// Get the vector to the object
-		var toFocus = transform.InverseTransformDirection((target.position - face.position).normalized);
+		var toFocus = face.InverseTransformDirection((target.position - face.position).normalized);
 
 		// The object must be in front of us.
 		if(!frontFocusOnly || toFocus.z > 0)

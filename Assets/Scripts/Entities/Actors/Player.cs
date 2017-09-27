@@ -17,6 +17,7 @@ public class Player : Actor
 	public bool aimingMode = false;
 	public bool recenter = false;
 
+	public AttackDataSet attackDataSet = null;
 	public GameObject attackBox = null;
 
 	private Collider attackCollider = null;

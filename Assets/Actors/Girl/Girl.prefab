@@ -977,6 +977,7 @@ MonoBehaviour:
   turnSmoothTime: 0.06
   aimingMode: 0
   recenter: 0
+  attackDataSet: {fileID: 11400000, guid: 7b599c3afc5abd14e97032bd4e49c044, type: 2}
   attackBox: {fileID: 1282268317942420}
 --- !u!114 &114758002474126014
 MonoBehaviour:
@@ -989,12 +990,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7397dc516a4bb9941ae69a063c0bcd19, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  actions:
-  - name: Pretty Cool Attack
-    clip: {fileID: 7400000, guid: 3c6d9289ca82cbb43a3d0c343304b7de, type: 2}
-    damage: 5
-    knockback: 4
-    stun: 0.25
 --- !u!136 &136820059272921584
 CapsuleCollider:
   m_ObjectHideFlags: 1

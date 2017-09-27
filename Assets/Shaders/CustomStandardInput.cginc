@@ -8,6 +8,8 @@
 #include "UnityPBSLighting.cginc" // TBD: remove
 #include "UnityStandardUtils.cginc"
 
+#include "BlendModes.cginc"
+
 //---------------------------------------
 // Directional lightmaps & Parallax require tangent space too
 #if (_NORMALMAP || DIRLIGHTMAP_COMBINED || _PARALLAXMAP)
@@ -90,7 +92,9 @@ half DetailMask(float2 uv)
 
 half3 Albedo(float4 texcoords)
 {
-    half3 albedo = _Color.rgb * tex2D (_MainTex, texcoords.xy).rgb;
+    //half3 albedo = _Color.rgb * tex2D (_MainTex, texcoords.xy).rgb;
+    half3 albedo = Overlay(tex2D(_MainTex, texcoords.xy).rgb, _Color.rgb); // Use overlay instead of multiply
+
 #if _DETAIL
     #if (SHADER_TARGET < 30)
         // SM20: instruction count limitation

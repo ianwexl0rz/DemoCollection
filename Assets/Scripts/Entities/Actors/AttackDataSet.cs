@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 using System;
 
@@ -33,33 +32,10 @@ public class AttackTimer
 	}
 }
 
-public class AttackAnimationEvents : MonoBehaviour
+[CreateAssetMenu]
+public class AttackDataSet : ScriptableObject
 {
-	public List<AttackData> actions = new List<AttackData>();
-	private Player player = null;
-
-	private void Awake()
-	{
-		player = transform.parent.GetComponent<Player>();
-	}
-
-	public void CancelOK()
-	{
-		player.SetCancelOK();
-	}
-
-	public void NewHit(AnimationEvent animEvent)
-	{
-		AttackData data = actions.Find(d => d.clip == animEvent.animatorClipInfo.clip);
-
-		if(data != null)
-		{
-			StartCoroutine(player.Attack(data));
-		}
-	}
-
-	public void EndHit()
-	{
-		player.EndHit();
-	}
+	[SerializeField]
+	private List<AttackData> _attacks = new List<AttackData>();
+	public List<AttackData> attacks { get { return _attacks; } private set { _attacks = value; } }
 }

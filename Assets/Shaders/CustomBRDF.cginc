@@ -49,7 +49,7 @@ half4 CustomLighting (half3 diffColor, half3 shadowColor, half3 specColor, half3
 
     #if defined(POINT) || defined(POINT_COOKIE) || defined(SPOT)
     #else
-    diffuseTerm = smoothstep(0, 0.2, diffuseTerm) * 0.6 + smoothstep(0, light.color, diffuseTerm) * 0.4;
+    diffuseTerm = diffuseTerm > 0 ? smoothstep(0, 0.2, diffuseTerm) * 0.6 + smoothstep(0, light.color, diffuseTerm) * 0.4 : 0;
 
     float fresnel = smoothstep(0.8, 0.2, nv);
     float edgelight = saturate((nl - nv) * 4) * fresnel;
@@ -129,6 +129,8 @@ half4 CustomLighting (half3 diffColor, half3 shadowColor, half3 specColor, half3
                 + diffColor * shadowColor * smoothstep(-0.25, 0.25, max(nlUnclamped, nh)) * (1 - diffuseTerm) * translucency * light.color
 
     //*/
+                //diffColor * (gi.diffuse + light.color * diffuseTerm)
+
                 //+ diffColor * (fLTDot) * shadowColor
                 + max(edgelight * edgeLightStrength * 6 * (specColor + specColor * diffColor * 4), specularTerm * FresnelTerm(specColor, lh)) * light.color
                 #endif

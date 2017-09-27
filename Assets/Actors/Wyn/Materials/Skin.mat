@@ -8,7 +8,7 @@ Material:
   m_PrefabInternal: {fileID: 0}
   m_Name: Skin
   m_Shader: {fileID: 4800000, guid: 289f6d7fd8e4d0542b05fb923a2492d0, type: 3}
-  m_ShaderKeywords: 
+  m_ShaderKeywords: _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -79,8 +79,8 @@ Material:
     - _Cutoff: 0.5
     - _DetailNormalMapScale: -0.41
     - _DstBlend: 0
-    - _EdgeLight: 0.4
-    - _GlossMapScale: 1
+    - _EdgeLight: 0.1
+    - _GlossMapScale: 0.5
     - _Glossiness: 0.5
     - _GlossyReflections: 1
     - _Metallic: 0
@@ -88,14 +88,14 @@ Material:
     - _OcclusionStrength: 1
     - _Parallax: 0.005
     - _Shininess: 0.207
-    - _SmoothnessTextureChannel: 0
+    - _SmoothnessTextureChannel: 1
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _Translucency: 0.4
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:
-    - _Color: {r: 0.9607843, g: 0.7411765, b: 0.6117647, a: 1}
+    - _Color: {r: 0.96078426, g: 0.77784985, b: 0.6117647, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _ShadowColor: {r: 0.716, g: 0.065155946, b: 0.065155946, a: 1}
+    - _ShadowColor: {r: 0.9117647, g: 0, b: 0, a: 1}
     - _SpecColor: {r: 0.43382353, g: 0, b: 0, a: 1}

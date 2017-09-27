@@ -33,10 +33,10 @@ MonoBehaviour:
     m_Settings:
       method: 0
       fxaaSettings:
-        preset: 2
+        preset: 4
       taaSettings:
         jitterSpread: 0.75
-        sharpen: 0.3
+        sharpen: 0
         stationaryBlending: 0.95
         motionBlending: 0.85
   ambientOcclusion:
@@ -89,7 +89,7 @@ MonoBehaviour:
       highPercent: 95
       minLuminance: -5
       maxLuminance: 1
-      keyValue: 0.25
+      keyValue: 0.6
       dynamicKeyValue: 1
       adaptationType: 0
       speedUp: 2
@@ -120,12 +120,12 @@ MonoBehaviour:
         neutralWhiteLevel: 4.87
         neutralWhiteClip: 8.35
       basic:
-        postExposure: 0.6
+        postExposure: 0
         temperature: 0
         tint: 0
         hueShift: 0
         saturation: 1
-        contrast: 0.855
+        contrast: 1
       channelMixer:
         red: {x: 1, y: 0, z: 0}
         green: {x: 0, y: 1, z: 0}
@@ -138,9 +138,9 @@ MonoBehaviour:
           power: {r: 1, g: 1, b: 1, a: 0}
           offset: {r: 1, g: 1, b: 1, a: 0}
         linear:
-          lift: {r: 1, g: 1, b: 1, a: -0.018735362}
-          gamma: {r: 1, g: 1, b: 1, a: -0.14269257}
-          gain: {r: 1, g: 1, b: 1, a: 0.16284573}
+          lift: {r: 1, g: 1, b: 1, a: 0}
+          gamma: {r: 1, g: 1, b: 1, a: 0.020304563}
+          gain: {r: 1, g: 1, b: 1, a: 0.16243656}
       curves:
         master:
           curve:
@@ -150,11 +150,11 @@ MonoBehaviour:
               time: 0
               value: 0
               inSlope: 0
-              outSlope: 0.95247066
+              outSlope: 0.9591036
               tangentMode: 0
             - serializedVersion: 2
-              time: 0.53812635
-              value: 0.52272725
+              time: 0.5490654
+              value: 0.53431374
               inSlope: 1.3758718
               outSlope: 1.3758718
               tangentMode: 0

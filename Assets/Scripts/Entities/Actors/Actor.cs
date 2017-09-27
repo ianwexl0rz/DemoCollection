@@ -119,6 +119,8 @@ public class Actor : Entity
 		// Apply knockback
 		rb.velocity = (transform.position - attackerPos).normalized * data.knockback;
 
+		//StartCoroutine(SlowMo(0.025f, 0.05f));
+
 		while(stunTime > 0f)
 		{
 			// If we got stunned, we want to apply a different physics material until it's over
@@ -129,4 +131,30 @@ public class Actor : Entity
 
 		collider.material = activeMaterial;
 	}
+
+	/*//
+	private IEnumerator SlowMo(float duration, float recovery)
+	{
+		yield return null;
+
+		float time = 0f;
+
+		while(time < duration)
+		{
+			Time.timeScale = 0.05f;
+			time += Time.unscaledDeltaTime;
+			yield return null;
+		}
+
+		time = 0f;
+		while(time < recovery)
+		{
+			Time.timeScale = Mathf.Lerp(0.02f, 1f, time / recovery);
+			time += Time.unscaledDeltaTime;
+			yield return null;
+		}
+
+		Time.timeScale = 1f;
+	}
+	//*/
 }

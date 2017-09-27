@@ -94,4 +94,4 @@ Material:
     - _Color: {r: 0.430952, g: 0.5039557, b: 0.523, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _ShadowColor: {r: 0, g: 0, b: 0, a: 1}
-    - _SpecColor: {r: 0.24870244, g: 0.33823532, b: 0.27895838, a: 1}
+    - _SpecColor: {r: 0.5019608, g: 0.5019608, b: 0.5019608, a: 1}
