@@ -655,22 +655,15 @@ void fragDeferred (
     #else
         bool evenPixel = fmod(screenPos.y, 2) == fmod(screenPos.x, 2);
 
-        // choose spec or translucency
-        //float3 spec = s.edgeLight > 0 ? s.specColor : s.shadowColor;
-
+        float3 diff = RGBToYCoCg(s.diffColor);
         float3 spec = RGBToYCoCg(s.specColor);
-        float3 shadow = RGBToYCoCg(s.shadowColor);
+        spec.gb = s.translucency == 0 ? spec.gb : RGBToYCoCg(s.shadowColor).gb;
 
-        float3 choose = half3(spec.r, s.translucency == 0 ? spec.gb : shadow.gb);
-
-        //float3 choose = half3(spec.r, lerp(spec.gb,shadow.gb, shadow.r));
-
-
-        data.diffuseColor = half3(evenPixel ? RGBToYCoCg(s.diffColor).rg : RGBToYCoCg(s.diffColor).rb, 0);
-        data.specularColor = half3(evenPixel ? choose.rg : choose.rb, 0);
+        data.diffuseColor = half3(evenPixel ? diff.rg : diff.rb, 0);
+        data.specularColor = half3(evenPixel ? spec.rg : spec.rb, 0);
     #endif
+
     data.occlusion      = occlusion;
-    
     data.smoothness     = s.smoothness;
     data.normalWorld    = s.normalWorld;
     data.shadowColor    = s.shadowColor;

@@ -3,7 +3,7 @@ guid: 81721b018986647ec90dfbf3a243b485
 timeCreated: 1494807523
 licenseType: Free
 ModelImporter:
-  serializedVersion: 19
+  serializedVersion: 21
   fileIDToRecycleName:
     100000: chest
     100002: foot_L
@@ -85,8 +85,10 @@ ModelImporter:
     animationImportErrors: 
     animationImportWarnings: "\nClip 'WalkBlocking' has import animation warnings
       that might lower retargeting quality:\nNote: Activate translation DOF on avatar
-      to improve retargeting quality.\n\t'shin_L' has scale animation that will be
-      discarded.\n\t'foot_R' has scale animation that will be discarded.\n"
+      to improve retargeting quality.\n\t'foot_L' has scale animation that will be
+      discarded.\n\nClip 'WalkTweened' has import animation warnings that might lower
+      retargeting quality:\nNote: Activate translation DOF on avatar to improve retargeting
+      quality.\n\t'foot_L' has scale animation that will be discarded.\n"
     animationRetargetingWarnings: 
     animationDoRetargetingWarnings: 0
     animationCompression: 3
@@ -95,6 +97,7 @@ ModelImporter:
     animationScaleError: 0.5
     animationWrapMode: 0
     extraExposedTransformPaths: []
+    extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
       name: Default Take
@@ -419,10 +422,13 @@ ModelImporter:
     isReadable: 1
   meshes:
     lODScreenPercentages: []
-    globalScale: 0.2
+    globalScale: 0.185
     meshCompression: 0
     addColliders: 0
+    importVisibility: 0
     importBlendShapes: 1
+    importCameras: 0
+    importLights: 0
     swapUVChannels: 0
     generateSecondaryUV: 0
     useFileUnits: 1
@@ -438,6 +444,7 @@ ModelImporter:
     normalSmoothAngle: 60
     normalImportMode: 0
     tangentImportMode: 3
+    normalCalculationMode: 0
   importAnimation: 1
   copyAvatar: 0
   humanDescription:
@@ -608,102 +615,102 @@ ModelImporter:
       scale: {x: 1, y: 1, z: 1}
     - name: rootBone
       parentName: GirlArmature
-      position: {x: -0.0021155924, y: 0.0064833285, z: 0.04557543}
+      position: {x: -0.001956923, y: 0.005997079, z: 0.04215727}
       rotation: {x: 0.5000001, y: 0.4999999, z: -0.50000006, w: 0.49999997}
       scale: {x: 1, y: 1, z: 1}
     - name: waist
       parentName: rootBone
-      position: {x: -0.93620396, y: 0.002115655, z: -0.03419618}
+      position: {x: -0.8659887, y: 0.001956981, z: -0.031631466}
       rotation: {x: 0.0000000030539293, y: 0.040418793, z: -0.000000009577511, w: 0.9991828}
       scale: {x: 1, y: 1, z: 1}
     - name: thigh_L
       parentName: waist
-      position: {x: -0.030388052, y: -0.049010046, z: -0.009781656}
+      position: {x: -0.028108947, y: -0.045334294, z: -0.009048032}
       rotation: {x: -0.066582195, y: 0.006237075, z: 0.9977377, w: 0.0068828412}
       scale: {x: 1.0000001, y: 1.0000001, z: 1.0000081}
     - name: shin_L
       parentName: thigh_L
-      position: {x: -0.50136703, y: 0.000000030361118, z: -2.328306e-10}
+      position: {x: -0.46376452, y: 0.000000028084035, z: -2.1536829e-10}
       rotation: {x: 0.998013, y: 0.0031724388, z: 0.062310614, w: 0.008799199}
       scale: {x: 1.0000001, y: 0.9999998, z: 1.0000007}
     - name: foot_L
       parentName: shin_L
-      position: {x: -0.4380114, y: 0.00000004360918, z: 0.000000007799827}
+      position: {x: -0.40516055, y: 0.00000004033849, z: 0.0000000072148394}
       rotation: {x: 0.82523346, y: -0.019580819, z: 0.5643519, w: -0.010642282}
       scale: {x: 1.0000046, y: 1.0000001, z: 1.0000032}
     - name: toes_L
       parentName: foot_L
-      position: {x: -0.07837469, y: 0.000000007916242, z: -0.0000000014164229}
+      position: {x: -0.07249659, y: 0.000000007322524, z: -0.0000000013101911}
       rotation: {x: 0.002316469, y: 0.12637056, z: -0.018182548, w: 0.9918138}
       scale: {x: 0.99999994, y: 1, z: 0.99999994}
     - name: chest
       parentName: waist
-      position: {x: -0.17517798, y: 0.000000013225566, z: -0.0000000029802323}
+      position: {x: -0.16203964, y: 0.000000012233649, z: -0.0000000027567149}
       rotation: {x: 0.000000115142406, y: -0.053445075, z: 0.00000001892392, w: 0.9985708}
       scale: {x: 0.99999994, y: 1, z: 1}
     - name: head
       parentName: chest
-      position: {x: -0.2984048, y: 0.000000017611343, z: -0.010134659}
+      position: {x: -0.27602443, y: 0.000000016290493, z: -0.009374559}
       rotation: {x: -0.00000011820226, y: 0.014970083, z: -0.0000000052178772, w: 0.99988794}
       scale: {x: 1, y: 1, z: 0.9999999}
     - name: shoulder_L
       parentName: chest
-      position: {x: -0.19415693, y: -0.033221386, z: 0.011817598}
+      position: {x: -0.17959514, y: -0.030729784, z: 0.010931278}
       rotation: {x: 0.008731688, y: 0.009685288, z: 0.6695496, w: 0.74265295}
       scale: {x: 0.99999994, y: 0.9999998, z: 1}
     - name: uppderArm_L
       parentName: shoulder_L
-      position: {x: -0.11989621, y: -0.043935105, z: -0.021126155}
+      position: {x: -0.110904, y: -0.04063997, z: -0.019541694}
       rotation: {x: 0.004022413, y: -0.00037389476, z: 0.08383506, w: 0.9964715}
       scale: {x: 0.99999994, y: 0.99999994, z: 1}
     - name: foreArm_L
       parentName: uppderArm_L
-      position: {x: -0.36049208, y: 0.00000014840626, z: -7.45058e-10}
+      position: {x: -0.33345518, y: 0.00000013727578, z: -6.891786e-10}
       rotation: {x: -0.70737886, y: 0.021349471, z: 0.00785885, w: 0.7064684}
       scale: {x: 1.0000001, y: 1.0000001, z: 1.0000001}
     - name: hand_L
       parentName: foreArm_L
-      position: {x: -0.27518794, y: 0.000000020116568, z: -0.00000014904654}
+      position: {x: -0.25454885, y: 0.000000018607825, z: -0.00000013786806}
       rotation: {x: -0.00028133442, y: -0.0547802, z: -0.015877811, w: 0.9983722}
       scale: {x: 1, y: 0.9999998, z: 0.99999976}
     - name: shoulder_R
       parentName: chest
-      position: {x: -0.19415693, y: 0.033221427, z: 0.011817567}
+      position: {x: -0.17959514, y: 0.03072982, z: 0.01093125}
       rotation: {x: -0.008731125, y: 0.009684148, z: -0.66954935, w: 0.7426532}
       scale: {x: 1, y: 1, z: 1}
     - name: uppderArm_R
       parentName: shoulder_R
-      position: {x: -0.11989613, y: 0.043935314, z: -0.021126257}
+      position: {x: -0.11090392, y: 0.040640168, z: -0.019541789}
       rotation: {x: -0.00053720165, y: -0.00066236063, z: -0.08383066, w: 0.9964797}
       scale: {x: 1.0000001, y: 1, z: 1}
     - name: foreArm_R
       parentName: uppderArm_R
-      position: {x: -0.36049184, y: -0.00000007642666, z: -0.000000007450581}
+      position: {x: -0.33345497, y: -0.00000007069466, z: -0.0000000068917867}
       rotation: {x: 0.70737886, y: 0.02133997, z: -0.007855243, w: 0.7064687}
       scale: {x: 0.9999996, y: 0.99999994, z: 0.9999998}
     - name: hand_R
       parentName: foreArm_R
-      position: {x: -0.27518785, y: 0.00000001937151, z: -0.00000019202707}
+      position: {x: -0.25454876, y: 0.000000017918648, z: -0.00000017762504}
       rotation: {x: 0.9983724, y: 0.015882522, z: 0.05477536, w: -0.000282359}
       scale: {x: 0.99999994, y: 0.9999999, z: 0.9999999}
     - name: thigh_R
       parentName: waist
-      position: {x: -0.030388042, y: 0.049010046, z: -0.00978168}
+      position: {x: -0.028108938, y: 0.045334294, z: -0.009048053}
       rotation: {x: -0.06659462, y: -0.0027402993, z: 0.99775285, w: -0.006853126}
       scale: {x: 1.0000001, y: 1.0000001, z: 1.000008}
     - name: shin_R
       parentName: thigh_R
-      position: {x: -0.5013668, y: 0.000000048102812, z: 1.6298139e-10}
+      position: {x: -0.4637643, y: 0.000000044495103, z: 1.5075778e-10}
       rotation: {x: 0.998013, y: -0.0031725555, z: 0.062309857, w: -0.008799194}
       scale: {x: 0.99999976, y: 0.9999998, z: 1.0000008}
     - name: foot_R
       parentName: shin_R
-      position: {x: -0.43801138, y: 0.000000031106175, z: 0.0000000047963113}
+      position: {x: -0.40516052, y: 0.000000028773213, z: 0.000000004436588}
       rotation: {x: 0.82520163, y: 0.021358358, z: 0.5642693, w: 0.0136517985}
       scale: {x: 1.0000043, y: 1.0000005, z: 1.0000037}
     - name: toes_R
       parentName: foot_R
-      position: {x: -0.07837472, y: 0.000000006798655, z: -0.0000000039963823}
+      position: {x: -0.072496615, y: 0.0000000062887557, z: -0.0000000036966536}
       rotation: {x: -0.0023169045, y: 0.12637049, z: 0.018182425, w: 0.9918138}
       scale: {x: 1.0000001, y: 1, z: 1.0000001}
     - name: GirlBody

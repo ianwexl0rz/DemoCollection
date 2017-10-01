@@ -57,6 +57,8 @@ public class GameManager : MonoBehaviour
 		{
 			if(p != activePlayer) p.SetBrain(followerBrain);
 		}
+
+		mainCamera.Setup();
 	}
 
 	private void FixedUpdate()

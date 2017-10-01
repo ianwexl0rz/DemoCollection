@@ -67,7 +67,7 @@ Material:
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
-    - _EdgeLight: 0.1
+    - _EdgeLight: 0.4
     - _GlossMapScale: 1
     - _Glossiness: 1
     - _GlossyReflections: 1
@@ -84,5 +84,5 @@ Material:
     m_Colors:
     - _Color: {r: 0.60655105, g: 0.67762315, b: 0.7369999, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _ShadowColor: {r: 1, g: 0.75, b: 0.8482759, a: 1}
+    - _ShadowColor: {r: 0.85294116, g: 0.056444637, b: 0.3695503, a: 1}
     - _SpecColor: {r: 0.28399995, g: 0.28399995, b: 0.28399995, a: 1}

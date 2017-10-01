@@ -99,10 +99,11 @@ Material:
     - _SpecSize: 1
     - _SpecularHighlights: 1
     - _SrcBlend: 1
+    - _Translucency: 0.454
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:
-    - _Color: {r: 0.18814878, g: 0.527595, b: 0.6397059, a: 1}
+    - _Color: {r: 0.897, g: 0.24218999, b: 0.24218999, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _ShadowColor: {r: 0.004751992, g: 0.13979074, b: 0.297, a: 1}
+    - _ShadowColor: {r: 1, g: 0, b: 0, a: 1}
     - _SpecColor: {r: 0.2352941, g: 0.2352941, b: 0.2352941, a: 1}

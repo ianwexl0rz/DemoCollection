@@ -32,7 +32,7 @@ public class ThirdPersonCamera : MonoBehaviour
 	private float timer = -1f;
 	private Vector3 lastTargetPos = Vector3.zero;
 
-	private void Start()
+	public void Setup()
 	{
 		distance = normalDistance;
 		player = GameManager.I.activePlayer;

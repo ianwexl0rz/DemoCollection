@@ -24,18 +24,17 @@ struct CustomData
 };
 
 //-----------------------------------------------------------------------------
-// This will encode UnityStandardData into GBuffer
+// This will encode CustomData into GBuffer
 void CustomDataToGbuffer(CustomData data, out half4 outGBuffer0, out half4 outGBuffer1, out half4 outGBuffer2)
 {
-
     // RT0: diffuse luma/chroma (rg), spec luma (b), spec/translucent chroma (a) - sRGB rendertarget
     outGBuffer0 = half4(data.diffuseColor.rg, data.specularColor.rg);
 
-    // RT1: translucency (r), edgel light (g), occlusion (b), smoothness (a) - sRGB rendertarget
+    // RT1: translucency (r), edge light (g), occlusion (b), smoothness (a) - sRGB rendertarget
     outGBuffer1 = half4(data.translucency, data.edgeLight, data.occlusion, data.smoothness);
 
     // RT2: normal (rgb), --unused, very low precision-- (a)
-	outGBuffer2 = half4(data.normalWorld * 0.5f + 0.5f, data.edgeLight);
+    outGBuffer2 = half4(data.normalWorld * 0.5f + 0.5f, 1);
 }
 
 //-----------------------------------------------------------------------------

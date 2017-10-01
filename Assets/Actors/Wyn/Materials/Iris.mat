@@ -99,7 +99,7 @@ Material:
     - _SpecSize: 1
     - _SpecularHighlights: 1
     - _SrcBlend: 1
-    - _Translucency: 0.328
+    - _Translucency: 0.4
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:

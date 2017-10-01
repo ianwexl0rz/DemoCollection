@@ -124,7 +124,7 @@ MonoBehaviour:
         temperature: 0
         tint: 0
         hueShift: 0
-        saturation: 1
+        saturation: 1.1
         contrast: 1
       channelMixer:
         red: {x: 1, y: 0, z: 0}
@@ -134,13 +134,13 @@ MonoBehaviour:
       colorWheels:
         mode: 0
         log:
-          slope: {r: 1, g: 1, b: 1, a: 0.05620609}
+          slope: {r: 1, g: 1, b: 1, a: 0}
           power: {r: 1, g: 1, b: 1, a: 0}
           offset: {r: 1, g: 1, b: 1, a: 0}
         linear:
           lift: {r: 1, g: 1, b: 1, a: 0}
-          gamma: {r: 1, g: 1, b: 1, a: 0.020304563}
-          gain: {r: 1, g: 1, b: 1, a: 0.16243656}
+          gamma: {r: 1, g: 1, b: 1, a: -0.12722886}
+          gain: {r: 1, g: 1, b: 1, a: 0.09573796}
       curves:
         master:
           curve:
@@ -150,19 +150,19 @@ MonoBehaviour:
               time: 0
               value: 0
               inSlope: 0
-              outSlope: 0.9591036
+              outSlope: 1.4453702
               tangentMode: 0
             - serializedVersion: 2
-              time: 0.5490654
-              value: 0.53431374
-              inSlope: 1.3758718
-              outSlope: 1.3758718
+              time: 0.4529148
+              value: 0.4506173
+              inSlope: 1.2388895
+              outSlope: 1.2388895
               tangentMode: 0
             - serializedVersion: 2
-              time: 0.7908497
-              value: 0.96818185
-              inSlope: 1.2450378
-              outSlope: 1.2450378
+              time: 0.6831091
+              value: 0.8888889
+              inSlope: 1.2740347
+              outSlope: 1.2740347
               tangentMode: 0
             - serializedVersion: 2
               time: 1
