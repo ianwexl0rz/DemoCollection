@@ -238,6 +238,16 @@ Prefab:
       propertyPath: m_Delegates.Array.data[0].callback.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1675173627}
+    - target: {fileID: 114790922256856972, guid: 0437fefdf508d45a4816f96442f04cbc,
+        type: 2}
+      propertyPath: walkSpeed
+      value: 1.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 114790922256856972, guid: 0437fefdf508d45a4816f96442f04cbc,
+        type: 2}
+      propertyPath: runSpeed
+      value: 3
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 0437fefdf508d45a4816f96442f04cbc, type: 2}
   m_IsPrefabParent: 0
@@ -992,8 +1002,8 @@ MonoBehaviour:
   lockOnTarget: {fileID: 0}
   abilities: []
   minSpeed: 0.25
-  walkSpeed: 2
-  runSpeed: 4
+  walkSpeed: 1.3
+  runSpeed: 3
   jumpHeight: 1.5
   gravityMult: 1
   speedSmoothTime: 0.05
