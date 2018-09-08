@@ -227,11 +227,14 @@ public class Player : Actor
 
 			if(cancelOK)
 			{
-				switch(attackType)
+				if(animator)
 				{
-					case AttackType.Light:
-						animator.SetTrigger("lightAttack");
-						break;
+					switch(attackType)
+					{
+						case AttackType.Light:
+							animator.SetTrigger("lightAttack");
+							break;
+					}
 				}
 				attackQueue.RemoveAt(i);
 			}
@@ -264,7 +267,9 @@ public class Player : Actor
 
 		while(attackInProgress)
 		{
-			Collider[] enemies = Physics.OverlapBox(attackBox.transform.position, attackCollider.bounds.extents, attackBox.transform.rotation, LayerMask.GetMask("Enemy", "Player"));
+			Collider[] enemies = Physics.OverlapBox(attackBox.transform.position,
+				attackCollider.bounds.extents, attackBox.transform.rotation,
+				LayerMask.GetMask("Enemy", "Player"));
 
 			foreach(Collider enemyCollider in enemies)
 			{

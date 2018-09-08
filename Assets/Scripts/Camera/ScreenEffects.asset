@@ -311,7 +311,7 @@ MonoBehaviour:
       size: 1
       luminanceContribution: 0.8
   vignette:
-    m_Enabled: 1
+    m_Enabled: 0
     m_Settings:
       mode: 0
       color: {r: 0.52205884, g: 0.52205884, b: 0.52205884, a: 1}
@@ -323,11 +323,11 @@ MonoBehaviour:
       opacity: 1
       rounded: 0
   dithering:
-    m_Enabled: 1
+    m_Enabled: 0
   monitors:
-    currentMonitorID: 1
+    currentMonitorID: 0
     refreshOnPlay: 0
-    histogramMode: 0
+    histogramMode: 4
     waveformExposure: 0.053333323
     waveformY: 1
     waveformR: 0

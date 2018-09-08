@@ -6,7 +6,7 @@ Shader "Custom/Custom (Metallic setup)"
 	{
 		[HDR]
 		_Color("Color", Color) = (0.5,0.5,0.5,1)
-		_MainTex("Albedo", 2D) = "gray" {}
+		_MainTex("Albedo", 2D) = "white" {}
 
 		[HDR]
 		_ShadowColor("Shadow", Color) = (0,0,0,1)
