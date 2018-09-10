@@ -17,15 +17,17 @@ public class GameManager : MonoBehaviour
 
 	[Space]
 	[Header("Actor Brains")]
-	public PlayerBrain playerBrain = null;
-	public ActorBrain followerBrain = null;
+	public PlayerController playerBrain = null;
+	public ActorController followerBrain = null;
 
 	private int targetIndex = 0;
 	private List<Player> playerCharacters;
 	private List<Entity> entities = new List<Entity>();
 
-	public Action<bool> OnSetPaused = delegate (bool value) { };
+	public Action<bool> OnPauseGame = delegate (bool value) { };
 	private bool gamePaused = false;
+
+	public bool IsPaused { get { return gamePaused; } }
 
 	private static GameManager _instance;
 	public static GameManager I
@@ -55,7 +57,7 @@ public class GameManager : MonoBehaviour
 
 		foreach(Player p in playerCharacters)
 		{
-			if(p != activePlayer) p.SetBrain(followerBrain);
+			if(p != activePlayer) p.SetController(followerBrain);
 		}
 
 		mainCamera.Setup();
@@ -67,43 +69,48 @@ public class GameManager : MonoBehaviour
 		{
 			entities.ForEach(entity => entity.OnFixedUpdate());
 		}
+
+		if(queuePause)
+		{
+			if(!gamePaused)
+			{
+				entities.ForEach(entity => entity.CacheRbPosition());
+			}
+
+			queuePause = false;
+			gamePaused = !gamePaused;
+			OnPauseGame(gamePaused);
+			pausePrefab.SetActive(gamePaused);
+		}
 	}
+
+	bool queuePause = false;
 
 	private void Update()
 	{
 		if(InputManager.ActiveDevice.MenuWasPressed)
 		{
-			// Pause or unpause the game
-			SetPaused(!gamePaused);
+			queuePause = true;
 		}
 
-		if(!gamePaused)
+		if(gamePaused) { return; }
+
+		// Swap characters
+		if(InputManager.ActiveDevice.Action4.WasPressed) { CyclePlayer(); }
+
+		// Hold the right bumper for slow-mo!
+		Time.timeScale = InputManager.ActiveDevice.RightBumper.IsPressed ? 0.25f : 1f;
+
+		UpdateHUD();
+
+		//TODO: Move Camera stuff to player controller?
+		mainCamera.UpdateRotation(); // Update camera rotation first so player input direction is correct
+		entities.ForEach(entity => entity.OnUpdate()); // Update all the things!
+		mainCamera.UpdatePosition(); // Update camera position
+
+		if(queuePause & !gamePaused)
 		{
-			// Swap characters
-			if(InputManager.ActiveDevice.Action4.WasPressed)
-			{
-				I.CyclePlayer();
-			}
-
-			// Hold the right bumper for slow-mo!
-			Time.timeScale = InputManager.ActiveDevice.RightBumper.IsPressed ? 0.25f : 1f;
-
-
-			if(Input.GetKeyDown(KeyCode.RightBracket))
-			{
-				activePlayer.health = Mathf.Min(activePlayer.health + 5f, activePlayer.maxHealth);
-			}
-
-			if(Input.GetKeyDown(KeyCode.LeftBracket))
-			{
-				activePlayer.health = Mathf.Max(activePlayer.health - 5f, 0f);
-			}
-
-			healthBarFill.anchorMax = new Vector2(activePlayer.health / activePlayer.maxHealth, healthBarFill.anchorMax.y);
-
-			mainCamera.UpdateRotation(); // Update camera rotation first so player input direction is correct
-			entities.ForEach(entity => entity.OnUpdate()); // Update all the things!
-			mainCamera.UpdatePosition(); // Update camera position
+			entities.ForEach(entity => entity.CachePosition());
 		}
 	}
 
@@ -145,12 +152,19 @@ public class GameManager : MonoBehaviour
 
 	#region PRIVATE_METHODS
 
-	private void SetPaused(bool paused)
+	private void UpdateHUD()
 	{
-		Time.timeScale = paused ? 0f : 1f;
-		OnSetPaused(paused);
-		pausePrefab.SetActive(paused);
-		gamePaused = paused;
+		if(Input.GetKeyDown(KeyCode.RightBracket))
+		{
+			activePlayer.health = Mathf.Min(activePlayer.health + 5f, activePlayer.maxHealth);
+		}
+
+		if(Input.GetKeyDown(KeyCode.LeftBracket))
+		{
+			activePlayer.health = Mathf.Max(activePlayer.health - 5f, 0f);
+		}
+
+		healthBarFill.anchorMax = new Vector2(activePlayer.health / activePlayer.maxHealth, healthBarFill.anchorMax.y);
 	}
 
 	private void CyclePlayer()
@@ -166,8 +180,8 @@ public class GameManager : MonoBehaviour
 		Player oldPlayer = activePlayer;
 		activePlayer = newTarget;
 
-		if(oldPlayer) oldPlayer.SetBrain(followerBrain); // Set the old active player to use Follower Brain
-		activePlayer.SetBrain(playerBrain); // Set the active player to use Player Brain
+		if(oldPlayer) oldPlayer.SetController(followerBrain); // Set the old active player to use Follower Brain
+		activePlayer.SetController(playerBrain); // Set the active player to use Player Brain
 		mainCamera.SetTarget(activePlayer); // Set the camera to follow the active player
 	}
 	#endregion

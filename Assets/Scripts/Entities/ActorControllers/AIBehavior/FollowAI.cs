@@ -1,25 +1,14 @@
 ﻿using UnityEngine;
-using System.Collections;
 
-[CreateAssetMenu(fileName = "Follower Brain", menuName = "Actor/Brain/Follower Brain")]
-public class FollowerBrain : ActorBrain
+[CreateAssetMenu(fileName = "Follow", menuName = "Actor/AI/Behavior/Follow")]
+public class FollowAI : AIBehavior
 {
 	public float startDistance = 3f;
 	public float stopDistance = 2f;
 	public float startRunDistance = 6f;
 	public float stopRunDistance = 4f;
 
-	//public Transform leader = null;
-
-	public override void Init(Actor actor)
-	{
-		if(GameManager.I.activePlayer != null)
-		{
-			actor.lockOnTarget = GameManager.I.activePlayer.transform;
-		}
-	}
-
-	public override void Process(Actor actor)
+	public override void Tick(Actor actor)
 	{
 		if(actor.lockOnTarget == null) { return; }
 

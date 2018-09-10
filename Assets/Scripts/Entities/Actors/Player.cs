@@ -47,31 +47,17 @@ public class Player : Actor
 		attackCollider = attackBox.GetComponent<Collider>();
 	}
 
-	protected override void OnEnable()
-	{
-		base.OnEnable();
-		OnUpdate += ProcessInput;
-		OnFixedUpdate += ProcessPhysics;
-	}
-
-	protected override void OnDisable()
-	{
-		base.OnDisable();
-		OnUpdate -= ProcessInput;
-		OnFixedUpdate -= ProcessPhysics;
-	}
-
 	private void OnDrawGizmosSelected()
 	{
 		// Draw foot collider
 		Gizmos.DrawSphere(transform.position + Vector3.up * 0.25f + Vector3.down * 0.1f, 0.2f);
 	}
 
-	private void ProcessPhysics()
+	protected override void ProcessPhysics()
 	{
 		if(stunTime > 0f) { return; }
 
-		RaycastHit[] hits = Physics.SphereCastAll(transform.position + Vector3.up * 0.25f, 0.2f, Vector3.down, 0.1f, ~LayerMask.GetMask("Player"));
+		RaycastHit[] hits = Physics.SphereCastAll(transform.position + Vector3.up * 0.25f, 0.2f, Vector3.down, 0.1f, ~LayerMask.GetMask("Player"), QueryTriggerInteraction.Ignore);
 		Vector3 groundNormal = Vector3.down;
 
 		if(hits.Length > 0)
@@ -150,8 +136,10 @@ public class Player : Actor
 		}
 	}
 
-	private void ProcessInput()
+	protected override void ProcessInput()
 	{
+		base.ProcessInput();
+
 		if(jump)
 		{
 			// Queue a jump if the jump was pressed this frame.
@@ -206,16 +194,24 @@ public class Player : Actor
 			attackQueue.Add(new AttackTimer(AttackType.Light, 0.5f));
 		}
 
-		if(animator != null && animator.runtimeAnimatorController != null)
+		UpdateAttackBuffer();
+	}
+
+	protected override void ProcessAnimation()
+	{
+		if(animator == null) { return; }
+
+		animator.speed = localTimeScale;
+
+		if(animator.runtimeAnimatorController != null)
 		{
+			//if(!GameManager.I.IsPaused)
 			//control speed percent in animator so that character walks or runs depending on speed
-			float animationSpeedPercent = currentSpeed.magnitude / runSpeed;
+			float animationSpeedPercent = paused ? 0f : currentSpeed.magnitude / runSpeed;
 
 			//reference for animator
 			animator.SetFloat("speedPercent", animationSpeedPercent, speedSmoothTime, Time.deltaTime);
 		}
-
-		UpdateAttackBuffer();
 	}
 
 	protected void UpdateAttackBuffer()

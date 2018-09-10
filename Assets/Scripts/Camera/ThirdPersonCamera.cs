@@ -117,7 +117,18 @@ public class ThirdPersonCamera : MonoBehaviour
 	public void UpdatePosition()
 	{
 		if(!player) return;
-		
+
+		//if(GameManager.I.IsPaused) return;
+
+		//bool paused = GameManager.I.IsPaused && !GameManager.I.justPaused;
+		bool paused = GameManager.I.IsPaused;
+
+		//float deltaTime = paused ? 0f : Time.deltaTime;
+		//float deltaTime = GameManager.I.IsPaused ? 0f : Time.deltaTime;
+		float deltaTime = Time.deltaTime;
+
+		//if(GameManager.I.IsPaused) goto FinalizePosition;
+
 		float desiredDistance = normalDistance;
 		Vector3 trackPos = player.transform.position;
 
@@ -136,20 +147,21 @@ public class ThirdPersonCamera : MonoBehaviour
 			oldPlayer = player;
 		}
 
+		if(!lockedOn && wasLockedOn)
+		{
+			timer = switchTime; // Set the timer so we quickly return to the player
+		}
+
 		if(lockedOn)
 		{
 			// Set the focus halfway between the player and the enemy (similar to BotW)
 			trackPos = (player.lockOnTarget.position + player.transform.position) * 0.5f;
 			desiredDistance += (player.lockOnTarget.position - player.transform.position).magnitude * 0.5f;
 		}
-		else if(wasLockedOn)
-		{
-			timer = switchTime; // Set the timer so we quickly return to the player
-		}
 
 		if(timer >= 0f)
 		{
-			timer -= Time.deltaTime;
+			timer -= deltaTime;
 			dragTime = switchTime;
 			if(timer < 0f) timer = -1f; // We use -1 to indicate the timer is disabled
 		}
@@ -166,17 +178,30 @@ public class ThirdPersonCamera : MonoBehaviour
 
 		wasLockedOn = lockedOn;
 
+		Vector3 dragVel = paused ? Vector3.zero : dragVectorVelocity;
+		float distanceVel = paused ? 0f : distanceVelocity;
+
+		//Vector3 dragVel = dragVectorVelocity;
+		//float distanceVel = distanceVelocity;
+
 		// We want drag relative to camera rotation so the character doesn't "fishtail" when the player looks around
 		// 1) Get the change in player position and rotate it by the inverse of the camera rotation
 		// 2) Now we can scale the amount of drag on each axis in screen space (yay!)
 		// 3) Interpolate the accumulated drag toward zero over time
 		// NOTE: Rotate dragVector by camera rotation later to put it back into world space
 		dragVector += Vector3.Scale(invRotation * (lastTargetPos - trackPos), _dragAmount);
-		dragVector = Vector3.SmoothDamp(dragVector, Vector3.zero, ref dragVectorVelocity, dragTime);
+		dragVector = Vector3.SmoothDamp(dragVector, Vector3.zero, ref dragVel, dragTime, Mathf.Infinity, deltaTime);
 		lastTargetPos = trackPos;
 
-		distance = Mathf.SmoothDamp(distance, desiredDistance, ref distanceVelocity, dragTime);
+
+		distance = Mathf.SmoothDamp(distance, desiredDistance, ref distanceVel, dragTime, Mathf.Infinity, deltaTime);
 		transform.position = trackPos + screenRotation * (offset + dragVector) - transform.forward * distance;
+
+		if(!paused)
+		{
+			dragVectorVelocity = dragVel;
+			distanceVelocity = distanceVel;
+		}
 
 		/*
 		Debug.DrawLine(trackPos, trackPos + screenRotation * dragVector, Color.white);

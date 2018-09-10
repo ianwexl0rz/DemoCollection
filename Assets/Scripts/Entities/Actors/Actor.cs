@@ -6,7 +6,11 @@ using System.Collections;
 public class Actor : Entity
 {
 	[SerializeField]
-	protected ActorBrain _brain = null;
+	protected Transform _mesh = null;
+	public Transform mesh { get { return _mesh; } private set { _mesh = value; } }
+
+	[SerializeField]
+	protected ActorController _controller = null;
 
 	public bool isAwake = false;
 
@@ -19,8 +23,9 @@ public class Actor : Entity
 
 	public Transform lockOnTarget = null;
 	public Animator animator { get; private set; }
-	public ActorBrain brain { get { return _brain; } private set { _brain = value; } }
+	public ActorController controller { get { return _controller; } private set { _controller = value; } }
 
+	public Action<Actor> UpdateController = delegate (Actor actor) { };
 	public Action OnResetAbilities = null;
 	public Action UpdateAbilities = null;
 	public Action FixedUpdateAbilities = null;
@@ -42,54 +47,62 @@ public class Actor : Entity
 		animator = GetComponentInChildren<Animator>();
 		collider = GetComponent<Collider>();
 		collider.material = isAwake ? activeMaterial : stunnedMaterial;
-
 		health = maxHealth = 100f;
-	}
-
-	protected override void OnEnable()
-	{
-		base.OnEnable();
-		OnUpdate += GetInput;
-	}
-
-	protected override void OnDisable()
-	{
-		base.OnDisable();
-		OnUpdate -= GetInput;
 	}
 
 	private void Start()
 	{
 		look = transform.forward;
 
-		if(brain != null)
+		if(controller != null)
 		{
-			brain.Init(this);
+			controller.Engage(this);
 		}
 	}
 
-	private void GetInput()
+	public override void OnUpdate()
 	{
-		if(isAwake && brain != null)
+		base.OnUpdate();
+		ProcessInput();
+		ProcessAnimation();
+	}
+
+	public override void OnFixedUpdate()
+	{
+		base.OnFixedUpdate();
+		ProcessPhysics();
+	}
+
+	protected override void OnPauseEntity(bool value)
+	{
+		PauseAnimation(value);
+	}
+
+	protected virtual void ProcessInput()
+	{
+		if(isAwake)
 		{
-			brain.Process(this);
-		}
-		else
-		{
-			move = Vector3.zero;
-			ResetAbilities();
+			UpdateController(this);
 		}
 	}
 
-	public void SetBrain(ActorBrain newBrain)
+	protected virtual void ProcessAnimation()
 	{
-		if(brain != null)
-		{
-			brain.Clean(this);
-		}
+	}
 
-		brain = newBrain;
-		brain.Init(this);
+	protected virtual void ProcessPhysics()
+	{
+	}
+
+	private void PauseAnimation(bool paused)
+	{
+		if(animator != null) animator.speed = paused ? 0f : localTimeScale;
+	}
+
+	public void SetController(ActorController newController)
+	{
+		newController.Engage(this);
+		controller = newController;
 	}
 
 	private void ResetAbilities()
@@ -106,6 +119,8 @@ public class Actor : Entity
 		
 	}
 
+	/* ----- COMBAT STUFF ------ */
+
 	private IEnumerator Hit(Vector3 attackerPos, AttackData data)
 	{
 		// Reduce health
@@ -119,7 +134,7 @@ public class Actor : Entity
 		// Apply knockback
 		rb.velocity = (transform.position - attackerPos).normalized * data.knockback;
 
-		//StartCoroutine(SlowMo(0.025f, 0.05f));
+		StartCoroutine(SlowMo(0.06f, 0.05f));
 
 		while(stunTime > 0f)
 		{
@@ -132,7 +147,24 @@ public class Actor : Entity
 		collider.material = activeMaterial;
 	}
 
-	/*//
+	/*
+	private IEnumerator HitStun(float duration)
+	{
+		PauseEntity
+
+			float time = 0f;
+
+		while(time < duration)
+		{
+			Time.timeScale = 0.05f;
+			time += Time.unscaledDeltaTime;
+			yield return null;
+		}
+	}
+	*/
+
+
+	//*//
 	private IEnumerator SlowMo(float duration, float recovery)
 	{
 		yield return null;

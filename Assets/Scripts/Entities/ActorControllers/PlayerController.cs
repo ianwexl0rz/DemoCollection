@@ -3,15 +3,15 @@ using System.Collections;
 using InControl;
 
 [CreateAssetMenu(fileName = "Player Brain", menuName = "Actor/Brain/Player Brain")]
-public class PlayerBrain : ActorBrain
+public class PlayerController : ActorController
 {
-	public override void Init(Actor actor)
+	protected override void Init(Actor actor)
 	{
 		Player inactivePlayer = GameManager.I.GetFirstInactivePlayer();
 		actor.lockOnTarget = inactivePlayer ? inactivePlayer.transform : null;
 	}
 
-	public override void Process(Actor actor)
+	protected override void Tick(Actor actor)
 	{
 		InputDevice playerInput = InputManager.ActiveDevice;
 
@@ -42,7 +42,7 @@ public class PlayerBrain : ActorBrain
 		*/
 	}
 
-	public override void Clean(Actor actor)
+	protected override void Clean(Actor actor)
 	{
 		actor.move = Vector3.zero;
 	}

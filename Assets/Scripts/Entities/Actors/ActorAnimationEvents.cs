@@ -9,7 +9,7 @@ public class ActorAnimationEvents : MonoBehaviour
 
 	private void Awake()
 	{
-		player = transform.parent.GetComponent<Player>();
+		player = transform.GetComponentInChildren<Player>();
 	}
 
 	public void CancelOK()
