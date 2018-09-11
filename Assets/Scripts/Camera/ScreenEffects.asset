@@ -3,7 +3,7 @@
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
@@ -71,10 +71,10 @@ MonoBehaviour:
   depthOfField:
     m_Enabled: 1
     m_Settings:
-      focusDistance: 1
-      aperture: 1.6
+      focusDistance: 1.04
+      aperture: 7
       focalLength: 18
-      useCameraFov: 0
+      useCameraFov: 1
       kernelSize: 0
   motionBlur:
     m_Enabled: 0
@@ -102,8 +102,8 @@ MonoBehaviour:
       bloom:
         intensity: 0.4
         threshold: 1
-        softKnee: 0.648
-        radius: 3.81
+        softKnee: 0.141
+        radius: 3.03
         antiFlicker: 1
       lensDirt:
         texture: {fileID: 0}
@@ -124,7 +124,7 @@ MonoBehaviour:
         temperature: 0
         tint: 0
         hueShift: 0
-        saturation: 1.1
+        saturation: 1
         contrast: 1
       channelMixer:
         red: {x: 1, y: 0, z: 0}

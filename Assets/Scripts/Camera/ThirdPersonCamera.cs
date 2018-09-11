@@ -1,18 +1,17 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.Serialization;
+﻿using UnityEngine;
 using InControl;
 
 public class ThirdPersonCamera : MonoBehaviour
 {
-	public Vector3 offset = new Vector3(0f,2f,0f);
+	public Vector3 forwardOffset = new Vector3(0f,2f,0f);
+	public Vector3 downOffset = new Vector3(0f, 0f, 1f);
 	public float normalDistance = 2;
 	public Vector2 pitchMinMax = new Vector2(-40,85);
 	public Vector3 dragAmount = Vector3.zero;
 	public float rotationSmoothTime = 0.12f;
 	public float posSmoothTime = 0.12f;
-	public float switchTime = 0.24f;
+	public float lockTime = 0.3f;
+	public float unlockTime = 0.6f;
 
 	private float yaw; //rotation on the y axis
 	private float pitch; //rotation on the x axis
@@ -21,21 +20,25 @@ public class ThirdPersonCamera : MonoBehaviour
 	private Vector3 rotationVelocity;
 
 	private float distance;
-	private float distanceVelocity;
+	private float lockOnDistance = 0f;
+	private float distanceVel;
+	private Vector3 switchVelocity;
 
+	private Vector3 lookPos = Vector3.zero;
+	private Vector3 lastTargetPos = Vector3.zero;
 	private Vector3 dragVector = Vector3.zero;
 	private Vector3 dragVectorVelocity = Vector3.zero;
 
 	private Player player = null;
 	private Player oldPlayer = null;
-	private bool wasLockedOn = false;
-	private float timer = -1f;
-	private Vector3 lastTargetPos = Vector3.zero;
+	private float blendToPlayer = 0f;
+	private Vector3 blendFromPosition = Vector3.zero;
+	private float blendToLockOn = -1f;
 
 	public void Setup()
 	{
 		distance = normalDistance;
-		player = GameManager.I.activePlayer;
+		player = oldPlayer = GameManager.I.activePlayer;
 		lastTargetPos = player.transform.position;
 	}
 
@@ -67,13 +70,7 @@ public class ThirdPersonCamera : MonoBehaviour
 					// Locked on to a target
 					yaw += playerInput.RightStickX * lookSensitivity.x * Time.deltaTime * 0.5f; // Half speed
 
-					// TODO: Separate smoothing for pitch (should be unaffected)
-					//smooth = 25f;
-
 					//yaw = Quaternion.LookRotation(player.lockOnTarget.position - player.transform.position).eulerAngles.y;
-
-					//float horizontalInput = ((PlayerBrain)player.brain).leftStick.x;
-					//yaw += horizontalInput * 10f * Time.deltaTime;
 				}
 			}
 			else if(player.aimingMode)
@@ -91,9 +88,9 @@ public class ThirdPersonCamera : MonoBehaviour
 				yaw += playerInput.RightStickX * lookSensitivity.x * Time.deltaTime;
 
 				// Start with 3x smoothing and diminish to zero as the camera aligns with character
-				smooth = -Vector3.Dot(transform.forward, Quaternion.Euler(pitch, yaw, 0) * Vector3.forward);
-				smooth = smooth * 0.5f + 0.5f;
-				smooth *= 3f;
+				//smooth = -Vector3.Dot(transform.forward, Quaternion.Euler(pitch, yaw, 0) * Vector3.forward);
+				//smooth = smooth * 0.5f + 0.5f;
+				//smooth *= 3f;
 			}
 			else
 			{
@@ -101,7 +98,7 @@ public class ThirdPersonCamera : MonoBehaviour
 				yaw += playerInput.RightStickX * lookSensitivity.x * Time.deltaTime;
 
 				// Rotate the camera slightly in the direction we're moving (like Dark Souls)
-				yaw += playerInput.LeftStickX * 20f * Time.deltaTime;
+				yaw += Mathf.Abs(playerInput.LeftStickX) * playerInput.LeftStickX * 20f * Time.deltaTime;
 			}
 
 			pitch += playerInput.RightStickY * lookSensitivity.y * Time.deltaTime * (ControlSettings.I.invertY ? 1 : -1);
@@ -118,95 +115,76 @@ public class ThirdPersonCamera : MonoBehaviour
 	{
 		if(!player) return;
 
-		//if(GameManager.I.IsPaused) return;
-
-		//bool paused = GameManager.I.IsPaused && !GameManager.I.justPaused;
-		bool paused = GameManager.I.IsPaused;
-
-		//float deltaTime = paused ? 0f : Time.deltaTime;
-		//float deltaTime = GameManager.I.IsPaused ? 0f : Time.deltaTime;
-		float deltaTime = Time.deltaTime;
-
-		//if(GameManager.I.IsPaused) goto FinalizePosition;
-
-		float desiredDistance = normalDistance;
 		Vector3 trackPos = player.transform.position;
 
 		bool switchedPlayer = player != oldPlayer;
 		bool lockedOn = player.lockOn && player.lockOnTarget != null;
 
-		Vector3 _dragAmount = dragAmount;
-		float dragTime = posSmoothTime;
-
-		Quaternion screenRotation = Quaternion.Euler(0f, transform.rotation.eulerAngles.y, 0f);
-		Quaternion invRotation = Quaternion.Euler(0f, -transform.rotation.eulerAngles.y, 0f);
+		Quaternion screenRotation = Quaternion.Euler(0, transform.rotation.eulerAngles.y, 0f);
+		Quaternion invRotation = Quaternion.Euler(0, -transform.rotation.eulerAngles.y, 0f);
 
 		if(switchedPlayer)
 		{
-			timer = switchTime; // Set a timer
+			blendFromPosition = oldPlayer.transform.position;
 			oldPlayer = player;
+			blendToPlayer = 1f;
 		}
 
-		if(!lockedOn && wasLockedOn)
+		if(blendToPlayer > 0f)
 		{
-			timer = switchTime; // Set the timer so we quickly return to the player
+			blendToPlayer -= Time.deltaTime / unlockTime;
+			blendToPlayer = Mathf.Max(blendToPlayer, 0f);
+			trackPos = Vector3.Lerp(trackPos, blendFromPosition, Mathf.SmoothStep(0f, 1f, blendToPlayer));
+			dragVector *= blendToPlayer;
 		}
 
 		if(lockedOn)
 		{
 			// Set the focus halfway between the player and the enemy (similar to BotW)
-			trackPos = (player.lockOnTarget.position + player.transform.position) * 0.5f;
-			desiredDistance += (player.lockOnTarget.position - player.transform.position).magnitude * 0.5f;
+			// TODO: Dynamically shift closer to the player when close to the camera
+			// TODO: Implement "breaking" distance
+			lookPos = Vector3.Lerp(player.transform.position, player.lockOnTarget.position, 0.5f);
+			lockOnDistance = normalDistance + Vector3.Distance(player.lockOnTarget.position, player.transform.position) * 0.25f;
 		}
 
-		if(timer >= 0f)
+		if(lockedOn)
 		{
-			timer -= deltaTime;
-			dragTime = switchTime;
-			if(timer < 0f) timer = -1f; // We use -1 to indicate the timer is disabled
+			blendToLockOn += Time.deltaTime / lockTime;
 		}
-
-		if(lockedOn != wasLockedOn || switchedPlayer)
+		else
 		{
-			_dragAmount = Vector3.one; // If we JUST changed modes, set drag scale to one
-		}
-		else if(lockedOn || player.aimingMode || player.recenter)
-		{
-			_dragAmount = Vector3.zero; // We want the camera to stick to the tracked position
-			dragTime = switchTime; // We want to quickly move from the old position
+			blendToLockOn -= Time.deltaTime / unlockTime;
 		}
 
-		wasLockedOn = lockedOn;
+		blendToLockOn = Mathf.Clamp01(blendToLockOn);
 
-		Vector3 dragVel = paused ? Vector3.zero : dragVectorVelocity;
-		float distanceVel = paused ? 0f : distanceVelocity;
-
-		//Vector3 dragVel = dragVectorVelocity;
-		//float distanceVel = distanceVelocity;
+		float cameraDown = Vector3.Dot(transform.forward, Vector3.down) * 0.5f + 0.5f;
+		float cameraForward = Mathf.Abs(Vector3.Dot(transform.up, Vector3.down));
 
 		// We want drag relative to camera rotation so the character doesn't "fishtail" when the player looks around
 		// 1) Get the change in player position and rotate it by the inverse of the camera rotation
 		// 2) Now we can scale the amount of drag on each axis in screen space (yay!)
 		// 3) Interpolate the accumulated drag toward zero over time
 		// NOTE: Rotate dragVector by camera rotation later to put it back into world space
-		dragVector += Vector3.Scale(invRotation * (lastTargetPos - trackPos), _dragAmount);
-		dragVector = Vector3.SmoothDamp(dragVector, Vector3.zero, ref dragVel, dragTime, Mathf.Infinity, deltaTime);
+
+		// Drag less if we're running toward the camera
+		float dragAway = Vector3.Dot(screenRotation * dragVector.normalized, -transform.forward) * 0.5f + 0.5f;
+		Vector3 dragDelta = Vector3.Scale(invRotation * (lastTargetPos - trackPos), dragAmount);
+		dragDelta = Vector3.Scale(dragDelta, new Vector3(1f, 1f, Mathf.Lerp(0.5f, 1f, dragAway)));
 		lastTargetPos = trackPos;
 
+		// Drag less if we're looking at the ground
+		dragVector += Vector3.Scale(dragDelta, new Vector3(1f, 1f, cameraForward));
+		dragVector = Vector3.SmoothDamp(dragVector, Vector3.zero, ref dragVectorVelocity, posSmoothTime);
 
-		distance = Mathf.SmoothDamp(distance, desiredDistance, ref distanceVel, dragTime, Mathf.Infinity, deltaTime);
-		transform.position = trackPos + screenRotation * (offset + dragVector) - transform.forward * distance;
+		Vector3 modifiedPlayerPos = trackPos + screenRotation * (forwardOffset + downOffset * cameraDown + dragVector) - transform.forward * normalDistance;
+		Vector3 modifiedLookPos = lookPos + screenRotation * forwardOffset - transform.forward * lockOnDistance;
 
-		if(!paused)
-		{
-			dragVectorVelocity = dragVel;
-			distanceVelocity = distanceVel;
-		}
+		float t = lockedOn ? Mathf.SmoothStep(0f, 1f, blendToLockOn) : blendToLockOn * blendToLockOn;
+		transform.position = Vector3.Lerp(modifiedPlayerPos, modifiedLookPos, t);
 
-		/*
 		Debug.DrawLine(trackPos, trackPos + screenRotation * dragVector, Color.white);
 		Debug.DrawLine(Vector3.Scale(transform.position, Vector3.one - Vector3.up), trackPos, Color.red);
 		Debug.DrawLine(Vector3.Scale(transform.position, Vector3.one - Vector3.up), trackPos + screenRotation * dragVector, Color.blue);
-		*/
 	}
 }

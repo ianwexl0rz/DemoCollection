@@ -4,7 +4,7 @@
 Material:
   serializedVersion: 6
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: Hair
   m_Shader: {fileID: 4800000, guid: 289f6d7fd8e4d0542b05fb923a2492d0, type: 3}
@@ -76,7 +76,7 @@ Material:
     - _Fresnel: 3
     - _FresnelBias: 0
     - _GlossMapScale: 1
-    - _Glossiness: 0.5
+    - _Glossiness: 0.454
     - _GlossyReflections: 1
     - _Metallic: 0
     - _Mode: 0
@@ -87,11 +87,11 @@ Material:
     - _SpecSize: 1.13
     - _SpecularHighlights: 1
     - _SrcBlend: 1
-    - _Translucency: 0.5
+    - _Translucency: 0.371
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:
-    - _Color: {r: 0, g: 0.2891593, b: 0.3301887, a: 1}
+    - _Color: {r: 0, g: 0.24395002, b: 0.357, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _ShadowColor: {r: 0, g: 0.1384483, b: 0.803, a: 1}
+    - _ShadowColor: {r: 0.059892, g: 0.23405398, b: 0.71300006, a: 1}
     - _SpecColor: {r: 0, g: 0.484, b: 0.46397257, a: 1}

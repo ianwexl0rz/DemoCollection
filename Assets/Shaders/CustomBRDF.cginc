@@ -141,7 +141,7 @@ half4 CustomLighting (half3 diffColor, half3 shadowColor, half3 specColor, half3
     //*/
 
     half3 color =
-#if defined(DIRECTIONAL)    //*/
+#if defined(DIRECTIONAL)
                 diffColor * (gi.diffuse + lerp(light.color * diffuseTerm, 1, pow(translucency, 2.5)))
                 //* lerp(1, shadowColor, smoothstep(0.5, -0.25, min(nlUnclamped, nh) * light.color) * (1 - step(translucency, 0)))
                 + diffColor * shadowColor * smoothstep(-0.25, 0.25, max(nlUnclamped, nh)) * (1 - diffuseTerm) * translucency * light.color

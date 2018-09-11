@@ -55,6 +55,7 @@ GameObject:
   - component: {fileID: 114310520992421260}
   - component: {fileID: 114246714986836600}
   - component: {fileID: 95043148762841650}
+  - component: {fileID: 114758397973983036}
   m_Layer: 8
   m_Name: Girl
   m_TagString: Untagged
@@ -1047,7 +1048,18 @@ MonoBehaviour:
   aimingMode: 0
   recenter: 0
   attackDataSet: {fileID: 11400000, guid: 7b599c3afc5abd14e97032bd4e49c044, type: 2}
-  attackBox: {fileID: 1221387033404510}
+  attackBox: {fileID: 1614801345478936}
+--- !u!114 &114758397973983036
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1028475939113934}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7397dc516a4bb9941ae69a063c0bcd19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!136 &136561752163569324
 CapsuleCollider:
   m_ObjectHideFlags: 1

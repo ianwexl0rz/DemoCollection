@@ -4,7 +4,7 @@
 Material:
   serializedVersion: 6
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: Boots
   m_Shader: {fileID: 4800000, guid: 289f6d7fd8e4d0542b05fb923a2492d0, type: 3}
@@ -76,7 +76,7 @@ Material:
     - _Fresnel: 3
     - _FresnelBias: 0
     - _GlossMapScale: 1
-    - _Glossiness: 0.311
+    - _Glossiness: 0.436
     - _GlossyReflections: 1
     - _Metallic: 0.413
     - _Mode: 0

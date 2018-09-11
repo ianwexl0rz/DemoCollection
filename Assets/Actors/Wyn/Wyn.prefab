@@ -171,6 +171,8 @@ GameObject:
   - component: {fileID: 114169830198121924}
   - component: {fileID: 114104967303299580}
   - component: {fileID: 114189782331923418}
+  - component: {fileID: 95270476207077868}
+  - component: {fileID: 114439975348288460}
   m_Layer: 8
   m_Name: Wyn
   m_TagString: Player
@@ -186,8 +188,6 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4577359606590488}
-  - component: {fileID: 95066288927252736}
-  - component: {fileID: 114132265903976800}
   m_Layer: 0
   m_Name: WynMesh
   m_TagString: Untagged
@@ -711,13 +711,13 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!95 &95066288927252736
+--- !u!95 &95270476207077868
 Animator:
   serializedVersion: 3
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1901694637806216}
+  m_GameObject: {fileID: 1849219369495232}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 311af048b21a65748993d6be932fa4f3, type: 3}
   m_Controller: {fileID: 9100000, guid: bb3ef21af525c0c4a82df01dca9ca8ad, type: 2}
@@ -749,17 +749,6 @@ MonoBehaviour:
   lookSpeed: 360
   frontFocusOnly: 1
   debugTarget: {fileID: 0}
---- !u!114 &114132265903976800
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1901694637806216}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7397dc516a4bb9941ae69a063c0bcd19, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &114169830198121924
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -820,6 +809,17 @@ MonoBehaviour:
   recenter: 0
   attackDataSet: {fileID: 11400000, guid: dc92ae606a85ca1419f16eeb7831eff9, type: 2}
   attackBox: {fileID: 1930265623123038}
+--- !u!114 &114439975348288460
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1849219369495232}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7397dc516a4bb9941ae69a063c0bcd19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!136 &136493107173934706
 CapsuleCollider:
   m_ObjectHideFlags: 1

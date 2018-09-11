@@ -4,7 +4,7 @@
 Material:
   serializedVersion: 6
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: Pants
   m_Shader: {fileID: 4800000, guid: 289f6d7fd8e4d0542b05fb923a2492d0, type: 3}
@@ -86,11 +86,11 @@ Material:
     - _SpecSize: 1.304
     - _SpecularHighlights: 1
     - _SrcBlend: 1
-    - _Translucency: 0.106
+    - _Translucency: 0.086
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:
-    - _Color: {r: 0.084, g: 0.084, b: 0.105, a: 1}
+    - _Color: {r: 0.064883, g: 0.064883, b: 0.091000006, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _ShadowColor: {r: 0, g: 0, b: 0, a: 1}
     - _SpecColor: {r: 0.269531, g: 0.28203508, b: 0.409, a: 1}
