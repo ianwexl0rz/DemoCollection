@@ -19,6 +19,7 @@ public class ThirdPersonCamera : MonoBehaviour
 	private Vector3 rotation;
 	private Vector3 rotationVelocity;
 
+	private float distance;
 	private float lockOnDistance = 0f;
 	private float distanceVel;
 	private Vector3 switchVelocity;
@@ -36,6 +37,7 @@ public class ThirdPersonCamera : MonoBehaviour
 
 	public void Setup()
 	{
+		distance = normalDistance;
 		player = oldPlayer = GameManager.I.activePlayer;
 		lastTargetPos = player.transform.position;
 	}
