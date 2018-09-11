@@ -124,7 +124,7 @@ MonoBehaviour:
         temperature: 0
         tint: 0
         hueShift: 0
-        saturation: 1
+        saturation: 1.1
         contrast: 1
       channelMixer:
         red: {x: 1, y: 0, z: 0}
@@ -134,20 +134,42 @@ MonoBehaviour:
       colorWheels:
         mode: 0
         log:
-          slope: {r: 1, g: 1, b: 1, a: 0}
-          power: {r: 1, g: 1, b: 1, a: 0}
-          offset: {r: 1, g: 1, b: 1, a: 0}
+          slope:
+            r: 1
+            g: 1
+            b: 1
+            a: 0
+          power:
+            r: 1
+            g: 1
+            b: 1
+            a: 0
+          offset:
+            r: 1
+            g: 1
+            b: 1
+            a: 0
         linear:
-          lift: {r: 1, g: 1, b: 1, a: 0}
-          gamma: {r: 1, g: 1, b: 1, a: -0.12722886}
-          gain: {r: 1, g: 1, b: 1, a: 0.052494716}
+          lift:
+            r: 1
+            g: 1
+            b: 1
+            a: 0
+          gamma:
+            r: 1
+            g: 1
+            b: 1
+            a: -0.08215843
+          gain:
+            r: 1
+            g: 1
+            b: 1
+            a: 0.052494716
       curves:
         master:
           curve:
-            serializedVersion: 2
             m_Curve:
-            - serializedVersion: 3
-              time: 0
+            - time: 0
               value: 0
               inSlope: 0
               outSlope: 1.4453702
@@ -155,8 +177,7 @@ MonoBehaviour:
               weightedMode: 0
               inWeight: 0.33333334
               outWeight: 0.33333334
-            - serializedVersion: 3
-              time: 0.4529148
+            - time: 0.4529148
               value: 0.4506173
               inSlope: 1.2388895
               outSlope: 1.2388895
@@ -164,8 +185,7 @@ MonoBehaviour:
               weightedMode: 0
               inWeight: 0.33333334
               outWeight: 0.33333334
-            - serializedVersion: 3
-              time: 0.6831091
+            - time: 0.6831091
               value: 0.8888889
               inSlope: 1.2740347
               outSlope: 1.2740347
@@ -173,8 +193,7 @@ MonoBehaviour:
               weightedMode: 0
               inWeight: 0.33333334
               outWeight: 0.33333334
-            - serializedVersion: 3
-              time: 1
+            - time: 1
               value: 1
               inSlope: -0
               outSlope: -0
@@ -188,12 +207,15 @@ MonoBehaviour:
           m_Loop: 0
           m_ZeroValue: 0
           m_Range: 1
+          m_InternalLoopingCurve:
+            m_Curve: []
+            m_PreInfinity: 2
+            m_PostInfinity: 2
+            m_RotationOrder: 4
         red:
           curve:
-            serializedVersion: 2
             m_Curve:
-            - serializedVersion: 3
-              time: 0
+            - time: 0
               value: 0
               inSlope: 1
               outSlope: 1
@@ -201,8 +223,7 @@ MonoBehaviour:
               weightedMode: 0
               inWeight: 0.33333334
               outWeight: 0.33333334
-            - serializedVersion: 3
-              time: 0.7690632
+            - time: 0.7690632
               value: 0.7690632
               inSlope: 1
               outSlope: 1
@@ -210,8 +231,7 @@ MonoBehaviour:
               weightedMode: 0
               inWeight: 0.33333334
               outWeight: 0.33333334
-            - serializedVersion: 3
-              time: 1
+            - time: 1
               value: 1
               inSlope: 1
               outSlope: 1
@@ -225,12 +245,15 @@ MonoBehaviour:
           m_Loop: 0
           m_ZeroValue: 0
           m_Range: 1
+          m_InternalLoopingCurve:
+            m_Curve: []
+            m_PreInfinity: 2
+            m_PostInfinity: 2
+            m_RotationOrder: 4
         green:
           curve:
-            serializedVersion: 2
             m_Curve:
-            - serializedVersion: 3
-              time: 0
+            - time: 0
               value: 0
               inSlope: 1
               outSlope: 1
@@ -238,8 +261,7 @@ MonoBehaviour:
               weightedMode: 0
               inWeight: 0.33333334
               outWeight: 0.33333334
-            - serializedVersion: 3
-              time: 1
+            - time: 1
               value: 1
               inSlope: 1
               outSlope: 1
@@ -253,12 +275,15 @@ MonoBehaviour:
           m_Loop: 0
           m_ZeroValue: 0
           m_Range: 1
+          m_InternalLoopingCurve:
+            m_Curve: []
+            m_PreInfinity: 2
+            m_PostInfinity: 2
+            m_RotationOrder: 4
         blue:
           curve:
-            serializedVersion: 2
             m_Curve:
-            - serializedVersion: 3
-              time: 0
+            - time: 0
               value: 0
               inSlope: 1
               outSlope: 1
@@ -266,8 +291,7 @@ MonoBehaviour:
               weightedMode: 0
               inWeight: 0.33333334
               outWeight: 0.33333334
-            - serializedVersion: 3
-              time: 1
+            - time: 1
               value: 1
               inSlope: 1
               outSlope: 1
@@ -281,9 +305,13 @@ MonoBehaviour:
           m_Loop: 0
           m_ZeroValue: 0
           m_Range: 1
+          m_InternalLoopingCurve:
+            m_Curve: []
+            m_PreInfinity: 2
+            m_PostInfinity: 2
+            m_RotationOrder: 4
         hueVShue:
           curve:
-            serializedVersion: 2
             m_Curve: []
             m_PreInfinity: 2
             m_PostInfinity: 2
@@ -291,9 +319,13 @@ MonoBehaviour:
           m_Loop: 1
           m_ZeroValue: 0.5
           m_Range: 1
+          m_InternalLoopingCurve:
+            m_Curve: []
+            m_PreInfinity: 2
+            m_PostInfinity: 2
+            m_RotationOrder: 4
         hueVSsat:
           curve:
-            serializedVersion: 2
             m_Curve: []
             m_PreInfinity: 2
             m_PostInfinity: 2
@@ -301,9 +333,13 @@ MonoBehaviour:
           m_Loop: 1
           m_ZeroValue: 0.5
           m_Range: 1
+          m_InternalLoopingCurve:
+            m_Curve: []
+            m_PreInfinity: 2
+            m_PostInfinity: 2
+            m_RotationOrder: 4
         satVSsat:
           curve:
-            serializedVersion: 2
             m_Curve: []
             m_PreInfinity: 2
             m_PostInfinity: 2
@@ -311,9 +347,13 @@ MonoBehaviour:
           m_Loop: 0
           m_ZeroValue: 0.5
           m_Range: 1
+          m_InternalLoopingCurve:
+            m_Curve: []
+            m_PreInfinity: 2
+            m_PostInfinity: 2
+            m_RotationOrder: 4
         lumVSsat:
           curve:
-            serializedVersion: 2
             m_Curve: []
             m_PreInfinity: 2
             m_PostInfinity: 2
@@ -321,11 +361,18 @@ MonoBehaviour:
           m_Loop: 0
           m_ZeroValue: 0.5
           m_Range: 1
+          m_InternalLoopingCurve:
+            m_Curve: []
+            m_PreInfinity: 2
+            m_PostInfinity: 2
+            m_RotationOrder: 4
         e_CurrentEditingCurve: 0
         e_CurveY: 1
         e_CurveR: 0
         e_CurveG: 0
         e_CurveB: 0
+    <isDirty>k__BackingField: 0
+    <bakedLut>k__BackingField: {fileID: 0}
   userLut:
     m_Enabled: 0
     m_Settings:
@@ -347,7 +394,11 @@ MonoBehaviour:
     m_Enabled: 1
     m_Settings:
       mode: 0
-      color: {r: 0.52205884, g: 0.52205884, b: 0.52205884, a: 1}
+      color:
+        r: 0.52205884
+        g: 0.52205884
+        b: 0.52205884
+        a: 1
       center: {x: 0.5, y: 0.5}
       intensity: 0.33
       smoothness: 0.75
@@ -357,6 +408,7 @@ MonoBehaviour:
       rounded: 0
   dithering:
     m_Enabled: 0
+    m_Settings: {}
   monitors:
     currentMonitorID: 0
     refreshOnPlay: 0
