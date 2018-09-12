@@ -1,7 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
-using System;
 
 public class ActorAnimationEvents : MonoBehaviour
 {
@@ -9,7 +6,8 @@ public class ActorAnimationEvents : MonoBehaviour
 
 	private void Awake()
 	{
-		player = transform.GetComponentInChildren<Player>();
+
+		player = (transform.parent ?? transform).GetComponentInChildren<Player>();
 	}
 
 	public void CancelOK()

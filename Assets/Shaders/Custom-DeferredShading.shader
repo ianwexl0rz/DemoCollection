@@ -30,7 +30,6 @@ CGPROGRAM
 #include "UnityDeferredLibrary.cginc"
 #include "UnityPBSLighting.cginc"
 //#include "UnityStandardUtils.cginc"
-#include "CustomGBuffer.cginc"
 //#include "UnityGBuffer.cginc"
 //#include "UnityStandardBRDF.cginc"
 

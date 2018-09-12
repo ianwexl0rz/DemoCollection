@@ -123,44 +123,43 @@ ModelImporter:
     rigImportErrors: 
     rigImportWarnings: 
     animationImportErrors: 
-    animationImportWarnings: "\nClip 'runfaster' has import animation warnings that
-      might lower retargeting quality:\nNote: Activate translation DOF on avatar to
-      improve retargeting quality.\n\t'bangs1' is inbetween humanoid transforms and
-      has rotation animation that will be discarded.\n\nClip 'swing' has import animation
-      warnings that might lower retargeting quality:\nNote: Activate translation DOF
-      on avatar to improve retargeting quality.\n\t'bangs1' is inbetween humanoid
-      transforms and has rotation animation that will be discarded.\n\nClip 'swing_forward'
-      has import animation warnings that might lower retargeting quality:\nNote: Activate
-      translation DOF on avatar to improve retargeting quality.\n\t'bangs1' is inbetween
-      humanoid transforms and has rotation animation that will be discarded.\n\nClip
+    animationImportWarnings: "\nClip 'dodgeL' has import animation warnings that might
+      lower retargeting quality:\nNote: Activate translation DOF on avatar to improve
+      retargeting quality.\n\t'foot_R' has scale animation that will be discarded.\n\nClip
+      'runfaster' has import animation warnings that might lower retargeting quality:\nNote:
+      Activate translation DOF on avatar to improve retargeting quality.\n\t'bangs1'
+      is inbetween humanoid transforms and has rotation animation that will be discarded.\n\nClip
+      'swing' has import animation warnings that might lower retargeting quality:\nNote:
+      Activate translation DOF on avatar to improve retargeting quality.\n\t'bangs1'
+      is inbetween humanoid transforms and has rotation animation that will be discarded.\n\nClip
+      'swing_forward' has import animation warnings that might lower retargeting quality:\nNote:
+      Activate translation DOF on avatar to improve retargeting quality.\n\t'bangs1'
+      is inbetween humanoid transforms and has rotation animation that will be discarded.\n\nClip
       'swing_forward_holds' has import animation warnings that might lower retargeting
       quality:\nNote: Activate translation DOF on avatar to improve retargeting quality.\n\t'bangs1'
       is inbetween humanoid transforms and has rotation animation that will be discarded.\n\nClip
-      'swordSwing' has import animation warnings that might lower retargeting quality:\nNote:
-      Activate translation DOF on avatar to improve retargeting quality.\n\t'foot_L'
-      has scale animation that will be discarded.\n\nClip 'swordSwing2' has import
-      animation warnings that might lower retargeting quality:\nNote: Activate translation
-      DOF on avatar to improve retargeting quality.\n\t'sideBangs1_L' has translation
-      animation that will be discarded.\n\t'bangs1' is inbetween humanoid transforms
-      and has rotation animation that will be discarded.\n\t'sideBangs1_R' has translation
-      animation that will be discarded.\n\nClip 'walk_sidewaysL' has import animation
+      'swordSwing2' has import animation warnings that might lower retargeting quality:\nNote:
+      Activate translation DOF on avatar to improve retargeting quality.\n\t'sideBangs1_L'
+      has translation animation that will be discarded.\n\t'bangs1' is inbetween humanoid
+      transforms and has rotation animation that will be discarded.\n\t'sideBangs1_R'
+      has translation animation that will be discarded.\n\nClip 'walk_sidewaysL' has
+      import animation warnings that might lower retargeting quality:\nNote: Activate
+      translation DOF on avatar to improve retargeting quality.\n\t'sideBangs1_L'
+      has translation animation that will be discarded.\n\t'sideBangs1_R' has translation
+      animation that will be discarded.\n\nClip 'walk_sidewaysR' has import animation
       warnings that might lower retargeting quality:\nNote: Activate translation DOF
       on avatar to improve retargeting quality.\n\t'sideBangs1_L' has translation
       animation that will be discarded.\n\t'sideBangs1_R' has translation animation
-      that will be discarded.\n\nClip 'walk_sidewaysR' has import animation warnings
-      that might lower retargeting quality:\nNote: Activate translation DOF on avatar
-      to improve retargeting quality.\n\t'sideBangs1_L' has translation animation
+      that will be discarded.\n\nClip 'walk2' has import animation warnings that might
+      lower retargeting quality:\nNote: Activate translation DOF on avatar to improve
+      retargeting quality.\n\t'sideBangs1_L' has translation animation that will be
+      discarded.\n\t'bangs1' is inbetween humanoid transforms and has rotation animation
       that will be discarded.\n\t'sideBangs1_R' has translation animation that will
-      be discarded.\n\nClip 'walk2' has import animation warnings that might lower
+      be discarded.\n\nClip 'walk3' has import animation warnings that might lower
       retargeting quality:\nNote: Activate translation DOF on avatar to improve retargeting
       quality.\n\t'sideBangs1_L' has translation animation that will be discarded.\n\t'bangs1'
       is inbetween humanoid transforms and has rotation animation that will be discarded.\n\t'sideBangs1_R'
-      has translation animation that will be discarded.\n\nClip 'walk3' has import
-      animation warnings that might lower retargeting quality:\nNote: Activate translation
-      DOF on avatar to improve retargeting quality.\n\t'sideBangs1_L' has translation
-      animation that will be discarded.\n\t'bangs1' is inbetween humanoid transforms
-      and has rotation animation that will be discarded.\n\t'sideBangs1_R' has translation
-      animation that will be discarded.\n"
+      has translation animation that will be discarded.\n"
     animationRetargetingWarnings: 
     animationDoRetargetingWarnings: 0
     importAnimatedCustomProperties: 0
@@ -425,8 +424,68 @@ ModelImporter:
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
       events: []
-      transformMask: []
-      maskType: 3
+      transformMask:
+      - path: 
+        weight: 1
+      - path: Armature
+        weight: 1
+      - path: Armature/rootBone
+        weight: 1
+      - path: Armature/rootBone/armControl_L
+        weight: 1
+      - path: Armature/rootBone/armControl_L/weaponBone_L
+        weight: 1
+      - path: Armature/rootBone/Body
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/head
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/head/bangs1
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/head/bangs1/bangs2
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/head/sideBangs1_L
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/head/sideBangs1_L/sideBangs2_L
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/head/sideBangs1_R
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/head/sideBangs1_R/sideBangs2_R
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/upperArm_L
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/upperArm_L/foreArm_L
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/upperArm_L/foreArm_L/handNull_L
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/upperArm_R
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/upperArm_R/foreArm_R
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/upperArm_R/foreArm_R/handNull_R
+        weight: 1
+      - path: Armature/rootBone/Body/thigh_L
+        weight: 1
+      - path: Armature/rootBone/Body/thigh_L/shin_L
+        weight: 1
+      - path: Armature/rootBone/Body/thigh_L/shin_L/foot_L
+        weight: 1
+      - path: Armature/rootBone/Body/thigh_R
+        weight: 1
+      - path: Armature/rootBone/Body/thigh_R/shin_R
+        weight: 1
+      - path: Armature/rootBone/Body/thigh_R/shin_R/foot_R
+        weight: 1
+      - path: Armature/rootBone/poleLeg_L
+        weight: 0
+      - path: Armature/rootBone/poleLeg_R
+        weight: 0
+      - path: Cube
+        weight: 0
+      - path: speedSword
+        weight: 0
+      maskType: 0
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
@@ -1124,7 +1183,7 @@ ModelImporter:
     - name: sideBangs1_R
       parentName: head
       position: {x: -0.29506975, y: 0.15745457, z: 0.04961426}
-      rotation: {x: -0.017599005, y: 0.0031777055, z: 0.98391455, w: -0.17774221}
+      rotation: {x: -0.017599005, y: 0.0031777062, z: 0.98391455, w: -0.17774226}
       scale: {x: 1, y: 0.99999946, z: 0.99999994}
     - name: sideBangs2_R
       parentName: sideBangs1_R
@@ -1134,63 +1193,63 @@ ModelImporter:
     - name: upperArm_L
       parentName: Body_001
       position: {x: 0.0007543767, y: -0.055477787, z: -0.002961248}
-      rotation: {x: 0.11218348, y: -0.023018667, z: 0.9587593, w: 0.26012617}
-      scale: {x: 0.99999994, y: 0.99999964, z: 0.99999994}
+      rotation: {x: 0.053901426, y: 0.04926128, z: 0.7171057, w: 0.6931287}
+      scale: {x: 1.0000002, y: 0.9999989, z: 0.9999996}
     - name: foreArm_L
       parentName: upperArm_L
-      position: {x: -0.12018207, y: 0.00000002256129, z: 0.000000001117587}
-      rotation: {x: -0.70331216, y: 0.08231655, z: 0.073041186, w: 0.70231116}
-      scale: {x: 0.9999998, y: 0.9999998, z: 0.99999994}
+      position: {x: -0.12018209, y: -0.00000003241003, z: -0.000000010058284}
+      rotation: {x: -0.70783955, y: 0.037838414, z: 0.018838875, w: 0.7051075}
+      scale: {x: 1.0000001, y: 1, z: 1}
     - name: handNull_L
       parentName: foreArm_L
-      position: {x: -0.12757684, y: 0.00000001131557, z: 0.000000035902488}
-      rotation: {x: -0.23643292, y: -0.1784477, z: -0.08418195, w: 0.95140386}
-      scale: {x: 0.99999994, y: 0.99999994, z: 0.99999994}
+      position: {x: -0.12757684, y: 0.000000010477379, z: 0.000000026333147}
+      rotation: {x: -0.23643291, y: -0.17844765, z: -0.08418195, w: 0.95140386}
+      scale: {x: 1, y: 1, z: 1}
     - name: upperArm_R
       parentName: Body_001
       position: {x: 0.0007543851, y: 0.055477787, z: -0.002961248}
-      rotation: {x: 0.14889637, y: -0.11572544, z: 0.95158225, w: -0.24275243}
-      scale: {x: 0.99999994, y: 0.9999997, z: 0.9999999}
+      rotation: {x: 0.15351062, y: -0.15236357, z: 0.7025157, w: -0.67800564}
+      scale: {x: 0.9999998, y: 0.9999991, z: 0.99999964}
     - name: foreArm_R
       parentName: upperArm_R
-      position: {x: -0.12018208, y: 0.000000033527613, z: -0.000000006705523}
-      rotation: {x: -0.60754013, y: 0.061411176, z: 0.09132237, w: 0.7866282}
-      scale: {x: 1.0000001, y: 1, z: 0.99999976}
+      position: {x: -0.12018212, y: 0.000000039115548, z: -0.000000001117587}
+      rotation: {x: -0.6097398, y: 0.013229606, z: 0.039670806, w: 0.7914977}
+      scale: {x: 1.0000002, y: 1.0000002, z: 0.9999998}
     - name: handNull_R
       parentName: foreArm_R
-      position: {x: -0.1275769, y: 0.0000000044703485, z: 2.7939692e-10}
-      rotation: {x: 0.9157138, y: -0.124245726, z: -0.16869533, w: -0.34288943}
+      position: {x: -0.12757689, y: 0.000000012852252, z: -0.000000018440188}
+      rotation: {x: 0.9157138, y: -0.12424571, z: -0.16869532, w: -0.34288943}
       scale: {x: 1.0000001, y: 1, z: 1}
     - name: thigh_L
       parentName: Body
       position: {x: -0.025524294, y: -0.035466142, z: 0.012686205}
-      rotation: {x: -0.05046636, y: -0.009971345, z: 0.9970954, w: 0.056165233}
-      scale: {x: 1.0000001, y: 1.0000013, z: 1.000001}
+      rotation: {x: -0.050467554, y: -0.00997127, z: 0.99709535, w: 0.056164946}
+      scale: {x: 1.0000006, y: 1.0000039, z: 1.0000027}
     - name: shin_L
       parentName: thigh_L
-      position: {x: -0.1156756, y: 0.000000016676495, z: -6.286428e-10}
-      rotation: {x: 0.9954988, y: -0.012601589, z: 0.09258841, w: -0.015837686}
-      scale: {x: 1.0000002, y: 1.0000004, z: 0.9999999}
+      position: {x: -0.115675606, y: 0.000000013498357, z: -0.0000000027939677}
+      rotation: {x: 0.99549854, y: -0.012601951, z: 0.092591025, w: -0.01583774}
+      scale: {x: 1.0000002, y: 1.0000005, z: 1.0000001}
     - name: foot_L
       parentName: shin_L
-      position: {x: -0.09510521, y: 0.000000011734665, z: 0.000000008870848}
-      rotation: {x: 0.66667724, y: -0.047840077, z: 0.7422015, w: 0.04888615}
-      scale: {x: 1.0000013, y: 1.0000007, z: 1.0000011}
+      position: {x: -0.09510524, y: 0.000000010617078, z: -0.0000000057974834}
+      rotation: {x: 0.66667634, y: -0.047840435, z: 0.7422023, w: 0.048886377}
+      scale: {x: 0.99999976, y: 1.0000008, z: 1.0000026}
     - name: thigh_R
       parentName: Body
       position: {x: -0.025524288, y: 0.03546616, z: 0.012686187}
-      rotation: {x: -0.050560866, y: 0.009998931, z: 0.99705034, w: -0.056869965}
-      scale: {x: 1, y: 1.0000011, z: 1.0000008}
+      rotation: {x: -0.05056258, y: 0.009998815, z: 0.9970503, w: -0.05686981}
+      scale: {x: 1.0000006, y: 1.0000033, z: 1.0000023}
     - name: shin_R
       parentName: thigh_R
-      position: {x: -0.11567564, y: 0.00000001276494, z: 0.000000005937182}
-      rotation: {x: 0.99559677, y: 0.011820835, z: 0.09269254, w: 0.0074473177}
-      scale: {x: 1.0000004, y: 1.0000002, z: 1}
+      position: {x: -0.11567562, y: 0.0000000026018823, z: 0.000000008940697}
+      rotation: {x: 0.9955964, y: 0.011821355, z: 0.09269625, w: 0.0074472176}
+      scale: {x: 1.0000007, y: 1.0000004, z: 0.9999999}
     - name: foot_R
       parentName: shin_R
-      position: {x: -0.09510522, y: 0.000000007683411, z: -0.0000000012572856}
-      rotation: {x: 0.6670292, y: 0.05350251, z: 0.74188465, w: -0.042622514}
-      scale: {x: 1.0000002, y: 1.000001, z: 1.0000011}
+      position: {x: -0.09510522, y: 0.00000000607688, z: -0.00000000433065}
+      rotation: {x: 0.66702783, y: 0.05350266, z: 0.7418859, w: -0.04262251}
+      scale: {x: 0.9999999, y: 1.000001, z: 1.0000013}
     - name: poleLeg_L
       parentName: rootBone
       position: {x: -0.23106588, y: -0.04848204, z: -0.14086251}
