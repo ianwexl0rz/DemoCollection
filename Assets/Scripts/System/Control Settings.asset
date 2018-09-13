@@ -12,5 +12,7 @@ MonoBehaviour:
   m_Name: Control Settings
   m_EditorClassIdentifier: 
   deadZone: 0
-  lookSensitivity: {x: 200, y: 112.5}
+  _lookSensitivityX: 200
+  _lookSensitivityY: 112.5
+  invertX: 0
   invertY: 1

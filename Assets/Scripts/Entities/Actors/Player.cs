@@ -151,7 +151,7 @@ public class Player : Actor
 		currentSpeed = Vector3.SmoothDamp(currentSpeed, targetSpeed, ref speedSmoothVelocity, speedSmoothTime * (grounded ? 1f : 8f));
 
 		// Cache look sensitivity from GameSettings
-		Vector2 lookSensitivity = ControlSettings.I.lookSensitivity;
+		float lookSensitivityX = ControlSettings.I.lookSensitivityX;
 		InputDevice playerInput = InputManager.ActiveDevice;
 
 		if(lockOn)
@@ -167,12 +167,12 @@ public class Player : Actor
 		{
 			// We want to align the character to the camera
 			look = Camera.main.transform.forward;
-			mesh.Rotate(Vector3.up, playerInput.RightStickX * lookSensitivity.x * Time.deltaTime);
+			mesh.Rotate(Vector3.up, playerInput.RightStickX * lookSensitivityX * Time.deltaTime);
 		}
 		else if(recenter)
 		{
 			// We want to align the camera to the character
-			mesh.Rotate(Vector3.up, playerInput.RightStickX * lookSensitivity.x * Time.deltaTime);
+			mesh.Rotate(Vector3.up, playerInput.RightStickX * lookSensitivityX * Time.deltaTime);
 			look = Quaternion.AngleAxis(Camera.main.transform.eulerAngles.x, mesh.right) * mesh.forward;
 		}
 		else

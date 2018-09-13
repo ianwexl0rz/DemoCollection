@@ -53,6 +53,10 @@ public class GameManager : MonoBehaviour
 
 	private void Start()
 	{
+		// TODO: Spawn all characters from proxy meshes
+		// 1) can take advantage of object pooling
+		// 2) load character status from room data
+
 		SetActivePlayer(playerCharacters[targetIndex]);
 
 		foreach(Player p in playerCharacters)

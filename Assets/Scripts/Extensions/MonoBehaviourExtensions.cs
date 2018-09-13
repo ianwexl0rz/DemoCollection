@@ -16,7 +16,6 @@ public static class MonoBehaviourExtensions
 		action();
 	}
 
-
 	// Start a coroutine and stop an existing coroutine if necessary
 	public static Coroutine OverrideCoroutine(this MonoBehaviour mono, ref Coroutine coroutine, IEnumerator ienumerator)
 	{
