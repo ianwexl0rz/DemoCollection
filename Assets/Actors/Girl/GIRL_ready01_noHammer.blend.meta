@@ -413,7 +413,7 @@ ModelImporter:
       events:
       - time: 0.2506083
         functionName: NewHit
-        data: 
+        data: lightAttack
         objectReferenceParameter: {instanceID: 0}
         floatParameter: 0
         intParameter: 0

@@ -3,7 +3,7 @@
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
@@ -12,13 +12,8 @@ MonoBehaviour:
   m_Name: GirlAttackData
   m_EditorClassIdentifier: 
   _attacks:
-  - name: Sick Move
-    clip: {fileID: 7400000, guid: 3c6d9289ca82cbb43a3d0c343304b7de, type: 2}
+  - name: lightAttack
     damage: 5
     knockback: 4
     stun: 0.25
-  - name: Hammer Strike
-    clip: {fileID: 7400010, guid: 7c5006bb81fdb476199973b6966f1d25, type: 3}
-    damage: 5
-    knockback: 4
-    stun: 0.25
+    rootMotion: 1

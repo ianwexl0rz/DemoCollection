@@ -26,4 +26,27 @@ public static class MonoBehaviourExtensions
 
 		return coroutine = mono.StartCoroutine(ienumerator);
 	}
+
+	// Vector3 extensions
+	public static Vector3 WithX(this Vector3 v, float x)
+	{
+		return new Vector3(x, v.y, v.z);
+	}
+
+	public static Vector3 WithY(this Vector3 v, float y)
+	{
+		return new Vector3(v.x, y, v.z);
+	}
+
+	public static Vector3 WithZ(this Vector3 v, float z)
+	{
+		return new Vector3(v.x, v.y, z);
+	}
+
+	public static float LinearRemap(this float value,
+									 float valueRangeMin, float valueRangeMax,
+									 float newRangeMin, float newRangeMax)
+	{
+		return (value - valueRangeMin) / (valueRangeMax - valueRangeMin) * (newRangeMax - newRangeMin) + newRangeMin;
+	}
 }

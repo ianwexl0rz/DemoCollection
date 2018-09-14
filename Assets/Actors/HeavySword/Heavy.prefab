@@ -171,8 +171,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4659776193117022}
-  - component: {fileID: 95130967920803666}
-  - component: {fileID: 114357144462982690}
   m_Layer: 0
   m_Name: heavySword2
   m_TagString: Untagged
@@ -479,6 +477,8 @@ GameObject:
   - component: {fileID: 114975490345739816}
   - component: {fileID: 136221232741552080}
   - component: {fileID: 54013669590684724}
+  - component: {fileID: 95524687467463414}
+  - component: {fileID: 114017150821268998}
   m_Layer: 8
   m_Name: Heavy
   m_TagString: Untagged
@@ -1005,30 +1005,30 @@ Rigidbody:
   m_Interpolate: 1
   m_Constraints: 112
   m_CollisionDetection: 0
---- !u!95 &95130967920803666
+--- !u!95 &95524687467463414
 Animator:
   serializedVersion: 3
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1222240912583934}
+  m_GameObject: {fileID: 1947941858301876}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 8c96fbc477da0405b9c477725bb7a7fe, type: 3}
-  m_Controller: {fileID: 9100000, guid: 577eeeda8465542d99ad38a77ae2cd60, type: 2}
+  m_Controller: {fileID: 9100000, guid: c97417f297d644503b5f4a021c6fd4dc, type: 2}
   m_CullingMode: 1
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 1
+  m_UpdateMode: 1
+  m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!114 &114357144462982690
+--- !u!114 &114017150821268998
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1222240912583934}
+  m_GameObject: {fileID: 1947941858301876}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7397dc516a4bb9941ae69a063c0bcd19, type: 3}
@@ -1046,7 +1046,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   localTimeScale: 1
-  _mesh: {fileID: 4659776193117022}
+  _mesh: {fileID: 4489367233018182}
   _controller: {fileID: 0}
   isAwake: 1
   activeMaterial: {fileID: 13400000, guid: 2797b4925bfa04d4a8a2d446c2a60cbc, type: 2}

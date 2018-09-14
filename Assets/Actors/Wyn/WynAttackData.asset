@@ -3,7 +3,7 @@
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
@@ -12,8 +12,7 @@ MonoBehaviour:
   m_Name: WynAttackData
   m_EditorClassIdentifier: 
   _attacks:
-  - name: Pretty Cool Attack
-    clip: {fileID: 7400000, guid: 0d3077df84efb154c9ec416e258df601, type: 2}
+  - name: lightAttack
     damage: 5
     knockback: 4
     stun: 0.25

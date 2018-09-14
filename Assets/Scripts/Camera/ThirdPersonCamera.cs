@@ -8,6 +8,7 @@ public class ThirdPersonCamera : MonoBehaviour
 	public Vector3 offset = new Vector3(0f,1.6f,0.7f);
 	public Vector3 dragAmount = Vector3.zero;
 	public float overheadDragScale = 0.5f;
+	public float towardCameraDragScale = 0.5f;
 	public float rotationSmoothTime = 0.12f;
 	public float posSmoothTime = 0.12f;
 	public float lockTime = 0.3f;
@@ -19,7 +20,7 @@ public class ThirdPersonCamera : MonoBehaviour
 	private Vector3 rotation;
 	private Vector3 rotationVelocity;
 
-	private float lockOnDistance = 0f;
+	//private float lockOnDistance = 0f;
 	private float distanceVel;
 	private Vector3 switchVelocity;
 
@@ -124,8 +125,7 @@ public class ThirdPersonCamera : MonoBehaviour
 		if(!player) return;
 		bool lockedOn = player.lockOn && player.lockOnTarget != null;
 
-		Quaternion screenRotation = Quaternion.Euler(0, transform.rotation.eulerAngles.y, 0f);
-		Quaternion invRotation = Quaternion.Euler(0, -transform.rotation.eulerAngles.y, 0f);
+		Quaternion screenRotation = Quaternion.AngleAxis(transform.rotation.eulerAngles.y, Vector3.up);
 
 		if(lockedOn)
 		{
@@ -170,28 +170,30 @@ public class ThirdPersonCamera : MonoBehaviour
 		// NOTE: Rotate dragVector by camera rotation later to put it back into world space
 
 		// Drag less if we're running toward the camera
-		float dragAway = Vector3.Dot(screenRotation * dragVector.normalized, -transform.forward) * 0.5f + 0.5f;
-		Vector3 dragDelta = Vector3.Scale(invRotation * (lastTargetPos - trackPos), dragAmount);
-		dragVector += Vector3.Scale(dragDelta, new Vector3(1f, 1f, Mathf.Lerp(0.5f, 1f, dragAway)));
+		float dragAway = Vector3.Dot(screenRotation * dragVector.normalized, -transform.forward).LinearRemap(-1f, 1f, towardCameraDragScale, 1f);
+
+		Vector3 dragDelta = Quaternion.Inverse(screenRotation) * (lastTargetPos - trackPos);
+		dragVector += Vector3.Scale(dragDelta, dragAmount.WithZ(dragAmount.z * dragAway));
 		dragVector = Vector3.SmoothDamp(dragVector, Vector3.zero, ref dragVectorVelocity, posSmoothTime);
 		lastTargetPos = trackPos;
 
+		
 		// Drag less if we're looking at the ground
-		Vector3 modifiedDragVector = new Vector3(dragVector.x, dragVector.y,
-			dragVector.z * Mathf.Lerp(overheadDragScale, 1f, 1f + transform.forward.y));
+		Vector3 modifiedDragVector = dragVector.WithZ(dragVector.z * Mathf.Lerp(overheadDragScale, 1f, 1f + transform.forward.y));
 
 		Vector3 modifiedPlayerPos = trackPos + screenRotation * modifiedDragVector
 			+ transform.forward * focalHeight * transform.forward.y
 			+ transform.TransformDirection(offset) * distance;
 
+		/*
 		float t = lockedOn ? Mathf.SmoothStep(0f, 1f, blendToLockOn) : blendToLockOn * blendToLockOn;
-
 		Vector3 lockedPos = Vector3.Lerp(trackPos, lookPos, 0.5f);
-
 		float lockOnDistance = Vector3.Distance(trackPos, lockedPos) * 0.25f;
 		float blendedDistance = distance + lockOnDistance * t;
-
 		transform.position = Vector3.Lerp(modifiedPlayerPos, lockedPos, t) - transform.forward * blendedDistance;
+		*/
+
+		transform.position = modifiedPlayerPos - transform.forward * distance;
 
 		Debug.DrawLine(trackPos, trackPos + screenRotation * dragVector, Color.white);
 		Debug.DrawLine(Vector3.Scale(transform.position, Vector3.one - Vector3.up), trackPos, Color.red);

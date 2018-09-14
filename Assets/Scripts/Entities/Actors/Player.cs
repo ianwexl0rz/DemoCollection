@@ -53,9 +53,11 @@ public class Player : Actor
 		Gizmos.DrawSphere(transform.position + Vector3.up * 0.25f + Vector3.down * 0.1f, 0.2f);
 	}
 
-	protected override void ProcessPhysics()
+	IEnumerator ProcessPhysicsForReal()
 	{
-		if(stunTime > 0f) { return; }
+		yield return new WaitForFixedUpdate();
+
+		if(stunTime > 0f) { yield break; }
 
 		RaycastHit[] hits = Physics.SphereCastAll(transform.position + Vector3.up * 0.25f, 0.2f, Vector3.down, 0.1f, ~LayerMask.GetMask("Player"), QueryTriggerInteraction.Ignore);
 		Vector3 groundNormal = Vector3.down;
@@ -136,6 +138,25 @@ public class Player : Actor
 		}
 	}
 
+	protected override void ProcessPhysics()
+	{
+		StartCoroutine(ProcessPhysicsForReal());
+	}
+
+	/*
+	void OnAnimatorMove()
+	{
+		Animator animator = GetComponent<Animator>();
+
+		if(animator)
+		{
+			Vector3 newPosition = transform.position;
+			newPosition.z += animator.GetFloat("WalkSpeed") * Time.deltaTime;
+			transform.position = newPosition;
+		}
+	}
+	*/
+
 	protected override void ProcessInput()
 	{
 		base.ProcessInput();
@@ -211,6 +232,21 @@ public class Player : Actor
 
 			//reference for animator
 			animator.SetFloat("speedPercent", animationSpeedPercent, speedSmoothTime, Time.deltaTime);
+
+			foreach(AnimatorControllerParameter parameter in animator.parameters)
+			{
+				if(parameter.name == "velocityX")
+				{
+					float velocityX = Vector3.Dot(currentSpeed, mesh.right) / runSpeed;
+					animator.SetFloat("velocityX", velocityX, speedSmoothTime, Time.deltaTime);
+				}
+
+				if(parameter.name == "velocityZ")
+				{
+					float velocityZ = Vector3.Dot(currentSpeed, mesh.forward) / runSpeed;
+					animator.SetFloat("velocityZ", velocityZ, speedSmoothTime, Time.deltaTime);
+				}
+			}
 		}
 	}
 
@@ -263,6 +299,8 @@ public class Player : Actor
 
 		while(attackInProgress)
 		{
+			//animator.applyRootMotion = data.rootMotion;
+
 			Collider[] enemies = Physics.OverlapBox(attackBox.transform.position,
 				attackCollider.bounds.extents, attackBox.transform.rotation,
 				LayerMask.GetMask("Enemy", "Player"));
@@ -281,6 +319,7 @@ public class Player : Actor
 
 			yield return null;
 		}
+		//animator.applyRootMotion = false;
 
 		attackBox.SetActive(false);
 	}
@@ -288,5 +327,6 @@ public class Player : Actor
 	public void EndHit()
 	{
 		attackInProgress = false;
+		cancelOK = true;
 	}
 }
