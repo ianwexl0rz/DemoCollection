@@ -50,7 +50,7 @@ public class Player : Actor
 	private void OnDrawGizmosSelected()
 	{
 		// Draw foot collider
-		Gizmos.DrawSphere(transform.position + Vector3.up * 0.25f + Vector3.down * 0.1f, 0.2f);
+		//Gizmos.DrawSphere(transform.position + Vector3.up * 0.25f + Vector3.down * 0.1f, 0.2f);
 	}
 
 	IEnumerator ProcessPhysicsForReal()

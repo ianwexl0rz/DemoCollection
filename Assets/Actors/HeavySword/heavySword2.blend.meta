@@ -163,7 +163,7 @@ ModelImporter:
     animationRetargetingWarnings: 
     animationDoRetargetingWarnings: 0
     importAnimatedCustomProperties: 0
-    importConstraints: 0
+    importConstraints: 1
     animationCompression: 3
     animationRotationError: 0.5
     animationPositionError: 0.5
@@ -396,9 +396,69 @@ ModelImporter:
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
       events: []
-      transformMask: []
-      maskType: 3
-      maskSource: {instanceID: 0}
+      transformMask:
+      - path: 
+        weight: 1
+      - path: Armature
+        weight: 1
+      - path: Armature/rootBone
+        weight: 1
+      - path: Armature/rootBone/armControl_L
+        weight: 1
+      - path: Armature/rootBone/armControl_L/weaponBone_L
+        weight: 1
+      - path: Armature/rootBone/Body
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/head
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/head/bangs1
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/head/bangs1/bangs2
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/head/sideBangs1_L
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/head/sideBangs1_L/sideBangs2_L
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/head/sideBangs1_R
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/head/sideBangs1_R/sideBangs2_R
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/upperArm_L
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/upperArm_L/foreArm_L
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/upperArm_L/foreArm_L/handNull_L
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/upperArm_R
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/upperArm_R/foreArm_R
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/upperArm_R/foreArm_R/handNull_R
+        weight: 1
+      - path: Armature/rootBone/Body/thigh_L
+        weight: 1
+      - path: Armature/rootBone/Body/thigh_L/shin_L
+        weight: 1
+      - path: Armature/rootBone/Body/thigh_L/shin_L/foot_L
+        weight: 1
+      - path: Armature/rootBone/Body/thigh_R
+        weight: 1
+      - path: Armature/rootBone/Body/thigh_R/shin_R
+        weight: 1
+      - path: Armature/rootBone/Body/thigh_R/shin_R/foot_R
+        weight: 1
+      - path: Armature/rootBone/poleLeg_L
+        weight: 1
+      - path: Armature/rootBone/poleLeg_R
+        weight: 1
+      - path: Cube
+        weight: 0
+      - path: speedSword
+        weight: 0
+      maskType: 1
+      maskSource: {fileID: 31900000, guid: 63482078664317442a65e6950eed136c, type: 2}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
       name: jump
@@ -530,19 +590,79 @@ ModelImporter:
       loopTime: 1
       loopBlend: 0
       loopBlendOrientation: 0
-      loopBlendPositionY: 0
+      loopBlendPositionY: 1
       loopBlendPositionXZ: 1
       keepOriginalOrientation: 0
       keepOriginalPositionY: 1
-      keepOriginalPositionXZ: 0
+      keepOriginalPositionXZ: 1
       heightFromFeet: 0
       mirror: 0
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
       events: []
-      transformMask: []
-      maskType: 3
-      maskSource: {instanceID: 0}
+      transformMask:
+      - path: 
+        weight: 1
+      - path: Armature
+        weight: 1
+      - path: Armature/rootBone
+        weight: 1
+      - path: Armature/rootBone/armControl_L
+        weight: 1
+      - path: Armature/rootBone/armControl_L/weaponBone_L
+        weight: 1
+      - path: Armature/rootBone/Body
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/head
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/head/bangs1
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/head/bangs1/bangs2
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/head/sideBangs1_L
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/head/sideBangs1_L/sideBangs2_L
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/head/sideBangs1_R
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/head/sideBangs1_R/sideBangs2_R
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/upperArm_L
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/upperArm_L/foreArm_L
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/upperArm_L/foreArm_L/handNull_L
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/upperArm_R
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/upperArm_R/foreArm_R
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/upperArm_R/foreArm_R/handNull_R
+        weight: 1
+      - path: Armature/rootBone/Body/thigh_L
+        weight: 1
+      - path: Armature/rootBone/Body/thigh_L/shin_L
+        weight: 1
+      - path: Armature/rootBone/Body/thigh_L/shin_L/foot_L
+        weight: 1
+      - path: Armature/rootBone/Body/thigh_R
+        weight: 1
+      - path: Armature/rootBone/Body/thigh_R/shin_R
+        weight: 1
+      - path: Armature/rootBone/Body/thigh_R/shin_R/foot_R
+        weight: 1
+      - path: Armature/rootBone/poleLeg_L
+        weight: 1
+      - path: Armature/rootBone/poleLeg_R
+        weight: 1
+      - path: Cube
+        weight: 0
+      - path: speedSword
+        weight: 0
+      maskType: 1
+      maskSource: {fileID: 31900000, guid: 63482078664317442a65e6950eed136c, type: 2}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
       name: runslow
@@ -652,23 +772,118 @@ ModelImporter:
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
       events:
-      - time: 0
+      - time: 0.087786265
         functionName: NewHit
         data: lightAttack
         objectReferenceParameter: {instanceID: 0}
         floatParameter: 0
         intParameter: 0
         messageOptions: 0
-      - time: 0.9871559
+      - time: 0.22699332
         functionName: EndHit
         data: 
         objectReferenceParameter: {instanceID: 0}
         floatParameter: 0
         intParameter: 0
         messageOptions: 0
-      transformMask: []
-      maskType: 3
-      maskSource: {instanceID: 0}
+      - time: 0.44715446
+        functionName: NewHit
+        data: lightAttack
+        objectReferenceParameter: {instanceID: 0}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      - time: 0.51717556
+        functionName: EndHit
+        data: 
+        objectReferenceParameter: {instanceID: 0}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      - time: 0.70229006
+        functionName: NewHit
+        data: lightAttack
+        objectReferenceParameter: {instanceID: 0}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      - time: 0.7748092
+        functionName: EndHit
+        data: 
+        objectReferenceParameter: {instanceID: 0}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      - time: 0.9045802
+        functionName: CancelOK
+        data: 
+        objectReferenceParameter: {instanceID: 0}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      transformMask:
+      - path: 
+        weight: 1
+      - path: Armature
+        weight: 1
+      - path: Armature/rootBone
+        weight: 1
+      - path: Armature/rootBone/armControl_L
+        weight: 1
+      - path: Armature/rootBone/armControl_L/weaponBone_L
+        weight: 1
+      - path: Armature/rootBone/Body
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/head
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/head/bangs1
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/head/bangs1/bangs2
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/head/sideBangs1_L
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/head/sideBangs1_L/sideBangs2_L
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/head/sideBangs1_R
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/head/sideBangs1_R/sideBangs2_R
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/upperArm_L
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/upperArm_L/foreArm_L
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/upperArm_L/foreArm_L/handNull_L
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/upperArm_R
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/upperArm_R/foreArm_R
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/upperArm_R/foreArm_R/handNull_R
+        weight: 1
+      - path: Armature/rootBone/Body/thigh_L
+        weight: 1
+      - path: Armature/rootBone/Body/thigh_L/shin_L
+        weight: 1
+      - path: Armature/rootBone/Body/thigh_L/shin_L/foot_L
+        weight: 1
+      - path: Armature/rootBone/Body/thigh_R
+        weight: 1
+      - path: Armature/rootBone/Body/thigh_R/shin_R
+        weight: 1
+      - path: Armature/rootBone/Body/thigh_R/shin_R/foot_R
+        weight: 1
+      - path: Armature/rootBone/poleLeg_L
+        weight: 1
+      - path: Armature/rootBone/poleLeg_R
+        weight: 1
+      - path: Cube
+        weight: 0
+      - path: speedSword
+        weight: 0
+      maskType: 1
+      maskSource: {fileID: 31900000, guid: 63482078664317442a65e6950eed136c, type: 2}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
       name: swordSwing
@@ -800,11 +1015,11 @@ ModelImporter:
       loopTime: 1
       loopBlend: 0
       loopBlendOrientation: 0
-      loopBlendPositionY: 0
-      loopBlendPositionXZ: 0
+      loopBlendPositionY: 1
+      loopBlendPositionXZ: 1
       keepOriginalOrientation: 0
       keepOriginalPositionY: 1
-      keepOriginalPositionXZ: 0
+      keepOriginalPositionXZ: 1
       heightFromFeet: 0
       mirror: 0
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
@@ -853,19 +1068,79 @@ ModelImporter:
       loopTime: 1
       loopBlend: 0
       loopBlendOrientation: 0
-      loopBlendPositionY: 0
-      loopBlendPositionXZ: 0
+      loopBlendPositionY: 1
+      loopBlendPositionXZ: 1
       keepOriginalOrientation: 0
       keepOriginalPositionY: 1
-      keepOriginalPositionXZ: 0
+      keepOriginalPositionXZ: 1
       heightFromFeet: 0
       mirror: 0
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
       events: []
-      transformMask: []
-      maskType: 3
-      maskSource: {instanceID: 0}
+      transformMask:
+      - path: 
+        weight: 1
+      - path: Armature
+        weight: 1
+      - path: Armature/rootBone
+        weight: 1
+      - path: Armature/rootBone/armControl_L
+        weight: 1
+      - path: Armature/rootBone/armControl_L/weaponBone_L
+        weight: 1
+      - path: Armature/rootBone/Body
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/head
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/head/bangs1
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/head/bangs1/bangs2
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/head/sideBangs1_L
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/head/sideBangs1_L/sideBangs2_L
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/head/sideBangs1_R
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/head/sideBangs1_R/sideBangs2_R
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/upperArm_L
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/upperArm_L/foreArm_L
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/upperArm_L/foreArm_L/handNull_L
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/upperArm_R
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/upperArm_R/foreArm_R
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/upperArm_R/foreArm_R/handNull_R
+        weight: 1
+      - path: Armature/rootBone/Body/thigh_L
+        weight: 1
+      - path: Armature/rootBone/Body/thigh_L/shin_L
+        weight: 1
+      - path: Armature/rootBone/Body/thigh_L/shin_L/foot_L
+        weight: 1
+      - path: Armature/rootBone/Body/thigh_R
+        weight: 1
+      - path: Armature/rootBone/Body/thigh_R/shin_R
+        weight: 1
+      - path: Armature/rootBone/Body/thigh_R/shin_R/foot_R
+        weight: 1
+      - path: Armature/rootBone/poleLeg_L
+        weight: 1
+      - path: Armature/rootBone/poleLeg_R
+        weight: 1
+      - path: Cube
+        weight: 0
+      - path: speedSword
+        weight: 0
+      maskType: 1
+      maskSource: {fileID: 31900000, guid: 63482078664317442a65e6950eed136c, type: 2}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
       name: walk_sidewaysR
@@ -881,19 +1156,79 @@ ModelImporter:
       loopTime: 1
       loopBlend: 0
       loopBlendOrientation: 0
-      loopBlendPositionY: 0
-      loopBlendPositionXZ: 0
+      loopBlendPositionY: 1
+      loopBlendPositionXZ: 1
       keepOriginalOrientation: 0
       keepOriginalPositionY: 1
-      keepOriginalPositionXZ: 0
+      keepOriginalPositionXZ: 1
       heightFromFeet: 0
       mirror: 0
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
       events: []
-      transformMask: []
-      maskType: 3
-      maskSource: {instanceID: 0}
+      transformMask:
+      - path: 
+        weight: 1
+      - path: Armature
+        weight: 1
+      - path: Armature/rootBone
+        weight: 1
+      - path: Armature/rootBone/armControl_L
+        weight: 1
+      - path: Armature/rootBone/armControl_L/weaponBone_L
+        weight: 1
+      - path: Armature/rootBone/Body
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/head
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/head/bangs1
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/head/bangs1/bangs2
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/head/sideBangs1_L
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/head/sideBangs1_L/sideBangs2_L
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/head/sideBangs1_R
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/head/sideBangs1_R/sideBangs2_R
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/upperArm_L
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/upperArm_L/foreArm_L
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/upperArm_L/foreArm_L/handNull_L
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/upperArm_R
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/upperArm_R/foreArm_R
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/upperArm_R/foreArm_R/handNull_R
+        weight: 1
+      - path: Armature/rootBone/Body/thigh_L
+        weight: 1
+      - path: Armature/rootBone/Body/thigh_L/shin_L
+        weight: 1
+      - path: Armature/rootBone/Body/thigh_L/shin_L/foot_L
+        weight: 1
+      - path: Armature/rootBone/Body/thigh_R
+        weight: 1
+      - path: Armature/rootBone/Body/thigh_R/shin_R
+        weight: 1
+      - path: Armature/rootBone/Body/thigh_R/shin_R/foot_R
+        weight: 1
+      - path: Armature/rootBone/poleLeg_L
+        weight: 1
+      - path: Armature/rootBone/poleLeg_R
+        weight: 1
+      - path: Cube
+        weight: 0
+      - path: speedSword
+        weight: 0
+      maskType: 1
+      maskSource: {fileID: 31900000, guid: 63482078664317442a65e6950eed136c, type: 2}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
       name: walk2
@@ -909,19 +1244,79 @@ ModelImporter:
       loopTime: 1
       loopBlend: 0
       loopBlendOrientation: 0
-      loopBlendPositionY: 0
-      loopBlendPositionXZ: 0
+      loopBlendPositionY: 1
+      loopBlendPositionXZ: 1
       keepOriginalOrientation: 0
       keepOriginalPositionY: 1
-      keepOriginalPositionXZ: 0
+      keepOriginalPositionXZ: 1
       heightFromFeet: 0
       mirror: 0
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
       events: []
-      transformMask: []
-      maskType: 3
-      maskSource: {instanceID: 0}
+      transformMask:
+      - path: 
+        weight: 1
+      - path: Armature
+        weight: 1
+      - path: Armature/rootBone
+        weight: 1
+      - path: Armature/rootBone/armControl_L
+        weight: 1
+      - path: Armature/rootBone/armControl_L/weaponBone_L
+        weight: 1
+      - path: Armature/rootBone/Body
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/head
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/head/bangs1
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/head/bangs1/bangs2
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/head/sideBangs1_L
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/head/sideBangs1_L/sideBangs2_L
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/head/sideBangs1_R
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/head/sideBangs1_R/sideBangs2_R
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/upperArm_L
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/upperArm_L/foreArm_L
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/upperArm_L/foreArm_L/handNull_L
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/upperArm_R
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/upperArm_R/foreArm_R
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/upperArm_R/foreArm_R/handNull_R
+        weight: 1
+      - path: Armature/rootBone/Body/thigh_L
+        weight: 1
+      - path: Armature/rootBone/Body/thigh_L/shin_L
+        weight: 1
+      - path: Armature/rootBone/Body/thigh_L/shin_L/foot_L
+        weight: 1
+      - path: Armature/rootBone/Body/thigh_R
+        weight: 1
+      - path: Armature/rootBone/Body/thigh_R/shin_R
+        weight: 1
+      - path: Armature/rootBone/Body/thigh_R/shin_R/foot_R
+        weight: 1
+      - path: Armature/rootBone/poleLeg_L
+        weight: 1
+      - path: Armature/rootBone/poleLeg_R
+        weight: 1
+      - path: Cube
+        weight: 0
+      - path: speedSword
+        weight: 0
+      maskType: 1
+      maskSource: {fileID: 31900000, guid: 63482078664317442a65e6950eed136c, type: 2}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
       name: walk3
@@ -937,11 +1332,11 @@ ModelImporter:
       loopTime: 1
       loopBlend: 0
       loopBlendOrientation: 0
-      loopBlendPositionY: 0
-      loopBlendPositionXZ: 0
+      loopBlendPositionY: 1
+      loopBlendPositionXZ: 1
       keepOriginalOrientation: 0
       keepOriginalPositionY: 1
-      keepOriginalPositionXZ: 0
+      keepOriginalPositionXZ: 1
       heightFromFeet: 0
       mirror: 0
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
@@ -965,19 +1360,79 @@ ModelImporter:
       loopTime: 1
       loopBlend: 0
       loopBlendOrientation: 0
-      loopBlendPositionY: 0
-      loopBlendPositionXZ: 0
+      loopBlendPositionY: 1
+      loopBlendPositionXZ: 1
       keepOriginalOrientation: 0
       keepOriginalPositionY: 1
-      keepOriginalPositionXZ: 0
+      keepOriginalPositionXZ: 1
       heightFromFeet: 0
       mirror: 0
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
       events: []
-      transformMask: []
-      maskType: 3
-      maskSource: {instanceID: 0}
+      transformMask:
+      - path: 
+        weight: 1
+      - path: Armature
+        weight: 1
+      - path: Armature/rootBone
+        weight: 1
+      - path: Armature/rootBone/armControl_L
+        weight: 1
+      - path: Armature/rootBone/armControl_L/weaponBone_L
+        weight: 1
+      - path: Armature/rootBone/Body
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/head
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/head/bangs1
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/head/bangs1/bangs2
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/head/sideBangs1_L
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/head/sideBangs1_L/sideBangs2_L
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/head/sideBangs1_R
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/head/sideBangs1_R/sideBangs2_R
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/upperArm_L
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/upperArm_L/foreArm_L
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/upperArm_L/foreArm_L/handNull_L
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/upperArm_R
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/upperArm_R/foreArm_R
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/upperArm_R/foreArm_R/handNull_R
+        weight: 1
+      - path: Armature/rootBone/Body/thigh_L
+        weight: 1
+      - path: Armature/rootBone/Body/thigh_L/shin_L
+        weight: 1
+      - path: Armature/rootBone/Body/thigh_L/shin_L/foot_L
+        weight: 1
+      - path: Armature/rootBone/Body/thigh_R
+        weight: 1
+      - path: Armature/rootBone/Body/thigh_R/shin_R
+        weight: 1
+      - path: Armature/rootBone/Body/thigh_R/shin_R/foot_R
+        weight: 1
+      - path: Armature/rootBone/poleLeg_L
+        weight: 1
+      - path: Armature/rootBone/poleLeg_R
+        weight: 1
+      - path: Cube
+        weight: 0
+      - path: speedSword
+        weight: 0
+      maskType: 1
+      maskSource: {fileID: 31900000, guid: 63482078664317442a65e6950eed136c, type: 2}
       additiveReferencePoseFrame: 0
     isReadable: 1
   meshes:
