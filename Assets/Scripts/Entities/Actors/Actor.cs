@@ -6,10 +6,6 @@ using System.Collections;
 public class Actor : Entity
 {
 	[SerializeField]
-	protected Transform _mesh = null;
-	public Transform mesh { get { return _mesh; } private set { _mesh = value; } }
-
-	[SerializeField]
 	protected ActorController _controller = null;
 
 	public bool isAwake = false;
@@ -18,7 +14,7 @@ public class Actor : Entity
 	public PhysicMaterial stunnedMaterial = null;
 
 	public Vector3 move { get; set; }
-	public Vector3 look { get; set; }
+	public float look { get; set; }
 	public bool lockOn { get; set; }
 
 	public Transform lockOnTarget = null;
@@ -52,7 +48,7 @@ public class Actor : Entity
 
 	private void Start()
 	{
-		look = transform.forward;
+		//look = transform.forward;
 
 		if(controller != null)
 		{

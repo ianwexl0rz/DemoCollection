@@ -9,6 +9,7 @@ public class AttackBehaviour : StateMachineBehaviour
 	override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
 	{
 		player = animator.GetComponent<Player>();
+		player.rootMotionOverride = applyRootMotion;
 		if(applyRootMotion) player.animator.applyRootMotion = true;
 		Debug.Log("Attack Enter");
 	}
@@ -23,6 +24,7 @@ public class AttackBehaviour : StateMachineBehaviour
 	{
 		base.OnStateExit(animator, stateInfo, layerIndex);
 		animator.applyRootMotion = false;
+		player.rootMotionOverride = false;
 		player.SetCancelOK();
 	}
 

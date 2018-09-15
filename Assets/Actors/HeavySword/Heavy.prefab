@@ -959,7 +959,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 1
-  m_Constraints: 112
+  m_Constraints: 80
   m_CollisionDetection: 0
 --- !u!95 &95524687467463414
 Animator:
@@ -972,7 +972,7 @@ Animator:
   m_Avatar: {fileID: 9000000, guid: 8c96fbc477da0405b9c477725bb7a7fe, type: 3}
   m_Controller: {fileID: 9100000, guid: c97417f297d644503b5f4a021c6fd4dc, type: 2}
   m_CullingMode: 1
-  m_UpdateMode: 1
+  m_UpdateMode: 0
   m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_WarningMessage: 
@@ -1015,7 +1015,10 @@ MonoBehaviour:
   jumpHeight: 1.5
   gravityMult: 1
   speedSmoothTime: 0.05
-  turnSmoothTime: 0.06
+  angleControllerConfig: {fileID: 11400000, guid: 9d23314fd1492584da56ef25598ab232,
+    type: 2}
+  angularVelocityControllerConfig: {fileID: 11400000, guid: c29f48e699ec26445a33657059edbdf3,
+    type: 2}
   aimingMode: 0
   recenter: 0
   attackDataSet: {fileID: 11400000, guid: 7b599c3afc5abd14e97032bd4e49c044, type: 2}

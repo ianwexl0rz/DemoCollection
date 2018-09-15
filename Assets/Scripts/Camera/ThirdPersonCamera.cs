@@ -7,12 +7,13 @@ public class ThirdPersonCamera : MonoBehaviour
 	public Vector2 pitchMinMax = new Vector2(-40, 85);
 	public Vector3 offset = new Vector3(0f,1.6f,0.7f);
 	public Vector3 dragAmount = Vector3.zero;
-	public float overheadDragScale = 0.5f;
-	public float towardCameraDragScale = 0.5f;
-	public float rotationSmoothTime = 0.12f;
 	public float posSmoothTime = 0.12f;
+	public float rotationSmoothTime = 0.12f;
+	public float turnWithPlayerFactor = 20f;
 	public float lockTime = 0.3f;
 	public float unlockTime = 0.6f;
+	public float towardCameraDragScale = 0.5f;
+	public float overheadDragScale = 0.5f;
 
 	private float yaw; //rotation on the y axis
 	private float pitch; //rotation on the x axis
@@ -81,40 +82,50 @@ public class ThirdPersonCamera : MonoBehaviour
 
 			InputDevice playerInput = InputManager.ActiveDevice;
 
-			float yawDelta = playerInput.RightStickX * lookSensitivityX * Time.deltaTime;
-
 			if(player.lockOn && player.lockOnTarget != null)
 			{
 				// Locked on to a target
-				yawDelta *= 0.5f;
+				yaw += playerInput.RightStickX * lookSensitivityX * Time.deltaTime * 0.5f;
 
 				//yaw = Quaternion.LookRotation(player.lockOnTarget.position - player.transform.position).eulerAngles.y;
 			}
 			else if(player.aimingMode)
 			{
 				// Aiming mode - move the camera directly and the character should follow
+				yaw += playerInput.RightStickX * lookSensitivityX * Time.deltaTime * 0.5f;
+
 				// No smoothing!
 				smooth = 0f;
 			}
 			else if(player.recenter)
 			{
 				// Re-center mode - move the character directly and the camera should follow
-				yaw = Quaternion.LookRotation(player.look).eulerAngles.y;
+				yaw = player.transform.eulerAngles.y;
 			}
 			else
 			{
 				// Not locked on
-				// Rotate the camera slightly in the direction we're moving (like Dark Souls)
-				yawDelta += Mathf.Abs(playerInput.LeftStickX) * playerInput.LeftStickX * 20f * Time.deltaTime;
+				yaw += playerInput.RightStickX * lookSensitivityX * Time.deltaTime * 0.5f;
 			}
-
-			yaw += yawDelta;
 
 			pitch += playerInput.RightStickY * lookSensitivityY * Time.deltaTime;
 			pitch = Mathf.Clamp(pitch, pitchMinMax.x, pitchMinMax.y);
 
 			rotation.x = Mathf.SmoothDampAngle(rotation.x, pitch, ref rotationVelocity.x, rotationSmoothTime * smooth);
 			rotation.y = Mathf.SmoothDampAngle(rotation.y, yaw, ref rotationVelocity.y, rotationSmoothTime * smooth);
+
+			// Rotate the camera slightly in the direction we're moving
+			Vector3 localDragVector = transform.TransformDirection(dragVector);
+			if(localDragVector.sqrMagnitude >= 1f)
+			{
+				Vector3.Normalize(localDragVector);
+			}
+			float turnFactor = Vector3.Dot(localDragVector, -transform.right);
+			float turnDelta = Mathf.Abs(turnFactor) * turnFactor * turnWithPlayerFactor * Time.deltaTime;
+
+			// Add it after rotation smoothing because it's driven by drag (already smoothed)
+			yaw += turnDelta;
+			rotation.y += turnDelta;
 
 			transform.eulerAngles = rotation;
 		}

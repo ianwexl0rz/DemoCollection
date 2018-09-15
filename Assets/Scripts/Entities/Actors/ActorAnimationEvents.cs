@@ -18,7 +18,6 @@ public class ActorAnimationEvents : MonoBehaviour
 	public void NewHit(AnimationEvent animEvent)
 	{
 		AttackData data = player.attackDataSet.attacks.Find(d => d.name == animEvent.stringParameter);
-		//AttackData data = player.attackDataSet.attacks.Find(d => d.clip == animEvent.animatorClipInfo.clip);
 
 		if(data != null)
 		{

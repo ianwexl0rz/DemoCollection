@@ -12,7 +12,12 @@ public class Player : Actor
 	public float jumpHeight = 4f;
 	public float gravityMult = 1f;
 	public float speedSmoothTime = 0.1f;
-	public float turnSmoothTime = 0.2f; //time it takets from angle to go from current value to target value
+	public PIDConfig angleControllerConfig = null;
+	public PIDConfig angularVelocityControllerConfig = null;
+
+	private PID angleController = null;
+	private PID angularVelocityController = null;
+
 
 	public bool aimingMode = false;
 	public bool recenter = false;
@@ -22,18 +27,19 @@ public class Player : Actor
 
 	private Collider attackCollider = null;
 	private Vector3 currentSpeed;
+	private float playerRotation = 0f;
 
 	private bool grounded = false;
 	private bool queueJump = false;
 
 	private bool doubleJumpOK = false;
 
-	private float turnSmoothVelocity; //ref
 	private Vector3 speedSmoothVelocity;
 
 	public bool run { get; set; }
 	public bool jump { get; set; }
 	public bool attack { get; set; }
+	public bool rootMotionOverride { get; set; }
 
 	private bool attackInProgress = false;
 	private bool cancelOK = true;
@@ -45,6 +51,9 @@ public class Player : Actor
 		base.Awake();
 		attackBox.SetActive(false);
 		attackCollider = attackBox.GetComponent<Collider>();
+
+		angleController = new PID(angleControllerConfig);
+		angularVelocityController = new PID(angularVelocityControllerConfig);
 	}
 
 	private void OnDrawGizmosSelected()
@@ -53,11 +62,16 @@ public class Player : Actor
 		//Gizmos.DrawSphere(transform.position + Vector3.up * 0.25f + Vector3.down * 0.1f, 0.2f);
 	}
 
-	IEnumerator ProcessPhysicsForReal()
+	protected override void ProcessPhysics()
 	{
-		yield return new WaitForFixedUpdate();
+		if(stunTime > 0f) { return; }
 
-		if(stunTime > 0f) { yield break; }
+		if(rootMotionOverride)
+		{
+			currentSpeed = Vector3.zero;
+			UpdateRotation();
+			return;
+		}
 
 		RaycastHit[] hits = Physics.SphereCastAll(transform.position + Vector3.up * 0.25f, 0.2f, Vector3.down, 0.1f, ~LayerMask.GetMask("Player"), QueryTriggerInteraction.Ignore);
 		Vector3 groundNormal = Vector3.down;
@@ -133,29 +147,32 @@ public class Player : Actor
 		}
 		else
 		{
-			rb.velocity = new Vector3(currentSpeed.x, yVelocity, currentSpeed.z);
+			rb.velocity = currentSpeed.WithY(yVelocity);
 			rb.velocity += Physics.gravity.y * (gravityMult - 1f) * Vector3.up * Time.fixedDeltaTime;
 		}
+
+		//rb.rotation = playerRotation;
+
+		UpdateRotation();
 	}
 
-	protected override void ProcessPhysics()
+	protected void UpdateRotation()
 	{
-		StartCoroutine(ProcessPhysicsForReal());
-	}
+		float targetRotation = playerRotation;
 
-	/*
-	void OnAnimatorMove()
-	{
-		Animator animator = GetComponent<Animator>();
-
-		if(animator)
+		if(lockOn && lockOnTarget != null)
 		{
-			Vector3 newPosition = transform.position;
-			newPosition.z += animator.GetFloat("WalkSpeed") * Time.deltaTime;
-			transform.position = newPosition;
+			playerRotation = Vector3.SignedAngle(Vector3.forward, (lockOnTarget.position - transform.position).normalized, Vector3.up);
 		}
+		else if(currentSpeed.WithY(0f).magnitude >= minSpeed)
+		{
+			playerRotation = Vector3.SignedAngle(Vector3.forward, currentSpeed.WithY(0f), Vector3.up);
+		}
+
+		rb.RotateToAngleYaw(angleController, angularVelocityController, playerRotation);
 	}
-	*/
+
+
 
 	protected override void ProcessInput()
 	{
@@ -175,25 +192,26 @@ public class Player : Actor
 		float lookSensitivityX = ControlSettings.I.lookSensitivityX;
 		InputDevice playerInput = InputManager.ActiveDevice;
 
+		/*
 		if(lockOn)
 		{
 			if(lockOnTarget != null)
 			{
 				// If locked on AND we have a target, look at the target
-				look = (lockOnTarget.position - transform.position).normalized;
-				recenter = false;
+				look = Vector3.SignedAngle((lockOnTarget.position - transform.position).normalized, Vector3.forward, Vector3.up);
+				//recenter = false;
 			}
 		}
 		else if(aimingMode)
 		{
 			// We want to align the character to the camera
 			look = Camera.main.transform.forward;
-			mesh.Rotate(Vector3.up, playerInput.RightStickX * lookSensitivityX * Time.deltaTime);
+			//mesh.Rotate(Vector3.up, playerInput.RightStickX * lookSensitivityX * Time.deltaTime);
 		}
 		else if(recenter)
 		{
 			// We want to align the camera to the character
-			mesh.Rotate(Vector3.up, playerInput.RightStickX * lookSensitivityX * Time.deltaTime);
+			//mesh.Rotate(Vector3.up, playerInput.RightStickX * lookSensitivityX * Time.deltaTime);
 			look = Quaternion.AngleAxis(Camera.main.transform.eulerAngles.x, mesh.right) * mesh.forward;
 		}
 		else
@@ -201,14 +219,7 @@ public class Player : Actor
 			// Normal camera
 			look = move == Vector3.zero ? mesh.forward : move.normalized;
 		}
-
-		// Interpolate our rotation to the desired look rotation
-		float smoothLook = Mathf.SmoothDampAngle(mesh.eulerAngles.y, Quaternion.LookRotation(look).eulerAngles.y, ref turnSmoothVelocity, turnSmoothTime * (grounded ? 1f : 4f));
-
-		//if(grounded) // No directional control in the air
-		{
-			mesh.rotation = Quaternion.AngleAxis(smoothLook, Vector3.up);
-		}
+		*/
 
 		if(attack)
 		{
@@ -237,13 +248,13 @@ public class Player : Actor
 			{
 				if(parameter.name == "velocityX")
 				{
-					float velocityX = Vector3.Dot(currentSpeed, mesh.right) / runSpeed;
+					float velocityX = Vector3.Dot(currentSpeed, transform.right) / runSpeed;
 					animator.SetFloat("velocityX", velocityX, speedSmoothTime, Time.deltaTime);
 				}
 
 				if(parameter.name == "velocityZ")
 				{
-					float velocityZ = Vector3.Dot(currentSpeed, mesh.forward) / runSpeed;
+					float velocityZ = Vector3.Dot(currentSpeed, transform.forward) / runSpeed;
 					animator.SetFloat("velocityZ", velocityZ, speedSmoothTime, Time.deltaTime);
 				}
 			}
@@ -299,8 +310,6 @@ public class Player : Actor
 
 		while(attackInProgress)
 		{
-			//animator.applyRootMotion = data.rootMotion;
-
 			Collider[] enemies = Physics.OverlapBox(attackBox.transform.position,
 				attackCollider.bounds.extents, attackBox.transform.rotation,
 				LayerMask.GetMask("Enemy", "Player"));
@@ -319,7 +328,6 @@ public class Player : Actor
 
 			yield return null;
 		}
-		//animator.applyRootMotion = false;
 
 		attackBox.SetActive(false);
 	}

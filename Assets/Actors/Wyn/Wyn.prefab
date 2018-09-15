@@ -697,7 +697,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 1
-  m_Constraints: 112
+  m_Constraints: 80
   m_CollisionDetection: 0
 --- !u!65 &65537947763453212
 BoxCollider:
@@ -791,7 +791,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   localTimeScale: 1
-  _mesh: {fileID: 4577359606590488}
+  _mesh: {fileID: 4260966739980654}
   _controller: {fileID: 0}
   isAwake: 1
   activeMaterial: {fileID: 13400000, guid: 2797b4925bfa04d4a8a2d446c2a60cbc, type: 2}
@@ -804,7 +804,10 @@ MonoBehaviour:
   jumpHeight: 1.5
   gravityMult: 2.5
   speedSmoothTime: 0.05
-  turnSmoothTime: 0.06
+  angleControllerConfig: {fileID: 11400000, guid: 9d23314fd1492584da56ef25598ab232,
+    type: 2}
+  angularVelocityControllerConfig: {fileID: 11400000, guid: c29f48e699ec26445a33657059edbdf3,
+    type: 2}
   aimingMode: 0
   recenter: 0
   attackDataSet: {fileID: 11400000, guid: dc92ae606a85ca1419f16eeb7831eff9, type: 2}

@@ -49,4 +49,18 @@ public static class MonoBehaviourExtensions
 	{
 		return (value - valueRangeMin) / (valueRangeMax - valueRangeMin) * (newRangeMax - newRangeMin) + newRangeMin;
 	}
+
+	public static void RotateToAngleYaw(this Rigidbody rigidbody, PID angleController, PID angularVelocityController, float targetAngle)
+	{
+		float dt = Time.fixedDeltaTime;
+
+		float angleError = Mathf.DeltaAngle(rigidbody.transform.eulerAngles.y, targetAngle);
+		float torqueCorrectionForAngle = angleController.GetOutput(angleError, dt);
+
+		float angularVelocityError = -rigidbody.angularVelocity.y;
+		float torqueCorrectionForAngularVelocity = angularVelocityController.GetOutput(angularVelocityError, dt);
+
+		Vector3 torque = rigidbody.transform.up * (torqueCorrectionForAngle + torqueCorrectionForAngularVelocity);
+		rigidbody.AddTorque(torque, ForceMode.Acceleration);
+	}
 }

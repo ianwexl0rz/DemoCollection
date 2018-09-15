@@ -9,7 +9,6 @@ public class AttackData
 	public float damage = 0f;
 	public float knockback = 0f;
 	public float stun = 0f;
-	public bool rootMotion = false;
 }
 
 public enum AttackType
