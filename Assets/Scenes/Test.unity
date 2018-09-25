@@ -23,7 +23,7 @@ RenderSettings:
   m_AmbientSkyColor: {r: 1, g: 1, b: 1, a: 1}
   m_AmbientEquatorColor: {r: 0.25783002, g: 0.2738935, b: 0.43700004, a: 1}
   m_AmbientGroundColor: {r: 0.37640572, g: 0.66437477, b: 0.86764705, a: 1}
-  m_AmbientIntensity: 0.91
+  m_AmbientIntensity: 0.8
   m_AmbientMode: 0
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
   m_SkyboxMaterial: {fileID: 2100000, guid: ff9d41243c5fdf5419e088325b994f44, type: 2}
@@ -657,6 +657,55 @@ Prefab:
       propertyPath: m_RootOrder
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 136120435856307064, guid: 60fcc4cc7ee37b6479184572e6f0d931,
+        type: 2}
+      propertyPath: m_Center.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 136120435856307064, guid: 60fcc4cc7ee37b6479184572e6f0d931,
+        type: 2}
+      propertyPath: m_Center.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 136120435856307064, guid: 60fcc4cc7ee37b6479184572e6f0d931,
+        type: 2}
+      propertyPath: m_Center.z
+      value: 0.18
+      objectReference: {fileID: 0}
+    - target: {fileID: 136120435856307064, guid: 60fcc4cc7ee37b6479184572e6f0d931,
+        type: 2}
+      propertyPath: m_Direction
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4147869441197932, guid: 60fcc4cc7ee37b6479184572e6f0d931, type: 2}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4147869441197932, guid: 60fcc4cc7ee37b6479184572e6f0d931, type: 2}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 4147869441197932, guid: 60fcc4cc7ee37b6479184572e6f0d931, type: 2}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4147869441197932, guid: 60fcc4cc7ee37b6479184572e6f0d931, type: 2}
+      propertyPath: m_LocalRotation.y
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 4147869441197932, guid: 60fcc4cc7ee37b6479184572e6f0d931, type: 2}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 4147869441197932, guid: 60fcc4cc7ee37b6479184572e6f0d931, type: 2}
+      propertyPath: m_LocalPosition.z
+      value: 0.62
+      objectReference: {fileID: 0}
+    - target: {fileID: 136120435856307064, guid: 60fcc4cc7ee37b6479184572e6f0d931,
+        type: 2}
+      propertyPath: m_Height
+      value: 0.36
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 60fcc4cc7ee37b6479184572e6f0d931, type: 2}
   m_IsPrefabAsset: 0
@@ -679,7 +728,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &565875272
 RectTransform:
   m_ObjectHideFlags: 0
@@ -871,13 +920,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   localTimeScale: 1
-  _mesh: {fileID: 0}
   _controller: {fileID: 0}
   isAwake: 0
   activeMaterial: {fileID: 0}
   stunnedMaterial: {fileID: 0}
   lockOnTarget: {fileID: 0}
   abilities: []
+  hitPauseTimer: 0
 --- !u!65 &658774151
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -981,7 +1030,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!23 &814143030
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -1077,13 +1126,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   localTimeScale: 1
-  _mesh: {fileID: 0}
   _controller: {fileID: 0}
   isAwake: 0
   activeMaterial: {fileID: 0}
   stunnedMaterial: {fileID: 0}
   lockOnTarget: {fileID: 0}
   abilities: []
+  hitPauseTimer: 0
 --- !u!114 &814143036
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1438,7 +1487,7 @@ Light:
   serializedVersion: 8
   m_Type: 1
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Intensity: 0.9
+  m_Intensity: 0.95
   m_Range: 0
   m_SpotAngle: 30
   m_CookieSize: 10
@@ -1751,6 +1800,11 @@ Prefab:
       propertyPath: m_RootOrder
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 65537947763453212, guid: 1447690b66c3cbd4390ad0df5ef89106,
+        type: 2}
+      propertyPath: m_IsTrigger
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1447690b66c3cbd4390ad0df5ef89106, type: 2}
   m_IsPrefabAsset: 0
@@ -1786,6 +1840,7 @@ MonoBehaviour:
   controlSettings: {fileID: 11400000, guid: 491122bfc34e6724c90d93067bb4cc0d, type: 2}
   mainCamera: {fileID: 198612201}
   pausePrefab: {fileID: 938772792}
+  slowMo: 0
   healthBarFill: {fileID: 1644564514}
   playerBrain: {fileID: 11400000, guid: 197438d32256b794faf42212dfaf46b5, type: 2}
   followerBrain: {fileID: 11400000, guid: 3bd6e43a756db3642bc08e8a5ba40b8e, type: 2}

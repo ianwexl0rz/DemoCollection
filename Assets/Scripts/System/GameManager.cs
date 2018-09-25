@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using InControl;
 using System;
 using System.Collections;
+using System.Linq;
 
 public class GameManager : MonoBehaviour
 {
@@ -10,6 +11,7 @@ public class GameManager : MonoBehaviour
 	public ControlSettings controlSettings = null;
 	public ThirdPersonCamera mainCamera = null;
 	public GameObject pausePrefab = null;
+	public bool slowMo = false;
 
 	[Space]
 	[Header("UI")]
@@ -81,10 +83,17 @@ public class GameManager : MonoBehaviour
 				entities.ForEach(entity => entity.CacheRbPosition());
 			}
 
+			List<ParticleSystem> systems = FindObjectsOfType<ParticleSystem>().ToList();
+
 			queuePause = false;
 			gamePaused = !gamePaused;
 			OnPauseGame(gamePaused);
 			pausePrefab.SetActive(gamePaused);
+
+			if(gamePaused)
+				systems.ForEach(ps => ps.Pause());
+			else
+				systems.ForEach(ps => ps.Play());
 		}
 	}
 
@@ -103,7 +112,17 @@ public class GameManager : MonoBehaviour
 		if(InputManager.ActiveDevice.Action4.WasPressed) { CyclePlayer(); }
 
 		// Hold the right bumper for slow-mo!
-		Time.timeScale = InputManager.ActiveDevice.RightBumper.IsPressed ? 0.25f : 1f;
+		//Time.timeScale = InputManager.ActiveDevice.RightBumper.IsPressed ? 0.25f : 1f;
+
+		/*
+		// Local time scale doesn't work right...
+		if(InputManager.ActiveDevice.RightBumper.WasPressed)
+		{
+			slowMo = !slowMo;
+			entities.ForEach(entity => entity.localTimeScale =  slowMo ? 0.25f : 1f);
+			Debug.Log(slowMo);
+		}
+		*/
 
 		UpdateHUD();
 

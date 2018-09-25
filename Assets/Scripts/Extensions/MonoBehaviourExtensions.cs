@@ -50,6 +50,24 @@ public static class MonoBehaviourExtensions
 		return (value - valueRangeMin) / (valueRangeMax - valueRangeMin) * (newRangeMax - newRangeMin) + newRangeMin;
 	}
 
+	/*
+	static public float GetDistPointToLine(Vector3 origin, Vector3 direction, Vector3 point)
+	{
+		Vector3 point2origin = origin - point;
+		Vector3 point2closestPointOnLine = point2origin - Vector3.Dot(point2origin, direction) * direction;
+		return point2closestPointOnLine.magnitude;
+	}
+	*/
+
+	static public Vector3 FindNearestPointOnLine(this Vector3 point, Vector3 origin, Vector3 direction, float maxDistance = Mathf.Infinity)
+	{
+		direction.Normalize();
+		Vector3 lhs = point - origin;
+
+		float dotP = Vector3.Dot(lhs, direction);
+		return origin + direction * Mathf.Clamp(dotP, 0f, maxDistance);
+	}
+
 	public static void RotateToAngleYaw(this Rigidbody rigidbody, PID angleController, PID angularVelocityController, float targetAngle)
 	{
 		float dt = Time.fixedDeltaTime;

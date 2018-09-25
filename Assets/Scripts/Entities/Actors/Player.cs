@@ -15,6 +15,9 @@ public class Player : Actor
 	public PIDConfig angleControllerConfig = null;
 	public PIDConfig angularVelocityControllerConfig = null;
 
+	public GameObject hitSpark;
+	public Transform weaponTransform;
+
 	private PID angleController = null;
 	private PID angularVelocityController = null;
 
@@ -151,6 +154,8 @@ public class Player : Actor
 			rb.velocity += Physics.gravity.y * (gravityMult - 1f) * Vector3.up * Time.fixedDeltaTime;
 		}
 
+		rb.velocity *= localTimeScale;
+
 		//rb.rotation = playerRotation;
 
 		UpdateRotation();
@@ -158,8 +163,6 @@ public class Player : Actor
 
 	protected void UpdateRotation()
 	{
-		float targetRotation = playerRotation;
-
 		if(lockOn && lockOnTarget != null)
 		{
 			playerRotation = Vector3.SignedAngle(Vector3.forward, (lockOnTarget.position - transform.position).normalized, Vector3.up);
@@ -171,8 +174,6 @@ public class Player : Actor
 
 		rb.RotateToAngleYaw(angleController, angularVelocityController, playerRotation);
 	}
-
-
 
 	protected override void ProcessInput()
 	{
@@ -227,6 +228,9 @@ public class Player : Actor
 		}
 
 		UpdateAttackBuffer();
+
+		if(weaponTransform)
+		Debug.DrawLine(weaponTransform.position, weaponTransform.position + weaponTransform.forward * 1, Color.red);
 	}
 
 	protected override void ProcessAnimation()
@@ -239,7 +243,7 @@ public class Player : Actor
 		{
 			//if(!GameManager.I.IsPaused)
 			//control speed percent in animator so that character walks or runs depending on speed
-			float animationSpeedPercent = paused ? 0f : currentSpeed.magnitude / runSpeed;
+			float animationSpeedPercent = physicsPaused ? 0f : currentSpeed.magnitude / runSpeed;
 
 			//reference for animator
 			animator.SetFloat("speedPercent", animationSpeedPercent, speedSmoothTime, Time.deltaTime);
@@ -321,7 +325,22 @@ public class Player : Actor
 
 				if(!hitEnemies.Contains(enemy))
 				{
-					enemy.GetHit(transform.position, data);
+					if(hitSpark && weaponTransform)
+					{
+						// Get the point on the enemy collider that is closest to the middle of the weapon
+						Vector3 hitPoint = enemyCollider.ClosestPoint(weaponTransform.position + weaponTransform.forward * attackCollider.bounds.extents.z);
+
+						// Get the closest point to THAT point along the length of the weapon
+						Vector3 hitSparkPos = hitPoint.FindNearestPointOnLine(weaponTransform.position, weaponTransform.forward, attackCollider.bounds.extents.z * 2f);
+
+						//RaycastHit hitInfo;
+						//Physics.Raycast(weaponTransform.position, weaponTransform.forward, out hitInfo, Mathf.Infinity, LayerMask.GetMask("Enemy", "Player"));
+						//hitSparkPos += hitInfo.normal * 0.2f;
+
+						Instantiate(hitSpark, hitSparkPos, Quaternion.identity, null);
+					}
+
+					enemy.GetHit(this, data);
 					hitEnemies.Add(enemy);
 				}
 			}

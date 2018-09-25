@@ -3,13 +3,13 @@ using System;
 
 public class Entity : MonoBehaviour
 {
-	private Vector3 savedPosition;
+	protected Vector3 savedPosition;
 	private Vector3 savedRbPosition;
 	private Vector3 savedVelocity;
-	private Vector3 savedAngularVelocity;
+	protected Vector3 savedAngularVelocity;
 	private bool savedKinematic;
 
-	protected bool paused;
+	protected bool physicsPaused;
 
 	[HideInInspector]
 	public float localTimeScale = 1f;
@@ -59,23 +59,45 @@ public class Entity : MonoBehaviour
 	{
 	}
 
+	bool savedPhysicsPaused;
+
 	public void PauseEntity(bool value)
 	{
-		PausePhysics(value);
+		
+		if(value)
+		{
+			savedPhysicsPaused = physicsPaused;
+
+			if(!savedPhysicsPaused)
+				PausePhysics(true);
+		}
+		else
+		{
+			if(!savedPhysicsPaused)
+				PausePhysics(false);
+		}
+		
 		OnPauseEntity(value);
 	}
 
+	private float savedLocalTimeScale = 1f;
+
 	public void PausePhysics(bool value)
 	{
-		paused = value;
+		physicsPaused = value;
 
-		if(paused)
+		if(physicsPaused)
 		{
+			savedRbPosition = rb.position;
+			savedPosition = transform.position;
+
+			savedLocalTimeScale = localTimeScale;
 			savedKinematic = rb.isKinematic;
 			savedVelocity = rb.velocity;
 			savedAngularVelocity = rb.angularVelocity;
 			rb.Sleep();
 
+			localTimeScale = 0f;
 			rb.isKinematic = true;
 			rb.velocity = Vector3.zero;
 			rb.angularVelocity = Vector3.zero;
@@ -86,12 +108,12 @@ public class Entity : MonoBehaviour
 		else
 		{
 			rb.WakeUp();
+			localTimeScale = savedLocalTimeScale;
 			rb.isKinematic = savedKinematic;
 			rb.AddForce(savedVelocity, ForceMode.VelocityChange);
 			rb.AddTorque(savedAngularVelocity, ForceMode.VelocityChange);
 
 			rb.position = transform.position = savedRbPosition;
-			//transform.position = savedRbPosition;
 		}
 	}
 }

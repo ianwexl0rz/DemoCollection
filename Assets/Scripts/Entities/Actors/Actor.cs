@@ -56,11 +56,18 @@ public class Actor : Entity
 		}
 	}
 
+	public float hitPauseTimer = 0f;
+
 	public override void OnUpdate()
 	{
 		base.OnUpdate();
 		ProcessInput();
 		ProcessAnimation();
+		if(hitPauseTimer > 0f)
+		{
+			hitPauseTimer -= Time.deltaTime;
+			hitPauseTimer = Mathf.Max(0f, hitPauseTimer);
+		}
 	}
 
 	public override void OnFixedUpdate()
@@ -109,15 +116,15 @@ public class Actor : Entity
 		}
 	}
 
-	public void GetHit(Vector3 attackerPos, AttackData data)
+	public void GetHit(Actor attacker, AttackData data)
 	{
-		this.OverrideCoroutine(ref getHit, Hit(attackerPos, data));
+		this.OverrideCoroutine(ref getHit, Hit(attacker, data));
 		
 	}
 
 	/* ----- COMBAT STUFF ------ */
 
-	private IEnumerator Hit(Vector3 attackerPos, AttackData data)
+	private IEnumerator Hit(Actor attacker, AttackData data)
 	{
 		// Reduce health
 		health = Mathf.Max(health - data.damage, 0f);
@@ -128,9 +135,9 @@ public class Actor : Entity
 		stunTime = Mathf.Max(stunTime, data.stun);
 
 		// Apply knockback
-		rb.velocity = (transform.position - attackerPos).normalized * data.knockback;
+		rb.velocity = (transform.position - attacker.transform.position).normalized * data.knockback;
 
-		StartCoroutine(SlowMo(0.06f, 0.05f));
+		StartCoroutine(HitPause(0.1f, attacker));
 
 		while(stunTime > 0f)
 		{
@@ -158,6 +165,55 @@ public class Actor : Entity
 		}
 	}
 	*/
+
+	private IEnumerator HitPause(float duration, Actor attacker)
+	{
+		//*/
+		Time.timeScale = 0f;
+		yield return new WaitForSecondsRealtime(duration);
+
+		Time.timeScale = 1f;
+		//*/
+
+		/*/
+		float time = 0f;
+		while(time < duration)
+		{
+			//float t = Mathf.Cos(time / duration * 2 * Mathf.PI) * 0.5f + 0.5f;
+			float t = time / duration;
+
+			Time.timeScale = t * t * t * t;
+			yield return null;
+
+			time += Time.unscaledDeltaTime;
+		}
+		Time.timeScale = 1f;
+		//*/
+
+		/*/
+		if(!physicsPaused) PausePhysics(true);
+		if(!attacker.physicsPaused) attacker.PausePhysics(true);
+
+		yield return new WaitForSecondsRealtime(duration);
+
+		PausePhysics(false);
+		attacker.PausePhysics(false);
+		//*/
+
+		/*/
+		while(time < duration)
+		{
+
+
+			time += Time.deltaTime;
+			transform.position = savedPosition + new Vector3(UnityEngine.Random.value,
+				UnityEngine.Random.value,
+				UnityEngine.Random.value).normalized * 0.05f;
+			yield return null;
+		}
+		transform.position = savedPosition;
+		//*/
+	}
 
 
 	//*//

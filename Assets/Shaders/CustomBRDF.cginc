@@ -140,12 +140,19 @@ half4 CustomLighting (half3 diffColor, half3 shadowColor, half3 specColor, half3
 #endif
     //*/
 
+    //float sssTerm = saturate(dot(-viewDir, light.dir + normal));
+    //sssTerm = saturate(pow(sssTerm * 1.5, 1 / translucency));
+
     half3 color =
 #if defined(DIRECTIONAL)
                 diffColor * (gi.diffuse + lerp(light.color * diffuseTerm, 1, pow(translucency, 2.5)))
+                //diffColor * (gi.diffuse + max(light.color * diffuseTerm, sssTerm))
                 //* lerp(1, shadowColor, smoothstep(0.5, -0.25, min(nlUnclamped, nh) * light.color) * (1 - step(translucency, 0)))
+
                 + diffColor * shadowColor * smoothstep(-0.25, 0.25, max(nlUnclamped, nh)) * (1 - diffuseTerm) * translucency * light.color
+
                 //+ diffColor * shadowColor * (1 - diffuseTerm) * translucency * light.color
+                //+ shadowColor * sssTerm
 
                 + max(edgelight * edgeLightStrength * 6 * specColor * (1 + diffColor * 3), specularTerm * FresnelTerm(specColor, lh)) * light.color
 #else

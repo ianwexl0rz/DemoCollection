@@ -1042,13 +1042,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   localTimeScale: 1
-  _mesh: {fileID: 4416901508690764}
   _controller: {fileID: 0}
   isAwake: 1
   activeMaterial: {fileID: 13400000, guid: 2797b4925bfa04d4a8a2d446c2a60cbc, type: 2}
   stunnedMaterial: {fileID: 13400000, guid: df424baae3c13e545b1aa61573299c06, type: 2}
   lockOnTarget: {fileID: 0}
   abilities: []
+  hitPauseTimer: 0
   minSpeed: 0.25
   walkSpeed: 2
   runSpeed: 4
@@ -1059,6 +1059,8 @@ MonoBehaviour:
     type: 2}
   angularVelocityControllerConfig: {fileID: 11400000, guid: c29f48e699ec26445a33657059edbdf3,
     type: 2}
+  hitSpark: {fileID: 1312546261970878, guid: bc7a4bb76e52cad4c8ac1a9c9b37ed1c, type: 2}
+  weaponTransform: {fileID: 4147869441197932}
   aimingMode: 0
   recenter: 0
   attackDataSet: {fileID: 11400000, guid: 7b599c3afc5abd14e97032bd4e49c044, type: 2}

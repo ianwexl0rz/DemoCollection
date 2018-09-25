@@ -127,7 +127,7 @@ public class ThirdPersonCamera : MonoBehaviour
 			yaw += turnDelta;
 			rotation.y += turnDelta;
 
-			transform.eulerAngles = rotation;
+			transform.rotation = Quaternion.Euler(rotation);
 		}
 	}
 
