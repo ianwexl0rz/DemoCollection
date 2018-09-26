@@ -67,6 +67,9 @@ public class Player : Actor
 
 	protected override void ProcessPhysics()
 	{
+		if(attackCoroutine != null)
+			attackCoroutine.MoveNext();
+
 		if(stunTime > 0f) { return; }
 
 		if(rootMotionOverride)
@@ -76,7 +79,7 @@ public class Player : Actor
 			return;
 		}
 
-		RaycastHit[] hits = Physics.SphereCastAll(transform.position + Vector3.up * 0.25f, 0.2f, Vector3.down, 0.1f, ~LayerMask.GetMask("Player"), QueryTriggerInteraction.Ignore);
+		RaycastHit[] hits = Physics.SphereCastAll(transform.position + Vector3.up * 0.25f, 0.2f, Vector3.down, 0.1f, ~LayerMask.GetMask("Actor"), QueryTriggerInteraction.Ignore);
 		Vector3 groundNormal = Vector3.down;
 
 		if(hits.Length > 0)
@@ -230,7 +233,7 @@ public class Player : Actor
 		UpdateAttackBuffer();
 
 		if(weaponTransform)
-		Debug.DrawLine(weaponTransform.position, weaponTransform.position + weaponTransform.forward * 1, Color.red);
+			Debug.DrawLine(weaponTransform.position, weaponTransform.position + weaponTransform.forward * ((CapsuleCollider)attackCollider).height, Color.red);
 	}
 
 	protected override void ProcessAnimation()
@@ -304,6 +307,8 @@ public class Player : Actor
 		cancelOK = true;
 	}
 
+	public IEnumerator attackCoroutine;
+
 	public IEnumerator Attack(AttackData data)
 	{
 		attackBox.SetActive(true);
@@ -314,12 +319,16 @@ public class Player : Actor
 
 		while(attackInProgress)
 		{
-			Collider[] enemies = Physics.OverlapBox(attackBox.transform.position,
-				attackCollider.bounds.extents, attackBox.transform.rotation,
-				LayerMask.GetMask("Enemy", "Player"));
+			RaycastHit[] hits = Physics.RaycastAll(
+				weaponTransform.position,
+				weaponTransform.forward,
+				((CapsuleCollider)attackCollider).height,
+				LayerMask.GetMask("Actor"));
 
-			foreach(Collider enemyCollider in enemies)
+			foreach(RaycastHit hit in hits)
 			{
+				Collider enemyCollider = hit.collider;
+
 				Actor enemy = enemyCollider.GetComponent<Actor>();
 				if(enemy == null || enemy == this) { continue; }
 
@@ -327,17 +336,7 @@ public class Player : Actor
 				{
 					if(hitSpark && weaponTransform)
 					{
-						// Get the point on the enemy collider that is closest to the middle of the weapon
-						Vector3 hitPoint = enemyCollider.ClosestPoint(weaponTransform.position + weaponTransform.forward * attackCollider.bounds.extents.z);
-
-						// Get the closest point to THAT point along the length of the weapon
-						Vector3 hitSparkPos = hitPoint.FindNearestPointOnLine(weaponTransform.position, weaponTransform.forward, attackCollider.bounds.extents.z * 2f);
-
-						//RaycastHit hitInfo;
-						//Physics.Raycast(weaponTransform.position, weaponTransform.forward, out hitInfo, Mathf.Infinity, LayerMask.GetMask("Enemy", "Player"));
-						//hitSparkPos += hitInfo.normal * 0.2f;
-
-						Instantiate(hitSpark, hitSparkPos, Quaternion.identity, null);
+						Instantiate(hitSpark, hit.point, Quaternion.identity, null);
 					}
 
 					enemy.GetHit(this, data);

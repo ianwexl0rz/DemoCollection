@@ -11,7 +11,7 @@ public class AttackBehaviour : StateMachineBehaviour
 		player = animator.GetComponent<Player>();
 		player.rootMotionOverride = applyRootMotion;
 		if(applyRootMotion) player.animator.applyRootMotion = true;
-		Debug.Log("Attack Enter");
+		//Debug.Log("Attack Enter");
 	}
 
 	// OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks

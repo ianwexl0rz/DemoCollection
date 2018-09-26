@@ -129,7 +129,7 @@ public class Actor : Entity
 		// Reduce health
 		health = Mathf.Max(health - data.damage, 0f);
 
-		Debug.Log("Hit " + name + " - HP: " + health + "/" + maxHealth);
+		//Debug.Log("Hit " + name + " - HP: " + health + "/" + maxHealth);
 
 		// Set stun time, if greater than current stun time
 		stunTime = Mathf.Max(stunTime, data.stun);
@@ -137,7 +137,7 @@ public class Actor : Entity
 		// Apply knockback
 		rb.velocity = (transform.position - attacker.transform.position).normalized * data.knockback;
 
-		StartCoroutine(HitPause(0.1f, attacker));
+		GameManager.I.hitPauseTimer = Time.fixedDeltaTime * 8f;
 
 		while(stunTime > 0f)
 		{
@@ -168,11 +168,18 @@ public class Actor : Entity
 
 	private IEnumerator HitPause(float duration, Actor attacker)
 	{
-		//*/
+		/*/
 		Time.timeScale = 0f;
 		yield return new WaitForSecondsRealtime(duration);
 
 		Time.timeScale = 1f;
+		//*/
+
+		//*/
+		GameManager.I.queuePauseGame = true;
+		yield return new WaitForSeconds(duration);
+
+		GameManager.I.queuePauseGame = true;
 		//*/
 
 		/*/

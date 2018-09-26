@@ -26,10 +26,12 @@ public class GameManager : MonoBehaviour
 	private List<Player> playerCharacters;
 	private List<Entity> entities = new List<Entity>();
 
+	public Action<bool> PauseAllPhysics = delegate (bool value) { };
 	public Action<bool> OnPauseGame = delegate (bool value) { };
 	private bool gamePaused = false;
+	private bool physicsPaused = false;
 
-	public bool IsPaused { get { return gamePaused; } }
+	public bool IsPaused { get { return physicsPaused; } }
 
 	private static GameManager _instance;
 	public static GameManager I
@@ -71,39 +73,48 @@ public class GameManager : MonoBehaviour
 
 	private void FixedUpdate()
 	{
-		if(!gamePaused)
+		if(!physicsPaused)
 		{
 			entities.ForEach(entity => entity.OnFixedUpdate());
 		}
 
-		if(queuePause)
+		if(queuePauseGame)
 		{
-			if(!gamePaused)
-			{
-				entities.ForEach(entity => entity.CacheRbPosition());
-			}
-
-			List<ParticleSystem> systems = FindObjectsOfType<ParticleSystem>().ToList();
-
-			queuePause = false;
+			queuePauseGame = false;
 			gamePaused = !gamePaused;
-			OnPauseGame(gamePaused);
 			pausePrefab.SetActive(gamePaused);
+			OnPauseGame(gamePaused);
+		}
 
-			if(gamePaused)
-				systems.ForEach(ps => ps.Pause());
-			else
-				systems.ForEach(ps => ps.Play());
+		if((gamePaused || hitPauseTimer > 0) && !physicsPaused)
+		{
+			physicsPaused = true;
+			PauseAllPhysics(true);
+		}
+
+		if((!gamePaused && hitPauseTimer == 0) && physicsPaused)
+		{
+			physicsPaused = false;
+			PauseAllPhysics(false);
+		}
+
+		if(!gamePaused)
+		{
+			hitPauseTimer -= Time.fixedDeltaTime;
+			hitPauseTimer = Mathf.Max(0f, hitPauseTimer);
 		}
 	}
 
-	bool queuePause = false;
+	public bool queuePauseGame = false;
+
+	public float hitPauseTimer = 0f;
 
 	private void Update()
 	{
+
 		if(InputManager.ActiveDevice.MenuWasPressed)
 		{
-			queuePause = true;
+			queuePauseGame = true;
 		}
 
 		if(gamePaused) { return; }
@@ -112,17 +123,7 @@ public class GameManager : MonoBehaviour
 		if(InputManager.ActiveDevice.Action4.WasPressed) { CyclePlayer(); }
 
 		// Hold the right bumper for slow-mo!
-		//Time.timeScale = InputManager.ActiveDevice.RightBumper.IsPressed ? 0.25f : 1f;
-
-		/*
-		// Local time scale doesn't work right...
-		if(InputManager.ActiveDevice.RightBumper.WasPressed)
-		{
-			slowMo = !slowMo;
-			entities.ForEach(entity => entity.localTimeScale =  slowMo ? 0.25f : 1f);
-			Debug.Log(slowMo);
-		}
-		*/
+		Time.timeScale = InputManager.ActiveDevice.RightBumper.IsPressed ? 0.25f : 1f;
 
 		UpdateHUD();
 
@@ -131,10 +132,24 @@ public class GameManager : MonoBehaviour
 		entities.ForEach(entity => entity.OnUpdate()); // Update all the things!
 		mainCamera.UpdatePosition(); // Update camera position
 
-		if(queuePause & !gamePaused)
+	}
+
+	public void LateUpdate()
+	{
+		entities.ForEach(entity => entity.CachePosition());
+
+		/*
+		if(queuePausePhysics && !physicsPaused)
+		{
+			//PrePausePhysics();
+			entities.ForEach(entity => entity.CachePosition());
+		}
+
+		if(hitPauseTimer > 0 && !physicsPaused)
 		{
 			entities.ForEach(entity => entity.CachePosition());
 		}
+		*/
 	}
 
 	#endregion

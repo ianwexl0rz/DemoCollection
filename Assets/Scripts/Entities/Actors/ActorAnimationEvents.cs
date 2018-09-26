@@ -21,7 +21,8 @@ public class ActorAnimationEvents : MonoBehaviour
 
 		if(data != null)
 		{
-			StartCoroutine(player.Attack(data));
+			//StartCoroutine(player.Attack(data));
+			player.attackCoroutine = player.Attack(data);
 		}
 	}
 

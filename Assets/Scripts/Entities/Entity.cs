@@ -26,7 +26,7 @@ public class Entity : MonoBehaviour
 	protected virtual void OnEnable()
 	{
 		GameManager.I.AddEntity(this);
-		GameManager.I.OnPauseGame += PauseEntity;
+		GameManager.I.PauseAllPhysics += PauseEntity;
 	}
 
 	protected virtual void OnDisable()
@@ -34,7 +34,7 @@ public class Entity : MonoBehaviour
 		if(!GameManager.I) { return; }
 
 		GameManager.I.RemoveEntity(this);
-		GameManager.I.OnPauseGame -= PauseEntity;
+		GameManager.I.PauseAllPhysics -= PauseEntity;
 	}
 
 	public void CachePosition()
@@ -89,8 +89,6 @@ public class Entity : MonoBehaviour
 		if(physicsPaused)
 		{
 			savedRbPosition = rb.position;
-			savedPosition = transform.position;
-
 			savedLocalTimeScale = localTimeScale;
 			savedKinematic = rb.isKinematic;
 			savedVelocity = rb.velocity;
