@@ -5,24 +5,31 @@ public class AttackBehaviour : StateMachineBehaviour
 	public bool applyRootMotion = false;
 	Player player = null;
 
+	private bool fullyTransitioned = false;
+
 	// OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
 	override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
 	{
-		player = animator.GetComponent<Player>();
-		player.rootMotionOverride = applyRootMotion;
-		if(applyRootMotion) player.animator.applyRootMotion = true;
-		//Debug.Log("Attack Enter");
+		animator.SetBool("isAttacking", true);
+		fullyTransitioned = false;
 	}
 
 	// OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
-	//override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
-	//
-	//}
+	override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+	{
+		if(!animator.IsInTransition(0) && !fullyTransitioned)
+		{
+			fullyTransitioned = true;
+			player = animator.GetComponent<Player>();
+			player.rootMotionOverride = applyRootMotion;
+			if(applyRootMotion) player.animator.applyRootMotion = true;
+		}
+	}
 
 	// OnStateExit is called when a transition ends and the state machine finishes evaluating this state
 	override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
 	{
-		base.OnStateExit(animator, stateInfo, layerIndex);
+		animator.SetBool("isAttacking", false);
 		animator.applyRootMotion = false;
 		player.rootMotionOverride = false;
 		player.SetCancelOK();

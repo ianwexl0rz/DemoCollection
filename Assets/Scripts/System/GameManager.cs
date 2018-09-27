@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using InControl;
 using System;
-using System.Collections;
-using System.Linq;
 
 public class GameManager : MonoBehaviour
 {
@@ -11,14 +9,13 @@ public class GameManager : MonoBehaviour
 	public ControlSettings controlSettings = null;
 	public ThirdPersonCamera mainCamera = null;
 	public GameObject pausePrefab = null;
-	public bool slowMo = false;
 
 	[Space]
 	[Header("UI")]
 	public RectTransform healthBarFill = null;
 
 	[Space]
-	[Header("Actor Brains")]
+	[Header("Actor Controllers")]
 	public PlayerController playerBrain = null;
 	public ActorController followerBrain = null;
 
@@ -30,8 +27,6 @@ public class GameManager : MonoBehaviour
 	public Action<bool> OnPauseGame = delegate (bool value) { };
 	private bool gamePaused = false;
 	private bool physicsPaused = false;
-
-	public bool IsPaused { get { return physicsPaused; } }
 
 	private static GameManager _instance;
 	public static GameManager I
@@ -131,7 +126,6 @@ public class GameManager : MonoBehaviour
 		mainCamera.UpdateRotation(); // Update camera rotation first so player input direction is correct
 		entities.ForEach(entity => entity.OnUpdate()); // Update all the things!
 		mainCamera.UpdatePosition(); // Update camera position
-
 	}
 
 	public void LateUpdate()
@@ -141,8 +135,8 @@ public class GameManager : MonoBehaviour
 		/*
 		if(queuePausePhysics && !physicsPaused)
 		{
-			//PrePausePhysics();
 			entities.ForEach(entity => entity.CachePosition());
+			//PrePausePhysics();
 		}
 
 		if(hitPauseTimer > 0 && !physicsPaused)

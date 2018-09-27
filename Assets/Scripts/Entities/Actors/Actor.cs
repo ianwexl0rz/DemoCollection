@@ -166,63 +166,6 @@ public class Actor : Entity
 	}
 	*/
 
-	private IEnumerator HitPause(float duration, Actor attacker)
-	{
-		/*/
-		Time.timeScale = 0f;
-		yield return new WaitForSecondsRealtime(duration);
-
-		Time.timeScale = 1f;
-		//*/
-
-		//*/
-		GameManager.I.queuePauseGame = true;
-		yield return new WaitForSeconds(duration);
-
-		GameManager.I.queuePauseGame = true;
-		//*/
-
-		/*/
-		float time = 0f;
-		while(time < duration)
-		{
-			//float t = Mathf.Cos(time / duration * 2 * Mathf.PI) * 0.5f + 0.5f;
-			float t = time / duration;
-
-			Time.timeScale = t * t * t * t;
-			yield return null;
-
-			time += Time.unscaledDeltaTime;
-		}
-		Time.timeScale = 1f;
-		//*/
-
-		/*/
-		if(!physicsPaused) PausePhysics(true);
-		if(!attacker.physicsPaused) attacker.PausePhysics(true);
-
-		yield return new WaitForSecondsRealtime(duration);
-
-		PausePhysics(false);
-		attacker.PausePhysics(false);
-		//*/
-
-		/*/
-		while(time < duration)
-		{
-
-
-			time += Time.deltaTime;
-			transform.position = savedPosition + new Vector3(UnityEngine.Random.value,
-				UnityEngine.Random.value,
-				UnityEngine.Random.value).normalized * 0.05f;
-			yield return null;
-		}
-		transform.position = savedPosition;
-		//*/
-	}
-
-
 	//*//
 	private IEnumerator SlowMo(float duration, float recovery)
 	{

@@ -109,7 +109,7 @@ public class Player : Actor
 		grounded &= Mathf.Abs(incline) < 0.75f;
 
 		// Disable double jump if we landed or we're falling too fast
-		if(grounded || rb.velocity.y <= -3f)
+		if(grounded || rb.velocity.y <= -5f)
 		{
 			doubleJumpOK = false;
 		}
@@ -251,6 +251,9 @@ public class Player : Actor
 			//reference for animator
 			animator.SetFloat("speedPercent", animationSpeedPercent, speedSmoothTime, Time.deltaTime);
 
+			animator.SetBool("inAir", !grounded);
+			animator.SetFloat("directionY", Mathf.Clamp01(Mathf.InverseLerp(1f, -1f, rb.velocity.y)), speedSmoothTime, Time.deltaTime);
+
 			foreach(AnimatorControllerParameter parameter in animator.parameters)
 			{
 				if(parameter.name == "velocityX")
@@ -323,7 +326,7 @@ public class Player : Actor
 				weaponTransform.position,
 				weaponTransform.forward,
 				((CapsuleCollider)attackCollider).height,
-				LayerMask.GetMask("Actor"));
+				LayerMask.GetMask("Actor", "PhysicsObject"));
 
 			foreach(RaycastHit hit in hits)
 			{
