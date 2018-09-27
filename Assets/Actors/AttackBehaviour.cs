@@ -1,15 +1,30 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 public class AttackBehaviour : StateMachineBehaviour
 {
 	public bool applyRootMotion = false;
 	Player player = null;
 
+	public Transform trackPosition;
+
+	public List<Vector3> positions = new List<Vector3>();
+
 	private bool fullyTransitioned = false;
 
 	// OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
 	override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
 	{
+		player = animator.GetComponent<Player>();
+
+		trackPosition = player.attackBox.transform;
+
+		positions.Clear();
+		for(int i=0; i<4; i++)
+		{
+			positions.Add(trackPosition.position + trackPosition.forward * 1.2f);
+		}
+
 		animator.SetBool("isAttacking", true);
 		fullyTransitioned = false;
 	}
@@ -20,9 +35,20 @@ public class AttackBehaviour : StateMachineBehaviour
 		if(!animator.IsInTransition(0) && !fullyTransitioned)
 		{
 			fullyTransitioned = true;
-			player = animator.GetComponent<Player>();
 			player.rootMotionOverride = applyRootMotion;
 			if(applyRootMotion) player.animator.applyRootMotion = true;
+		}
+
+		if(trackPosition != null)
+		{
+			positions.RemoveAt(positions.Count - 1);
+			positions.Insert(0, trackPosition.position + trackPosition.forward * 1.2f);
+			//Debug.Log("Position 1: " + trackPosition.position + " Position 2");
+
+			for(int i=0; i<positions.Count-1; i++)
+			{
+				Debug.DrawLine(positions[i], positions[i+1], player.attackInProgress ? Color.red : Color.cyan, Time.fixedDeltaTime * 8);
+			}
 		}
 	}
 

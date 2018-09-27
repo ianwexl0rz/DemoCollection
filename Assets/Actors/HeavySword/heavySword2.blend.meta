@@ -803,7 +803,7 @@ ModelImporter:
         floatParameter: 0
         intParameter: 0
         messageOptions: 0
-      - time: 0.70229006
+      - time: 0.6788858
         functionName: NewHit
         data: lightAttack
         objectReferenceParameter: {instanceID: 0}

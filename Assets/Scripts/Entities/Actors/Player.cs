@@ -44,7 +44,7 @@ public class Player : Actor
 	public bool attack { get; set; }
 	public bool rootMotionOverride { get; set; }
 
-	private bool attackInProgress = false;
+	public bool attackInProgress = false;
 	private bool cancelOK = true;
 
 	private List<AttackTimer> attackQueue = new List<AttackTimer>();
