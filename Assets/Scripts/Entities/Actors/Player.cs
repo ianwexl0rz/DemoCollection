@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using InControl;
-using System.Linq;
 
 public class Player : Actor
 {
@@ -67,8 +66,7 @@ public class Player : Actor
 
 	protected override void ProcessPhysics()
 	{
-		if(attackCoroutine != null)
-			attackCoroutine.MoveNext();
+		
 
 		if(stunTime > 0f) { return; }
 
@@ -244,18 +242,25 @@ public class Player : Actor
 
 		if(animator.runtimeAnimatorController != null)
 		{
-			//if(!GameManager.I.IsPaused)
 			//control speed percent in animator so that character walks or runs depending on speed
 			float animationSpeedPercent = physicsPaused ? 0f : currentSpeed.magnitude / runSpeed;
 
 			//reference for animator
 			animator.SetFloat("speedPercent", animationSpeedPercent, speedSmoothTime, Time.deltaTime);
 
-			animator.SetBool("inAir", !grounded);
-			animator.SetFloat("directionY", Mathf.Clamp01(Mathf.InverseLerp(1f, -1f, rb.velocity.y)), speedSmoothTime, Time.deltaTime);
-
 			foreach(AnimatorControllerParameter parameter in animator.parameters)
 			{
+				if(parameter.name == "inAir")
+				{
+					animator.SetBool("inAir", !grounded);
+				}
+
+				if(parameter.name == "directionY")
+				{
+					float directionY =  Mathf.Clamp01(Mathf.InverseLerp(1f, -1f, rb.velocity.y));
+					animator.SetFloat("directionY", directionY, speedSmoothTime, Time.deltaTime);
+				}
+
 				if(parameter.name == "velocityX")
 				{
 					float velocityX = Vector3.Dot(currentSpeed, transform.right) / runSpeed;
@@ -269,6 +274,12 @@ public class Player : Actor
 				}
 			}
 		}
+	}
+
+	public override void OnLateUpdate()
+	{
+		if(attackCoroutine != null)
+			attackCoroutine.MoveNext();
 	}
 
 	protected void UpdateAttackBuffer()

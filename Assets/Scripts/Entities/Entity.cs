@@ -3,10 +3,9 @@ using System;
 
 public class Entity : MonoBehaviour
 {
-	protected Vector3 savedPosition;
 	private Vector3 savedRbPosition;
 	private Vector3 savedVelocity;
-	protected Vector3 savedAngularVelocity;
+	private Vector3 savedAngularVelocity;
 	private bool savedKinematic;
 
 	protected bool physicsPaused;
@@ -21,6 +20,8 @@ public class Entity : MonoBehaviour
 	protected virtual void Awake()
 	{
 		rb = GetComponent<Rigidbody>();
+
+		Physics.autoSyncTransforms = false;
 	}
 
 	protected virtual void OnEnable()
@@ -37,17 +38,11 @@ public class Entity : MonoBehaviour
 		GameManager.I.PauseAllPhysics -= PauseEntity;
 	}
 
-	public void CachePosition()
-	{
-		savedPosition = transform.position;
-	}
-
-	public virtual void CacheRbPosition()
-	{
-		savedRbPosition = rb.position;
-	}
-
 	public virtual void OnUpdate()
+	{
+	}
+
+	public virtual void OnLateUpdate()
 	{
 	}
 
@@ -93,25 +88,28 @@ public class Entity : MonoBehaviour
 			savedKinematic = rb.isKinematic;
 			savedVelocity = rb.velocity;
 			savedAngularVelocity = rb.angularVelocity;
-			rb.Sleep();
 
 			localTimeScale = 0f;
 			rb.isKinematic = true;
 			rb.velocity = Vector3.zero;
 			rb.angularVelocity = Vector3.zero;
+			rb.interpolation = RigidbodyInterpolation.None;
 
 			// Account for interpolation
-			transform.position = savedPosition;
+			rb.position = transform.position;
+			rb.Sleep();
 		}
 		else
 		{
 			rb.WakeUp();
 			localTimeScale = savedLocalTimeScale;
 			rb.isKinematic = savedKinematic;
+			rb.interpolation = RigidbodyInterpolation.Interpolate;
+
 			rb.AddForce(savedVelocity, ForceMode.VelocityChange);
 			rb.AddTorque(savedAngularVelocity, ForceMode.VelocityChange);
 
-			rb.position = transform.position = savedRbPosition;
+			rb.position = savedRbPosition;
 		}
 	}
 }

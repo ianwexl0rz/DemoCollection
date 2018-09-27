@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class AttackBehaviour : StateMachineBehaviour
 {
@@ -25,7 +26,10 @@ public class AttackBehaviour : StateMachineBehaviour
 			positions.Add(trackPosition.position + trackPosition.forward * 1.2f);
 		}
 
-		animator.SetBool("isAttacking", true);
+		if(animator.parameters.Any(p => p.name == "isAttacking"))
+		{
+			animator.SetBool("isAttacking", true);
+		}
 		fullyTransitioned = false;
 	}
 
@@ -55,7 +59,10 @@ public class AttackBehaviour : StateMachineBehaviour
 	// OnStateExit is called when a transition ends and the state machine finishes evaluating this state
 	override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
 	{
-		animator.SetBool("isAttacking", false);
+		if(animator.parameters.Any(p => p.name == "isAttacking"))
+		{
+			animator.SetBool("isAttacking", false);
+		}
 		animator.applyRootMotion = false;
 		player.rootMotionOverride = false;
 		player.SetCancelOK();

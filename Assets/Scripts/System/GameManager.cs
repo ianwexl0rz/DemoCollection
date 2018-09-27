@@ -27,6 +27,7 @@ public class GameManager : MonoBehaviour
 	public Action<bool> OnPauseGame = delegate (bool value) { };
 	private bool gamePaused = false;
 	private bool physicsPaused = false;
+	public float hitPauseTimer = 0f;
 
 	private static GameManager _instance;
 	public static GameManager I
@@ -72,47 +73,11 @@ public class GameManager : MonoBehaviour
 		{
 			entities.ForEach(entity => entity.OnFixedUpdate());
 		}
-
-		if(queuePauseGame)
-		{
-			queuePauseGame = false;
-			gamePaused = !gamePaused;
-			pausePrefab.SetActive(gamePaused);
-			OnPauseGame(gamePaused);
-		}
-
-		if((gamePaused || hitPauseTimer > 0) && !physicsPaused)
-		{
-			physicsPaused = true;
-			PauseAllPhysics(true);
-		}
-
-		if((!gamePaused && hitPauseTimer == 0) && physicsPaused)
-		{
-			physicsPaused = false;
-			PauseAllPhysics(false);
-		}
-
-		if(!gamePaused)
-		{
-			hitPauseTimer -= Time.fixedDeltaTime;
-			hitPauseTimer = Mathf.Max(0f, hitPauseTimer);
-		}
 	}
-
-	public bool queuePauseGame = false;
-
-	public float hitPauseTimer = 0f;
 
 	private void Update()
 	{
-
-		if(InputManager.ActiveDevice.MenuWasPressed)
-		{
-			queuePauseGame = true;
-		}
-
-		if(gamePaused) { return; }
+		if(gamePaused) { goto Paused; }
 
 		// Swap characters
 		if(InputManager.ActiveDevice.Action4.WasPressed) { CyclePlayer(); }
@@ -126,24 +91,39 @@ public class GameManager : MonoBehaviour
 		mainCamera.UpdateRotation(); // Update camera rotation first so player input direction is correct
 		entities.ForEach(entity => entity.OnUpdate()); // Update all the things!
 		mainCamera.UpdatePosition(); // Update camera position
+
+		Paused:
+
+		if(InputManager.ActiveDevice.MenuWasPressed)
+		{
+			gamePaused = !gamePaused;
+			pausePrefab.SetActive(gamePaused);
+			OnPauseGame(gamePaused);
+		}
 	}
 
 	public void LateUpdate()
 	{
-		entities.ForEach(entity => entity.CachePosition());
+		entities.ForEach(entity => entity.OnLateUpdate());
 
-		/*
-		if(queuePausePhysics && !physicsPaused)
+		if((gamePaused || hitPauseTimer > 0) && !physicsPaused)
 		{
-			entities.ForEach(entity => entity.CachePosition());
-			//PrePausePhysics();
+			physicsPaused = true;
+			PauseAllPhysics(true);
+			//mainCamera.UpdatePosition(); 
 		}
 
-		if(hitPauseTimer > 0 && !physicsPaused)
+		if((!gamePaused && hitPauseTimer == 0) && physicsPaused)
 		{
-			entities.ForEach(entity => entity.CachePosition());
+			physicsPaused = false;
+			PauseAllPhysics(false);
 		}
-		*/
+
+		if(!gamePaused)
+		{
+			hitPauseTimer -= Time.fixedDeltaTime;
+			hitPauseTimer = Mathf.Max(0f, hitPauseTimer);
+		}
 	}
 
 	#endregion
