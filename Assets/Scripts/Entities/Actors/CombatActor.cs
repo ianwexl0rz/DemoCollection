@@ -34,10 +34,19 @@ public class CombatActor : Actor
 	{
 		cancelOK = true;
 	}
+
+	protected override void OnGetHit(Vector3 direction, AttackData data)
+	{
+		health = Mathf.Max(health - data.damage, 0f);
+		//Debug.Log("Hit " + name + " - HP: " + health + "/" + maxHealth);
+
+		// TODO: Get reaction type from AttackData 
+		hitReaction = Stunned(data.stun);
+	}
 	
 	public IEnumerator Attack(AttackData data)
 	{
-		List<Actor> hitEnemies = new List<Actor>();
+		List<Entity> hitEntities = new List<Entity>();
 
 		while(true)
 		{
@@ -49,21 +58,16 @@ public class CombatActor : Actor
 
 			foreach(RaycastHit hit in hits)
 			{
-				Collider enemyCollider = hit.collider;
+				Collider hitCollider = hit.collider;
 
-				Actor enemy = enemyCollider.GetComponent<Actor>();
-				if(enemy == null || enemy == this) { continue; }
+				Entity entity = hitCollider.GetComponent<Entity>();
+				if(entity == null || entity == this) { continue; }
 
-				if(!hitEnemies.Contains(enemy))
+				if(!hitEntities.Contains(entity))
 				{
-					if(weaponTransform)
-					{
-						// TODO: Spawn a different kind of spark depending on what we hit.
-						Instantiate(GameManager.HitSpark, hit.point, Quaternion.identity, null);
-					}
-
-					enemy.GetHit(this, data);
-					hitEnemies.Add(enemy);
+					Vector3 hitDirection = (entity.transform.position - transform.position).normalized;
+					entity.GetHit(hit.point, hitDirection, data);
+					hitEntities.Add(entity);
 
 					GameManager.HitPauseTimer = Time.fixedDeltaTime * data.hitPause;
 				}

@@ -66,6 +66,10 @@ public class Entity : MonoBehaviour
 	{
 	}
 
+	protected virtual void OnGetHit(Vector3 direction, AttackData data)
+	{
+	}
+
 	public void PauseEntity(bool value)
 	{
 		if(value == paused) { return; } else { paused = value; }
@@ -92,5 +96,16 @@ public class Entity : MonoBehaviour
 		}
 
 		OnPauseEntity(value);
+	}
+
+	public void GetHit(Vector3 hitPoint, Vector3 direction, AttackData data)
+	{
+		// Apply knockback
+		rb.velocity = direction * data.knockback;
+
+		HitSparkType sparkType = this is Actor ? HitSparkType.Blue : HitSparkType.Orange;
+		Instantiate(GameManager.I.GetHitSpark(sparkType), hitPoint, Quaternion.identity, null);
+
+		OnGetHit(direction, data);
 	}
 }

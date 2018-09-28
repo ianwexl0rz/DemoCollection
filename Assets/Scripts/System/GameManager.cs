@@ -3,6 +3,12 @@ using System.Collections.Generic;
 using InControl;
 using System;
 
+public enum HitSparkType
+{
+	Blue,
+	Orange
+}
+
 public class GameManager : MonoBehaviour
 {
 	public Player activePlayer;
@@ -20,6 +26,8 @@ public class GameManager : MonoBehaviour
 	[Header("Gameplay")]
 	[SerializeField]
 	private GameObject hitSpark;
+	[SerializeField]
+	private GameObject hitSpark2;
 
 	private int targetIndex = 0;
 	private List<Player> playerCharacters;
@@ -36,11 +44,6 @@ public class GameManager : MonoBehaviour
 	public static GameManager I
 	{
 		get { if(!_instance) { _instance = FindObjectOfType<GameManager>(); } return _instance; }
-	}
-
-	public static GameObject HitSpark
-	{
-		get { return I.hitSpark; }
 	}
 
 	public static float HitPauseTimer
@@ -145,6 +148,17 @@ public class GameManager : MonoBehaviour
 		{
 			SetActivePlayer(newTarget);
 			Cursor.lockState = CursorLockMode.Locked;
+		}
+	}
+
+	public GameObject GetHitSpark(HitSparkType type)
+	{
+		switch (type)
+		{
+			case HitSparkType.Blue:
+				return hitSpark;
+			default:
+				return hitSpark2;
 		}
 	}
 

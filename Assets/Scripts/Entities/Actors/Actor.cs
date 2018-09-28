@@ -105,19 +105,6 @@ public class Actor : Entity
 		}
 	}
 
-	public void GetHit(Actor attacker, AttackData data)
-	{
-		// Reduce health
-		health = Mathf.Max(health - data.damage, 0f);
-		//Debug.Log("Hit " + name + " - HP: " + health + "/" + maxHealth);
-
-		// Apply knockback
-		rb.velocity = (transform.position - attacker.transform.position).normalized * data.knockback;
-
-		// TODO: Get reaction type from AttackData 
-		hitReaction = Stunned(data.stun);
-	}
-
 	protected IEnumerator Stunned(float newStunTime)
 	{
 		// Set stun time, if greater than current stun time
