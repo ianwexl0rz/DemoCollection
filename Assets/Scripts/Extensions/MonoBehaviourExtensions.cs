@@ -66,6 +66,8 @@ public static class MonoBehaviourExtensions
 
 	static public void RestoreState(this Rigidbody rb, RigidbodyState rigidbodyState)
 	{
+		//Debug.Log("Restored " + rb.gameObject.name + " to velocity: "  + rigidbodyState.velocity.magnitude);
+
 		rb.position = rigidbodyState.position;
 		rb.rotation = rigidbodyState.rotation;
 		rb.velocity = rigidbodyState.velocity;

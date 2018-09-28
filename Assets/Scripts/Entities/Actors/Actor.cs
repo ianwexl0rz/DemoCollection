@@ -51,7 +51,6 @@ public class Actor : Entity
 	public override void OnUpdate()
 	{
 		base.OnUpdate();
-		hitReaction?.MoveNext();
 		ProcessInput();
 		ProcessAnimation();
 		if(localPauseTimer > 0f)
@@ -64,6 +63,7 @@ public class Actor : Entity
 	public override void OnFixedUpdate()
 	{
 		base.OnFixedUpdate();
+		hitReaction?.MoveNext();
 		ProcessPhysics();
 	}
 
@@ -114,7 +114,6 @@ public class Actor : Entity
 		// Apply knockback
 		rb.velocity = (transform.position - attacker.transform.position).normalized * data.knockback;
 
-		// TODO: Start hit reacting after hit pause (using a delegate callback?)
 		// TODO: Get reaction type from AttackData 
 		hitReaction = Stunned(data.stun);
 	}
@@ -126,8 +125,8 @@ public class Actor : Entity
 
 		while(stunTime > 0f)
 		{
-			stunTime -= Time.deltaTime;
 			yield return null;
+			stunTime -= Time.fixedDeltaTime;
 		}
 	}
 

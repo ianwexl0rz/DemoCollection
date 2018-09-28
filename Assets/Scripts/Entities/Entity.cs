@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System;
 
-
+[Serializable]
 public struct RigidbodyState
 {
 	public Vector3 position;
