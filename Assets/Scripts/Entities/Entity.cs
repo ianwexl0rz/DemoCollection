@@ -1,18 +1,30 @@
 ﻿using UnityEngine;
 using System;
 
+
+public struct RigidbodyState
+{
+	public Vector3 position;
+	public Quaternion rotation;
+	public Vector3 velocity;
+	public Vector3 angularVelocity;
+	public bool isKinematic;
+
+	public RigidbodyState(Rigidbody rb)
+	{
+		position = rb.position;
+		rotation = rb.rotation;
+		velocity = rb.velocity;
+		angularVelocity = rb.angularVelocity;
+		isKinematic = rb.isKinematic;
+	}
+}
+
 public class Entity : MonoBehaviour
 {
-	private Vector3 savedRbPosition;
-	private Vector3 savedVelocity;
-	private Vector3 savedAngularVelocity;
-	private bool savedKinematic;
+	private RigidbodyState savedState;
 
-	protected bool physicsPaused;
-
-	[HideInInspector]
-	public float localTimeScale = 1f;
-	public float TimeScale { get { return localTimeScale * Time.timeScale; } }
+	protected bool paused;
 
 	public Rigidbody rb { get; private set; }
 
@@ -54,62 +66,31 @@ public class Entity : MonoBehaviour
 	{
 	}
 
-	bool savedPhysicsPaused;
-
 	public void PauseEntity(bool value)
 	{
+		if(value == paused) { return; } else { paused = value; }
 		
 		if(value)
 		{
-			savedPhysicsPaused = physicsPaused;
+			savedState = new RigidbodyState(rb);
 
-			if(!savedPhysicsPaused)
-				PausePhysics(true);
-		}
-		else
-		{
-			if(!savedPhysicsPaused)
-				PausePhysics(false);
-		}
-		
-		OnPauseEntity(value);
-	}
-
-	private float savedLocalTimeScale = 1f;
-
-	public void PausePhysics(bool value)
-	{
-		physicsPaused = value;
-
-		if(physicsPaused)
-		{
-			savedRbPosition = rb.position;
-			savedLocalTimeScale = localTimeScale;
-			savedKinematic = rb.isKinematic;
-			savedVelocity = rb.velocity;
-			savedAngularVelocity = rb.angularVelocity;
-
-			localTimeScale = 0f;
 			rb.isKinematic = true;
 			rb.velocity = Vector3.zero;
 			rb.angularVelocity = Vector3.zero;
-			rb.interpolation = RigidbodyInterpolation.None;
 
 			// Account for interpolation
+			// TODO: Set rigidbody position between current transform position and previous transform position
+			// depending on sub-frame collision. Also set animator.Simulate() to that time.
 			rb.position = transform.position;
+			rb.rotation = transform.rotation;
 			rb.Sleep();
 		}
 		else
 		{
 			rb.WakeUp();
-			localTimeScale = savedLocalTimeScale;
-			rb.isKinematic = savedKinematic;
-			rb.interpolation = RigidbodyInterpolation.Interpolate;
-
-			rb.AddForce(savedVelocity, ForceMode.VelocityChange);
-			rb.AddTorque(savedAngularVelocity, ForceMode.VelocityChange);
-
-			rb.position = savedRbPosition;
+			rb.RestoreState(savedState);
 		}
+
+		OnPauseEntity(value);
 	}
 }

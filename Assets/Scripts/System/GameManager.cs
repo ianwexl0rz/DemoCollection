@@ -8,16 +8,18 @@ public class GameManager : MonoBehaviour
 	public Player activePlayer;
 	public ControlSettings controlSettings = null;
 	public ThirdPersonCamera mainCamera = null;
-	public GameObject pausePrefab = null;
 
-	[Space]
 	[Header("UI")]
+	public GameObject pausePrefab = null;
 	public RectTransform healthBarFill = null;
 
-	[Space]
 	[Header("Actor Controllers")]
 	public PlayerController playerBrain = null;
 	public ActorController followerBrain = null;
+
+	[Header("Gameplay")]
+	[SerializeField]
+	private GameObject hitSpark;
 
 	private int targetIndex = 0;
 	private List<Player> playerCharacters;
@@ -27,12 +29,24 @@ public class GameManager : MonoBehaviour
 	public Action<bool> OnPauseGame = delegate (bool value) { };
 	private bool gamePaused = false;
 	private bool physicsPaused = false;
-	public float hitPauseTimer = 0f;
+	
+	private float hitPauseTimer = 0f;
 
 	private static GameManager _instance;
 	public static GameManager I
 	{
 		get { if(!_instance) { _instance = FindObjectOfType<GameManager>(); } return _instance; }
+	}
+
+	public static GameObject HitSpark
+	{
+		get { return I.hitSpark; }
+	}
+
+	public static float HitPauseTimer
+	{
+		get { return I.hitPauseTimer; }
+		set { I.hitPauseTimer = value; }
 	}
 
 	#region UNITY_METHODS
@@ -57,14 +71,12 @@ public class GameManager : MonoBehaviour
 		// 1) can take advantage of object pooling
 		// 2) load character status from room data
 
-		SetActivePlayer(playerCharacters[targetIndex]);
+		SetActivePlayer(playerCharacters[targetIndex], true);
 
 		foreach(Player p in playerCharacters)
 		{
 			if(p != activePlayer) p.SetController(followerBrain);
 		}
-
-		mainCamera.Setup();
 	}
 
 	private void FixedUpdate()
@@ -77,7 +89,7 @@ public class GameManager : MonoBehaviour
 
 	private void Update()
 	{
-		if(gamePaused) { goto Paused; }
+		if(physicsPaused) { return; }
 
 		// Swap characters
 		if(InputManager.ActiveDevice.Action4.WasPressed) { CyclePlayer(); }
@@ -91,8 +103,11 @@ public class GameManager : MonoBehaviour
 		mainCamera.UpdateRotation(); // Update camera rotation first so player input direction is correct
 		entities.ForEach(entity => entity.OnUpdate()); // Update all the things!
 		mainCamera.UpdatePosition(); // Update camera position
+	}
 
-		Paused:
+	public void LateUpdate()
+	{
+		entities.ForEach(entity => entity.OnLateUpdate());
 
 		if(InputManager.ActiveDevice.MenuWasPressed)
 		{
@@ -100,17 +115,11 @@ public class GameManager : MonoBehaviour
 			pausePrefab.SetActive(gamePaused);
 			OnPauseGame(gamePaused);
 		}
-	}
-
-	public void LateUpdate()
-	{
-		entities.ForEach(entity => entity.OnLateUpdate());
 
 		if((gamePaused || hitPauseTimer > 0) && !physicsPaused)
 		{
 			physicsPaused = true;
 			PauseAllPhysics(true);
-			//mainCamera.UpdatePosition(); 
 		}
 
 		if((!gamePaused && hitPauseTimer == 0) && physicsPaused)
@@ -119,7 +128,7 @@ public class GameManager : MonoBehaviour
 			PauseAllPhysics(false);
 		}
 
-		if(!gamePaused)
+		if(!gamePaused && hitPauseTimer > 0)
 		{
 			hitPauseTimer -= Time.fixedDeltaTime;
 			hitPauseTimer = Mathf.Max(0f, hitPauseTimer);
@@ -185,7 +194,7 @@ public class GameManager : MonoBehaviour
 		SetActivePlayer(playerCharacters[targetIndex]);
 	}
 
-	private void SetActivePlayer(Player newTarget)
+	private void SetActivePlayer(Player newTarget, bool immediate = false)
 	{
 		if(activePlayer == newTarget) { return; }
 
@@ -194,7 +203,7 @@ public class GameManager : MonoBehaviour
 
 		if(oldPlayer) oldPlayer.SetController(followerBrain); // Set the old active player to use Follower Brain
 		activePlayer.SetController(playerBrain); // Set the active player to use Player Brain
-		mainCamera.SetTarget(activePlayer); // Set the camera to follow the active player
+		mainCamera.SetTarget(activePlayer, immediate); // Set the camera to follow the active player
 	}
 	#endregion
 }

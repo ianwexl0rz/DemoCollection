@@ -472,11 +472,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4489367233018182}
-  - component: {fileID: 114975490345739816}
-  - component: {fileID: 136221232741552080}
-  - component: {fileID: 54013669590684724}
   - component: {fileID: 95524687467463414}
-  - component: {fileID: 114017150821268998}
+  - component: {fileID: 54013669590684724}
+  - component: {fileID: 136221232741552080}
+  - component: {fileID: 114975490345739816}
   m_Layer: 8
   m_Name: Heavy
   m_TagString: Untagged
@@ -972,7 +971,7 @@ Animator:
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 8c96fbc477da0405b9c477725bb7a7fe, type: 3}
   m_Controller: {fileID: 9100000, guid: c97417f297d644503b5f4a021c6fd4dc, type: 2}
-  m_CullingMode: 1
+  m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
@@ -980,17 +979,6 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!114 &114017150821268998
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1947941858301876}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7397dc516a4bb9941ae69a063c0bcd19, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &114975490345739816
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1002,14 +990,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9a67f68fcd6514dd2b7733d06827c987, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  localTimeScale: 1
   _controller: {fileID: 0}
   isAwake: 1
-  activeMaterial: {fileID: 13400000, guid: 2797b4925bfa04d4a8a2d446c2a60cbc, type: 2}
-  stunnedMaterial: {fileID: 13400000, guid: df424baae3c13e545b1aa61573299c06, type: 2}
   lockOnTarget: {fileID: 0}
   abilities: []
-  hitPauseTimer: 0
+  attackDataSet: {fileID: 11400000, guid: 7b599c3afc5abd14e97032bd4e49c044, type: 2}
+  attackBox: {fileID: 1427677460019374}
+  weaponTransform: {fileID: 4199021440535396}
   minSpeed: 0.25
   walkSpeed: 2
   runSpeed: 4
@@ -1020,12 +1007,6 @@ MonoBehaviour:
     type: 2}
   angularVelocityControllerConfig: {fileID: 11400000, guid: c29f48e699ec26445a33657059edbdf3,
     type: 2}
-  hitSpark: {fileID: 1312546261970878, guid: bc7a4bb76e52cad4c8ac1a9c9b37ed1c, type: 2}
-  weaponTransform: {fileID: 4199021440535396}
-  aimingMode: 0
-  recenter: 0
-  attackDataSet: {fileID: 11400000, guid: 7b599c3afc5abd14e97032bd4e49c044, type: 2}
-  attackBox: {fileID: 1427677460019374}
 --- !u!136 &136004479896525336
 CapsuleCollider:
   m_ObjectHideFlags: 1

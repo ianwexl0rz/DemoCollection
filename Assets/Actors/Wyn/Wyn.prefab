@@ -78,7 +78,7 @@ GameObject:
   m_IsActive: 0
 --- !u!1 &1385781860386458
 GameObject:
-  m_ObjectHideFlags: 1
+  m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   serializedVersion: 6
@@ -216,11 +216,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4260966739980654}
-  - component: {fileID: 136493107173934706}
+  - component: {fileID: 95771723763597656}
   - component: {fileID: 54771946021644714}
-  - component: {fileID: 114169830198121924}
-  - component: {fileID: 114104967303299580}
+  - component: {fileID: 136493107173934706}
   - component: {fileID: 114189782331923418}
+  - component: {fileID: 114104967303299580}
   m_Layer: 8
   m_Name: Wyn
   m_TagString: Player
@@ -236,8 +236,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4577359606590488}
-  - component: {fileID: 95698421251496028}
-  - component: {fileID: 114554010284988740}
   m_Layer: 0
   m_Name: WynMesh
   m_TagString: Untagged
@@ -303,6 +301,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4577359606590488}
+  - {fileID: 4295379533120550}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -326,13 +325,13 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1385781860386458}
-  m_LocalRotation: {x: 0, y: -0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0.5, y: 1.2, z: 0.2}
+  m_LocalRotation: {x: -0, y: -0.7071068, z: -0, w: 0.7071068}
+  m_LocalPosition: {x: 0.5, y: 1.2, z: 0.20000005}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4373133503259642}
-  m_Father: {fileID: 4577359606590488}
-  m_RootOrder: 4
+  m_Father: {fileID: 4260966739980654}
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
 --- !u!4 &4315450752096002
 Transform:
@@ -389,7 +388,6 @@ Transform:
   - {fileID: 4887861502058762}
   - {fileID: 4852772146711482}
   - {fileID: 4580956237682828}
-  - {fileID: 4295379533120550}
   m_Father: {fileID: 4260966739980654}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -821,15 +819,15 @@ Rigidbody:
   m_Interpolate: 1
   m_Constraints: 80
   m_CollisionDetection: 0
---- !u!95 &95698421251496028
+--- !u!95 &95771723763597656
 Animator:
   serializedVersion: 3
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1901694637806216}
+  m_GameObject: {fileID: 1849219369495232}
   m_Enabled: 1
-  m_Avatar: {fileID: 9000000, guid: 311af048b21a65748993d6be932fa4f3, type: 3}
+  m_Avatar: {fileID: 0}
   m_Controller: {fileID: 9100000, guid: bb3ef21af525c0c4a82df01dca9ca8ad, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
@@ -983,36 +981,6 @@ MonoBehaviour:
   lookSpeed: 360
   frontFocusOnly: 1
   debugTarget: {fileID: 0}
---- !u!114 &114169830198121924
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1849219369495232}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: -1862395651, guid: f70555f144d8491a825f0804e09c671c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Delegates:
-  - eventID: 4
-    callback:
-      m_PersistentCalls:
-        m_Calls:
-        - m_Target: {fileID: 0}
-          m_MethodName: ClickOnPlayer
-          m_Mode: 2
-          m_Arguments:
-            m_ObjectArgument: {fileID: 114189782331923418}
-            m_ObjectArgumentAssemblyTypeName: Player, Assembly-CSharp
-            m_IntArgument: 0
-            m_FloatArgument: 0
-            m_StringArgument: 
-            m_BoolArgument: 1
-          m_CallState: 2
-      m_TypeName: UnityEngine.EventSystems.EventTrigger+TriggerEvent, UnityEngine.UI,
-        Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  delegates: []
 --- !u!114 &114189782331923418
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1024,14 +992,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9a67f68fcd6514dd2b7733d06827c987, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  localTimeScale: 1
   _controller: {fileID: 0}
   isAwake: 1
-  activeMaterial: {fileID: 13400000, guid: 2797b4925bfa04d4a8a2d446c2a60cbc, type: 2}
-  stunnedMaterial: {fileID: 13400000, guid: df424baae3c13e545b1aa61573299c06, type: 2}
   lockOnTarget: {fileID: 0}
   abilities: []
-  hitPauseTimer: 0
+  attackDataSet: {fileID: 11400000, guid: dc92ae606a85ca1419f16eeb7831eff9, type: 2}
+  attackBox: {fileID: 1930265623123038}
+  weaponTransform: {fileID: 4295379533120550}
   minSpeed: 0.25
   walkSpeed: 3
   runSpeed: 5
@@ -1042,23 +1009,6 @@ MonoBehaviour:
     type: 2}
   angularVelocityControllerConfig: {fileID: 11400000, guid: c29f48e699ec26445a33657059edbdf3,
     type: 2}
-  hitSpark: {fileID: 1312546261970878, guid: bc7a4bb76e52cad4c8ac1a9c9b37ed1c, type: 2}
-  weaponTransform: {fileID: 4295379533120550}
-  aimingMode: 0
-  recenter: 0
-  attackDataSet: {fileID: 11400000, guid: dc92ae606a85ca1419f16eeb7831eff9, type: 2}
-  attackBox: {fileID: 1930265623123038}
---- !u!114 &114554010284988740
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1901694637806216}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7397dc516a4bb9941ae69a063c0bcd19, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!136 &136493107173934706
 CapsuleCollider:
   m_ObjectHideFlags: 1

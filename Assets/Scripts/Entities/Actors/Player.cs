@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using InControl;
 
-public class Player : Actor
+public class Player : CombatActor
 {
 	public float minSpeed = 1f;
 	public float walkSpeed = 2f;
@@ -11,40 +11,27 @@ public class Player : Actor
 	public float jumpHeight = 4f;
 	public float gravityMult = 1f;
 	public float speedSmoothTime = 0.1f;
-	public PIDConfig angleControllerConfig = null;
-	public PIDConfig angularVelocityControllerConfig = null;
-
-	public GameObject hitSpark;
-	public Transform weaponTransform;
-
-	private PID angleController = null;
-	private PID angularVelocityController = null;
-
-
-	public bool aimingMode = false;
-	public bool recenter = false;
-
-	public AttackDataSet attackDataSet = null;
-	public GameObject attackBox = null;
-
-	private Collider attackCollider = null;
-	private Vector3 currentSpeed;
-	private float playerRotation = 0f;
-
-	private bool grounded = false;
-	private bool queueJump = false;
-
-	private bool doubleJumpOK = false;
-
-	private Vector3 speedSmoothVelocity;
 
 	public bool run { get; set; }
 	public bool jump { get; set; }
 	public bool attack { get; set; }
+	public bool recenter { get; set; }
+	public bool aimingMode { get; set; }
 	public bool rootMotionOverride { get; set; }
 
-	public bool attackInProgress = false;
-	private bool cancelOK = true;
+	public PIDConfig angleControllerConfig = null;
+	public PIDConfig angularVelocityControllerConfig = null;
+
+	private PID angleController = null;
+	private PID angularVelocityController = null;
+
+	private Vector3 currentSpeed;
+	private Vector3 speedSmoothVelocity;
+	private float desiredRotation = 0f;
+
+	private bool grounded = false;
+	private bool queueJump = false;
+	private bool doubleJumpOK = false;
 
 	private List<AttackTimer> attackQueue = new List<AttackTimer>();
 
@@ -66,8 +53,6 @@ public class Player : Actor
 
 	protected override void ProcessPhysics()
 	{
-		
-
 		if(stunTime > 0f) { return; }
 
 		if(rootMotionOverride)
@@ -155,10 +140,6 @@ public class Player : Actor
 			rb.velocity += Physics.gravity.y * (gravityMult - 1f) * Vector3.up * Time.fixedDeltaTime;
 		}
 
-		rb.velocity *= localTimeScale;
-
-		//rb.rotation = playerRotation;
-
 		UpdateRotation();
 	}
 
@@ -166,14 +147,14 @@ public class Player : Actor
 	{
 		if(lockOn && lockOnTarget != null)
 		{
-			playerRotation = Vector3.SignedAngle(Vector3.forward, (lockOnTarget.position - transform.position).normalized, Vector3.up);
+			desiredRotation = Vector3.SignedAngle(Vector3.forward, (lockOnTarget.position - transform.position).normalized, Vector3.up);
 		}
 		else if(currentSpeed.WithY(0f).magnitude >= minSpeed)
 		{
-			playerRotation = Vector3.SignedAngle(Vector3.forward, currentSpeed.WithY(0f), Vector3.up);
+			desiredRotation = Vector3.SignedAngle(Vector3.forward, currentSpeed.WithY(0f), Vector3.up);
 		}
 
-		rb.RotateToAngleYaw(angleController, angularVelocityController, playerRotation);
+		rb.RotateToAngleYaw(angleController, angularVelocityController, desiredRotation);
 	}
 
 	protected override void ProcessInput()
@@ -238,12 +219,12 @@ public class Player : Actor
 	{
 		if(animator == null) { return; }
 
-		animator.speed = localTimeScale;
+		//animator.speed = localTimeScale;
 
 		if(animator.runtimeAnimatorController != null)
 		{
 			//control speed percent in animator so that character walks or runs depending on speed
-			float animationSpeedPercent = physicsPaused ? 0f : currentSpeed.magnitude / runSpeed;
+			float animationSpeedPercent = paused ? 0f : currentSpeed.magnitude / runSpeed;
 
 			//reference for animator
 			animator.SetFloat("speedPercent", animationSpeedPercent, speedSmoothTime, Time.deltaTime);
@@ -278,8 +259,7 @@ public class Player : Actor
 
 	public override void OnLateUpdate()
 	{
-		if(attackCoroutine != null)
-			attackCoroutine.MoveNext();
+		activeHit?.MoveNext();
 	}
 
 	protected void UpdateAttackBuffer()
@@ -289,16 +269,13 @@ public class Player : Actor
 			AttackTimer actionTimer = attackQueue[i];
 			AttackType attackType = actionTimer.attackType;
 
-			if(cancelOK)
+			if(!isAttacking || cancelOK)
 			{
-				if(animator)
+				switch(attackType)
 				{
-					switch(attackType)
-					{
-						case AttackType.Light:
-							animator.SetTrigger("lightAttack");
-							break;
-					}
+					case AttackType.Light:
+						animator?.SetTrigger("lightAttack");
+						break;
 				}
 				attackQueue.RemoveAt(i);
 			}
@@ -314,59 +291,5 @@ public class Player : Actor
 				}
 			}
 		}
-	}
-
-	public void SetCancelOK()
-	{
-		cancelOK = true;
-	}
-
-	public IEnumerator attackCoroutine;
-
-	public IEnumerator Attack(AttackData data)
-	{
-		attackBox.SetActive(true);
-		attackInProgress = true;
-		cancelOK = false;
-
-		List<Actor> hitEnemies = new List<Actor>();
-
-		while(attackInProgress)
-		{
-			RaycastHit[] hits = Physics.RaycastAll(
-				weaponTransform.position,
-				weaponTransform.forward,
-				((CapsuleCollider)attackCollider).height,
-				LayerMask.GetMask("Actor", "PhysicsObject"));
-
-			foreach(RaycastHit hit in hits)
-			{
-				Collider enemyCollider = hit.collider;
-
-				Actor enemy = enemyCollider.GetComponent<Actor>();
-				if(enemy == null || enemy == this) { continue; }
-
-				if(!hitEnemies.Contains(enemy))
-				{
-					if(hitSpark && weaponTransform)
-					{
-						Instantiate(hitSpark, hit.point, Quaternion.identity, null);
-					}
-
-					enemy.GetHit(this, data);
-					hitEnemies.Add(enemy);
-				}
-			}
-
-			yield return null;
-		}
-
-		attackBox.SetActive(false);
-	}
-
-	public void EndHit()
-	{
-		attackInProgress = false;
-		cancelOK = true;
 	}
 }

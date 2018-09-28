@@ -59,6 +59,20 @@ public static class MonoBehaviourExtensions
 	}
 	*/
 
+	static public void SetPaused(this Animator animator, bool value)
+	{
+		animator.speed = value ? 0f : 1f;
+	}
+
+	static public void RestoreState(this Rigidbody rb, RigidbodyState rigidbodyState)
+	{
+		rb.position = rigidbodyState.position;
+		rb.rotation = rigidbodyState.rotation;
+		rb.velocity = rigidbodyState.velocity;
+		rb.angularVelocity = rigidbodyState.angularVelocity;
+		rb.isKinematic = rigidbodyState.isKinematic;
+	}
+
 	static public Vector3 FindNearestPointOnLine(this Vector3 point, Vector3 origin, Vector3 direction, float maxDistance = Mathf.Infinity)
 	{
 		direction.Normalize();

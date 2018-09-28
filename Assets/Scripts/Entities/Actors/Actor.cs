@@ -10,9 +10,6 @@ public class Actor : Entity
 
 	public bool isAwake = false;
 
-	public PhysicMaterial activeMaterial = null;
-	public PhysicMaterial stunnedMaterial = null;
-
 	public Vector3 move { get; set; }
 	public float look { get; set; }
 	public bool lockOn { get; set; }
@@ -29,44 +26,38 @@ public class Actor : Entity
 	[HideInInspector]
 	public List<ActorAbility> abilities = new List<ActorAbility>();
 
-	private new Collider collider = null;
-
 	public float health { get; set; }
 	public float maxHealth { get; protected set; }
 	protected float stunTime = 0f;
-	protected Coroutine getHit = null;
+	protected float localPauseTimer = 0f;
+	public IEnumerator hitReaction;
 
 	// Use this for initialization
 	protected override void Awake()
 	{
 		base.Awake();
-		animator = GetComponentInChildren<Animator>();
-		collider = GetComponent<Collider>();
-		collider.material = isAwake ? activeMaterial : stunnedMaterial;
+		animator = GetComponent<Animator>();
 		health = maxHealth = 100f;
 	}
 
 	private void Start()
 	{
-		//look = transform.forward;
-
 		if(controller != null)
 		{
 			controller.Engage(this);
 		}
 	}
 
-	public float hitPauseTimer = 0f;
-
 	public override void OnUpdate()
 	{
 		base.OnUpdate();
+		hitReaction?.MoveNext();
 		ProcessInput();
 		ProcessAnimation();
-		if(hitPauseTimer > 0f)
+		if(localPauseTimer > 0f)
 		{
-			hitPauseTimer -= Time.deltaTime;
-			hitPauseTimer = Mathf.Max(0f, hitPauseTimer);
+			localPauseTimer -= Time.deltaTime;
+			localPauseTimer = Mathf.Max(0f, localPauseTimer);
 		}
 	}
 
@@ -78,7 +69,10 @@ public class Actor : Entity
 
 	protected override void OnPauseEntity(bool value)
 	{
-		PauseAnimation(value);
+		if(animator != null)
+		{
+			animator.SetPaused(value);
+		}
 	}
 
 	protected virtual void ProcessInput()
@@ -97,11 +91,6 @@ public class Actor : Entity
 	{
 	}
 
-	private void PauseAnimation(bool paused)
-	{
-		if(animator != null) animator.speed = paused ? 0f : localTimeScale;
-	}
-
 	public void SetController(ActorController newController)
 	{
 		newController.Engage(this);
@@ -118,55 +107,31 @@ public class Actor : Entity
 
 	public void GetHit(Actor attacker, AttackData data)
 	{
-		this.OverrideCoroutine(ref getHit, Hit(attacker, data));
-		
-	}
-
-	/* ----- COMBAT STUFF ------ */
-
-	private IEnumerator Hit(Actor attacker, AttackData data)
-	{
 		// Reduce health
 		health = Mathf.Max(health - data.damage, 0f);
-
 		//Debug.Log("Hit " + name + " - HP: " + health + "/" + maxHealth);
-
-		// Set stun time, if greater than current stun time
-		stunTime = Mathf.Max(stunTime, data.stun);
 
 		// Apply knockback
 		rb.velocity = (transform.position - attacker.transform.position).normalized * data.knockback;
 
-		GameManager.I.hitPauseTimer = Time.fixedDeltaTime * 8f;
+		// TODO: Start hit reacting after hit pause (using a delegate callback?)
+		// TODO: Get reaction type from AttackData 
+		hitReaction = Stunned(data.stun);
+	}
+
+	protected IEnumerator Stunned(float newStunTime)
+	{
+		// Set stun time, if greater than current stun time
+		stunTime = Mathf.Max(stunTime, newStunTime);
 
 		while(stunTime > 0f)
 		{
-			// If we got stunned, we want to apply a different physics material until it's over
-			collider.material = stunnedMaterial;
 			stunTime -= Time.deltaTime;
 			yield return null;
 		}
-
-		collider.material = activeMaterial;
 	}
 
-	/*
-	private IEnumerator HitStun(float duration)
-	{
-		PauseEntity
-
-			float time = 0f;
-
-		while(time < duration)
-		{
-			Time.timeScale = 0.05f;
-			time += Time.unscaledDeltaTime;
-			yield return null;
-		}
-	}
-	*/
-
-	//*//
+	/*//
 	private IEnumerator SlowMo(float duration, float recovery)
 	{
 		yield return null;

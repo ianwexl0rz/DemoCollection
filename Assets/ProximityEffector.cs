@@ -3,33 +3,29 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(SphereCollider))]
-public class TimeDilator : MonoBehaviour {
+public class ProximityEffector : MonoBehaviour {
 
-	public float speedMultiplier = 0.2f;
+	public float intensity = 1f;
 	public List<Entity> entities = new List<Entity>();
 
+	/*
 	private SphereCollider sphereCollider = null;
 
-	// Use this for initialization
-	void Awake ()
+	private void Awake()
 	{
 		sphereCollider = GetComponent<SphereCollider>();
 	}
 	
-	// Update is called once per frame
-	void Update ()
+	private void Update()
 	{
-
 		foreach(Entity entity in entities)
 		{
-			float distance = Vector3.Distance(transform.position, entity.transform.position);
+			float distance = Vector3.Distance(transform.position, entity.transform.position) / sphereCollider.radius;
 
-			distance /= sphereCollider.radius;
-
-			entity.localTimeScale = Mathf.Lerp(speedMultiplier, 1f, distance);
+			//entity.someProperty = intensity * (1 - distance);
 		}
-		
 	}
+	*/
 
 	private void OnTriggerEnter(Collider other)
 	{

@@ -44,24 +44,26 @@ public class ThirdPersonCamera : MonoBehaviour
 	private Vector3 trackPos = Vector3.zero;
 	private Vector3 desiredLookPos;
 
-	public void Setup()
-	{
-		SetTarget(GameManager.I.activePlayer);
-		focalHeight = desiredFocalHeight;
-		lastTargetPos = player.transform.position;
-	}
-
-	public void SetTarget(Player newPlayer)
+	public void SetTarget(Player newPlayer, bool immediate)
 	{
 		player = newPlayer;
 
 		desiredFocalHeight = player.GetComponent<Collider>().bounds.extents.y;
 
+		if(immediate)
+		{
+			focalHeight = desiredFocalHeight;
+			lastTargetPos = trackPos = player.transform.position + Vector3.up * focalHeight;
+		}
+		else
+		{
+			blendToPlayer = 1f;
+		}
+
 		previousPlayerPosition = trackPos;
 		previousFocalHeight = focalHeight;
 		previousLookPos = lookPos;
 		//previousLockOnHeight = lockOnHeight;
-		blendToPlayer = 1f;
 	}
 
 	public void UpdateRotation()

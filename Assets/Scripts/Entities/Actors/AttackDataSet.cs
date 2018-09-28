@@ -7,6 +7,7 @@ public class AttackData
 {
 	public string name = "New Attack";
 	public float damage = 0f;
+	public int hitPause = 8;
 	public float knockback = 0f;
 	public float stun = 0f;
 }

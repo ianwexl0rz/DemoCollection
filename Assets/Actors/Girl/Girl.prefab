@@ -95,12 +95,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4416901508690764}
+  - component: {fileID: 95425245237739550}
   - component: {fileID: 54147962096831054}
   - component: {fileID: 136499514121446498}
   - component: {fileID: 114853101477975604}
-  - component: {fileID: 114680203467849534}
-  - component: {fileID: 95425245237739550}
-  - component: {fileID: 114024611013101192}
   m_Layer: 8
   m_Name: Girl
   m_TagString: Untagged
@@ -980,7 +978,7 @@ Animator:
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 7c5006bb81fdb476199973b6966f1d25, type: 3}
   m_Controller: {fileID: 9100000, guid: 577eeeda8465542d99ad38a77ae2cd60, type: 2}
-  m_CullingMode: 1
+  m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
@@ -1006,47 +1004,6 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!114 &114024611013101192
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1093183912855910}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7397dc516a4bb9941ae69a063c0bcd19, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &114680203467849534
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1093183912855910}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: -1862395651, guid: f70555f144d8491a825f0804e09c671c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Delegates:
-  - eventID: 4
-    callback:
-      m_PersistentCalls:
-        m_Calls:
-        - m_Target: {fileID: 0}
-          m_MethodName: ClickOnPlayer
-          m_Mode: 2
-          m_Arguments:
-            m_ObjectArgument: {fileID: 114853101477975604}
-            m_ObjectArgumentAssemblyTypeName: Player, Assembly-CSharp
-            m_IntArgument: 0
-            m_FloatArgument: 0
-            m_StringArgument: 
-            m_BoolArgument: 0
-          m_CallState: 2
-      m_TypeName: UnityEngine.EventSystems.EventTrigger+TriggerEvent, UnityEngine.UI,
-        Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  delegates: []
 --- !u!114 &114853101477975604
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1058,14 +1015,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9a67f68fcd6514dd2b7733d06827c987, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  localTimeScale: 1
   _controller: {fileID: 0}
   isAwake: 1
-  activeMaterial: {fileID: 13400000, guid: 2797b4925bfa04d4a8a2d446c2a60cbc, type: 2}
-  stunnedMaterial: {fileID: 13400000, guid: df424baae3c13e545b1aa61573299c06, type: 2}
   lockOnTarget: {fileID: 0}
   abilities: []
-  hitPauseTimer: 0
+  attackDataSet: {fileID: 11400000, guid: 7b599c3afc5abd14e97032bd4e49c044, type: 2}
+  attackBox: {fileID: 1345380477356850}
+  weaponTransform: {fileID: 4147869441197932}
   minSpeed: 0.25
   walkSpeed: 2
   runSpeed: 4
@@ -1076,12 +1032,6 @@ MonoBehaviour:
     type: 2}
   angularVelocityControllerConfig: {fileID: 11400000, guid: c29f48e699ec26445a33657059edbdf3,
     type: 2}
-  hitSpark: {fileID: 1312546261970878, guid: bc7a4bb76e52cad4c8ac1a9c9b37ed1c, type: 2}
-  weaponTransform: {fileID: 4147869441197932}
-  aimingMode: 0
-  recenter: 0
-  attackDataSet: {fileID: 11400000, guid: 7b599c3afc5abd14e97032bd4e49c044, type: 2}
-  attackBox: {fileID: 1345380477356850}
 --- !u!136 &136120435856307064
 CapsuleCollider:
   m_ObjectHideFlags: 1

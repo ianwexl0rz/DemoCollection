@@ -17,6 +17,7 @@ public class AttackBehaviour : StateMachineBehaviour
 	override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
 	{
 		player = animator.GetComponent<Player>();
+		player.isAttacking = true;
 
 		trackPosition = player.attackBox.transform;
 
@@ -51,7 +52,7 @@ public class AttackBehaviour : StateMachineBehaviour
 
 			for(int i=0; i<positions.Count-1; i++)
 			{
-				Debug.DrawLine(positions[i], positions[i+1], player.attackInProgress ? Color.red : Color.cyan, Time.fixedDeltaTime * 8);
+				Debug.DrawLine(positions[i], positions[i+1], player.activeHit != null ? Color.red : Color.cyan, Time.fixedDeltaTime * 8);
 			}
 		}
 	}
@@ -65,7 +66,8 @@ public class AttackBehaviour : StateMachineBehaviour
 		}
 		animator.applyRootMotion = false;
 		player.rootMotionOverride = false;
-		player.SetCancelOK();
+		player.isAttacking = false;
+		player.cancelOK = false;
 	}
 
 	// OnStateMove is called right after Animator.OnAnimatorMove(). Code that processes and affects root motion should be implemented here
