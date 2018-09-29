@@ -38,9 +38,6 @@ public class Player : CombatActor
 	protected override void Awake()
 	{
 		base.Awake();
-		attackBox.SetActive(false);
-		attackCollider = attackBox.GetComponent<Collider>();
-
 		angleController = new PID(angleControllerConfig);
 		angularVelocityController = new PID(angularVelocityControllerConfig);
 	}
@@ -211,8 +208,8 @@ public class Player : CombatActor
 
 		UpdateAttackBuffer();
 
-		if(weaponTransform)
-			Debug.DrawLine(weaponTransform.position, weaponTransform.position + weaponTransform.forward * ((CapsuleCollider)attackCollider).height, Color.red);
+		//if(weaponTransform)
+		//	Debug.DrawLine(weaponTransform.position, weaponTransform.position + weaponTransform.forward * ((CapsuleCollider)attackCollider).height, Color.red);
 	}
 
 	protected override void ProcessAnimation()
@@ -259,7 +256,14 @@ public class Player : CombatActor
 
 	public override void OnLateUpdate()
 	{
-		activeHit?.MoveNext();
+		if(activeHit)
+		{
+			Vector3 origin = weaponTransform.position;
+			Vector3 end = origin + weaponTransform.forward * 1.2f;
+
+			weaponCollision.SetCurrentPosition(origin, end);
+			weaponCollision.CheckHits(this, 4);
+		}
 	}
 
 	protected void UpdateAttackBuffer()

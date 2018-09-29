@@ -124,20 +124,26 @@ ModelImporter:
     optimizeGameObjects: 0
     motionNodeName: 
     rigImportErrors: 
-    rigImportWarnings: 
+    rigImportWarnings: "Avatar Rig Configuration mis-match. Inbetween bone rotation
+      in configuration does not match rotation in animation file:\n\t'bangs1' : rotation
+      error = 2.722463 deg\n"
     animationImportErrors: 
-    animationImportWarnings: "\nClip 'dodgeL' has import animation warnings that might
-      lower retargeting quality:\nNote: Activate translation DOF on avatar to improve
-      retargeting quality.\n\t'foot_R' has scale animation that will be discarded.\n\nClip
-      'runfaster' has import animation warnings that might lower retargeting quality:\nNote:
-      Activate translation DOF on avatar to improve retargeting quality.\n\t'bangs1'
-      is inbetween humanoid transforms and has rotation animation that will be discarded.\n\nClip
-      'swing' has import animation warnings that might lower retargeting quality:\nNote:
-      Activate translation DOF on avatar to improve retargeting quality.\n\t'bangs1'
-      is inbetween humanoid transforms and has rotation animation that will be discarded.\n\nClip
-      'swing_forward' has import animation warnings that might lower retargeting quality:\nNote:
-      Activate translation DOF on avatar to improve retargeting quality.\n\t'bangs1'
-      is inbetween humanoid transforms and has rotation animation that will be discarded.\n\nClip
+    animationImportWarnings: "\nClip 'Default Take' has import animation warnings
+      that might lower retargeting quality:\nNote: Activate translation DOF on avatar
+      to improve retargeting quality.\n\t'bangs1' is inbetween humanoid transforms
+      and has rotation animation that will be discarded.\n\nClip 'dodgeL' has import
+      animation warnings that might lower retargeting quality:\nNote: Activate translation
+      DOF on avatar to improve retargeting quality.\n\t'foot_R' has scale animation
+      that will be discarded.\n\nClip 'runfaster' has import animation warnings that
+      might lower retargeting quality:\nNote: Activate translation DOF on avatar to
+      improve retargeting quality.\n\t'bangs1' is inbetween humanoid transforms and
+      has rotation animation that will be discarded.\n\nClip 'swing' has import animation
+      warnings that might lower retargeting quality:\nNote: Activate translation DOF
+      on avatar to improve retargeting quality.\n\t'bangs1' is inbetween humanoid
+      transforms and has rotation animation that will be discarded.\n\nClip 'swing_forward'
+      has import animation warnings that might lower retargeting quality:\nNote: Activate
+      translation DOF on avatar to improve retargeting quality.\n\t'bangs1' is inbetween
+      humanoid transforms and has rotation animation that will be discarded.\n\nClip
       'swing_forward_holds' has import animation warnings that might lower retargeting
       quality:\nNote: Activate translation DOF on avatar to improve retargeting quality.\n\t'bangs1'
       is inbetween humanoid transforms and has rotation animation that will be discarded.\n\nClip
@@ -389,7 +395,7 @@ ModelImporter:
       loopTime: 1
       loopBlend: 0
       loopBlendOrientation: 0
-      loopBlendPositionY: 0
+      loopBlendPositionY: 1
       loopBlendPositionXZ: 0
       keepOriginalOrientation: 0
       keepOriginalPositionY: 1

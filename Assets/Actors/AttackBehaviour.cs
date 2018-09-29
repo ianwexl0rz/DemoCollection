@@ -5,11 +5,8 @@ using System.Linq;
 public class AttackBehaviour : StateMachineBehaviour
 {
 	public bool applyRootMotion = false;
-	Player player = null;
-
-	public Transform trackPosition;
-
-	public List<Vector3> positions = new List<Vector3>();
+	private Player player = null;
+	private Transform weaponTransform;
 
 	private bool fullyTransitioned = false;
 
@@ -18,14 +15,9 @@ public class AttackBehaviour : StateMachineBehaviour
 	{
 		player = animator.GetComponent<Player>();
 		player.isAttacking = true;
+		player.hitEntities = new List<Entity>();
 
-		trackPosition = player.attackBox.transform;
-
-		positions.Clear();
-		for(int i=0; i<4; i++)
-		{
-			positions.Add(trackPosition.position + trackPosition.forward * 1.2f);
-		}
+		weaponTransform = player.weaponTransform.transform;
 
 		if(animator.parameters.Any(p => p.name == "isAttacking"))
 		{
@@ -44,17 +36,11 @@ public class AttackBehaviour : StateMachineBehaviour
 			if(applyRootMotion) player.animator.applyRootMotion = true;
 		}
 
-		if(trackPosition != null)
-		{
-			positions.RemoveAt(positions.Count - 1);
-			positions.Insert(0, trackPosition.position + trackPosition.forward * 1.2f);
-			//Debug.Log("Position 1: " + trackPosition.position + " Position 2");
+		Vector3 origin = weaponTransform.position;
+		Vector3 end = origin + weaponTransform.forward * 1.2f;
 
-			for(int i=0; i<positions.Count-1; i++)
-			{
-				Debug.DrawLine(positions[i], positions[i+1], player.activeHit != null ? Color.red : Color.cyan, Time.fixedDeltaTime * 8);
-			}
-		}
+		// TODO: Update all weaponCollisions in a "weapon collision set"
+		player.weaponCollision.SetInitialPosition(origin, end);
 	}
 
 	// OnStateExit is called when a transition ends and the state machine finishes evaluating this state

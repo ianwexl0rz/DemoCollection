@@ -2,16 +2,55 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public class WeaponCollision
+{
+	public Vector3 origin, end, lastOrigin, lastEnd = Vector3.zero;
+
+	public void SetInitialPosition(Vector3 p0, Vector3 p1)
+	{
+		lastOrigin = p0;
+		lastEnd = p1;
+	}
+
+	public void SetCurrentPosition(Vector3 p0, Vector3 p1)
+	{
+		origin = p0;
+		end = p1;
+	}
+
+	public void CheckHits(CombatActor attacker, int steps)
+	{
+		attacker.CheckHit(origin, end);
+		Debug.DrawLine(origin, end, Color.red, Time.fixedDeltaTime * 8);
+
+		for (int i = steps; i-- > 0;)
+		{
+			float t = (i + 1f) / (steps + 1f);
+
+			Vector3 p0 = Vector3.Lerp(lastOrigin, origin, t);
+			Vector3 p1 = Vector3.Lerp(lastEnd, end, t);
+
+			attacker.CheckHit(p0, p1);
+			Debug.DrawLine(p0, p1, Color.red, Time.fixedDeltaTime * 8);
+		}
+
+		attacker.CheckHit(lastOrigin, origin);
+		Debug.DrawLine(lastOrigin, origin, Color.red, Time.fixedDeltaTime * 8);
+	}
+}
+
 public class CombatActor : Actor
 {
 	[Header("Melee")]
-	public IEnumerator activeHit;
+	public AttackData attackData;
 	public bool isAttacking { get; set; }
+	public bool activeHit { get; set; }
 	public bool cancelOK { get; set; }
 	public AttackDataSet attackDataSet = null;
-	public GameObject attackBox = null;
 	public Transform weaponTransform;
-	protected Collider attackCollider = null;
+	public List<Entity> hitEntities = new List<Entity>();
+
+	public WeaponCollision weaponCollision = new WeaponCollision();
 
 	public void NewHit(AnimationEvent animEvent)
 	{
@@ -19,15 +58,15 @@ public class CombatActor : Actor
 
 		if(data != null)
 		{
-			attackBox.SetActive(true);
-			activeHit = Attack(data);
+			activeHit = true;
+			attackData = data;
+			hitEntities = new List<Entity>();
 		}
 	}
 
 	public void EndHit()
 	{
-		activeHit = null;
-		attackBox.SetActive(false);
+		activeHit = false;
 	}
 
 		public void CancelOK()
@@ -43,37 +82,30 @@ public class CombatActor : Actor
 		// TODO: Get reaction type from AttackData 
 		hitReaction = Stunned(data.stun);
 	}
-	
-	public IEnumerator Attack(AttackData data)
+
+	public void CheckHit(Vector3 origin, Vector3 end)
 	{
-		List<Entity> hitEntities = new List<Entity>();
+		RaycastHit[] hits = Physics.RaycastAll(
+			origin,
+			(end - origin).normalized,
+			(end - origin).magnitude,
+			LayerMask.GetMask("Actor", "PhysicsObject"));
 
-		while(true)
+		foreach(RaycastHit hit in hits)
 		{
-			RaycastHit[] hits = Physics.RaycastAll(
-				weaponTransform.position,
-				weaponTransform.forward,
-				((CapsuleCollider)attackCollider).height,
-				LayerMask.GetMask("Actor", "PhysicsObject"));
+			Collider hitCollider = hit.collider;
 
-			foreach(RaycastHit hit in hits)
+			Entity entity = hitCollider.GetComponent<Entity>();
+			if(entity == null || entity == this) { continue; }
+
+			if(!hitEntities.Contains(entity))
 			{
-				Collider hitCollider = hit.collider;
+				Vector3 hitDirection = (entity.transform.position - transform.position).normalized;
+				entity.GetHit(hit.point, hitDirection, attackData);
+				hitEntities.Add(entity);
 
-				Entity entity = hitCollider.GetComponent<Entity>();
-				if(entity == null || entity == this) { continue; }
-
-				if(!hitEntities.Contains(entity))
-				{
-					Vector3 hitDirection = (entity.transform.position - transform.position).normalized;
-					entity.GetHit(hit.point, hitDirection, data);
-					hitEntities.Add(entity);
-
-					GameManager.HitPauseTimer = Time.fixedDeltaTime * data.hitPause;
-				}
+				GameManager.HitPauseTimer = Time.fixedDeltaTime * attackData.hitPause;
 			}
-
-			yield return null;
 		}
 	}
 }

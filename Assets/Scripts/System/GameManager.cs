@@ -55,6 +55,8 @@ public class GameManager : MonoBehaviour
 	#region UNITY_METHODS
 	private void Awake()
 	{
+		Application.targetFrameRate = 60;
+
 		DontDestroyOnLoad(this);
 
 		// Lock cursor by default.
