@@ -46,7 +46,9 @@ public class Player : CombatActor
 		desiredDirection = transform.forward;
 		angleController = new PID3(angleControllerConfig);
 		angularVelocityController = new PID3(angularVelocityControllerConfig);
+		rb.centerOfMass = Vector3.zero;
 	}
+
 
 	private void OnDrawGizmosSelected()
 	{
@@ -150,7 +152,7 @@ public class Player : CombatActor
 	{
 		if(lockOn && lockOnTarget != null)
 		{
-			desiredDirection = (lockOnTarget.position - transform.position).normalized;
+			desiredDirection = (lockOnTarget.position - transform.position).WithY(0f).normalized;
 		}
 		else if(currentSpeed.WithY(0f).magnitude >= minSpeed)
 		{
@@ -217,9 +219,6 @@ public class Player : CombatActor
 		}
 
 		UpdateAttackBuffer();
-
-		//if(weaponTransform)
-		//	Debug.DrawLine(weaponTransform.position, weaponTransform.position + weaponTransform.forward * ((CapsuleCollider)attackCollider).height, Color.red);
 	}
 
 	protected override void ProcessAnimation()

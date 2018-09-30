@@ -124,6 +124,15 @@ public class GameManager : MonoBehaviour
 			OnPauseGame(gamePaused);
 		}
 
+		if(!gamePaused && hitPauseTimer > 0)
+		{
+			InputManager.ActiveDevice.Vibrate(0.5f);
+		}
+		else
+		{
+			InputManager.ActiveDevice.Vibrate(0f);
+		}
+
 		if((gamePaused || hitPauseTimer > 0) && !physicsPaused)
 		{
 			physicsPaused = true;

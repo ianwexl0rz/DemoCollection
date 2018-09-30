@@ -14,6 +14,6 @@ MonoBehaviour:
   _attacks:
   - name: lightAttack
     damage: 5
-    hitPause: 8
+    hitPause: 4
     knockback: 4
     stun: 0.25

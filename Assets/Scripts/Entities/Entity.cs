@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
+using System.Collections.Generic;
 using System;
+using InControl;
 
 [Serializable]
 public struct RigidbodyState
@@ -25,6 +27,9 @@ public class Entity : MonoBehaviour
 	private RigidbodyState savedState;
 
 	protected bool paused;
+
+
+	protected Action OnEarlyFixedUpdate = delegate { };
 
 	public Rigidbody rb { get; private set; }
 
@@ -60,6 +65,11 @@ public class Entity : MonoBehaviour
 
 	public virtual void OnFixedUpdate()
 	{
+		if(OnEarlyFixedUpdate != null)
+		{
+			OnEarlyFixedUpdate();
+		}
+		OnEarlyFixedUpdate = null;
 	}
 
 	protected virtual void OnPauseEntity(bool value)
@@ -100,12 +110,25 @@ public class Entity : MonoBehaviour
 
 	public void GetHit(Vector3 hitPoint, Vector3 direction, AttackData data)
 	{
-		// Apply knockback
-		rb.velocity = direction * data.knockback;
+		bool isActor = this is Actor;
+		HitSparkType sparkType;
+		
+		if(isActor)
+		{
+			OnEarlyFixedUpdate = () =>
+			{
+				rb.AddForce(direction * data.knockback / Time.fixedDeltaTime, ForceMode.Acceleration);
+				rb.AddForceAtPosition(direction * data.knockback * 0.25f / Time.fixedDeltaTime, rb.position.WithY(hitPoint.y), ForceMode.Acceleration);
+			};
+			sparkType = HitSparkType.Blue;
+		}
+		else
+		{
+			OnEarlyFixedUpdate = () => rb.AddForceAtPosition(direction * data.knockback / Time.fixedDeltaTime, hitPoint, ForceMode.Acceleration);
+			sparkType = HitSparkType.Orange;
+		}
 
-		HitSparkType sparkType = this is Actor ? HitSparkType.Blue : HitSparkType.Orange;
 		Instantiate(GameManager.I.GetHitSpark(sparkType), hitPoint, Quaternion.identity, null);
-
 		OnGetHit(direction, data);
 	}
 }
