@@ -3,6 +3,7 @@ using InControl;
 
 public class ThirdPersonCamera : MonoBehaviour
 {
+	public bool isEnabled = false;
 	public float distance = 2.5f;
 	public Vector2 pitchMinMax = new Vector2(-40, 85);
 	public Vector3 offset = new Vector3(0f,1.6f,0.7f);
@@ -68,7 +69,7 @@ public class ThirdPersonCamera : MonoBehaviour
 
 	public void UpdateRotation()
 	{
-		if(!player) return;
+		if(!player || !isEnabled) return;
 
 		float smooth = 1;
 
@@ -135,7 +136,7 @@ public class ThirdPersonCamera : MonoBehaviour
 
 	public void UpdatePosition()
 	{
-		if(!player) return;
+		if(!player || !isEnabled) return;
 		bool lockedOn = player.lockOn && player.lockOnTarget != null;
 
 		Quaternion screenRotation = Quaternion.AngleAxis(transform.rotation.eulerAngles.y, Vector3.up);

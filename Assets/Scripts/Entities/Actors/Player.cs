@@ -10,24 +10,29 @@ public class Player : CombatActor
 	public float runSpeed = 4f;
 	public float jumpHeight = 4f;
 	public float gravityMult = 1f;
+	public float rollSpeed = 5f;
 	public float speedSmoothTime = 0.1f;
 
 	public bool run { get; set; }
 	public bool jump { get; set; }
 	public bool attack { get; set; }
+	public bool shouldRoll { get; set; }
+
 	public bool recenter { get; set; }
 	public bool aimingMode { get; set; }
 	public bool rootMotionOverride { get; set; }
 
+	private Quaternion rollRotation = Quaternion.identity;
+
 	public PIDConfig angleControllerConfig = null;
 	public PIDConfig angularVelocityControllerConfig = null;
 
-	private PID angleController = null;
-	private PID angularVelocityController = null;
+	private PID3 angleController = null;
+	private PID3 angularVelocityController = null;
 
 	private Vector3 currentSpeed;
 	private Vector3 speedSmoothVelocity;
-	private float desiredRotation = 0f;
+	private Vector3 desiredDirection;
 
 	private bool grounded = false;
 	private bool queueJump = false;
@@ -38,8 +43,9 @@ public class Player : CombatActor
 	protected override void Awake()
 	{
 		base.Awake();
-		angleController = new PID(angleControllerConfig);
-		angularVelocityController = new PID(angularVelocityControllerConfig);
+		desiredDirection = transform.forward;
+		angleController = new PID3(angleControllerConfig);
+		angularVelocityController = new PID3(angularVelocityControllerConfig);
 	}
 
 	private void OnDrawGizmosSelected()
@@ -144,14 +150,18 @@ public class Player : CombatActor
 	{
 		if(lockOn && lockOnTarget != null)
 		{
-			desiredRotation = Vector3.SignedAngle(Vector3.forward, (lockOnTarget.position - transform.position).normalized, Vector3.up);
+			desiredDirection = (lockOnTarget.position - transform.position).normalized;
 		}
 		else if(currentSpeed.WithY(0f).magnitude >= minSpeed)
 		{
-			desiredRotation = Vector3.SignedAngle(Vector3.forward, currentSpeed.WithY(0f), Vector3.up);
+			desiredDirection = currentSpeed.WithY(0f);
 		}
 
-		rb.RotateToAngleYaw(angleController, angularVelocityController, desiredRotation);
+		rollRotation = shouldRoll ? rollRotation * Quaternion.AngleAxis(5f, Vector3.right) : Quaternion.identity;
+
+		Quaternion rotation = Quaternion.LookRotation(desiredDirection) * rollRotation;
+
+		rb.RotateTo(angleController, angularVelocityController, rotation, !grounded);
 	}
 
 	protected override void ProcessInput()
