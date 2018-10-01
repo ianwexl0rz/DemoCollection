@@ -15,7 +15,7 @@ public class AttackBehaviour : StateMachineBehaviour
 	{
 		player = animator.GetComponent<Player>();
 		player.isAttacking = true;
-		player.hitEntities = new List<Entity>();
+		player.hitObjects = new List<GameObject>();
 
 		weaponTransform = player.weaponTransform.transform;
 
@@ -29,18 +29,14 @@ public class AttackBehaviour : StateMachineBehaviour
 	// OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
 	override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
 	{
-		if(!animator.IsInTransition(0) && !fullyTransitioned)
+		if(!animator.IsInTransition(0) && !fullyTransitioned && !player.rootMotionOverride)
 		{
 			fullyTransitioned = true;
 			player.rootMotionOverride = applyRootMotion;
-			if(applyRootMotion) player.animator.applyRootMotion = true;
+			if(applyRootMotion) animator.applyRootMotion = true;
 		}
 
-		Vector3 origin = weaponTransform.position;
-		Vector3 end = origin + weaponTransform.forward * 1.2f;
-
-		// TODO: Update all weaponCollisions in a "weapon collision set"
-		player.weaponCollision.SetInitialPosition(origin, end);
+		//SetWeaponInitialPosition();
 	}
 
 	// OnStateExit is called when a transition ends and the state machine finishes evaluating this state
@@ -55,6 +51,15 @@ public class AttackBehaviour : StateMachineBehaviour
 		player.isAttacking = false;
 		player.cancelOK = false;
 	}
+
+	// private void SetWeaponInitialPosition()
+	// {
+	// 	Vector3 origin = weaponTransform.position;
+	// 	Vector3 end = origin + weaponTransform.forward * 1.2f;
+
+	// 	// TODO: Update all weaponCollisions in a "weapon collision set"
+	// 	player.weaponCollision.SetInitialPosition(origin, end);
+	// }
 
 	// OnStateMove is called right after Animator.OnAnimatorMove(). Code that processes and affects root motion should be implemented here
 	//override public void OnStateMove(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {

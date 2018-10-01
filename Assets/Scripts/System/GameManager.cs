@@ -3,12 +3,6 @@ using System.Collections.Generic;
 using InControl;
 using System;
 
-public enum HitSparkType
-{
-	Blue,
-	Orange
-}
-
 public class GameManager : MonoBehaviour
 {
 	public Player activePlayer;
@@ -16,7 +10,7 @@ public class GameManager : MonoBehaviour
 	public ThirdPersonCamera mainCamera = null;
 
 	[Header("UI")]
-	public GameObject pausePrefab = null;
+	public UnityEngine.GameObject pausePrefab = null;
 	public RectTransform healthBarFill = null;
 
 	[Header("Actor Controllers")]
@@ -25,9 +19,9 @@ public class GameManager : MonoBehaviour
 
 	[Header("Gameplay")]
 	[SerializeField]
-	private GameObject hitSpark = null;
+	private UnityEngine.GameObject hitSpark = null;
 	[SerializeField]
-	private GameObject hitSpark2 = null;
+	private UnityEngine.GameObject hitSpark2 = null;
 
 	private int targetIndex = 0;
 	private List<Player> playerCharacters;
@@ -55,8 +49,6 @@ public class GameManager : MonoBehaviour
 	#region UNITY_METHODS
 	private void Awake()
 	{
-		Application.targetFrameRate = 60;
-
 		DontDestroyOnLoad(this);
 
 		// Lock cursor by default.
@@ -165,15 +157,13 @@ public class GameManager : MonoBehaviour
 		}
 	}
 
-	public GameObject GetHitSpark(HitSparkType type)
+	public static bool GetHitSpark(Entity entity, out GameObject hitSpark)
 	{
-		switch (type)
-		{
-			case HitSparkType.Blue:
-				return hitSpark;
-			default:
-				return hitSpark2;
-		}
+		return hitSpark =
+		(
+			entity is Actor ? I.hitSpark :
+			entity is Entity ? I.hitSpark2 : null
+		);
 	}
 
 	public Player GetFirstInactivePlayer()
@@ -213,6 +203,7 @@ public class GameManager : MonoBehaviour
 			activePlayer.health = Mathf.Max(activePlayer.health - 5f, 0f);
 		}
 
+		// TODO: Only update this when it changes
 		healthBarFill.anchorMax = new Vector2(activePlayer.health / activePlayer.maxHealth, healthBarFill.anchorMax.y);
 	}
 

@@ -2,43 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class WeaponCollision
-{
-	public Vector3 origin, end, lastOrigin, lastEnd = Vector3.zero;
-
-	public void SetInitialPosition(Vector3 p0, Vector3 p1)
-	{
-		lastOrigin = p0;
-		lastEnd = p1;
-	}
-
-	public void SetCurrentPosition(Vector3 p0, Vector3 p1)
-	{
-		origin = p0;
-		end = p1;
-	}
-
-	public void CheckHits(CombatActor attacker, int steps)
-	{
-		attacker.CheckHit(origin, end);
-		Debug.DrawLine(origin, end, Color.red, Time.fixedDeltaTime * 8);
-
-		for (int i = steps; i-- > 0;)
-		{
-			float t = (i + 1f) / (steps + 1f);
-
-			Vector3 p0 = Vector3.Lerp(lastOrigin, origin, t);
-			Vector3 p1 = Vector3.Lerp(lastEnd, end, t);
-
-			attacker.CheckHit(p0, p1);
-			Debug.DrawLine(p0, p1, Color.red, Time.fixedDeltaTime * 8);
-		}
-
-		attacker.CheckHit(lastOrigin, origin);
-		Debug.DrawLine(lastOrigin, origin, Color.red, Time.fixedDeltaTime * 8);
-	}
-}
-
 public class CombatActor : Actor
 {
 	[Header("Melee")]
@@ -48,7 +11,7 @@ public class CombatActor : Actor
 	public bool cancelOK { get; set; }
 	public AttackDataSet attackDataSet = null;
 	public Transform weaponTransform;
-	public List<Entity> hitEntities = new List<Entity>();
+	public List<GameObject> hitObjects = new List<GameObject>();
 
 	public WeaponCollision weaponCollision = new WeaponCollision();
 
@@ -60,8 +23,14 @@ public class CombatActor : Actor
 		{
 			activeHit = true;
 			attackData = data;
-			hitEntities = new List<Entity>();
+			hitObjects = new List<GameObject>();
 		}
+		
+		Vector3 origin = weaponTransform.position;
+		Vector3 end = origin + weaponTransform.forward * 1.2f;
+
+		// TODO: Update all weaponCollisions in a "weapon collision set"
+		weaponCollision.SetInitialPosition(origin, end);
 	}
 
 	public void EndHit()
@@ -69,18 +38,20 @@ public class CombatActor : Actor
 		activeHit = false;
 	}
 
-		public void CancelOK()
+	public void CancelOK()
 	{
 		cancelOK = true;
 	}
 
-	protected override void OnGetHit(Vector3 direction, AttackData data)
+	protected override void OnGetHit(Vector3 hitPoint, Vector3 direction, AttackData data)
 	{
+		base.OnGetHit(hitPoint, direction, data);
+
 		health = Mathf.Max(health - data.damage, 0f);
 		//Debug.Log("Hit " + name + " - HP: " + health + "/" + maxHealth);
 
 		// TODO: Get reaction type from AttackData 
-		hitReaction = Stunned(data.stun);
+		stunTime = Mathf.Max(stunTime, data.stun);
 	}
 
 	public void CheckHit(Vector3 origin, Vector3 end)
@@ -88,24 +59,28 @@ public class CombatActor : Actor
 		RaycastHit[] hits = Physics.RaycastAll(
 			origin,
 			(end - origin).normalized,
-			(end - origin).magnitude,
-			LayerMask.GetMask("Actor", "PhysicsObject"));
+			(end - origin).magnitude);
 
 		foreach(RaycastHit hit in hits)
 		{
-			Collider hitCollider = hit.collider;
+			GameObject go = hit.collider.gameObject;
+			Entity entity = go.GetComponent<Entity>();
 
-			Entity entity = hitCollider.GetComponent<Entity>();
-			if(entity == null || entity == this) { continue; }
-
-			if(!hitEntities.Contains(entity))
+			if(hitObjects.Contains(go) || entity == this) { continue; }
+			
+			if(entity != null)
 			{
-				Vector3 hitDirection = (entity.transform.position - transform.position).normalized;
+				Vector3 hitDirection = (go.transform.position - transform.position).normalized;
 				entity.GetHit(hit.point, hitDirection, attackData);
-				hitEntities.Add(entity);
-
 				GameManager.HitPauseTimer = Time.fixedDeltaTime * attackData.hitPause;
 			}
+			
+			if(GameManager.GetHitSpark(entity, out GameObject hitspark))
+			{
+				Instantiate(hitspark, hit.point, Quaternion.identity);
+			}
+
+			hitObjects.Add(go);
 		}
 	}
 }

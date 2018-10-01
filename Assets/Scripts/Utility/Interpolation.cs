@@ -67,6 +67,30 @@ public static class Interpolation
         
         return (d2 - t) / (d2 - d1) * b1 + (t - d1) / (d2 - d1) * b2;
     }
+
+    public static Vector3 CatmullRom(Vector3 p0, Vector3 p1, Vector3 p2, Vector3 p3, float t, float alpha)
+    {
+        if (p1 == p2) return p2;
+        
+        float d0 = 0f;
+        float d1 = Mathf.Pow((p1 - p0).magnitude, alpha);
+        float d2 = Mathf.Pow((p2 - p1).magnitude, alpha) + d1;
+        float d3 = Mathf.Pow((p3 - p2).magnitude, alpha) + d2;
+        
+        t = Mathf.Lerp(d1,d2,t);
+        
+        Vector3 a1 = p1;
+        Vector3 a2 = (d2 - t) / (d2 - d1) * p1 + (t - d1) / (d2 - d1) * p2;
+        Vector3 a3 = p2;
+        
+        if (d1 > d0) a1 = (d1 - t) / (d1 - d0) * p0 + (t - d0) / (d1 - d0) * p1;
+        if (d3 > d2) a3 = (d3 - t) / (d3 - d2) * p2 + (t - d2) / (d3 - d2) * p3;
+        
+        Vector3 b1 = (d2 - t) / (d2 - d0) * a1 + (t - d0) / (d2 - d0) * a2;
+        Vector3 b2 = (d3 - t) / (d3 - d1) * a2 + (t - d1) / (d3 - d1) * a3;
+        
+        return (d2 - t) / (d2 - d1) * b1 + (t - d1) / (d2 - d1) * b2;
+    }
     
     public static Vector3 CatmullRom(Vector3 p0, Vector3 p1, Vector3 p2, Vector3 p3, float t)
     {

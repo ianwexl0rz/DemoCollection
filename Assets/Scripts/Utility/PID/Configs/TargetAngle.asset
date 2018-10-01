@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b85230e7b29f0b44e8b39ec659d3c943, type: 3}
   m_Name: TargetAngle
   m_EditorClassIdentifier: 
-  Kp: 9.244681
+  Kp: 50
   Ki: 0
-  Kd: 0.06382979
+  Kd: 1

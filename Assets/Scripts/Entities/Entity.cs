@@ -53,6 +53,8 @@ public class Entity : MonoBehaviour
 
 		GameManager.I.RemoveEntity(this);
 		GameManager.I.PauseAllPhysics -= PauseEntity;
+
+		if(paused) { PauseEntity(false); }
 	}
 
 	public virtual void OnUpdate()
@@ -108,16 +110,13 @@ public class Entity : MonoBehaviour
 		OnPauseEntity(value);
 	}
 
-	protected virtual void Knockback(Vector3 hitPoint, Vector3 direction, AttackData data, out HitSparkType sparkType)
+	protected virtual void OnGetHit(Vector3 hitPoint, Vector3 direction, AttackData data)
 	{
 		OnEarlyFixedUpdate = () => rb.AddForceAtPosition(direction * data.knockback / Time.fixedDeltaTime, hitPoint, ForceMode.Acceleration);
-		sparkType = HitSparkType.Orange;
 	}
 
 	public void GetHit(Vector3 hitPoint, Vector3 direction, AttackData data)
 	{
-		Knockback(hitPoint, direction, data, out HitSparkType sparkType);
-		Instantiate(GameManager.I.GetHitSpark(sparkType), hitPoint, Quaternion.identity, null);
-		OnGetHit(direction, data);
+		OnGetHit(hitPoint, direction, data);
 	}
 }

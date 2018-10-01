@@ -26,7 +26,7 @@ public class PlayerController : ActorController
 			player.recenter = playerInput.RightStickButton.WasPressed;
 			player.run = playerInput.RightTrigger.IsPressed || Input.GetKey(KeyCode.LeftShift);
 			player.jump = playerInput.Action1.WasPressed || playerInput.LeftBumper.WasPressed || Input.GetKeyDown(KeyCode.Space);
-			player.attack = playerInput.Action3.WasPressed || Input.GetMouseButton(0);
+			player.attack = playerInput.Action3.WasPressed || Input.GetMouseButtonDown(0);
 		}
 
 		/*

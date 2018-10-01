@@ -59,7 +59,12 @@ public class Player : CombatActor
 
 	protected override void ProcessPhysics()
 	{
-		if(stunTime > 0f) { return; }
+		if(stunTime > 0)
+		{
+			stunTime -= Time.fixedDeltaTime;
+			stunTime = Mathf.Max(0f, stunTime);
+			return;
+		}
 
 		if(rootMotionOverride)
 		{
@@ -268,13 +273,14 @@ public class Player : CombatActor
 
 	public override void OnLateUpdate()
 	{
-		if(activeHit)
+		if(activeHit && !paused)
 		{
 			Vector3 origin = weaponTransform.position;
 			Vector3 end = origin + weaponTransform.forward * 1.2f;
+			//Vector3 up = 
 
 			weaponCollision.SetCurrentPosition(origin, end);
-			weaponCollision.CheckHits(this, 4);
+			weaponCollision.CheckHits(this, 0.2f);
 		}
 	}
 
