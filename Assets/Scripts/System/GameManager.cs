@@ -97,7 +97,7 @@ public class GameManager : MonoBehaviour
 		if(physicsPaused) { return; }
 
 		// Swap characters
-		if(InputManager.ActiveDevice.Action4.WasPressed) { CyclePlayer(); }
+		if(InputManager.ActiveDevice.Action4.WasPressed || Input.GetKeyDown(KeyCode.Tab)) { CyclePlayer(); }
 
 		// Hold the right bumper for slow-mo!
 		Time.timeScale = InputManager.ActiveDevice.RightBumper.IsPressed || Input.GetKey(KeyCode.LeftAlt) ? 0.25f : 1f;
