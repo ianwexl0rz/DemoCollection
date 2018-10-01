@@ -29,6 +29,7 @@ namespace CustomProfileExample
 			LowerDeadZone = 0.0f;
 			UpperDeadZone = 1.0f;
 
+			/*
 			ButtonMappings = new[]
 			{
 				new InputControlMapping
@@ -69,6 +70,7 @@ namespace CustomProfileExample
 					Source = KeyCodeButton( KeyCode.P )
 				},
 			};
+			*/
 
 			AnalogMappings = new[]
 			{

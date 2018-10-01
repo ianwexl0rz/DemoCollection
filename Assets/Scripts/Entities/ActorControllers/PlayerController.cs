@@ -16,7 +16,7 @@ public class PlayerController : ActorController
 		InputDevice playerInput = InputManager.ActiveDevice;
 
 		actor.move = CalculateMove(playerInput);
-		actor.lockOn = playerInput.LeftTrigger.IsPressed;
+		actor.lockOn = playerInput.LeftTrigger.IsPressed || Input.GetMouseButton(1);
 
 		if(actor is Player)
 		{
@@ -24,9 +24,9 @@ public class PlayerController : ActorController
 
 			//player.aimingMode = gamePad.RightTrigger.IsPressed;
 			player.recenter = playerInput.RightStickButton.WasPressed;
-			player.run = playerInput.RightTrigger.IsPressed || playerInput.Action2.IsPressed;
-			player.jump = playerInput.Action1.WasPressed || playerInput.LeftBumper.WasPressed;
-			player.attack = playerInput.Action3.WasPressed || Input.GetKeyDown(KeyCode.M);
+			player.run = playerInput.RightTrigger.IsPressed || Input.GetKey(KeyCode.LeftShift);
+			player.jump = playerInput.Action1.WasPressed || playerInput.LeftBumper.WasPressed || Input.GetKeyDown(KeyCode.Space);
+			player.attack = playerInput.Action3.WasPressed || Input.GetMouseButton(0);
 		}
 
 		/*

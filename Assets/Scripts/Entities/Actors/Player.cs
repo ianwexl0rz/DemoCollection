@@ -162,11 +162,11 @@ public class Player : CombatActor
 			desiredDirection = currentSpeed.WithY(0f);
 		}
 
-		rollRotation = shouldRoll ? rollRotation * Quaternion.AngleAxis(5f, Vector3.right) : Quaternion.identity;
+		rollRotation = shouldRoll ? rollRotation * Quaternion.AngleAxis(6f, Vector3.right) : Quaternion.identity;
 
 		Quaternion rotation = Quaternion.LookRotation(desiredDirection) * rollRotation;
 
-		rb.RotateTo(angleController, angularVelocityController, rotation, !grounded);
+		rb.RotateTo(angleController, angularVelocityController, rotation, Time.fixedDeltaTime);
 	}
 
 	protected override void ProcessInput()

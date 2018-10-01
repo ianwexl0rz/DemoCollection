@@ -84,26 +84,19 @@ public static class MonoBehaviourExtensions
 		return origin + direction * Mathf.Clamp(dotP, 0f, maxDistance);
 	}
 
-	public static void RotateTo(this Rigidbody rb, PID3 angleController, PID3 angularVelocityController, Quaternion to, bool flipOK)
+	public static Vector3 GetXYZ(this Quaternion q)
 	{
-		float dt = Time.fixedDeltaTime;
+		return new Vector3(q.x, q.y, q.z);
+	}
 
-		Quaternion rotation = to *  Quaternion.Inverse(rb.rotation);
+	public static void RotateTo(this Rigidbody rb, PID3 rotationPid, PID3 angularVelocityPid, Quaternion target, float dt)
+	{
+		Quaternion toTarget = target * Quaternion.Inverse(rb.rotation);
 
-		if(rotation.w < 0)
-		{
-			rotation.w *= -1;
-			rotation.x *= -1;
-			rotation.y *= -1;
-			rotation.z *= -1;
-		}
+		Vector3 rotationCorrection = rotationPid.GetOutput(toTarget.GetXYZ() * Mathf.Sign(toTarget.w), dt);
+		Vector3 angularVelocityCorrection = angularVelocityPid.GetOutput(-rb.angularVelocity, dt);
 
-		Vector3 torqueCorrectionForAngle = angleController.GetOutput(new Vector3(rotation.x, rotation.y, rotation.z), dt);
-
-		Vector3 angularVelocityError = -rb.angularVelocity;
-		Vector3 torqueCorrectionForAngularVelocity = angularVelocityController.GetOutput(angularVelocityError, dt);
-
-		Vector3 torque = torqueCorrectionForAngle * Mathf.Rad2Deg + torqueCorrectionForAngularVelocity;
+		Vector3 torque = rotationCorrection * Mathf.Rad2Deg + angularVelocityCorrection;
 		rb.AddTorque(torque, ForceMode.Acceleration);
 	}
 }

@@ -100,10 +100,10 @@ public class GameManager : MonoBehaviour
 		if(InputManager.ActiveDevice.Action4.WasPressed) { CyclePlayer(); }
 
 		// Hold the right bumper for slow-mo!
-		Time.timeScale = InputManager.ActiveDevice.RightBumper.IsPressed ? 0.25f : 1f;
+		Time.timeScale = InputManager.ActiveDevice.RightBumper.IsPressed || Input.GetKey(KeyCode.LeftAlt) ? 0.25f : 1f;
 
 		// Hold the right face button to roll
-		activePlayer.shouldRoll = InputManager.ActiveDevice.Action2.IsPressed;
+		activePlayer.shouldRoll = InputManager.ActiveDevice.Action2.IsPressed || Input.GetKey(KeyCode.LeftControl);
 
 		UpdateHUD();
 
@@ -117,7 +117,7 @@ public class GameManager : MonoBehaviour
 	{
 		entities.ForEach(entity => entity.OnLateUpdate());
 
-		if(InputManager.ActiveDevice.MenuWasPressed)
+		if(InputManager.ActiveDevice.MenuWasPressed || Input.GetKey(KeyCode.P))
 		{
 			gamePaused = !gamePaused;
 			pausePrefab.SetActive(gamePaused);
