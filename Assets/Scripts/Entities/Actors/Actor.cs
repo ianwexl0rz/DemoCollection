@@ -105,6 +105,16 @@ public class Actor : Entity
 		}
 	}
 
+	protected override void Knockback(Vector3 hitPoint, Vector3 direction, AttackData data, out HitSparkType sparkType)
+	{
+		OnEarlyFixedUpdate = () =>
+		{
+			rb.AddForce(direction * data.knockback / Time.fixedDeltaTime, ForceMode.Acceleration);
+			rb.AddForceAtPosition(direction * data.knockback * 0.25f / Time.fixedDeltaTime, rb.position.WithY(hitPoint.y), ForceMode.Acceleration);
+		};
+		sparkType = HitSparkType.Blue;
+	}
+
 	protected IEnumerator Stunned(float newStunTime)
 	{
 		// Set stun time, if greater than current stun time

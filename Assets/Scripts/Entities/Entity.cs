@@ -38,7 +38,7 @@ public class Entity : MonoBehaviour
 	{
 		rb = GetComponent<Rigidbody>();
 
-		Physics.autoSyncTransforms = false;
+		Physics.autoSyncTransforms = true;
 	}
 
 	protected virtual void OnEnable()
@@ -108,26 +108,15 @@ public class Entity : MonoBehaviour
 		OnPauseEntity(value);
 	}
 
+	protected virtual void Knockback(Vector3 hitPoint, Vector3 direction, AttackData data, out HitSparkType sparkType)
+	{
+		OnEarlyFixedUpdate = () => rb.AddForceAtPosition(direction * data.knockback / Time.fixedDeltaTime, hitPoint, ForceMode.Acceleration);
+		sparkType = HitSparkType.Orange;
+	}
+
 	public void GetHit(Vector3 hitPoint, Vector3 direction, AttackData data)
 	{
-		bool isActor = this is Actor;
-		HitSparkType sparkType;
-		
-		if(isActor)
-		{
-			OnEarlyFixedUpdate = () =>
-			{
-				rb.AddForce(direction * data.knockback / Time.fixedDeltaTime, ForceMode.Acceleration);
-				rb.AddForceAtPosition(direction * data.knockback * 0.25f / Time.fixedDeltaTime, rb.position.WithY(hitPoint.y), ForceMode.Acceleration);
-			};
-			sparkType = HitSparkType.Blue;
-		}
-		else
-		{
-			OnEarlyFixedUpdate = () => rb.AddForceAtPosition(direction * data.knockback / Time.fixedDeltaTime, hitPoint, ForceMode.Acceleration);
-			sparkType = HitSparkType.Orange;
-		}
-
+		Knockback(hitPoint, direction, data, out HitSparkType sparkType);
 		Instantiate(GameManager.I.GetHitSpark(sparkType), hitPoint, Quaternion.identity, null);
 		OnGetHit(direction, data);
 	}

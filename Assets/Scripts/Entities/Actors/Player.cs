@@ -22,6 +22,7 @@ public class Player : CombatActor
 	public bool aimingMode { get; set; }
 	public bool rootMotionOverride { get; set; }
 
+	private CapsuleCollider capsuleCollider;
 	private Quaternion rollRotation = Quaternion.identity;
 
 	public PIDConfig angleControllerConfig = null;
@@ -46,7 +47,7 @@ public class Player : CombatActor
 		desiredDirection = transform.forward;
 		angleController = new PID3(angleControllerConfig);
 		angularVelocityController = new PID3(angularVelocityControllerConfig);
-		rb.centerOfMass = Vector3.zero;
+		capsuleCollider = GetComponent<CapsuleCollider>();
 	}
 
 
@@ -144,6 +145,8 @@ public class Player : CombatActor
 			rb.velocity = currentSpeed.WithY(yVelocity);
 			rb.velocity += Physics.gravity.y * (gravityMult - 1f) * Vector3.up * Time.fixedDeltaTime;
 		}
+
+		rb.centerOfMass = grounded ? Vector3.zero : capsuleCollider.center;
 
 		UpdateRotation();
 	}
@@ -287,7 +290,7 @@ public class Player : CombatActor
 				switch(attackType)
 				{
 					case AttackType.Light:
-						animator?.SetTrigger("lightAttack");
+						if(animator != null) { animator.SetTrigger("lightAttack"); }
 						break;
 				}
 				attackQueue.RemoveAt(i);

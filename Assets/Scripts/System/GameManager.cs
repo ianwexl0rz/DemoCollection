@@ -25,9 +25,9 @@ public class GameManager : MonoBehaviour
 
 	[Header("Gameplay")]
 	[SerializeField]
-	private GameObject hitSpark;
+	private GameObject hitSpark = null;
 	[SerializeField]
-	private GameObject hitSpark2;
+	private GameObject hitSpark2 = null;
 
 	private int targetIndex = 0;
 	private List<Player> playerCharacters;
