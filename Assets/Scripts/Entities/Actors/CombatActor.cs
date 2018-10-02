@@ -25,17 +25,19 @@ public class CombatActor : Actor
 			attackData = data;
 			hitObjects = new List<GameObject>();
 		}
-		
+
 		Vector3 origin = weaponTransform.position;
 		Vector3 end = origin + weaponTransform.forward * 1.2f;
 
 		// TODO: Update all weaponCollisions in a "weapon collision set"
 		weaponCollision.SetInitialPosition(origin, end);
+		weaponCollision.pointBuffer.Clear();
 	}
 
 	public void EndHit()
 	{
 		activeHit = false;
+		weaponCollision.pointBuffer.Clear();
 	}
 
 	public void CancelOK()

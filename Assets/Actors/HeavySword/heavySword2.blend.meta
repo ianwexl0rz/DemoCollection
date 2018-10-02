@@ -124,51 +124,9 @@ ModelImporter:
     optimizeGameObjects: 0
     motionNodeName: 
     rigImportErrors: 
-    rigImportWarnings: "Avatar Rig Configuration mis-match. Inbetween bone rotation
-      in configuration does not match rotation in animation file:\n\t'bangs1' : rotation
-      error = 2.722463 deg\n"
+    rigImportWarnings: "Avatar Rig Configuration mis-match. Inbetween bone rotation in configuration does not match rotation in animation file:\n\t'bangs1' : rotation error = 2.722463 deg\n"
     animationImportErrors: 
-    animationImportWarnings: "\nClip 'Default Take' has import animation warnings
-      that might lower retargeting quality:\nNote: Activate translation DOF on avatar
-      to improve retargeting quality.\n\t'bangs1' is inbetween humanoid transforms
-      and has rotation animation that will be discarded.\n\nClip 'dodgeL' has import
-      animation warnings that might lower retargeting quality:\nNote: Activate translation
-      DOF on avatar to improve retargeting quality.\n\t'foot_R' has scale animation
-      that will be discarded.\n\nClip 'runfaster' has import animation warnings that
-      might lower retargeting quality:\nNote: Activate translation DOF on avatar to
-      improve retargeting quality.\n\t'bangs1' is inbetween humanoid transforms and
-      has rotation animation that will be discarded.\n\nClip 'swing' has import animation
-      warnings that might lower retargeting quality:\nNote: Activate translation DOF
-      on avatar to improve retargeting quality.\n\t'bangs1' is inbetween humanoid
-      transforms and has rotation animation that will be discarded.\n\nClip 'swing_forward'
-      has import animation warnings that might lower retargeting quality:\nNote: Activate
-      translation DOF on avatar to improve retargeting quality.\n\t'bangs1' is inbetween
-      humanoid transforms and has rotation animation that will be discarded.\n\nClip
-      'swing_forward_holds' has import animation warnings that might lower retargeting
-      quality:\nNote: Activate translation DOF on avatar to improve retargeting quality.\n\t'bangs1'
-      is inbetween humanoid transforms and has rotation animation that will be discarded.\n\nClip
-      'swordSwing2' has import animation warnings that might lower retargeting quality:\nNote:
-      Activate translation DOF on avatar to improve retargeting quality.\n\t'sideBangs1_L'
-      has translation animation that will be discarded.\n\t'bangs1' is inbetween humanoid
-      transforms and has rotation animation that will be discarded.\n\t'sideBangs1_R'
-      has translation animation that will be discarded.\n\nClip 'walk_sidewaysL' has
-      import animation warnings that might lower retargeting quality:\nNote: Activate
-      translation DOF on avatar to improve retargeting quality.\n\t'sideBangs1_L'
-      has translation animation that will be discarded.\n\t'sideBangs1_R' has translation
-      animation that will be discarded.\n\nClip 'walk_sidewaysR' has import animation
-      warnings that might lower retargeting quality:\nNote: Activate translation DOF
-      on avatar to improve retargeting quality.\n\t'sideBangs1_L' has translation
-      animation that will be discarded.\n\t'sideBangs1_R' has translation animation
-      that will be discarded.\n\nClip 'walk2' has import animation warnings that might
-      lower retargeting quality:\nNote: Activate translation DOF on avatar to improve
-      retargeting quality.\n\t'sideBangs1_L' has translation animation that will be
-      discarded.\n\t'bangs1' is inbetween humanoid transforms and has rotation animation
-      that will be discarded.\n\t'sideBangs1_R' has translation animation that will
-      be discarded.\n\nClip 'walk3' has import animation warnings that might lower
-      retargeting quality:\nNote: Activate translation DOF on avatar to improve retargeting
-      quality.\n\t'sideBangs1_L' has translation animation that will be discarded.\n\t'bangs1'
-      is inbetween humanoid transforms and has rotation animation that will be discarded.\n\t'sideBangs1_R'
-      has translation animation that will be discarded.\n"
+    animationImportWarnings: "\nClip 'Default Take' has import animation warnings that might lower retargeting quality:\nNote: Activate translation DOF on avatar to improve retargeting quality.\n\t'bangs1' is inbetween humanoid transforms and has rotation animation that will be discarded.\n\nClip 'dodgeL' has import animation warnings that might lower retargeting quality:\nNote: Activate translation DOF on avatar to improve retargeting quality.\n\t'foot_R' has scale animation that will be discarded.\n\nClip 'runfaster' has import animation warnings that might lower retargeting quality:\nNote: Activate translation DOF on avatar to improve retargeting quality.\n\t'bangs1' is inbetween humanoid transforms and has rotation animation that will be discarded.\n\nClip 'swing' has import animation warnings that might lower retargeting quality:\nNote: Activate translation DOF on avatar to improve retargeting quality.\n\t'bangs1' is inbetween humanoid transforms and has rotation animation that will be discarded.\n\nClip 'swing_forward' has import animation warnings that might lower retargeting quality:\nNote: Activate translation DOF on avatar to improve retargeting quality.\n\t'bangs1' is inbetween humanoid transforms and has rotation animation that will be discarded.\n\nClip 'swing_forward_holds' has import animation warnings that might lower retargeting quality:\nNote: Activate translation DOF on avatar to improve retargeting quality.\n\t'bangs1' is inbetween humanoid transforms and has rotation animation that will be discarded.\n\nClip 'swordSwing2' has import animation warnings that might lower retargeting quality:\nNote: Activate translation DOF on avatar to improve retargeting quality.\n\t'sideBangs1_L' has translation animation that will be discarded.\n\t'bangs1' is inbetween humanoid transforms and has rotation animation that will be discarded.\n\t'sideBangs1_R' has translation animation that will be discarded.\n\nClip 'walk_sidewaysL' has import animation warnings that might lower retargeting quality:\nNote: Activate translation DOF on avatar to improve retargeting quality.\n\t'sideBangs1_L' has translation animation that will be discarded.\n\t'sideBangs1_R' has translation animation that will be discarded.\n\nClip 'walk_sidewaysR' has import animation warnings that might lower retargeting quality:\nNote: Activate translation DOF on avatar to improve retargeting quality.\n\t'sideBangs1_L' has translation animation that will be discarded.\n\t'sideBangs1_R' has translation animation that will be discarded.\n\nClip 'walk2' has import animation warnings that might lower retargeting quality:\nNote: Activate translation DOF on avatar to improve retargeting quality.\n\t'sideBangs1_L' has translation animation that will be discarded.\n\t'bangs1' is inbetween humanoid transforms and has rotation animation that will be discarded.\n\t'sideBangs1_R' has translation animation that will be discarded.\n\nClip 'walk3' has import animation warnings that might lower retargeting quality:\nNote: Activate translation DOF on avatar to improve retargeting quality.\n\t'sideBangs1_L' has translation animation that will be discarded.\n\t'bangs1' is inbetween humanoid transforms and has rotation animation that will be discarded.\n\t'sideBangs1_R' has translation animation that will be discarded.\n"
     animationRetargetingWarnings: 
     animationDoRetargetingWarnings: 0
     importAnimatedCustomProperties: 0
@@ -781,7 +739,7 @@ ModelImporter:
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
       events:
-      - time: 0.087786265
+      - time: 0.16363457
         functionName: NewHit
         data: lightAttack
         objectReferenceParameter: {instanceID: 0}
@@ -802,7 +760,7 @@ ModelImporter:
         floatParameter: 0
         intParameter: 0
         messageOptions: 0
-      - time: 0.51717556
+      - time: 0.48723543
         functionName: EndHit
         data: 
         objectReferenceParameter: {instanceID: 0}
@@ -816,7 +774,7 @@ ModelImporter:
         floatParameter: 0
         intParameter: 0
         messageOptions: 0
-      - time: 0.7748092
+      - time: 0.7588411
         functionName: EndHit
         data: 
         objectReferenceParameter: {instanceID: 0}
@@ -1713,6 +1671,7 @@ ModelImporter:
     globalScale: 0.3
     meshCompression: 0
     addColliders: 0
+    useSRGBMaterialColor: 1
     importVisibility: 1
     importBlendShapes: 1
     importCameras: 1
@@ -1737,6 +1696,9 @@ ModelImporter:
     normalImportMode: 0
     tangentImportMode: 3
     normalCalculationMode: 4
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
   importAnimation: 1
   copyAvatar: 0
   humanDescription:
@@ -2045,7 +2007,6 @@ ModelImporter:
     legStretch: 0.05
     feetSpacing: 0
     rootMotionBoneName: 
-    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
     hasTranslationDoF: 0
     hasExtraRoot: 1
     skeletonHasParents: 1

@@ -1204,12 +1204,18 @@ MonoBehaviour:
     stun: 0
   attackDataSet: {fileID: 11400000, guid: 7b599c3afc5abd14e97032bd4e49c044, type: 2}
   weaponTransform: {fileID: 4199021440535396}
-  hitEntities: []
+  hitObjects: []
+  weaponCollision:
+    origin: {x: 0, y: 0, z: 0}
+    end: {x: 0, y: 0, z: 0}
+    lastOrigin: {x: 0, y: 0, z: 0}
+    lastEnd: {x: 0, y: 0, z: 0}
+    pointBuffer: []
   minSpeed: 0.25
   walkSpeed: 2
   runSpeed: 4
-  jumpHeight: 1.5
-  gravityMult: 1
+  jumpHeight: 2
+  gravityMult: 1.5
   rollSpeed: 5
   speedSmoothTime: 0.05
   angleControllerConfig: {fileID: 11400000, guid: 9d23314fd1492584da56ef25598ab232, type: 2}
