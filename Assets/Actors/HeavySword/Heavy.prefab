@@ -1218,6 +1218,7 @@ MonoBehaviour:
   gravityMult: 1.5
   rollSpeed: 5
   speedSmoothTime: 0.05
+  maxAngularVelocity: 12
   angleControllerConfig: {fileID: 11400000, guid: 9d23314fd1492584da56ef25598ab232, type: 2}
   angularVelocityControllerConfig: {fileID: 11400000, guid: c29f48e699ec26445a33657059edbdf3, type: 2}
 --- !u!1 &1952990599612566

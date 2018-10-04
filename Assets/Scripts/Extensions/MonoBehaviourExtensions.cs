@@ -135,7 +135,6 @@ public static class MonoBehaviourExtensions
 		return twist * swing;
 	}
 
-
 	public static Vector3 GetXYZ(this Quaternion q)
 	{
 		return new Vector3(q.x, q.y, q.z);

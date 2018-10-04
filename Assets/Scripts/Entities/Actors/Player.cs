@@ -12,6 +12,7 @@ public class Player : CombatActor
 	public float gravityMult = 1f;
 	public float rollSpeed = 5f;
 	public float speedSmoothTime = 0.1f;
+	public float maxAngularVelocity = 12;
 
 	public bool run { get; set; }
 	public bool jump { get; set; }
@@ -48,6 +49,12 @@ public class Player : CombatActor
 		angleController = new PID3(angleControllerConfig);
 		angularVelocityController = new PID3(angularVelocityControllerConfig);
 		capsuleCollider = GetComponent<CapsuleCollider>();
+		rb.maxAngularVelocity = maxAngularVelocity;
+	}
+
+	private void OnValidate()
+	{
+		if(rb != null) rb.maxAngularVelocity = maxAngularVelocity;
 	}
 
 
