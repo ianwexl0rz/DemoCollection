@@ -40,7 +40,7 @@ public class Player : CombatActor
 	private bool queueJump = false;
 	private bool doubleJumpOK = false;
 
-	private List<AttackTimer> attackQueue = new List<AttackTimer>();
+	private readonly List<AttackTimer> attackQueue = new List<AttackTimer>();
 
 	protected override void Awake()
 	{
@@ -174,7 +174,10 @@ public class Player : CombatActor
 			desiredDirection = currentSpeed.WithY(0f);
 		}
 
-		rollRotation = shouldRoll ? rollRotation * Quaternion.AngleAxis(6f, Vector3.right) : Quaternion.identity;
+		var rollAxis = currentSpeed.WithY(0f).magnitude >= minSpeed ?
+			transform.InverseTransformDirection(Vector3.Cross(-currentSpeed.WithY(0f), Vector3.up)) :
+			Vector3.right;
+		rollRotation = shouldRoll ? rollRotation * Quaternion.AngleAxis(rollSpeed, rollAxis) : Quaternion.identity;
 
 		Quaternion rotation = Quaternion.LookRotation(desiredDirection) * rollRotation;
 
@@ -192,12 +195,12 @@ public class Player : CombatActor
 		}
 
 		// Interpolate from our current speed to the target speed.
-		Vector3 targetSpeed = move * Mathf.Max(minSpeed, (run ? runSpeed : walkSpeed));
+		var targetSpeed = move * Mathf.Max(minSpeed, (run ? runSpeed : walkSpeed));
 		currentSpeed = Vector3.SmoothDamp(currentSpeed, targetSpeed, ref speedSmoothVelocity, speedSmoothTime * (grounded ? 1f : 8f));
 
 		// Cache look sensitivity from GameSettings
-		float lookSensitivityX = ControlSettings.I.lookSensitivityX;
-		InputDevice playerInput = InputManager.ActiveDevice;
+		var lookSensitivityX = ControlSettings.I.lookSensitivityX;
+		var playerInput = InputManager.ActiveDevice;
 
 		/*
 		if(lockOn)

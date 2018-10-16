@@ -54,7 +54,7 @@ public class ThirdPersonCamera : MonoBehaviour
 		if(immediate)
 		{
 			focalHeight = desiredFocalHeight;
-			lastTargetPos = trackPos = player.transform.position + Vector3.up * focalHeight;
+			lastTargetPos = trackPos = player.transform.position + player.transform.up * focalHeight;
 		}
 		else
 		{
@@ -166,14 +166,14 @@ public class ThirdPersonCamera : MonoBehaviour
 			blendToPlayer -= Time.deltaTime / unlockTime;
 			blendToPlayer = Mathf.Max(blendToPlayer, 0f);
 			float smoothBlend = Mathf.SmoothStep(1f, 0f, blendToPlayer);
-			trackPos = Vector3.Lerp(previousPlayerPosition, player.transform.position + Vector3.up * desiredFocalHeight, smoothBlend);
+			trackPos = Vector3.Lerp(previousPlayerPosition, player.transform.position + player.transform.up * desiredFocalHeight, smoothBlend);
 			focalHeight = Mathf.Lerp(previousFocalHeight, desiredFocalHeight, smoothBlend);
 			lookPos = Vector3.Lerp(previousLookPos, desiredLookPos, smoothBlend);
 			dragVector *= blendToPlayer;
 		}
 		else
 		{
-			trackPos = player.transform.position + Vector3.up * focalHeight;
+			trackPos = player.transform.position + player.transform.up * focalHeight;
 			lookPos = desiredLookPos;
 		}
 

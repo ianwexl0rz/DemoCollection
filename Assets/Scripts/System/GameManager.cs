@@ -131,7 +131,7 @@ public class GameManager : MonoBehaviour
 			PauseAllPhysics(true);
 		}
 
-		if((!gamePaused && hitPauseTimer == 0) && physicsPaused)
+		if((!gamePaused && hitPauseTimer == 0f) && physicsPaused)
 		{
 			physicsPaused = false;
 			PauseAllPhysics(false);

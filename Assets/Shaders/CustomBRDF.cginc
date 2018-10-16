@@ -9,7 +9,7 @@
 //  b) GGX
 // * Smith for Visiblity term
 // * Schlick approximation for Fresnel
-half4 CustomLighting (half3 diffColor, half3 shadowColor, half3 specColor, half3 translucency, half edgeLightStrength, half oneMinusReflectivity, half smoothness,
+half4 CUSTOM_BRDF (half3 diffColor, half3 shadowColor, half3 specColor, half3 translucency, half edgeLightStrength, half hardness, half oneMinusReflectivity, half smoothness,
     half3 normal, half3 viewDir,
     UnityLight light, UnityIndirect gi)
 {
@@ -47,13 +47,12 @@ half4 CustomLighting (half3 diffColor, half3 shadowColor, half3 specColor, half3
 
     half diffuseTerm = DisneyDiffuse(nv, nl, lh, perceptualRoughness) * nl;
 
-    #if defined(POINT) || defined(POINT_COOKIE) || defined(SPOT)
-    #else
-    diffuseTerm = min(diffuseTerm / (translucency * 0.25 + 0.1), 1) * 0.8 + nl * 0.2;
-
-    float fresnel = smoothstep(0.7, 0.4, nv);
+    float fresnel = smoothstep(0.5, 0.4, nv);
     float edgelight = saturate((nl - nv) * 4) * fresnel;
-    #endif
+
+    //#if defined(POINT) || defined(POINT_COOKIE) || defined(SPOT)
+    //#else
+    //#endif
 
     // Specular term
     // HACK: theoretically we should divide diffuseTerm by Pi and not multiply specularTerm!
@@ -101,65 +100,57 @@ half4 CustomLighting (half3 diffColor, half3 shadowColor, half3 specColor, half3
     specularTerm *= any(specColor) ? 1.0 : 0.0;
 
     half grazingTerm = saturate(smoothness + (1-oneMinusReflectivity));
-	/*
-    half3 color =   diffColor * (gi.diffuse + light.color * diffuseTerm)
-                    + specularTerm * light.color * FresnelTerm (specColor, lh)
-                    + surfaceReduction * gi.specular * FresnelLerp (specColor, grazingTerm, nv);
-	*/
 
-    half fLTDistortion = 0.5;
-    half iLTPower = 12;
-    half fLTScale = 1;
-
-    //half3 vLTLight = light.dir + normal.xyz * fLTDistortion;
-    //half fLTDot = pow(saturate(dot(viewDir, -vLTLight)), iLTPower) * fLTScale;
-    //half3 fLT = fLightAttentuation * (fLTDot + fLTAmbient.rgb) * fLTThickness;
-    //half3 color = shadowColor * saturate(nlUnclamped + 1) * (1 - diffuseTerm) * light.color;
-
-    //original
-    //float3 H = normalize(light.dir + normal * fLTDistortion);
-    //float I = pow(saturate(dot(viewDir, -H)), iLTPower) * fLTScale;
-
-    //float3 H = normalize(light.dir + normal * translucency);
-    //float sss = saturate(dot(viewDir, -H));
-
+   
+    half specColorRaw = specColor;
     // Shift spec color a little bit towards diffuse
-    specColor = lerp(diffColor, specColor, 0.95);
+    specColor = lerp(diffColor, specColor, 0.9);
+
+    //#if defined(DIRECTIONAL)
+    half specularTermModified = 8 * smoothness * smoothness * smoothstep(0,0.1 + (1-smoothness * smoothness) * 0.6,specularTerm);
+    specularTerm = lerp(specularTerm, specularTermModified, 1);
+    //specularTerm = specularTerm * specularTermModified;
 
     // Multiply diffuse color by the shadow color in shadowed areas
-    diffColor *= lerp(shadowColor, 1, light.color * diffuseTerm);
+    //half diffuseTerm = min(diffuseTermRaw / (translucency * 0.25 + 0.1), 1) * 0.8 + nl * 0.2;
+    
+    //#endif
 
-    //diffuseTerm = saturate(diffuseTerm + smoothstep(-0.25, 0.25, nlUnclamped) * pow(translucency, 2.5));
+    half diffuseTermModified = smoothstep(0,0.15,diffuseTerm);
+    diffuseTerm = lerp(diffuseTerm, diffuseTermModified, 0.6 * hardness);
 
-    /*/
-#if defined(DIRECTIONAL) 
-    half specLobe = saturate(sin((nl+UNITY_HALF_PI) * UNITY_TWO_PI) * (1 - roughness) + (roughness));
-    specLobe = pow(specLobe, 0.5);
-    half aniso = GGXTerm(lerp(specLobe, nv, 0.125), roughness);
-    diffColor += aniso * diffColor;
-#endif
-    //*/
+    //half diffuseTerm = diffuseTermRaw;
+    //diffColor *= lerp(shadowColor, 1, light.color * diffuseTerm);
+    //diffColor += shadowColor - light.color * diffuseTerm;
 
-    //float sssTerm = saturate(dot(-viewDir, light.dir + normal));
-    //sssTerm = saturate(pow(sssTerm * 1.5, 1 / translucency));
+    half fLTDistortion = 2;
+    half iLTPower = 3;
+    half fLTScale = 2;
+    half fLTThickness = 1;
 
-    half3 color =
+    //Source: https://colinbarrebrisebois.com/2011/03/07/gdc-2011-approximating-translucency-for-a-fast-cheap-and-convincing-subsurface-scattering-look/
+    half3 vLTLight = light.dir + normal * fLTDistortion;
+    half fLTDot = exp2(saturate(dot(viewDir, -vLTLight)) * iLTPower - iLTPower) * fLTScale;
+    half3 fLT = (fLTDot * shadowColor) * fLTThickness;
+    //half3 color = shadowColor * saturate(nlUnclamped + 1) * (1 - diffuseTerm) * light.color;
+
+    half3 color = 
+
 #if defined(DIRECTIONAL)
-                diffColor * (gi.diffuse + lerp(light.color * diffuseTerm, 1, pow(translucency, 2.5)))
+                //diffColor * (gi.diffuse + light.color * lerp(diffuseTerm, 1, pow(translucency, 2.5)) * fLT)
                 //diffColor * (gi.diffuse + max(light.color * diffuseTerm, sssTerm))
-                //* lerp(1, shadowColor, smoothstep(0.5, -0.25, min(nlUnclamped, nh) * light.color) * (1 - step(translucency, 0)))
+                //diffColor * (gi.diffuse + light.color * diffuseTerm)
 
-                + diffColor * shadowColor * smoothstep(-0.25, 0.25, max(nlUnclamped, nh)) * (1 - diffuseTerm) * translucency * light.color
+                diffColor * (gi.diffuse + light.color * (diffuseTerm + fLT))
+                //diffColor * (gi.diffuse + light.color * (diffuseTerm)) + fLT
 
-                //+ diffColor * shadowColor * (1 - diffuseTerm) * translucency * light.color
-                //+ shadowColor * sssTerm
-
-                + max(edgelight * edgeLightStrength * 6 * specColor * (1 + diffColor * 3), specularTerm * FresnelTerm(specColor, lh)) * light.color
 #else
                 diffColor * (gi.diffuse + light.color * diffuseTerm)
-                + specularTerm * light.color * FresnelTerm(specColor, lh)
 #endif
-                + surfaceReduction * gi.specular * FresnelLerp(specColor, grazingTerm, pow(nv, 1 + edgeLightStrength));
+                //diffColor * (gi.diffuse + light.color * max(diffuseTerm, fLT)) + 
 
+                //+ diffColor * shadowColor * smoothstep(-0.25, 0.25, max(nlUnclamped, nh)) * (1 - diffuseTerm) * translucency * light.color
+                + max(edgelight * edgeLightStrength * specColor * (1 + diffColor) * 4, specularTerm * FresnelTerm(specColor, lh)) * light.color
+                + surfaceReduction * gi.specular * FresnelLerp(specColor, grazingTerm, nv);
     return half4(color, 1);
 }

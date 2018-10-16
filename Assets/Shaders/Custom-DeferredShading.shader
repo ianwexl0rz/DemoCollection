@@ -29,6 +29,7 @@ CGPROGRAM
 #include "UnityCG.cginc"
 #include "UnityDeferredLibrary.cginc"
 #include "UnityPBSLighting.cginc"
+//#include "CustomPBSLighting.cginc"
 //#include "UnityStandardUtils.cginc"
 //#include "UnityGBuffer.cginc"
 //#include "UnityStandardBRDF.cginc"
@@ -40,40 +41,6 @@ sampler2D _CameraGBufferTexture0;
 sampler2D _CameraGBufferTexture1;
 sampler2D _CameraGBufferTexture2;
 
-//Returns the missing chrominance (Co or Cg) of a pixel.
-//a1-a4 are the 4 neighbors of the center pixel a0.
-float2 filter(float3 a0, float4 a1, float4 a2, float4 a3, float4 a4, float b0, float b1, float b2, float b3, float b4)
-{
-	float4 lum = float4(a1.x, a2.x , a3.x, a4.x);
-	float4 w = 1.0 - step(30.0/255.0, abs(lum - a0.x));
-
-	// don't blend if luma is zero
-	w *= float4(a1.x, a2.x , a3.x, a4.x) > 0;
-
-	float W = w.x + w.y + w.z + w.w;
-	// handle the special case where all the weights are zero
-	w.x = (W==0.0)? 1.0: w.x; W = (W==0.0)? 1.0: W;
-
-	float diffChroma = half(w.x * a1.y + w.y * a2.y + w.z * a3.y + w.w * a4.y) / W;
-
-	// Next get the missing chroma for spec / translucent
-	lum = float4(a1.z, a2.z , a3.z, a4.z);
-	w = 1.0 - step(30.0/255.0, abs(lum - a0.z));
-
-	// don't blend if luma is zero
-	w *= float4(a1.z, a2.z , a3.z, a4.z) > 0;
-
-	// only blend if chroma is same type
-	w *= b0 > 0 == float4(b1, b2, b3, b4) > 0;
-
-	W = w.x + w.y + w.z + w.w;
-	// handle the special case where all the weights are zero
-	w.x = (W==0.0)? 1.0: w.x; W = (W==0.0)? 1.0: W;
-
-	float specChroma = half(w.x * a1.w + w.y * a2.w+w.z * a3.w+w.w * a4.w) / W;
-	return float2(diffChroma, specChroma);
-}
-
 half4 CalculateLight (unity_v2f_deferred i, UNITY_VPOS_TYPE screenPos : SV_Position)
 {
 	float3 wpos;
@@ -83,56 +50,66 @@ half4 CalculateLight (unity_v2f_deferred i, UNITY_VPOS_TYPE screenPos : SV_Posit
 	UNITY_INITIALIZE_OUTPUT(UnityLight, light);
 	UnityDeferredCalculateLightParams (i, wpos, uv, light.dir, atten, fadeDist);
 
-	light.color = _LightColor.rgb * atten;
+	light.color = _LightColor.rgb *atten;
 
 	// unpack Gbuffer
-	half4 gbuffer0 = tex2D(_CameraGBufferTexture0, uv);
+	half4 gbuffer0 = tex2D (_CameraGBufferTexture0, uv);
 	half4 gbuffer1 = tex2D (_CameraGBufferTexture1, uv);
 	half4 gbuffer2 = tex2D (_CameraGBufferTexture2, uv);
 
-	// pixel offset
-	half2 pixel = 1/_ScreenParams;
+	if (gbuffer2.a == 0)
+	{
+		half2 pixel = 1 / _ScreenParams;
+		bool evenPixel = fmod(screenPos.y, 2) == fmod(screenPos.x, 2);
 
-	#ifdef CUSTOM_USE_YCOCG
-	float4 a1 = tex2D(_CameraGBufferTexture0, half2(uv.x + pixel.x, uv.y));
-	float4 a2 = tex2D(_CameraGBufferTexture0, half2(uv.x - pixel.x, uv.y));
-	float4 a3 = tex2D(_CameraGBufferTexture0, half2(uv.x, uv.y + pixel.y));
-	float4 a4 = tex2D(_CameraGBufferTexture0, half2(uv.x, uv.y - pixel.y));
+		float4 a1 = tex2D(_CameraGBufferTexture0, half2(uv.x + pixel.x, uv.y));
+		float4 a2 = tex2D(_CameraGBufferTexture0, half2(uv.x - pixel.x, uv.y));
+		float4 a3 = tex2D(_CameraGBufferTexture0, half2(uv.x, uv.y + pixel.y));
+		float4 a4 = tex2D(_CameraGBufferTexture0, half2(uv.x, uv.y - pixel.y));
 
-	float b1 = tex2D(_CameraGBufferTexture1, half2(uv.x + pixel.x, uv.y)).r;
-	float b2 = tex2D(_CameraGBufferTexture1, half2(uv.x - pixel.x, uv.y)).r;
-	float b3 = tex2D(_CameraGBufferTexture1, half2(uv.x, uv.y + pixel.y)).r;
-	float b4 = tex2D(_CameraGBufferTexture1, half2(uv.x, uv.y - pixel.y)).r;
+		float4 b1 = tex2D(_CameraGBufferTexture1, half2(uv.x + pixel.x, uv.y));
+		float4 b2 = tex2D(_CameraGBufferTexture1, half2(uv.x - pixel.x, uv.y));
+		float4 b3 = tex2D(_CameraGBufferTexture1, half2(uv.x, uv.y + pixel.y));
+		float4 b4 = tex2D(_CameraGBufferTexture1, half2(uv.x, uv.y - pixel.y));
 
-	bool evenPixel = fmod(screenPos.y, 2) == fmod(screenPos.x, 2);
+		half diffChroma = GetChroma(gbuffer0.rg, a1.rg, a2.rg, a3.rg, a4.rg);
+		half specChroma = GetChromaWithType(gbuffer1.rgb, b1.rgb, b2.rgb, b3.rgb, b4.rgb);
 
-	half3 unpackDiffuse = gbuffer0.rgg;
-	half3 unpackSpec = gbuffer0.baa;
+		half3 unpackDiffuse = half3(gbuffer0.r, lerp(half2(diffChroma, gbuffer0.g), half2(gbuffer0.g, diffChroma), evenPixel));
+		half3 unpackSpec = half3(gbuffer1.r, lerp(half2(specChroma, gbuffer1.g), half2(gbuffer1.g, specChroma), evenPixel));
 
-	half2 unfilteredChroma = filter(gbuffer0, a1, a2, a3, a4, gbuffer1.r, b1, b2, b3, b4);
+		CustomData data = CustomDataFromGbuffer(unpackDiffuse, unpackSpec, gbuffer0, gbuffer1, gbuffer2);
+		
+		float3 eyeVec = normalize(wpos - _WorldSpaceCameraPos);
+		half oneMinusReflectivity = 1 - SpecularStrength(data.specularColor);
 
-	unpackDiffuse.b = !evenPixel ? unpackDiffuse.g : unfilteredChroma.x;
-	unpackDiffuse.g = evenPixel ? unpackDiffuse.g : unfilteredChroma.x;
+		UnityIndirect ind;
+		UNITY_INITIALIZE_OUTPUT(UnityIndirect, ind);
+		ind.diffuse = 0;
+		ind.specular = 0;
 
-	unpackSpec.b = !evenPixel ? unpackSpec.g : unfilteredChroma.y;
-	unpackSpec.g = evenPixel ? unpackSpec.g : unfilteredChroma.y;
-	#endif
+		half4 res = CUSTOM_BRDF(data.diffuseColor, data.shadowColor, data.specularColor, data.translucency, data.edgeLight, 1, oneMinusReflectivity, data.smoothness, data.normalWorld, -eyeVec, light, ind);
+		return res;
+	}
+	else
+	{
+		UnityStandardData data = UnityStandardDataFromGbuffer(gbuffer0, gbuffer1, gbuffer2);
 
-	CustomData data = CustomDataFromGbuffer(unpackDiffuse, unpackSpec, gbuffer1, gbuffer2);
+		float3 eyeVec = normalize(wpos - _WorldSpaceCameraPos);
+		half oneMinusReflectivity = 1 - SpecularStrength(data.specularColor);
 
-	//if(data.normalWorld.z < 0.0f) data.normalWorld.z = 0.0f;
+		UnityIndirect ind;
+		UNITY_INITIALIZE_OUTPUT(UnityIndirect, ind);
+		ind.diffuse = 0;
+		ind.specular = 0;
 
-	float3 eyeVec = normalize(wpos-_WorldSpaceCameraPos);
-	half oneMinusReflectivity = 1 - SpecularStrength(data.specularColor.rgb);
+		
+		half4 res = UNITY_BRDF_PBS(data.diffuseColor, data.specularColor, oneMinusReflectivity, data.smoothness, data.normalWorld, -eyeVec, light, ind);
+		// Use custom specular with standard materials
+		//half4 res = CUSTOM_BRDF(data.diffuseColor, 0, data.specularColor, 0, 0, 0, oneMinusReflectivity, data.smoothness, data.normalWorld, -eyeVec, light, ind);
 
-	UnityIndirect ind;
-	UNITY_INITIALIZE_OUTPUT(UnityIndirect, ind);
-	ind.diffuse = 0;
-	ind.specular = 0;
-
-    half4 res = CustomLighting (data.diffuseColor, data.shadowColor, data.specularColor, data.translucency, data.edgeLight, oneMinusReflectivity, data.smoothness, data.normalWorld, -eyeVec, light, ind);
-
-	return res;
+		return res;
+	}
 }
 
 #ifdef UNITY_HDR_ON

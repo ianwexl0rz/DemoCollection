@@ -2,7 +2,7 @@
 
 // Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
 
-Shader "Custom/Screen Space Vertex Snap" {
+Shader "Custom/Low Precision (Screen Space)" {
 	Properties {
 		_MainTex ("Base (RGB)", 2D) = "white" {}
 		_Precision ("Precision", float) = 240

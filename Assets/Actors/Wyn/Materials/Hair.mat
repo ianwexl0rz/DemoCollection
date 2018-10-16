@@ -5,7 +5,8 @@ Material:
   serializedVersion: 6
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
   m_Name: Hair
   m_Shader: {fileID: 4800000, guid: 289f6d7fd8e4d0542b05fb923a2492d0, type: 3}
   m_ShaderKeywords: 
@@ -72,26 +73,33 @@ Material:
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
-    - _EdgeLight: 0.3
+    - _EdgeLight: 1
+    - _Float0: 0
     - _Fresnel: 3
     - _FresnelBias: 0
     - _GlossMapScale: 1
-    - _Glossiness: 0.454
+    - _Glossiness: 0.576
     - _GlossyReflections: 1
     - _Metallic: 0
     - _Mode: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.02
-    - _Shininess: 0.019
+    - _Precision: 240
+    - _Shininess: 0.062
+    - _Smoothness: 0.601
     - _SmoothnessTextureChannel: 0
     - _SpecSize: 1.13
     - _SpecularHighlights: 1
     - _SrcBlend: 1
-    - _Translucency: 0.371
+    - _Translucency: 0.78
     - _UVSec: 0
     - _ZWrite: 1
+    - __dirty: 0
     m_Colors:
-    - _Color: {r: 0, g: 0.24395002, b: 0.357, a: 1}
+    - _Color: {r: 0, g: 0.37519854, b: 0.469, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _ShadowColor: {r: 0.059892, g: 0.23405398, b: 0.71300006, a: 1}
-    - _SpecColor: {r: 0, g: 0.484, b: 0.46397257, a: 1}
+    - _Fresnel: {r: 0, g: 0, b: 0, a: 1}
+    - _MainColor: {r: 0, g: 0.42432597, b: 0.601, a: 0}
+    - _SecondaryColor: {r: 0, g: 0.5074098, b: 1, a: 0}
+    - _ShadowColor: {r: 0.039215676, g: 0.21049097, b: 0.47058824, a: 1}
+    - _SpecColor: {r: 0.16509432, g: 1, b: 0.96606076, a: 1}

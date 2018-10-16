@@ -5,7 +5,8 @@ Material:
   serializedVersion: 6
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
   m_Name: Face__WynFace_psd
   m_Shader: {fileID: 4800000, guid: 289f6d7fd8e4d0542b05fb923a2492d0, type: 3}
   m_ShaderKeywords: _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
@@ -67,7 +68,8 @@ Material:
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
-    - _EdgeLight: 0.5
+    - _EdgeLight: 0.9
+    - _Float0: 0
     - _GlossMapScale: 0.4
     - _Glossiness: 1
     - _GlossyReflections: 1
@@ -75,14 +77,18 @@ Material:
     - _Mode: 0
     - _OcclusionStrength: 0
     - _Parallax: 0.08
+    - _Smoothness: 0.4
     - _SmoothnessTextureChannel: 1
     - _SpecularHighlights: 1
     - _SrcBlend: 1
-    - _Translucency: 0.45
+    - _Translucency: 0.4
     - _UVSec: 0
     - _ZWrite: 1
+    - __dirty: 0
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _ShadowColor: {r: 0.897, g: 0, b: 0, a: 1}
+    - _MainColor: {r: 0.9411765, g: 0.7376685, b: 0.5813148, a: 1}
+    - _SecondaryColor: {r: 1, g: 0, b: 0, a: 1}
+    - _ShadowColor: {r: 1, g: 0, b: 0, a: 1}
     - _SpecColor: {r: 0.28399995, g: 0.28399995, b: 0.28399995, a: 1}

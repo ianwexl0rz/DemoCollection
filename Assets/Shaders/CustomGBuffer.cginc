@@ -18,7 +18,7 @@ struct CustomData
 	half3   shadowColor;
     half3   specularColor;
     half    smoothness;
-    half3   normalWorld;        // normal in world space
+    half4   normalWorld;        // normal in world space
     half    translucency;
 	half    edgeLight;
 };
@@ -27,34 +27,39 @@ struct CustomData
 // This will encode CustomData into GBuffer
 void CustomDataToGbuffer(CustomData data, out half4 outGBuffer0, out half4 outGBuffer1, out half4 outGBuffer2)
 {
-    // RT0: diffuse luma/chroma (rg), spec luma (b), spec/translucent chroma (a) - sRGB rendertarget
-    outGBuffer0 = half4(data.diffuseColor.rg, data.specularColor.rg);
+    
+    // OLD FORMAT:
+    //outGBuffer0 = half4(data.diffuseColor.rg, data.specularColor.rg);
+    //outGBuffer1 = half4(data.translucency, data.edgeLight, data.occlusion, data.smoothness);
 
-    // RT1: translucency (r), edge light (g), occlusion (b), smoothness (a) - sRGB rendertarget
-    outGBuffer1 = half4(data.translucency, data.edgeLight, data.occlusion, data.smoothness);
+    // RT0: diffuse luma/chroma (rg), translucency (b), occlusion (a) - sRGB rendertarget
+    outGBuffer0 = half4(data.diffuseColor.rg, data.edgeLight, data.occlusion);
+
+    // RT1: spec/translucent luma/chroma (rg), edge light (b), smoothness (a) - sRGB rendertarget
+    outGBuffer1 = half4(data.specularColor.rg, data.translucency, data.smoothness);
 
     // RT2: normal (rgb), --unused, very low precision-- (a)
-    outGBuffer2 = half4(data.normalWorld * 0.5f + 0.5f, 1);
+    outGBuffer2 = half4(data.normalWorld.rgb * 0.5f + 0.5f, data.normalWorld.a);
 }
 
 //-----------------------------------------------------------------------------
 // This decode the Gbuffer in a UnityStandardData struct
-CustomData CustomDataFromGbuffer(half3 inGBuffer0RG, half3 inGBuffer0BA, half4 inGBuffer1, half4 inGBuffer2)
+CustomData CustomDataFromGbuffer(half3 diffuse, half3 spec, half4 inGBuffer0, half4 inGBuffer1, half4 inGBuffer2)
 {
-
     CustomData data;
 
-    data.diffuseColor = YCoCgToRGB(inGBuffer0RG);
-
-    data.translucency = inGBuffer1.r;
-    data.edgeLight = inGBuffer1.g;
-    data.occlusion = inGBuffer1.b;
+    data.diffuseColor = YCoCgToRGB(diffuse);
+    
+    data.edgeLight = inGBuffer0.b;
+    data.occlusion = inGBuffer0.a;
+    data.translucency = inGBuffer1.b;
     data.smoothness = inGBuffer1.a;
 
-    data.specularColor = data.translucency == 0 ? YCoCgToRGB(inGBuffer0BA) : inGBuffer0BA.xxx;
-    data.shadowColor = data.translucency > 0 ? YCoCgToRGB(half3(data.translucency, inGBuffer0BA.gb)) : half3(0, 0, 0);
+    data.specularColor = data.translucency == 0 ? YCoCgToRGB(spec) : spec.xxx;
+    data.shadowColor = data.translucency > 0 ? YCoCgToRGB(half3(data.translucency, spec.gb)): half3(0, 0, 0);
+    //data.shadowColor = data.translucency > 0 ? YCoCgToRGB(half3(0, spec.gb)) : half3(0, 0, 0);
 
-    data.normalWorld   = normalize(inGBuffer2.rgb * 2 - 1);
+    data.normalWorld.rgb   = normalize(inGBuffer2.rgb * 2 - 1);
 
     return data;
 }
@@ -69,5 +74,39 @@ void CustomDataApplyWeightToGbuffer(inout half4 inOutGBuffer0, inout half4 inOut
     inOutGBuffer2.rgb   *= alpha; // Normal
 }
 //-----------------------------------------------------------------------------
+
+//Source: http://graphics.cs.aueb.gr/graphics/docs/papers/YcoCgFrameBuffer.pdf
+//Returns the missing chrominance (Co or Cg) of a pixel.
+//a1-a4 are the 4 neighbors of the center pixel a0.
+float GetChroma(float2 a0, float2 a1, float2 a2, float2 a3, float2 a4)
+{
+	float4 lum = float4(a1.x, a2.x, a3.x, a4.x);
+	float4 w = 1.0 - step(30.0 / 255.0, abs(lum - a0.x));
+
+	float W = w.x + w.y + w.z + w.w;
+
+	// more performant?
+	//w.x = lerp(1, w.x, W > 0); W = lerp(1, W, W > 0);
+
+	// handle the special case where all the weights are zero
+	w.x = (W == 0.0) ? 1.0 : w.x; W = (W == 0.0) ? 1.0 : W;
+	return (w.x * a1.y + w.y * a2.y + w.z * a3.y + w.w * a4.y) / W;
+}
+
+// lum, chroma, translucency
+float GetChromaWithType(float3 a0, float3 a1, float3 a2, float3 a3, float3 a4)
+{
+	float4 lum = float4(a1.x, a2.x, a3.x, a4.x);
+	float4 w = 1.0 - step(30.0 / 255.0, abs(lum - a0.x));
+
+	// only blend if same type
+	w *= a0.z > 0 == float4(a1.z, a2.z, a3.z, a4.z) > 0;
+
+	float W = w.x + w.y + w.z + w.w;
+
+	// handle the special case where all the weights are zero
+	w.x = (W == 0.0) ? 1.0 : w.x; W = (W == 0.0) ? 1.0 : W;
+	return (w.x * a1.y + w.y * a2.y + w.z * a3.y + w.w * a4.y) / W;
+}
 
 #endif // #ifndef CUSTOM_GBUFFER_INCLUDED

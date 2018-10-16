@@ -19,6 +19,88 @@ MonoBehaviour:
   - {fileID: 114336560655913662}
   - {fileID: 114591750801218332}
   - {fileID: 114552438541246234}
+  - {fileID: 114027838466018538}
+  - {fileID: 114195830858165662}
+--- !u!114 &114027838466018538
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d5989756ea37ac46b1c199fb99ffc33, type: 3}
+  m_Name: EdgeDetect_BeforeStack
+  m_EditorClassIdentifier: 
+  active: 1
+  enabled:
+    overrideState: 1
+    value: 1
+  mode:
+    overrideState: 1
+    value: 2
+  sensitivityDepth:
+    overrideState: 1
+    value: 5
+  sensitivityNormals:
+    overrideState: 1
+    value: 0
+  lumThreshold:
+    overrideState: 0
+    value: 0.2
+  edgeExp:
+    overrideState: 1
+    value: 1
+  sampleDist:
+    overrideState: 1
+    value: 1
+  edgesOnly:
+    overrideState: 1
+    value: 0
+  edgesOnlyBgColor:
+    overrideState: 1
+    value: {r: 1, g: 1, b: 1, a: 1}
+--- !u!114 &114195830858165662
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e1905ad603bb9a479914accad762e92, type: 3}
+  m_Name: EdgeDetect_BeforeTransparent
+  m_EditorClassIdentifier: 
+  active: 0
+  enabled:
+    overrideState: 1
+    value: 1
+  mode:
+    overrideState: 1
+    value: 2
+  sensitivityDepth:
+    overrideState: 1
+    value: 1
+  sensitivityNormals:
+    overrideState: 1
+    value: 1
+  lumThreshold:
+    overrideState: 1
+    value: 0.2
+  edgeExp:
+    overrideState: 1
+    value: 1
+  sampleDist:
+    overrideState: 1
+    value: 1
+  edgesOnly:
+    overrideState: 1
+    value: 0
+  edgesOnlyBgColor:
+    overrideState: 1
+    value: {r: 1, g: 1, b: 1, a: 1}
 --- !u!114 &114319015473501564
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -40,7 +122,7 @@ MonoBehaviour:
     value: 1
   intensity:
     overrideState: 1
-    value: 0.32
+    value: 0.4
   color:
     overrideState: 1
     value: {r: 0, g: 0, b: 0, a: 1}
@@ -80,7 +162,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 556797029e73b2347956b6579e77e05b, type: 3}
   m_Name: DepthOfField
   m_EditorClassIdentifier: 
-  active: 1
+  active: 0
   enabled:
     overrideState: 1
     value: 1
@@ -165,25 +247,25 @@ MonoBehaviour:
     defaultState: 1
   tonemapper:
     overrideState: 1
-    value: 2
+    value: 1
   toneCurveToeStrength:
     overrideState: 1
-    value: 0
+    value: 0.261
   toneCurveToeLength:
     overrideState: 1
-    value: 0.5
+    value: 0.749
   toneCurveShoulderStrength:
     overrideState: 1
-    value: 0
+    value: 0.363
   toneCurveShoulderLength:
     overrideState: 1
-    value: 0.5
+    value: 0.37
   toneCurveShoulderAngle:
     overrideState: 1
     value: 0
   toneCurveGamma:
     overrideState: 1
-    value: 1
+    value: 0.82
   ldrLut:
     overrideState: 1
     value: {fileID: 0}
@@ -193,7 +275,7 @@ MonoBehaviour:
     value: 1
   temperature:
     overrideState: 1
-    value: 14
+    value: 0
   tint:
     overrideState: 1
     value: 0
@@ -205,16 +287,16 @@ MonoBehaviour:
     value: 0
   saturation:
     overrideState: 1
-    value: 13
+    value: 0
   brightness:
     overrideState: 1
     value: 0
   postExposure:
-    overrideState: 1
-    value: 0
+    overrideState: 0
+    value: 0.2
   contrast:
     overrideState: 1
-    value: 5
+    value: 31.8
   mixerRedOutRedIn:
     overrideState: 1
     value: 100
@@ -247,10 +329,10 @@ MonoBehaviour:
     value: {x: 1, y: 1, z: 1, w: 0}
   gamma:
     overrideState: 1
-    value: {x: 1, y: 1, z: 1, w: -0.05415164}
+    value: {x: 1, y: 1, z: 1, w: -0.01913963}
   gain:
     overrideState: 1
-    value: {x: 1, y: 1, z: 1, w: 0.3610109}
+    value: {x: 1, y: 1, z: 1, w: 0.3264158}
   masterCurve:
     overrideState: 1
     value:
@@ -1509,7 +1591,7 @@ MonoBehaviour:
     value: 1.31
   threshold:
     overrideState: 1
-    value: 2
+    value: 1
   softKnee:
     overrideState: 1
     value: 0.5

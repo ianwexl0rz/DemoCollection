@@ -1,11 +1,12 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class AutoDestroyParticleSystem : MonoBehaviour {
 
 	public bool destroyOnComplete = false;
 	public float offsetCloserToCamera = 0f;
+	public new Light light = null;
+	public AnimationCurve lightCurve = new AnimationCurve();
+	public float lightIntensity = 1f;
 
 	private ParticleSystem ps;
 	private Vector3 originalPos;
@@ -32,6 +33,13 @@ public class AutoDestroyParticleSystem : MonoBehaviour {
 
 	void Update ()
 	{
+		if(ps.isPlaying)
+		{
+			float t = ps.time / ps.main.duration;
+			light.color = ps.colorOverLifetime.color.Evaluate(t);
+			light.intensity = lightIntensity * lightCurve.Evaluate(t);
+		}
+
 		if(offsetCloserToCamera > 0f)
 		{
 			Vector3 dir = Camera.main.transform.position - originalPos;

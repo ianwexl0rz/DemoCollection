@@ -1,6 +1,6 @@
 // Unity built-in shader source. Copyright (c) 2016 Unity Technologies. MIT license (see license.txt)
 
-Shader "Custom/Custom (Specular setup)"
+Shader "Custom/Cel Shaded (Specular setup)"
 {
 	Properties
 	{
