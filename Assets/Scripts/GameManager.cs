@@ -94,9 +94,6 @@ public class GameManager : MonoBehaviour
 		// Hold the right bumper for slow-mo!
 		Time.timeScale = InputManager.ActiveDevice.RightBumper.IsPressed || Input.GetKey(KeyCode.LeftAlt) ? 0.25f : 1f;
 
-		// Hold the right face button to roll
-		activePlayer.shouldRoll = InputManager.ActiveDevice.Action2.IsPressed || Input.GetKey(KeyCode.LeftControl);
-
 		UpdateHUD();
 
 		//TODO: Move Camera stuff to player controller?

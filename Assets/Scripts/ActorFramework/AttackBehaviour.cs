@@ -29,10 +29,10 @@ public class AttackBehaviour : StateMachineBehaviour
 	// OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
 	override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
 	{
-		if(!animator.IsInTransition(0) && !fullyTransitioned && !player.rootMotionOverride)
+		if(!animator.IsInTransition(0) && !fullyTransitioned && !player.RootMotionOverride)
 		{
 			fullyTransitioned = true;
-			player.rootMotionOverride = applyRootMotion;
+			player.RootMotionOverride = applyRootMotion;
 			if(applyRootMotion) animator.applyRootMotion = true;
 		}
 
@@ -47,7 +47,7 @@ public class AttackBehaviour : StateMachineBehaviour
 			animator.SetBool("isAttacking", false);
 		}
 		animator.applyRootMotion = false;
-		player.rootMotionOverride = false;
+		player.RootMotionOverride = false;
 		player.isAttacking = false;
 		player.cancelOK = false;
 	}

@@ -6,7 +6,8 @@ using System.Collections;
 public class Actor : Entity
 {
 	[SerializeField]
-	protected ActorController _controller = null;
+	protected ActorController controller;
+	protected Animator animator;
 
 	public bool isAwake = false;
 
@@ -15,10 +16,8 @@ public class Actor : Entity
 	public bool lockOn { get; set; }
 
 	public Transform lockOnTarget = null;
-	public Animator animator { get; private set; }
-	public ActorController controller { get { return _controller; } private set { _controller = value; } }
 
-	public Action<Actor> UpdateController = delegate (Actor actor) { };
+	public Action<Actor> UpdateController = delegate { };
 	public Action OnResetAbilities = null;
 	public Action UpdateAbilities = null;
 	public Action FixedUpdateAbilities = null;
@@ -28,9 +27,8 @@ public class Actor : Entity
 
 	public float health { get; set; }
 	public float maxHealth { get; protected set; }
-	protected float stunTime = 0f;
-	protected float localPauseTimer = 0f;
 	public IEnumerator hitReaction;
+	protected readonly TimerGroup actorTimerGroup = new TimerGroup();
 
 	// Use this for initialization
 	protected override void Awake()
@@ -53,11 +51,7 @@ public class Actor : Entity
 		base.OnUpdate();
 		ProcessInput();
 		ProcessAnimation();
-		if(localPauseTimer > 0f)
-		{
-			localPauseTimer -= Time.deltaTime;
-			localPauseTimer = Mathf.Max(0f, localPauseTimer);
-		}
+		actorTimerGroup.Tick(Time.deltaTime);
 	}
 
 	public override void OnFixedUpdate()
@@ -89,6 +83,11 @@ public class Actor : Entity
 
 	protected virtual void ProcessPhysics()
 	{
+	}
+
+	public ActorController GetController()
+	{
+		return controller;
 	}
 
 	public void SetController(ActorController newController)

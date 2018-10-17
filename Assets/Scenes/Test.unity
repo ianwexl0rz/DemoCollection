@@ -205,7 +205,7 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 0.01
+  near clip plane: 0.03
   far clip plane: 500
   field of view: 60
   orthographic: 0
@@ -1101,6 +1101,14 @@ PrefabInstance:
       propertyPath: rollSpeed
       value: 8
       objectReference: {fileID: 0}
+    - target: {fileID: 114975490345739816, guid: 09e76c50c237c544bab6b4d67100a8dc, type: 3}
+      propertyPath: gravityScale
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 114975490345739816, guid: 09e76c50c237c544bab6b4d67100a8dc, type: 3}
+      propertyPath: jumpCount
+      value: 3
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 09e76c50c237c544bab6b4d67100a8dc, type: 3}
 --- !u!1 &658774149
@@ -1310,6 +1318,10 @@ PrefabInstance:
     - target: {fileID: 4960146848568262, guid: 1447690b66c3cbd4390ad0df5ef89106, type: 3}
       propertyPath: m_LocalRotation.x
       value: -5.029089e-10
+      objectReference: {fileID: 0}
+    - target: {fileID: 114189782331923418, guid: 1447690b66c3cbd4390ad0df5ef89106, type: 3}
+      propertyPath: gravityScale
+      value: 1.5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1447690b66c3cbd4390ad0df5ef89106, type: 3}

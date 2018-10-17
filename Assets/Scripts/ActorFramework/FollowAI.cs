@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-[CreateAssetMenu(fileName = "Follow", menuName = "Actor/AI/Behavior/Follow")]
+[CreateAssetMenu(fileName = "Follow", menuName = "Actor/AI Behaviors/Follow")]
 public class FollowAI : AIBehavior
 {
 	public float startDistance = 3f;
@@ -29,15 +29,15 @@ public class FollowAI : AIBehavior
 			{
 				Player player = actor as Player;
 
-				if(!player.run && vector.magnitude > startRunDistance)
+				if(!player.Run && vector.magnitude > startRunDistance)
 				{
 					// Start running
-					player.run = true;
+					player.Run = true;
 				}
-				else if(player.run && vector.magnitude < stopRunDistance)
+				else if(player.Run && vector.magnitude < stopRunDistance)
 				{
 					// Stop running
-					player.run = false;
+					player.Run = false;
 				}
 			}
 

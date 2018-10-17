@@ -92,7 +92,7 @@ public class ThirdPersonCamera : MonoBehaviour
 
 				//yaw = Quaternion.LookRotation(player.lockOnTarget.position - player.transform.position).eulerAngles.y;
 			}
-			else if(player.aimingMode)
+			else if(player.AimingMode)
 			{
 				// Aiming mode - move the camera directly and the character should follow
 				yaw += playerInput.RightStickX * lookSensitivityX * Time.deltaTime * 0.5f;
@@ -100,7 +100,7 @@ public class ThirdPersonCamera : MonoBehaviour
 				// No smoothing!
 				smooth = 0f;
 			}
-			else if(player.recenter)
+			else if(player.Recenter)
 			{
 				// Re-center mode - move the character directly and the camera should follow
 				yaw = player.transform.eulerAngles.y;

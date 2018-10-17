@@ -17,9 +17,10 @@ public class ActorController : ScriptableObject
 
 	public virtual void Engage(Actor actor)
 	{
-		if(actor.controller != null)
+		var controller = actor.GetController();
+		if(controller != null)
 		{
-			actor.controller.Disengage(actor);
+			controller.Disengage(actor);
 		}
 
 		Init(actor);

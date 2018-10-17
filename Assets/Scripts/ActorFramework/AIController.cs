@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-[CreateAssetMenu(fileName = "AI Controller", menuName = "Actor/AI/AI Controller")]
+[CreateAssetMenu(fileName = "AI Controller", menuName = "Actor/Controllers/AI Controller")]
 public class AIController : ActorController
 {
 	public List<AIBehavior> behaviors = new List<AIBehavior>();
