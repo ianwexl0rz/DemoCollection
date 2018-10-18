@@ -90,7 +90,7 @@ Material:
     - _Fresnel: 3
     - _FresnelBias: 0
     - _GlossMapScale: 1
-    - _Glossiness: 0.177
+    - _Glossiness: 0.343
     - _GlossyReflections: 1
     - _Metallic: 0
     - _Mode: 0

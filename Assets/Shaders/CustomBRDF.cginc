@@ -50,10 +50,6 @@ half4 CUSTOM_BRDF (half3 diffColor, half3 shadowColor, half3 specColor, half3 tr
     float fresnel = smoothstep(0.5, 0.4, nv);
     float edgelight = saturate((nl - nv) * 4) * fresnel;
 
-    //#if defined(POINT) || defined(POINT_COOKIE) || defined(SPOT)
-    //#else
-    //#endif
-
     // Specular term
     // HACK: theoretically we should divide diffuseTerm by Pi and not multiply specularTerm!
     // BUT 1) that will make shader look significantly darker than Legacy ones
@@ -71,12 +67,6 @@ half4 CUSTOM_BRDF (half3 diffColor, half3 shadowColor, half3 specColor, half3 tr
 #endif
 
     half specularTerm = V * D * UNITY_PI; // Torrance-Sparrow model, Fresnel is applied later
-
-    specularTerm = saturate((specularTerm - 0.2) / 0.5) * specularTerm; //; + specularTerm;
-    //5 * (1 - roughness) * (1 - roughness);
-    //specularTerm = pow(specularTerm, 2);
-
-    //specularTerm = pow(lerp(specularTerm, aniso, 1), smoothness * 128);
 
 #   ifdef UNITY_COLORSPACE_GAMMA
         specularTerm = sqrt(max(1e-4h, specularTerm));
@@ -100,28 +90,19 @@ half4 CUSTOM_BRDF (half3 diffColor, half3 shadowColor, half3 specColor, half3 tr
     specularTerm *= any(specColor) ? 1.0 : 0.0;
 
     half grazingTerm = saturate(smoothness + (1-oneMinusReflectivity));
-
    
-    half specColorRaw = specColor;
     // Shift spec color a little bit towards diffuse
     specColor = lerp(diffColor, specColor, 0.9);
 
-    //#if defined(DIRECTIONAL)
-    half specularTermModified = 8 * smoothness * smoothness * smoothstep(0,0.1 + (1-smoothness * smoothness) * 0.6,specularTerm);
-    specularTerm = lerp(specularTerm, specularTermModified, 1);
-    //specularTerm = specularTerm * specularTermModified;
+    specularTerm = 8 * smoothness * smoothness * smoothstep(0,0.1 + (1-smoothness * smoothness) * 0.6, specularTerm);
 
     // Multiply diffuse color by the shadow color in shadowed areas
-    //half diffuseTerm = min(diffuseTermRaw / (translucency * 0.25 + 0.1), 1) * 0.8 + nl * 0.2;
-    
-    //#endif
-
-    half diffuseTermModified = smoothstep(0,0.15,diffuseTerm);
-    diffuseTerm = lerp(diffuseTerm, diffuseTermModified, 0.6 * hardness);
-
-    //half diffuseTerm = diffuseTermRaw;
+    //diffuseTerm = min(diffuseTermRaw / (translucency * 0.25 + 0.1), 1) * 0.8 + nl * 0.2;
     //diffColor *= lerp(shadowColor, 1, light.color * diffuseTerm);
     //diffColor += shadowColor - light.color * diffuseTerm;
+
+    half diffuseTermModified = smoothstep(0, 0.15, diffuseTerm);
+    diffuseTerm = lerp(diffuseTerm, diffuseTermModified, 0.6 * hardness);
 
     half fLTDistortion = 2;
     half iLTPower = 3;
@@ -132,24 +113,14 @@ half4 CUSTOM_BRDF (half3 diffColor, half3 shadowColor, half3 specColor, half3 tr
     half3 vLTLight = light.dir + normal * fLTDistortion;
     half fLTDot = exp2(saturate(dot(viewDir, -vLTLight)) * iLTPower - iLTPower) * fLTScale;
     half3 fLT = (fLTDot * shadowColor) * fLTThickness;
-    //half3 color = shadowColor * saturate(nlUnclamped + 1) * (1 - diffuseTerm) * light.color;
 
     half3 color = 
 
 #if defined(DIRECTIONAL)
-                //diffColor * (gi.diffuse + light.color * lerp(diffuseTerm, 1, pow(translucency, 2.5)) * fLT)
-                //diffColor * (gi.diffuse + max(light.color * diffuseTerm, sssTerm))
-                //diffColor * (gi.diffuse + light.color * diffuseTerm)
-
                 diffColor * (gi.diffuse + light.color * (diffuseTerm + fLT))
-                //diffColor * (gi.diffuse + light.color * (diffuseTerm)) + fLT
-
 #else
                 diffColor * (gi.diffuse + light.color * diffuseTerm)
 #endif
-                //diffColor * (gi.diffuse + light.color * max(diffuseTerm, fLT)) + 
-
-                //+ diffColor * shadowColor * smoothstep(-0.25, 0.25, max(nlUnclamped, nh)) * (1 - diffuseTerm) * translucency * light.color
                 + max(edgelight * edgeLightStrength * specColor * (1 + diffColor) * 4, specularTerm * FresnelTerm(specColor, lh)) * light.color
                 + surfaceReduction * gi.specular * FresnelLerp(specColor, grazingTerm, nv);
     return half4(color, 1);

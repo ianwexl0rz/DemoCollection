@@ -4,11 +4,9 @@ Shader "Custom/Cel Shaded (Specular setup)"
 {
 	Properties
 	{
-		[HDR]
 		_Color("Color", Color) = (0.5,0.5,0.5,1)
 		_MainTex("Albedo", 2D) = "gray" {}
 
-		[HDR]
 		_ShadowColor("Shadow", Color) = (0,0,0,1)
 		_ShadowTex("Shadow", 2D) = "white" {}
 

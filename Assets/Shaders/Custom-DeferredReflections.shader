@@ -70,10 +70,13 @@ half4 frag (unity_v2f_deferred i, UNITY_VPOS_TYPE screenPos : SV_Position) : SV_
 		half diffChroma = GetChroma(gbuffer0.rg, a1.rg, a2.rg, a3.rg, a4.rg);
 		half specChroma = GetChromaWithType(gbuffer1.rgb, b1.rgb, b2.rgb, b3.rgb, b4.rgb);
 
-		half3 unpackDiffuse = half3(gbuffer0.r, lerp(half2(diffChroma, gbuffer0.g), half2(gbuffer0.g, diffChroma), evenPixel));
-		half3 unpackSpec = half3(gbuffer1.r, lerp(half2(specChroma, gbuffer1.g), half2(gbuffer1.g, specChroma), evenPixel));
+		half3 baseColor = half3(gbuffer0.r, lerp(half2(diffChroma, gbuffer0.g), half2(gbuffer0.g, diffChroma), evenPixel));
+		baseColor = YCoCgToRGB(baseColor);
 
-		CustomData data = CustomDataFromGbuffer(unpackDiffuse, unpackSpec, gbuffer0, gbuffer1, gbuffer2);
+		half3 specColor = half3(gbuffer1.r, lerp(half2(specChroma, gbuffer1.g), half2(gbuffer1.g, specChroma), evenPixel));
+		specColor = gbuffer1.b > 0 ? gbuffer1.r : YCoCgToRGB(specColor);
+
+		CustomData data = CustomDataFromGbuffer(baseColor, specColor, gbuffer0, gbuffer1, gbuffer2);
 
 		float3 eyeVec = normalize(worldPos - _WorldSpaceCameraPos);
 		half oneMinusReflectivity = 1 - SpecularStrength(data.specularColor);
@@ -154,7 +157,7 @@ half4 frag (unity_v2f_deferred i, UNITY_VPOS_TYPE screenPos : SV_Position) : SV_
 		ind.specular = env0;
 
 		half3 rgb = UNITY_BRDF_PBS(0, data.specularColor, oneMinusReflectivity, data.smoothness, data.normalWorld, -eyeVec, light, ind).rgb;
-		//half3 rgb = CUSTOM_BRDF(0, 0, data.specularColor, 0, 0, 0, oneMinusReflectivity, data.smoothness, data.normalWorld, -eyeVec, light, ind).rgb;
+		//half3 rgb = CUSTOM_BRDF(0, 0, data.specularColor, 0, 0, 1, oneMinusReflectivity, data.smoothness, data.normalWorld, -eyeVec, light, ind).rgb;
 
 
 		// Calculate falloff value, so reflections on the edges of the probe would gradually blend to previous reflection.
