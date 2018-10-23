@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: face practice_hair
-  m_Shader: {fileID: 4800000, guid: 289f6d7fd8e4d0542b05fb923a2492d0, type: 3}
+  m_Shader: {fileID: 4800000, guid: 811e8972b8e0eac48934e7e9b636adb9, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -73,15 +73,15 @@ Material:
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
-    - _EdgeLight: 0.223
+    - _EdgeLight: 0.724
     - _GlossMapScale: 1
-    - _Glossiness: 0.208
+    - _Glossiness: 0.376
     - _GlossyReflections: 1
     - _Metallic: 0
     - _Mode: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.02
-    - _Precision: 16
+    - _Precision: 32
     - _Shininess: 0.09
     - _Smoothness: 0
     - _SmoothnessTextureChannel: 0
@@ -95,7 +95,8 @@ Material:
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _Fresnel: {r: 0, g: 0, b: 0, a: 1}
     - _MainColor: {r: 1, g: 1, b: 1, a: 0}
     - _SecondaryColor: {r: 0, g: 0, b: 0, a: 0}
     - _ShadowColor: {r: 0.9803922, g: 0.9803922, b: 0.9803922, a: 1}
-    - _SpecColor: {r: 0.19852942, g: 0.19852942, b: 0.19852942, a: 1}
+    - _SpecColor: {r: 0.14039966, g: 0.13333334, b: 0.14117648, a: 1}

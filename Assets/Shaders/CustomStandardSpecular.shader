@@ -5,7 +5,7 @@ Shader "Custom/Cel Shaded (Specular setup)"
 	Properties
 	{
 		_Color("Color", Color) = (0.5,0.5,0.5,1)
-		_MainTex("Albedo", 2D) = "gray" {}
+		_MainTex("Albedo", 2D) = "white" {}
 
 		_ShadowColor("Shadow", Color) = (0,0,0,1)
 		_ShadowTex("Shadow", 2D) = "white" {}

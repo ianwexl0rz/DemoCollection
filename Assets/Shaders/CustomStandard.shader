@@ -214,7 +214,7 @@ Shader "Custom/Cel Shaded"
 			#pragma shader_feature ___ _DETAIL_MULX2
 			#pragma shader_feature EDITOR_VISUALIZATION
 
-			#include "UnityStandardMeta.cginc"
+			#include "CustomStandardMeta.cginc"
 			ENDCG
 		}
 	}

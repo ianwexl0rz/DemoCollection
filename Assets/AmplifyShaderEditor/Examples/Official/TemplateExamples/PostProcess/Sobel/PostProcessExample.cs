@@ -20,6 +20,7 @@ public class PostProcessExample : MonoBehaviour
 
 	}
 
+	[ImageEffectOpaque]
 	void OnRenderImage( RenderTexture src, RenderTexture dest )
 	{
 		Graphics.Blit( src, dest, PostProcessMat );

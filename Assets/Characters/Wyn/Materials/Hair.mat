@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Hair
-  m_Shader: {fileID: 4800000, guid: 289f6d7fd8e4d0542b05fb923a2492d0, type: 3}
+  m_Shader: {fileID: 4800000, guid: 811e8972b8e0eac48934e7e9b636adb9, type: 3}
   m_ShaderKeywords: _EMISSION
   m_LightmapFlags: 0
   m_EnableInstancingVariants: 0
@@ -81,12 +81,12 @@ Material:
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
-    - _EdgeLight: 1
+    - _EdgeLight: 0.827
     - _Float0: 0
     - _Fresnel: 3
     - _FresnelBias: 0
     - _GlossMapScale: 1
-    - _Glossiness: 0.576
+    - _Glossiness: 0.542
     - _GlossyReflections: 1
     - _Metallic: 0.305
     - _Mode: 0
@@ -104,12 +104,12 @@ Material:
     - _ZWrite: 1
     - __dirty: 0
     m_Colors:
-    - _Color: {r: 0.056644008, g: 0.39377338, b: 0.47599998, a: 1}
+    - _Color: {r: 0, g: 0.3975591, b: 0.51, a: 1}
     - _Emission: {r: 0, g: 0, b: 0, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 0}
     - _Fresnel: {r: 0, g: 0, b: 0, a: 1}
     - _MainColor: {r: 0, g: 0.42432597, b: 0.601, a: 0}
     - _SecondaryColor: {r: 1, g: 1, b: 1, a: 0}
     - _ShadowColor: {r: 0, g: 0, b: 0, a: 1}
-    - _SpecColor: {r: 0.20149021, g: 0.27450982, b: 0.27450982, a: 1}
+    - _SpecColor: {r: 0.23431577, g: 0.3514737, b: 0.371, a: 1}
     - _Vector0: {r: 0, g: 0, b: 0, a: 0}

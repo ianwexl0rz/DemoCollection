@@ -41,18 +41,18 @@ public class Timer
 
 		if(Current < Duration)
 		{
-			if(overTime == null) return false;
+			if(overTime == null) return true;
 
 			var t = Current;
 			if(normalizedTime) t /= Duration;
 			overTime(t);
 			
-			return false;
+			return true;
 		}
 
 		Current = Duration;
 		onEnd?.Invoke();
-		return true;
+		return false;
 	}
 
 	public void Reset()

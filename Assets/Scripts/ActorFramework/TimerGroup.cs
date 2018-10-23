@@ -13,8 +13,8 @@ public class TimerGroup : List<Timer>
 		for(var i = Count; i-- > 0;)
 		{
 			var t = this[i];
-			if(t.Tick(dt) && !t.Persistent) RemoveAt(i);
+			if(t.Tick(dt) || t.Persistent) continue;
+			RemoveAt(i);
 		}
-		
 	}
 }

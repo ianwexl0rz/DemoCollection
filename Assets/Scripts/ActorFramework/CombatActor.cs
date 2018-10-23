@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 public class CombatActor : Actor
 {
@@ -21,6 +23,8 @@ public class CombatActor : Actor
 		base.Awake();
 		actorTimerGroup.Add(stunned);
 		actorTimerGroup.Add(jumpAllowance);
+
+		
 	}
 
 	public void NewHit(AnimationEvent animEvent)

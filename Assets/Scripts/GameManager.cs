@@ -2,37 +2,34 @@
 using System.Collections.Generic;
 using InControl;
 using System;
+using UnityStandardAssets.ImageEffects;
 
 public class GameManager : MonoBehaviour
 {
 	public Player activePlayer;
-	public ControlSettings controlSettings = null;
-	public ThirdPersonCamera mainCamera = null;
-
-	[Header("UI")]
-	public UnityEngine.GameObject pausePrefab = null;
-	public RectTransform healthBarFill = null;
+	public ControlSettings controlSettings;
+	public ThirdPersonCamera mainCamera;
+	public HUD hud;
 
 	[Header("Actor Controllers")]
-	public PlayerController playerBrain = null;
-	public ActorController followerBrain = null;
+	public PlayerController playerBrain;
+	public ActorController followerBrain;
 
 	[Header("Gameplay")]
 	[SerializeField]
-	private UnityEngine.GameObject hitSpark = null;
+	private GameObject hitSpark = null;
 	[SerializeField]
-	private UnityEngine.GameObject hitSpark2 = null;
+	private GameObject hitSpark2 = null;
 
-	private int targetIndex = 0;
+	private int targetIndex;
 	private List<Player> playerCharacters;
-	private List<Entity> entities = new List<Entity>();
+	private readonly List<Entity> entities = new List<Entity>();
 
-	public Action<bool> PauseAllPhysics = delegate (bool value) { };
-	public Action<bool> OnPauseGame = delegate (bool value) { };
-	private bool gamePaused = false;
-	private bool physicsPaused = false;
+	public Action<bool> PauseAllPhysics = delegate { };
+	public Action<bool> OnPauseGame = delegate { };
+	private bool gamePaused, physicsPaused;
 	
-	private float hitPauseTimer = 0f;
+	private float hitPauseTimer;
 
 	private static GameManager _instance;
 	public static GameManager I
@@ -42,13 +39,15 @@ public class GameManager : MonoBehaviour
 
 	public static float HitPauseTimer
 	{
-		get { return I.hitPauseTimer; }
-		set { I.hitPauseTimer = value; }
+		get => I.hitPauseTimer;
+		set => I.hitPauseTimer = value;
 	}
 
 	#region UNITY_METHODS
 	private void Awake()
 	{
+		QualitySettings.maxQueuedFrames = 1;
+
 		DontDestroyOnLoad(this);
 
 		// Lock cursor by default.
@@ -94,7 +93,7 @@ public class GameManager : MonoBehaviour
 		// Hold the right bumper for slow-mo!
 		Time.timeScale = InputManager.ActiveDevice.RightBumper.IsPressed || Input.GetKey(KeyCode.LeftAlt) ? 0.25f : 1f;
 
-		UpdateHUD();
+		hud.OnUpdate();
 
 		//TODO: Move Camera stuff to player controller?
 		mainCamera.UpdateRotation(); // Update camera rotation first so player input direction is correct
@@ -109,8 +108,9 @@ public class GameManager : MonoBehaviour
 		if(InputManager.ActiveDevice.MenuWasPressed || Input.GetKey(KeyCode.P))
 		{
 			gamePaused = !gamePaused;
-			pausePrefab.SetActive(gamePaused);
+			hud.SetPaused(gamePaused);
 			OnPauseGame(gamePaused);
+			Camera.main.GetComponent<BlurOptimized>().enabled = gamePaused;
 		}
 
 		if(!gamePaused && hitPauseTimer > 0)
@@ -187,23 +187,6 @@ public class GameManager : MonoBehaviour
 	#endregion
 
 	#region PRIVATE_METHODS
-
-	private void UpdateHUD()
-	{
-		if(Input.GetKeyDown(KeyCode.RightBracket))
-		{
-			activePlayer.health = Mathf.Min(activePlayer.health + 5f, activePlayer.maxHealth);
-		}
-
-		if(Input.GetKeyDown(KeyCode.LeftBracket))
-		{
-			activePlayer.health = Mathf.Max(activePlayer.health - 5f, 0f);
-		}
-
-		// TODO: Only update this when it changes
-		healthBarFill.anchorMax = new Vector2(activePlayer.health / activePlayer.maxHealth, healthBarFill.anchorMax.y);
-	}
-
 	private void CyclePlayer()
 	{
 		targetIndex = (targetIndex + 1) % playerCharacters.Count;

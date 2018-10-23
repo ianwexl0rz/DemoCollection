@@ -72,6 +72,8 @@ Shader "Custom/Low Precision (Cel Shaded)"
 		{
 			UNITY_INITIALIZE_OUTPUT(Input, o);
 
+			_Precision = max(_Precision, 0);
+
 			// use camera space
 			float3 pos = UnityObjectToViewPos(v.vertex.xyz);
 			pos = LowPrecision(pos, _Precision);

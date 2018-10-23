@@ -94,15 +94,16 @@ half4 CUSTOM_BRDF (half3 diffColor, half3 shadowColor, half3 specColor, half3 tr
     // Shift spec color a little bit towards diffuse
     specColor = lerp(diffColor, specColor, 0.9);
 
-    specularTerm = 8 * smoothness * smoothness * smoothstep(0,0.1 + (1-smoothness * smoothness) * 0.6, specularTerm);
+    specularTerm = 8 * smoothness * smoothness * smoothstep(0.05, 0.1 + (1-smoothness * smoothness) * 0.6, specularTerm);
 
     // Multiply diffuse color by the shadow color in shadowed areas
     //diffuseTerm = min(diffuseTermRaw / (translucency * 0.25 + 0.1), 1) * 0.8 + nl * 0.2;
     //diffColor *= lerp(shadowColor, 1, light.color * diffuseTerm);
     //diffColor += shadowColor - light.color * diffuseTerm;
 
-    half diffuseTermModified = smoothstep(0, 0.15, diffuseTerm);
-    diffuseTerm = lerp(diffuseTerm, diffuseTermModified, 0.6 * hardness);
+    //lerp(0.05, 0.2, 1-nv) // use this for more blur at glancing angles
+    half diffuseTermModified = smoothstep(0, 0.1, diffuseTerm);
+    diffuseTerm = lerp(diffuseTerm, diffuseTermModified, 0.75 * hardness);
 
     half fLTDistortion = 2;
     half iLTPower = 3;
