@@ -21,7 +21,7 @@ public class WeaponCollision
 		end = p1;
 	}
 
-	public void CheckHits(CombatActor attacker, float distThreshold)
+	public void CheckHits(CombatCharacter attacker, float distThreshold)
 	{
         float debugTime = Time.fixedDeltaTime * 8;
 

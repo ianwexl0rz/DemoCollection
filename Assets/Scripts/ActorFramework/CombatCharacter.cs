@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-public class CombatActor : Actor
+public class CombatCharacter : Character
 {
 	[Header("Melee")]
 	public AttackData attackData;
@@ -15,8 +15,8 @@ public class CombatActor : Actor
 	public Transform weaponTransform;
 	public List<GameObject> hitObjects = new List<GameObject>();
 	public WeaponCollision weaponCollision = new WeaponCollision();
-	protected Timer stunned = new Timer();
-	protected Timer jumpAllowance = new Timer();
+	public Timer stunned = new Timer();
+	public Timer jumpAllowance = new Timer();
 
 	protected override void Awake()
 	{
@@ -80,18 +80,18 @@ public class CombatActor : Actor
 		foreach(RaycastHit hit in hits)
 		{
 			GameObject go = hit.collider.gameObject;
-			Entity entity = go.GetComponent<Entity>();
+			Actor actor = go.GetComponent<Actor>();
 
-			if(hitObjects.Contains(go) || entity == this) { continue; }
+			if(hitObjects.Contains(go) || actor == this) { continue; }
 			
-			if(entity != null)
+			if(actor != null)
 			{
 				Vector3 hitDirection = (go.transform.position - transform.position).normalized;
-				entity.GetHit(hit.point, hitDirection, attackData);
+				actor.GetHit(hit.point, hitDirection, attackData);
 				GameManager.HitPauseTimer = Time.fixedDeltaTime * attackData.hitPause;
 			}
 			
-			if(GameManager.GetHitSpark(entity, out GameObject hitspark))
+			if(GameManager.GetHitSpark(actor, out GameObject hitspark))
 			{
 				Instantiate(hitspark, hit.point, Quaternion.identity);
 			}

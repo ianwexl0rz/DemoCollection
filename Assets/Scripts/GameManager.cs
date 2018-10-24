@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using InControl;
 using System;
+using Unity.Entities;
 using UnityStandardAssets.ImageEffects;
 
 public class GameManager : MonoBehaviour
@@ -13,7 +14,7 @@ public class GameManager : MonoBehaviour
 
 	[Header("Actor Controllers")]
 	public PlayerController playerBrain;
-	public ActorController followerBrain;
+	public CharacterController followerBrain;
 
 	[Header("Gameplay")]
 	[SerializeField]
@@ -23,7 +24,7 @@ public class GameManager : MonoBehaviour
 
 	private int targetIndex;
 	private List<Player> playerCharacters;
-	private readonly List<Entity> entities = new List<Entity>();
+	private readonly List<Actor> actors = new List<Actor>();
 
 	public Action<bool> PauseAllPhysics = delegate { };
 	public Action<bool> OnPauseGame = delegate { };
@@ -79,7 +80,11 @@ public class GameManager : MonoBehaviour
 	{
 		if(!physicsPaused)
 		{
-			entities.ForEach(entity => entity.OnFixedUpdate());
+			actors.ForEach(actor =>
+			{
+				//if(actor.GetComponent<GameObjectEntity>() == null)
+					actor.OnFixedUpdate();
+			});
 		}
 	}
 
@@ -97,13 +102,13 @@ public class GameManager : MonoBehaviour
 
 		//TODO: Move Camera stuff to player controller?
 		mainCamera.UpdateRotation(); // Update camera rotation first so player input direction is correct
-		entities.ForEach(entity => entity.OnUpdate()); // Update all the things!
+		actors.ForEach(entity => entity.OnUpdate()); // Update all the things!
 		mainCamera.UpdatePosition(); // Update camera position
 	}
 
 	public void LateUpdate()
 	{
-		entities.ForEach(entity => entity.OnLateUpdate());
+		actors.ForEach(actors => actors.OnLateUpdate());
 
 		if(InputManager.ActiveDevice.MenuWasPressed || Input.GetKey(KeyCode.P))
 		{
@@ -128,7 +133,7 @@ public class GameManager : MonoBehaviour
 			PauseAllPhysics(true);
 		}
 
-		if((!gamePaused && hitPauseTimer == 0f) && physicsPaused)
+		if((!gamePaused && Mathf.Approximately(hitPauseTimer, 0f)) && physicsPaused)
 		{
 			physicsPaused = false;
 			PauseAllPhysics(false);
@@ -154,12 +159,12 @@ public class GameManager : MonoBehaviour
 		}
 	}
 
-	public static bool GetHitSpark(Entity entity, out GameObject hitSpark)
+	public static bool GetHitSpark(Actor actor, out GameObject hitSpark)
 	{
 		return hitSpark =
 		(
-			entity is Actor ? I.hitSpark :
-			entity is Entity ? I.hitSpark2 : null
+			actor is Character ? I.hitSpark :
+			actor is Actor ? I.hitSpark2 : null
 		);
 	}
 
@@ -175,14 +180,14 @@ public class GameManager : MonoBehaviour
 		return null;
 	}
 
-	public void AddEntity(Entity entity)
+	public void AddEntity(Actor actor)
 	{
-		entities.Add(entity);
+		actors.Add(actor);
 	}
 
-	public void RemoveEntity(Entity entity)
+	public void RemoveEntity(Actor actor)
 	{
-		entities.Remove(entity);
+		actors.Remove(actor);
 	}
 	#endregion
 

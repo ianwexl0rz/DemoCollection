@@ -8,26 +8,26 @@ public class FollowAI : AIBehavior
 	public float startRunDistance = 6f;
 	public float stopRunDistance = 4f;
 
-	public override void Tick(Actor actor)
+	public override void Tick(Character character)
 	{
-		if(actor.lockOnTarget == null) { return; }
+		if(character.lockOnTarget == null) { return; }
 
-		Vector3 vector = actor.lockOnTarget.position - actor.transform.position;
+		Vector3 vector = character.lockOnTarget.position - character.transform.position;
 
 		vector = Vector3.Scale(vector, new Vector3(1, 0, 1));
 
-		if(actor.move == Vector3.zero)
+		if(character.move == Vector3.zero)
 		{
 			if(vector.magnitude > startDistance)
 			{
-				actor.move = vector.normalized;
+				character.move = vector.normalized;
 			}
 		}
 		else if(vector.magnitude > stopDistance)
 		{
-			if(actor is Player)
+			if(character is Player)
 			{
-				Player player = actor as Player;
+				Player player = character as Player;
 
 				if(!player.Run && vector.magnitude > startRunDistance)
 				{
@@ -41,11 +41,11 @@ public class FollowAI : AIBehavior
 				}
 			}
 
-			actor.move = vector.normalized;
+			character.move = vector.normalized;
 		}
 		else
 		{
-			actor.move = Vector3.zero;
+			character.move = Vector3.zero;
 		}
 	}
 }

@@ -1,141 +1,119 @@
 ﻿using UnityEngine;
-using System;
 using System.Collections.Generic;
-using System.Collections;
+using System;
+using InControl;
 
-public class Actor : Entity
+[Serializable]
+public struct RigidbodyState
 {
-	[SerializeField]
-	protected ActorController controller;
-	protected Animator animator;
+	public Vector3 position;
+	public Quaternion rotation;
+	public Vector3 velocity;
+	public Vector3 angularVelocity;
+	public bool isKinematic;
 
-	public bool isAwake = false;
+	public RigidbodyState(Rigidbody rb)
+	{
+		position = rb.position;
+		rotation = rb.rotation;
+		velocity = rb.velocity;
+		angularVelocity = rb.angularVelocity;
+		isKinematic = rb.isKinematic;
+	}
+}
 
-	public Vector3 move { get; set; }
-	public float look { get; set; }
-	public bool lockOn { get; set; }
+public class Actor : MonoBehaviour
+{
+	private RigidbodyState savedState;
 
-	public Transform lockOnTarget = null;
+	protected bool paused;
 
-	public Action<Actor> UpdateController = delegate { };
-	public Action OnResetAbilities = null;
-	public Action UpdateAbilities = null;
-	public Action FixedUpdateAbilities = null;
 
-	[HideInInspector]
-	public List<ActorAbility> abilities = new List<ActorAbility>();
+	protected Action OnEarlyFixedUpdate = delegate { };
 
-	public float health { get; set; }
-	public float maxHealth { get; protected set; }
-	public IEnumerator hitReaction;
-	protected readonly TimerGroup actorTimerGroup = new TimerGroup();
+	public Rigidbody rb { get; private set; }
 
 	// Use this for initialization
-	protected override void Awake()
+	protected virtual void Awake()
 	{
-		base.Awake();
-		animator = GetComponent<Animator>();
-		health = maxHealth = 100f;
+		rb = GetComponent<Rigidbody>();
+
+		Physics.autoSyncTransforms = true;
 	}
 
-	private void Start()
+	protected virtual void OnEnable()
 	{
-		if(controller != null)
+		GameManager.I.AddEntity(this);
+		GameManager.I.PauseAllPhysics += PauseEntity;
+	}
+
+	protected virtual void OnDisable()
+	{
+		if(!GameManager.I) { return; }
+
+		GameManager.I.RemoveEntity(this);
+		GameManager.I.PauseAllPhysics -= PauseEntity;
+
+		if(paused) { PauseEntity(false); }
+	}
+
+	public virtual void OnUpdate()
+	{
+	}
+
+	public virtual void OnLateUpdate()
+	{
+	}
+
+	public virtual void OnFixedUpdate()
+	{
+		OnEarlyFixedUpdate?.Invoke();
+		OnEarlyFixedUpdate = null;
+	}
+
+	protected virtual void OnPauseEntity(bool value)
+	{
+	}
+
+	protected virtual void OnGetHit(Vector3 direction, AttackData data)
+	{
+	}
+
+	public void PauseEntity(bool value)
+	{
+		if(value == paused) { return; } else { paused = value; }
+		
+		if(value)
 		{
-			controller.Engage(this);
+			savedState = new RigidbodyState(rb);
+
+			rb.isKinematic = true;
+			rb.velocity = Vector3.zero;
+			rb.angularVelocity = Vector3.zero;
+
+			// Account for interpolation
+			// TODO: Set rigidbody position between current transform position and previous transform position
+			// depending on sub-frame collision. Also set animator.Simulate() to that time.
+			rb.position = transform.position;
+			rb.rotation = transform.rotation;
+			rb.Sleep();
 		}
-	}
-
-	public override void OnUpdate()
-	{
-		base.OnUpdate();
-		ProcessInput();
-		ProcessAnimation();
-		actorTimerGroup.Tick(Time.deltaTime);
-	}
-
-	public override void OnFixedUpdate()
-	{
-		base.OnFixedUpdate();
-		hitReaction?.MoveNext();
-		ProcessPhysics();
-	}
-
-	protected override void OnPauseEntity(bool value)
-	{
-		if(animator != null)
+		else
 		{
-			animator.SetPaused(value);
-		}
-	}
-
-	protected virtual void ProcessInput()
-	{
-		if(isAwake)
-		{
-			UpdateController(this);
-		}
-	}
-
-	protected virtual void ProcessAnimation()
-	{
-	}
-
-	protected virtual void ProcessPhysics()
-	{
-	}
-
-	public ActorController GetController()
-	{
-		return controller;
-	}
-
-	public void SetController(ActorController newController)
-	{
-		newController.Engage(this);
-		controller = newController;
-	}
-
-	private void ResetAbilities()
-	{
-		if(OnResetAbilities != null)
-		{
-			OnResetAbilities();
-		}
-	}
-
-	protected override void OnGetHit(Vector3 hitPoint, Vector3 direction, AttackData data)
-	{
-		OnEarlyFixedUpdate = () =>
-		{
-			rb.AddForce(direction * data.knockback / Time.fixedDeltaTime, ForceMode.Acceleration);
-			rb.AddForceAtPosition(direction * data.knockback * 0.25f / Time.fixedDeltaTime, rb.position.WithY(hitPoint.y), ForceMode.Acceleration);
-		};
-	}
-
-	/*//
-	private IEnumerator SlowMo(float duration, float recovery)
-	{
-		yield return null;
-
-		float time = 0f;
-
-		while(time < duration)
-		{
-			Time.timeScale = 0.05f;
-			time += Time.unscaledDeltaTime;
-			yield return null;
+			rb.WakeUp();
+			rb.RestoreState(savedState);
 		}
 
-		time = 0f;
-		while(time < recovery)
-		{
-			Time.timeScale = Mathf.Lerp(0.02f, 1f, time / recovery);
-			time += Time.unscaledDeltaTime;
-			yield return null;
-		}
-
-		Time.timeScale = 1f;
+		OnPauseEntity(value);
 	}
-	//*/
+
+	protected virtual void OnGetHit(Vector3 hitPoint, Vector3 direction, AttackData data)
+	{
+		OnEarlyFixedUpdate = () => rb.AddForceAtPosition(direction * data.knockback / Time.fixedDeltaTime, hitPoint, ForceMode.Acceleration);
+	}
+
+	public void GetHit(Vector3 hitPoint, Vector3 direction, AttackData data)
+	{
+		OnGetHit(hitPoint, direction, data);
+	}
 }

@@ -2,27 +2,27 @@
 using InControl;
 
 [CreateAssetMenu(fileName = "Player Controller", menuName = "Actor/Controllers/Player Controller")]
-public class PlayerController : ActorController
+public class PlayerController : CharacterController
 {
 	private readonly InputBuffer inputBuffer = new InputBuffer();
 
-	protected override void Init(Actor actor)
+	protected override void Init(Character character)
 	{
 		var inactivePlayer = GameManager.I.GetFirstInactivePlayer();
-		actor.lockOnTarget = inactivePlayer ? inactivePlayer.transform : null;
+		character.lockOnTarget = inactivePlayer ? inactivePlayer.transform : null;
 		inputBuffer.Clear();
 	}
 
-	protected override void Tick(Actor actor)
+	protected override void Tick(Character character)
 	{
 		inputBuffer.Update(Time.deltaTime);
 
 		var inputDevice = InputManager.ActiveDevice;
 
-		actor.move = CalculateMove(inputDevice);
-		actor.lockOn = inputDevice.LeftTrigger.IsPressed || Input.GetMouseButton(1);
+		character.move = CalculateMove(inputDevice);
+		character.lockOn = inputDevice.LeftTrigger.IsPressed || Input.GetMouseButton(1);
 
-		if(!(actor is Player player)) return;
+		if(!(character is Player player)) return;
 
 		//player.aimingMode = gamePad.RightTrigger.IsPressed;
 		//player.Recenter = playerInput.RightStickButton.WasPressed;
@@ -54,9 +54,9 @@ public class PlayerController : ActorController
 		*/
 	}
 
-	protected override void Clean(Actor actor)
+	protected override void Clean(Character character)
 	{
-		actor.move = Vector3.zero;
+		character.move = Vector3.zero;
 	}
 
 	public Vector3 CalculateMove(InputDevice playerInput)

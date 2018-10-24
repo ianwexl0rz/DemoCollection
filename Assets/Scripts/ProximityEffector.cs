@@ -6,7 +6,7 @@ using UnityEngine;
 public class ProximityEffector : MonoBehaviour {
 
 	public float intensity = 1f;
-	public List<Entity> entities = new List<Entity>();
+	public List<Actor> entities = new List<Actor>();
 
 	/*
 	private SphereCollider sphereCollider = null;
@@ -29,7 +29,7 @@ public class ProximityEffector : MonoBehaviour {
 
 	private void OnTriggerEnter(Collider other)
 	{
-		Entity e = other.GetComponent<Entity>();
+		Actor e = other.GetComponent<Actor>();
 
 		if(e != null && !entities.Contains(e))
 		{
@@ -39,7 +39,7 @@ public class ProximityEffector : MonoBehaviour {
 
 	private void OnTriggerExit(Collider other)
 	{
-		Entity e = other.GetComponent<Entity>();
+		Actor e = other.GetComponent<Actor>();
 
 		if(e != null && entities.Contains(e))
 		{

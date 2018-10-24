@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class Player : CombatActor
+public class Player : CombatCharacter
 {
 	public float minSpeed = 1f;
 	public float walkSpeed = 2f;
@@ -18,7 +18,7 @@ public class Player : CombatActor
 	public bool AimingMode { get; set; }
 	public bool RootMotionOverride { get; set; }
 
-	private CapsuleCollider capsuleCollider;
+	public CapsuleCollider capsuleCollider;
 	private Quaternion rollRotation = Quaternion.identity;
 
 	public PIDConfig angleControllerConfig = null;
@@ -27,13 +27,18 @@ public class Player : CombatActor
 	private PID3 angleController;
 	private PID3 angularVelocityController;
 
-	private Vector3 currentSpeed;
-	private Vector3 speedSmoothVelocity;
+	//[HideInInspector]
+	public Vector3 currentSpeed;
+	//[HideInInspector]
+	public Vector3 speedSmoothVelocity;
 	private Vector3 desiredDirection;
 
-	private bool grounded;
-	private bool queueJump;
-	private int remainingJumps;
+	//[HideInInspector]
+	public bool grounded;
+	//[HideInInspector]
+	public bool queueJump;
+	//[HideInInspector]
+	public int remainingJumps;
 
 	protected override void Awake()
 	{
@@ -59,114 +64,7 @@ public class Player : CombatActor
 		//Gizmos.DrawSphere(transform.position + Vector3.up * 0.25f + Vector3.down * 0.1f, 0.2f);
 	}
 
-	protected override void ProcessPhysics()
-	{
-		var dt = Time.fixedDeltaTime;
-
-		if(stunned.InProgress) return;
-
-		if(RootMotionOverride)
-		{
-			currentSpeed = Vector3.zero;
-			UpdateRotation();
-			return;
-		}
-
-		var hits = Physics.SphereCastAll(transform.position + Vector3.up * 0.25f, 0.2f, Vector3.down, 0.1f, ~LayerMask.GetMask("Actor"), QueryTriggerInteraction.Ignore);
-		var groundNormal = Vector3.down;
-
-		bool wasGrounded = grounded;
-
-		if(hits.Length > 0)
-		{
-			var groundHit = hits[0];
-
-			for(var i = 1; i < hits.Length; i++)
-			{
-				if(hits[i].normal.y > groundHit.normal.y)
-				{
-					groundHit = hits[i];
-				}
-			}
-			groundNormal = groundHit.normal.normalized;
-
-			if(!grounded)
-			{
-				remainingJumps = 0;
-				grounded = true;
-			}
-		}
-		else
-		{
-			grounded = false;
-		}
-
-		// Get the ground incline (positive = uphill, negative = downhill)
-		var incline = Vector3.Dot(groundNormal, -currentSpeed.normalized);
-
-		// We aren't grounded if the slope is too steep!
-		grounded &= Mathf.Abs(incline) < 0.75f;
-
-		var yVelocity = rb.velocity.y;
-
-		if(!grounded && wasGrounded && remainingJumps == 0)
-		{
-			jumpAllowance.Reset();
-			jumpAllowance.SetDuration(dt * 4);
-		}
-
-		// Disable extra jumps if we're falling too fast
-		if(!grounded && !jumpAllowance.InProgress && yVelocity <= -5f)
-		{
-			remainingJumps = 0;
-		}
-
-		// Did we queue a jump?
-		if(queueJump && remainingJumps > 0)
-		{
-			queueJump = false;
-			grounded = false;
-			remainingJumps--;
-
-			// jump!
-			yVelocity = Mathf.Sqrt(2 * -Physics.gravity.y * gravityScale * jumpHeight);
-		}
-
-		var targetSpeed = move * Mathf.Max(minSpeed, (Run ? runSpeed : walkSpeed));
-		currentSpeed = Vector3.SmoothDamp(currentSpeed, targetSpeed, ref speedSmoothVelocity, speedSmoothTime * (grounded ? 1f : 8f));
-
-		if(grounded) // No directional input in the air
-		{
-			if(incline >= 0f)
-			{
-				// Set move velocity if we are on level ground OR going uphill
-				rb.velocity = currentSpeed;
-			}
-			else
-			{
-				// Do some math to make the move vector parallel to the ground
-				var cross = Vector3.Cross(currentSpeed.normalized, Vector3.up);
-				rb.velocity = Vector3.Cross(groundNormal, cross) * currentSpeed.magnitude;
-
-				// Make the move speed a bit faster or slower depending on the incline
-				rb.velocity *= 1 - incline * 0.5f;
-			}
-
-			// Counteract gravity (so we don't slide on an incline!)
-			rb.velocity -= Physics.gravity * Time.fixedDeltaTime;
-		}
-		else
-		{
-			rb.velocity = currentSpeed.WithY(yVelocity);
-			rb.velocity += Physics.gravity.y * (gravityScale - 1f) * Vector3.up * Time.fixedDeltaTime;
-		}
-
-		rb.centerOfMass = grounded ? Vector3.zero : capsuleCollider.center;
-
-		UpdateRotation();
-	}
-
-	protected void UpdateRotation()
+	public void UpdateRotation()
 	{
 		if(lockOn && lockOnTarget != null)
 		{
@@ -184,44 +82,6 @@ public class Player : CombatActor
 		var rotation = Quaternion.LookRotation(desiredDirection) * rollRotation;
 		rb.RotateTo(angleController, angularVelocityController, rotation, Time.fixedDeltaTime);
 	}
-
-	/*
-	protected override void ProcessInput()
-	{
-		base.ProcessInput();
-
-		// Cache look sensitivity from GameSettings
-		var lookSensitivityX = ControlSettings.I.lookSensitivityX;
-		var playerInput = InputManager.ActiveDevice;
-
-		if(lockOn)
-		{
-			if(lockOnTarget != null)
-			{
-				// If locked on AND we have a target, look at the target
-				look = Vector3.SignedAngle((lockOnTarget.position - transform.position).normalized, Vector3.forward, Vector3.up);
-				//recenter = false;
-			}
-		}
-		else if(aimingMode)
-		{
-			// We want to align the character to the camera
-			look = Camera.main.transform.forward;
-			//mesh.Rotate(Vector3.up, playerInput.RightStickX * lookSensitivityX * Time.deltaTime);
-		}
-		else if(recenter)
-		{
-			// We want to align the camera to the character
-			//mesh.Rotate(Vector3.up, playerInput.RightStickX * lookSensitivityX * Time.deltaTime);
-			look = Quaternion.AngleAxis(Camera.main.transform.eulerAngles.x, mesh.right) * mesh.forward;
-		}
-		else
-		{
-			// Normal camera
-			look = move == Vector3.zero ? mesh.forward : move.normalized;
-		}
-	}
-	*/
 
 	protected override void ProcessAnimation()
 	{
