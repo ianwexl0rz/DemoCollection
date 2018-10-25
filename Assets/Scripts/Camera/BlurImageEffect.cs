@@ -2,7 +2,7 @@
 using UnityEngine;
 
 [ExecuteInEditMode]
-public class ImageEffect : MonoBehaviour
+public class BlurImageEffect : MonoBehaviour
 {
 	public Material material;
 	public float blur;

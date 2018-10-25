@@ -1,0 +1,4 @@
+[submodule "Packages/Kino"]
+	path = Packages/Kino
+	url = https://github.com/keijiro/Kino.git
+	branch = upm

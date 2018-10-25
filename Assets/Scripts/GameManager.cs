@@ -105,7 +105,7 @@ public class GameManager : MonoBehaviour
 	{
 		entities.ForEach(entity => entity.OnLateUpdate());
 
-		if(InputManager.ActiveDevice.MenuWasPressed || Input.GetKey(KeyCode.P))
+		if(InputManager.ActiveDevice.MenuWasPressed || Input.GetKeyDown(KeyCode.P))
 		{
 			gamePaused = !gamePaused;
 			hud.SetPaused(gamePaused);

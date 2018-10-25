@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 0.5
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 1112326137}
-  m_IndirectSpecularColor: {r: 0.13732046, g: 0.16953702, b: 0.34970888, a: 0.5}
+  m_IndirectSpecularColor: {r: 0.11787108, g: 0.1455245, b: 0.30017123, a: 0.5}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -129,8 +129,8 @@ GameObject:
   - component: {fileID: 198612200}
   - component: {fileID: 198612198}
   - component: {fileID: 198612204}
-  - component: {fileID: 198612203}
   - component: {fileID: 198612205}
+  - component: {fileID: 198612203}
   m_Layer: 10
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -284,13 +284,16 @@ MonoBehaviour:
   m_ShowToolkit: 0
   m_ShowCustomSorter: 0
   breakBeforeColorGrading: 0
-  m_BeforeTransparentBundles:
-  - assemblyQualifiedName: EdgeDetect_BeforeTransparent, Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  m_BeforeTransparentBundles: []
   m_BeforeStackBundles:
-  - assemblyQualifiedName: EdgeDetect_BeforeStack, Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-  - assemblyQualifiedName: BlurPostProcessing, Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  - assemblyQualifiedName: Kino.PostProcessing.Isoline, Kino.Postprocessing, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  - assemblyQualifiedName: Kino.PostProcessing.PreStackOverlay, Kino.Postprocessing, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  - assemblyQualifiedName: Kino.PostProcessing.Recolor, Kino.Postprocessing, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  - assemblyQualifiedName: Kino.PostProcessing.Streak, Kino.Postprocessing, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
   m_AfterStackBundles:
-  - assemblyQualifiedName: EdgeDetect_AfterStack, Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  - assemblyQualifiedName: Kino.PostProcessing.Invert, Kino.Postprocessing, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  - assemblyQualifiedName: Kino.PostProcessing.Overlay, Kino.Postprocessing, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  - assemblyQualifiedName: Kino.PostProcessing.Sharpen, Kino.Postprocessing, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
 --- !u!114 &198612201
 MonoBehaviour:
   m_ObjectHideFlags: 0
