@@ -45,12 +45,12 @@ half4 CalculateLight (unity_v2f_deferred i, UNITY_VPOS_TYPE screenPos : SV_Posit
 {
 	float3 wpos;
 	float2 uv;
-	float atten, fadeDist;
+	float atten, fadeDist, shadows;
 	UnityLight light;
 	UNITY_INITIALIZE_OUTPUT(UnityLight, light);
-	UnityDeferredCalculateLightParams (i, wpos, uv, light.dir, atten, fadeDist);
+	CustomDeferredCalculateLightParams(i, wpos, uv, light.dir, atten, fadeDist, shadows);
 
-	light.color = _LightColor.rgb *atten;
+	light.color = _LightColor.rgb * atten;// *shadows;
 
 	// unpack Gbuffer
 	half4 gbuffer0 = tex2D (_CameraGBufferTexture0, uv);
@@ -76,10 +76,10 @@ half4 CalculateLight (unity_v2f_deferred i, UNITY_VPOS_TYPE screenPos : SV_Posit
 		half specChroma = GetChromaWithType(gbuffer1.rgb, b1.rgb, b2.rgb, b3.rgb, b4.rgb);
 
 		half3 baseColor = half3(gbuffer0.r, lerp(half2(diffChroma, gbuffer0.g), half2(gbuffer0.g, diffChroma), evenPixel));
-		baseColor = YCoCgToRGB(baseColor);
+		//baseColor = YCoCgToRGB(baseColor);
 		
 		half3 specColor = half3(gbuffer1.r, lerp(half2(specChroma, gbuffer1.g), half2(gbuffer1.g, specChroma), evenPixel));
-		specColor = gbuffer1.b > 0 ? gbuffer1.r : YCoCgToRGB(specColor);
+		//specColor = gbuffer1.b > 0 ? gbuffer1.r : YCoCgToRGB(specColor);
 
 		CustomData data = CustomDataFromGbuffer(baseColor, specColor, gbuffer0, gbuffer1, gbuffer2);
 		
@@ -91,11 +91,13 @@ half4 CalculateLight (unity_v2f_deferred i, UNITY_VPOS_TYPE screenPos : SV_Posit
 		ind.diffuse = 0;
 		ind.specular = 0;
 
-		half4 res = CUSTOM_BRDF(data.diffuseColor, data.shadowColor, data.specularColor, data.translucency, data.edgeLight, 1, oneMinusReflectivity, data.smoothness, data.normalWorld, -eyeVec, light, ind);
+		half4 res = CUSTOM_BRDF(data.diffuseColor, data.shadowColor, data.specularColor, data.translucency, data.edgeLight, 1, oneMinusReflectivity, data.smoothness, data.normalWorld, -eyeVec, light, shadows, ind);
 		return res;
 	}
 	else
 	{
+		light.color *= shadows;
+
 		UnityStandardData data = UnityStandardDataFromGbuffer(gbuffer0, gbuffer1, gbuffer2);
 
 		float3 eyeVec = normalize(wpos - _WorldSpaceCameraPos);

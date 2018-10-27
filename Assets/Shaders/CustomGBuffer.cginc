@@ -48,8 +48,8 @@ CustomData CustomDataFromGbuffer(half3 diffuse, half3 spec, half4 inGBuffer0, ha
 {
     CustomData data;
 
-    data.diffuseColor = diffuse;
-    data.specularColor = spec;
+    data.diffuseColor = YCoCgToRGB(diffuse);
+    data.specularColor = inGBuffer1.b > 0 ? inGBuffer1.r : YCoCgToRGB(spec);
     
     data.edgeLight = inGBuffer0.b;
     data.occlusion = inGBuffer0.a;
@@ -57,8 +57,7 @@ CustomData CustomDataFromGbuffer(half3 diffuse, half3 spec, half4 inGBuffer0, ha
     data.translucency = inGBuffer1.b;
     data.smoothness = inGBuffer1.a;
 
-    data.shadowColor = data.translucency > 0 ? YCoCgToRGB(half3(data.translucency, spec.gb)): half3(0, 0, 0);
-    //data.shadowColor = data.translucency > 0 ? YCoCgToRGB(half3(0, spec.gb)) : half3(0, 0, 0);
+    data.shadowColor = data.translucency > 0 ? YCoCgToRGB(half3(0, spec.gb)): half3(0, 0, 0);
 
     data.normalWorld.rgb = normalize(inGBuffer2.rgb * 2 - 1);
 

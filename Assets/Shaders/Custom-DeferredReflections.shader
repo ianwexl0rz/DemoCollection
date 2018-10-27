@@ -71,10 +71,10 @@ half4 frag (unity_v2f_deferred i, UNITY_VPOS_TYPE screenPos : SV_Position) : SV_
 		half specChroma = GetChromaWithType(gbuffer1.rgb, b1.rgb, b2.rgb, b3.rgb, b4.rgb);
 
 		half3 baseColor = half3(gbuffer0.r, lerp(half2(diffChroma, gbuffer0.g), half2(gbuffer0.g, diffChroma), evenPixel));
-		baseColor = YCoCgToRGB(baseColor);
+		//baseColor = YCoCgToRGB(baseColor);
 
 		half3 specColor = half3(gbuffer1.r, lerp(half2(specChroma, gbuffer1.g), half2(gbuffer1.g, specChroma), evenPixel));
-		specColor = gbuffer1.b > 0 ? gbuffer1.r : YCoCgToRGB(specColor);
+		//specColor = gbuffer1.b > 0 ? gbuffer1.r : YCoCgToRGB(specColor);
 
 		CustomData data = CustomDataFromGbuffer(baseColor, specColor, gbuffer0, gbuffer1, gbuffer2);
 
@@ -109,7 +109,7 @@ half4 frag (unity_v2f_deferred i, UNITY_VPOS_TYPE screenPos : SV_Position) : SV_
 		ind.diffuse = 1;
 		ind.specular = env0;
 
-		half3 rgb = CUSTOM_BRDF(0, data.shadowColor, data.specularColor, data.translucency, data.edgeLight, 1, oneMinusReflectivity, data.smoothness, data.normalWorld, -eyeVec, light, ind).rgb;
+		half3 rgb = CUSTOM_BRDF(0, data.shadowColor, data.specularColor, 0, data.edgeLight, 1, oneMinusReflectivity, data.smoothness, data.normalWorld, -eyeVec, light, 1, ind).rgb;
 
 		//rgb = data.shadowColor * data.translucency * light.dir;
 

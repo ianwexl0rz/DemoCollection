@@ -18,7 +18,7 @@ public class InvertCameraProjection : MonoBehaviour
 	private void Awake()
     {
 		cam = GetComponent<Camera>();
-	}
+    }
 
 	private void OnValidate()
 	{

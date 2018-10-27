@@ -80,23 +80,28 @@ Material:
     - _Cutoff: 0.5
     - _DetailNormalMapScale: -0.41
     - _DstBlend: 0
-    - _EdgeLight: 0.9
+    - _EdgeLight: 0.216
+    - _Float0: 0
     - _GlossMapScale: 1
-    - _Glossiness: 0.5
+    - _Glossiness: 0.672
     - _GlossyReflections: 1
     - _Metallic: 0
     - _Mode: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.005
     - _Shininess: 0.207
+    - _Smoothness: 0.672
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
-    - _Translucency: 0.4
+    - _Translucency: 1
     - _UVSec: 0
     - _ZWrite: 1
+    - __dirty: 1
     m_Colors:
-    - _Color: {r: 0.606551, g: 0.6776232, b: 0.737, a: 1}
+    - _Color: {r: 0.18422927, g: 0.37812167, b: 0.5660378, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _ShadowColor: {r: 0.85294116, g: 0.056444637, b: 0.3695503, a: 1}
+    - _MainColor: {r: 0.18422922, g: 0.37812164, b: 0.5660378, a: 1}
+    - _SecondaryColor: {r: 0, g: 1, b: 0.97285265, a: 1}
+    - _ShadowColor: {r: 0, g: 1, b: 0.9728527, a: 1}
     - _SpecColor: {r: 0.43382353, g: 0, b: 0, a: 1}

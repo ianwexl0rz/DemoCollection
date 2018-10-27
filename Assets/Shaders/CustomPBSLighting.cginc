@@ -76,7 +76,7 @@ inline half4 LightingCustom (SurfaceOutputCustom s, float3 viewDir, UnityGI gi)
     data.translucency   = s.Translucency;
     data.edgeLight      = s.EdgeLight;
 
-    half4 c = CUSTOM_BRDF(data.diffuseColor, data.shadowColor, data.specularColor, data.translucency, data.edgeLight, 1, oneMinusReflectivity, data.smoothness, data.normalWorld, viewDir, gi.light, gi.indirect);
+    half4 c = CUSTOM_BRDF(data.diffuseColor, data.shadowColor, data.specularColor, data.translucency, data.edgeLight, 1, oneMinusReflectivity, data.smoothness, data.normalWorld, viewDir, gi.light, 1, gi.indirect);
     c.a = outputAlpha;
     return c;
 }

@@ -217,7 +217,7 @@ Camera:
   m_CullingMask:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_RenderingPath: -1
+  m_RenderingPath: 3
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
   m_TargetEye: 3
@@ -876,7 +876,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &564018415
 Transform:
   m_ObjectHideFlags: 0
@@ -1354,6 +1354,10 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 23591999301820070, guid: 1447690b66c3cbd4390ad0df5ef89106, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 1882095cb06365849b07b00339c19b55, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1447690b66c3cbd4390ad0df5ef89106, type: 3}
 --- !u!1 &692385356
@@ -1926,6 +1930,7 @@ GameObject:
   - component: {fileID: 1084430560}
   - component: {fileID: 1084430559}
   - component: {fileID: 1084430558}
+  - component: {fileID: 1084430557}
   m_Layer: 0
   m_Name: Cube (2)
   m_TagString: Untagged
@@ -1933,6 +1938,18 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 4294967295
   m_IsActive: 1
+--- !u!114 &1084430557
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1084430556}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9fa782213740dac45822d87e30826a82, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!23 &1084430558
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -2102,7 +2119,7 @@ Light:
   m_Enabled: 1
   serializedVersion: 8
   m_Type: 1
-  m_Color: {r: 1, g: 0.9737514, b: 0.8632076, a: 1}
+  m_Color: {r: 1, g: 0.99809504, b: 0.9009434, a: 1}
   m_Intensity: 1.1
   m_Range: 0
   m_SpotAngle: 30

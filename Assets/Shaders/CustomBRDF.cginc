@@ -1,4 +1,6 @@
-﻿// Main Physically Based BRDF
+﻿#include "UnityDeferredLibrary.cginc"
+
+// Main Physically Based BRDF
 // Derived from Disney work and based on Torrance-Sparrow micro-facet model
 //
 //   BRDF = kD / pi + kS * (D * V * F) / 4
@@ -11,11 +13,15 @@
 // * Schlick approximation for Fresnel
 half4 CUSTOM_BRDF (half3 diffColor, half3 shadowColor, half3 specColor, half3 translucency, half edgeLightStrength, half hardness, half oneMinusReflectivity, half smoothness,
     half3 normal, half3 viewDir,
-    UnityLight light, UnityIndirect gi)
+    UnityLight light, half shadows, UnityIndirect gi)
 {
 
     half perceptualRoughness = SmoothnessToPerceptualRoughness (smoothness);
     half3 halfDir = Unity_SafeNormalize (light.dir + viewDir);
+
+    // Stylize the specular
+    half3 sharpHalfDir = smoothstep(0, smoothness, halfDir * smoothness);
+    halfDir = lerp(halfDir, sharpHalfDir, 1 - step(smoothness, 0));
 
 // NdotV should not be negative for visible pixels, but it can happen due to perspective projection and normal mapping
 // In this case normal should be modified to become valid (i.e facing camera) and not cause weird artifacts.
@@ -38,7 +44,6 @@ half4 CUSTOM_BRDF (half3 diffColor, half3 shadowColor, half3 specColor, half3 tr
 #endif
 
 	half nlUnclamped = dot(normal, light.dir);
-
     half nl = saturate(nlUnclamped);
     half nh = saturate(dot(normal, halfDir));
 
@@ -46,6 +51,8 @@ half4 CUSTOM_BRDF (half3 diffColor, half3 shadowColor, half3 specColor, half3 tr
     half lh = saturate(dot(light.dir, halfDir));
 
     half diffuseTerm = DisneyDiffuse(nv, nl, lh, perceptualRoughness) * nl;
+    half diffuseTermModified = smoothstep(0, 0.1, diffuseTerm);
+    diffuseTerm = lerp(diffuseTerm, diffuseTermModified, 0.6 * hardness);
 
     float fresnel = smoothstep(0.5, 0.4, nv);
     float edgelight = saturate((nl - nv) * 4) * fresnel;
@@ -56,9 +63,8 @@ half4 CUSTOM_BRDF (half3 diffColor, half3 shadowColor, half3 specColor, half3 tr
     // and 2) on engine side "Non-important" lights have to be divided by Pi too in cases when they are injected into ambient SH
     half roughness = PerceptualRoughnessToRoughness(perceptualRoughness);
 
-
 #if UNITY_BRDF_GGX
-    half V = SmithJointGGXVisibilityTerm (nl, nv, roughness);
+    half V = SmithJointGGXVisibilityTerm (nl * 3, nv * 3, roughness);
     half D = GGXTerm (nh, roughness);
 #else
     // Legacy
@@ -90,39 +96,108 @@ half4 CUSTOM_BRDF (half3 diffColor, half3 shadowColor, half3 specColor, half3 tr
     specularTerm *= any(specColor) ? 1.0 : 0.0;
 
     half grazingTerm = saturate(smoothness + (1-oneMinusReflectivity));
-   
-    // Shift spec color a little bit towards diffuse
-    specColor = lerp(diffColor, specColor, 0.9);
 
-    specularTerm = 8 * smoothness * smoothness * smoothstep(0.05, 0.1 + (1-smoothness * smoothness) * 0.6, specularTerm);
-
-    // Multiply diffuse color by the shadow color in shadowed areas
-    //diffuseTerm = min(diffuseTermRaw / (translucency * 0.25 + 0.1), 1) * 0.8 + nl * 0.2;
-    //diffColor *= lerp(shadowColor, 1, light.color * diffuseTerm);
-    //diffColor += shadowColor - light.color * diffuseTerm;
-
-    //lerp(0.05, 0.2, 1-nv) // use this for more blur at glancing angles
-    half diffuseTermModified = smoothstep(0, 0.1, diffuseTerm);
-    diffuseTerm = lerp(diffuseTerm, diffuseTermModified, 0.75 * hardness);
-
-    half fLTDistortion = 2;
-    half iLTPower = 3;
-    half fLTScale = 2;
-    half fLTThickness = 1;
+    float distortion = 0.5;
+    float power = 1;
+    float scale = 2;
 
     //Source: https://colinbarrebrisebois.com/2011/03/07/gdc-2011-approximating-translucency-for-a-fast-cheap-and-convincing-subsurface-scattering-look/
-    half3 vLTLight = light.dir + normal * fLTDistortion;
-    half fLTDot = exp2(saturate(dot(viewDir, -vLTLight)) * iLTPower - iLTPower) * fLTScale;
-    half3 fLT = (fLTDot * shadowColor) * fLTThickness;
+    float3 H = light.dir + normal * distortion;
+    float VdotH = pow(saturate(dot(viewDir, -H)), power) * scale;
+    float3 sss = light.color * (VdotH /*+ Ambient*/) * translucency;
+
+    half transPow = pow(translucency,8);
+    half3 spec = specularTerm * FresnelTerm(specColor, lh);
+
+    float halfLambert = nlUnclamped * 0.5 + 0.5;
+    float halfLdotV = dot(light.dir + normal * distortion, viewDir) * 0.5 + 0.5;
+
+    // Darken diffuse in the middle if translucent
+    diffColor *= lerp(1, max(1 - pow(nv, 2), diffColor), translucency * (1 - lv));
 
     half3 color = 
+        diffColor * (gi.diffuse + light.color * max(shadows * diffuseTerm, lerp(0, shadowColor, transPow)))
+        + max(edgelight * edgeLightStrength * specColor * (1 + diffColor) * 4, spec) * light.color * shadows
+        + surfaceReduction * gi.specular * FresnelLerp(specColor, grazingTerm, nv);
 
-#if defined(DIRECTIONAL)
-                diffColor * (gi.diffuse + light.color * (diffuseTerm + fLT))
-#else
-                diffColor * (gi.diffuse + light.color * diffuseTerm)
-#endif
-                + max(edgelight * edgeLightStrength * specColor * (1 + diffColor) * 4, specularTerm * FresnelTerm(specColor, lh)) * light.color
-                + surfaceReduction * gi.specular * FresnelLerp(specColor, grazingTerm, nv);
+    half fadedShadows = lerp(shadows, 1, transPow * 0.25);
+    half transmission = halfLdotV * (1-halfLambert) * translucency;
+    transmission = pow(transmission * scale, 2);
+    
+    color += max(shadowColor, spec) * max(sss, transmission) * fadedShadows;
+
     return half4(color, 1);
+}
+
+// Common lighting data calculation (direction, attenuation, ...)
+void CustomDeferredCalculateLightParams (
+    unity_v2f_deferred i,
+    out float3 outWorldPos,
+    out float2 outUV,
+    out half3 outLightDir,
+    out float outAtten,
+    out float outFadeDist,
+    out float outShadows)
+{
+    i.ray = i.ray * (_ProjectionParams.z / i.ray.z);
+    float2 uv = i.uv.xy / i.uv.w;
+
+    // read depth and reconstruct world position
+    float depth = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, uv);
+    depth = Linear01Depth (depth);
+    float4 vpos = float4(i.ray * depth,1);
+    float3 wpos = mul (unity_CameraToWorld, vpos).xyz;
+
+    float fadeDist = UnityComputeShadowFadeDistance(wpos, vpos.z);
+
+    // spot light case
+    #if defined (SPOT)
+        float3 tolight = _LightPos.xyz - wpos;
+        half3 lightDir = normalize (tolight);
+
+        float4 uvCookie = mul (unity_WorldToLight, float4(wpos,1));
+        // negative bias because http://aras-p.info/blog/2010/01/07/screenspace-vs-mip-mapping/
+        float atten = tex2Dbias (_LightTexture0, float4(uvCookie.xy / uvCookie.w, 0, -8)).w;
+        atten *= uvCookie.w < 0;
+        float att = dot(tolight, tolight) * _LightPos.w;
+        atten *= tex2D (_LightTextureB0, att.rr).r;
+
+        float shadows = UnityDeferredComputeShadow (wpos, fadeDist, uv);
+
+    // directional light case
+    #elif defined (DIRECTIONAL) || defined (DIRECTIONAL_COOKIE)
+        half3 lightDir = -_LightDir.xyz;
+        float atten = 1.0;
+
+        float shadows = UnityDeferredComputeShadow (wpos, fadeDist, uv);
+
+        #if defined (DIRECTIONAL_COOKIE)
+        atten *= tex2Dbias (_LightTexture0, float4(mul(unity_WorldToLight, half4(wpos,1)).xy, 0, -8)).w;
+        #endif //DIRECTIONAL_COOKIE
+
+    // point light case
+    #elif defined (POINT) || defined (POINT_COOKIE)
+        float3 tolight = wpos - _LightPos.xyz;
+        half3 lightDir = -normalize (tolight);
+
+        float att = dot(tolight, tolight) * _LightPos.w;
+        float atten = tex2D (_LightTextureB0, att.rr).r;
+
+        float shadows = UnityDeferredComputeShadow (tolight, fadeDist, uv);
+
+        #if defined (POINT_COOKIE)
+        atten *= texCUBEbias(_LightTexture0, float4(mul(unity_WorldToLight, half4(wpos,1)).xyz, -8)).w;
+        #endif //POINT_COOKIE
+    #else
+        half3 lightDir = 0;
+        float atten = 0;
+        float shadows = 0;
+    #endif
+
+    outWorldPos = wpos;
+    outUV = uv;
+    outLightDir = lightDir;
+    outAtten = atten;
+    outFadeDist = fadeDist;
+    outShadows = shadows;
 }
