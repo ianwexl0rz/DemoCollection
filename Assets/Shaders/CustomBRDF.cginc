@@ -20,7 +20,7 @@ half4 CUSTOM_BRDF (half3 diffColor, half3 shadowColor, half3 specColor, half3 tr
     half3 halfDir = Unity_SafeNormalize (light.dir + viewDir);
 
     // Stylize the specular
-    half3 sharpHalfDir = smoothstep(0, smoothness, halfDir * smoothness);
+    half3 sharpHalfDir = lerp(0, 1.05, halfDir);
     halfDir = lerp(halfDir, sharpHalfDir, 1 - step(smoothness, 0));
 
 // NdotV should not be negative for visible pixels, but it can happen due to perspective projection and normal mapping
@@ -64,7 +64,7 @@ half4 CUSTOM_BRDF (half3 diffColor, half3 shadowColor, half3 specColor, half3 tr
     half roughness = PerceptualRoughnessToRoughness(perceptualRoughness);
 
 #if UNITY_BRDF_GGX
-    half V = SmithJointGGXVisibilityTerm (nl * 3, nv * 3, roughness);
+    half V = SmithJointGGXVisibilityTerm (nl * 6, nv * 6, roughness);
     half D = GGXTerm (nh, roughness);
 #else
     // Legacy
@@ -97,7 +97,7 @@ half4 CUSTOM_BRDF (half3 diffColor, half3 shadowColor, half3 specColor, half3 tr
 
     half grazingTerm = saturate(smoothness + (1-oneMinusReflectivity));
 
-    float distortion = 0.5;
+    float distortion = 1;
     float power = 1;
     float scale = 2;
 
@@ -120,7 +120,7 @@ half4 CUSTOM_BRDF (half3 diffColor, half3 shadowColor, half3 specColor, half3 tr
         + max(edgelight * edgeLightStrength * specColor * (1 + diffColor) * 4, spec) * light.color * shadows
         + surfaceReduction * gi.specular * FresnelLerp(specColor, grazingTerm, nv);
 
-    half fadedShadows = lerp(shadows, 1, transPow * 0.25);
+    half fadedShadows = light.color * lerp(shadows, 1, transPow * 0.25);
     half transmission = halfLdotV * (1-halfLambert) * translucency;
     transmission = pow(transmission * scale, 2);
     

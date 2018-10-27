@@ -97,7 +97,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - _ASEOutlineWidth: 0.008
-    - _BumpScale: 1.5
+    - _BumpScale: 1
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _Distortion: 0.02
