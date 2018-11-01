@@ -81,12 +81,12 @@ Material:
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
-    - _EdgeLight: 0.951
+    - _EdgeLight: 0.791
     - _Float0: 0
     - _Fresnel: 3
     - _FresnelBias: 0
     - _GlossMapScale: 1
-    - _Glossiness: 0.952
+    - _Glossiness: 0.691
     - _GlossyReflections: 1
     - _Metallic: 0.305
     - _Mode: 0
@@ -99,17 +99,17 @@ Material:
     - _SpecSize: 1.13
     - _SpecularHighlights: 1
     - _SrcBlend: 1
-    - _Translucency: 0.327
+    - _Translucency: 0.234
     - _UVSec: 0
     - _ZWrite: 1
     - __dirty: 0
     m_Colors:
-    - _Color: {r: 0.17254902, g: 0.40033513, b: 0.49803922, a: 1}
+    - _Color: {r: 0, g: 0.36046794, b: 0.42, a: 1}
     - _Emission: {r: 0, g: 0, b: 0, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 0}
     - _Fresnel: {r: 0, g: 0, b: 0, a: 1}
     - _MainColor: {r: 0, g: 0.42432597, b: 0.601, a: 0}
     - _SecondaryColor: {r: 1, g: 1, b: 1, a: 0}
-    - _ShadowColor: {r: 0, g: 0.95587206, b: 1, a: 1}
-    - _SpecColor: {r: 0.23431577, g: 0.3514737, b: 0.371, a: 1}
+    - _ShadowColor: {r: 0, g: 0.91827536, b: 1, a: 1}
+    - _SpecColor: {r: 0.2864902, g: 0.34960002, b: 0.37254903, a: 1}
     - _Vector0: {r: 0, g: 0, b: 0, a: 0}

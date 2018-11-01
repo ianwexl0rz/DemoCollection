@@ -50,9 +50,16 @@ half4 CUSTOM_BRDF (half3 diffColor, half3 shadowColor, half3 specColor, half3 tr
     half lv = saturate(dot(light.dir, viewDir));
     half lh = saturate(dot(light.dir, halfDir));
 
+    float halfLambert = nlUnclamped * 0.5 + 0.5;
+
     half diffuseTerm = DisneyDiffuse(nv, nl, lh, perceptualRoughness) * nl;
-    half diffuseTermModified = smoothstep(0, 0.1, diffuseTerm);
-    diffuseTerm = lerp(diffuseTerm, diffuseTermModified, 0.6 * hardness);
+
+    //hardness = edgeLightStrength;
+
+    half sharpNl = 1-pow(1-diffuseTerm, 2);
+    half diffModified = smoothstep(0, 0.1 + (1-hardness) * 0.9, diffuseTerm);
+    diffModified = lerp(sharpNl, diffModified, 0.8 * hardness);
+    diffuseTerm = lerp(diffuseTerm, diffModified, hardness);
 
     float fresnel = smoothstep(0.5, 0.4, nv);
     float edgelight = saturate((nl - nv) * 4) * fresnel;
@@ -64,7 +71,7 @@ half4 CUSTOM_BRDF (half3 diffColor, half3 shadowColor, half3 specColor, half3 tr
     half roughness = PerceptualRoughnessToRoughness(perceptualRoughness);
 
 #if UNITY_BRDF_GGX
-    half V = SmithJointGGXVisibilityTerm (nl * 6, nv * 6, roughness);
+    half V = SmithJointGGXVisibilityTerm (nl * 4, nv * 4, roughness);
     half D = GGXTerm (nh, roughness);
 #else
     // Legacy
@@ -106,25 +113,30 @@ half4 CUSTOM_BRDF (half3 diffColor, half3 shadowColor, half3 specColor, half3 tr
     float VdotH = pow(saturate(dot(viewDir, -H)), power) * scale;
     float3 sss = light.color * (VdotH /*+ Ambient*/) * translucency;
 
-    half transPow = pow(translucency,8);
+    half transPow = pow(translucency, 4);
     half3 spec = specularTerm * FresnelTerm(specColor, lh);
-
-    float halfLambert = nlUnclamped * 0.5 + 0.5;
-    float halfLdotV = dot(light.dir + normal * distortion, viewDir) * 0.5 + 0.5;
 
     // Darken diffuse in the middle if translucent
     diffColor *= lerp(1, max(1 - pow(nv, 2), diffColor), translucency * (1 - lv));
 
     half3 color = 
-        diffColor * (gi.diffuse + light.color * max(shadows * diffuseTerm, lerp(0, shadowColor, transPow)))
+#if defined (DIRECTIONAL)
+        diffColor * (gi.diffuse + light.color * max(diffuseTerm * shadows, shadowColor * transPow))
+#else
+        diffColor * (gi.diffuse + light.color * max(diffuseTerm * shadows, 0))
+#endif
         + max(edgelight * edgeLightStrength * specColor * (1 + diffColor) * 4, spec) * light.color * shadows
         + surfaceReduction * gi.specular * FresnelLerp(specColor, grazingTerm, nv);
 
+    float halfLdotV = dot(light.dir + normal * distortion, viewDir) * 0.5 + 0.5;
+
+
+#if defined (DIRECTIONAL)
     half fadedShadows = light.color * lerp(shadows, 1, transPow * 0.25);
     half transmission = halfLdotV * (1-halfLambert) * translucency;
     transmission = pow(transmission * scale, 2);
-    
     color += max(shadowColor, spec) * max(sss, transmission) * fadedShadows;
+#endif
 
     return half4(color, 1);
 }

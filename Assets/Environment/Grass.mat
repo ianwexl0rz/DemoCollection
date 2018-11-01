@@ -72,7 +72,7 @@ Material:
     - _EdgeLight: 0
     - _Float0: 0
     - _GlossMapScale: 1
-    - _Glossiness: 0.321
+    - _Glossiness: 0.235
     - _GlossyReflections: 0
     - _Metallic: 0
     - _Mode: 0
@@ -88,7 +88,7 @@ Material:
     - _ZWrite: 1
     - __dirty: 0
     m_Colors:
-    - _Color: {r: 0, g: 0.39200002, b: 0.32738152, a: 1}
+    - _Color: {r: 0.305853, g: 0.39900002, b: 0.214662, a: 1}
     - _EmissionColor: {r: 0, g: 0.36407667, b: 0.4627451, a: 1}
     - _MainColor: {r: 0, g: 0.287, b: 0.22213298, a: 0}
     - _SecondaryColor: {r: 0, g: 0, b: 0, a: 0}

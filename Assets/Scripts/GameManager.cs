@@ -9,18 +9,17 @@ public class GameManager : MonoBehaviour
 	public Player activePlayer;
 	public ControlSettings controlSettings;
 	public ThirdPersonCamera mainCamera;
-	public HUD hud;
+	[SerializeField] private GameObject hudPrefab = null;
 
 	[Header("Actor Controllers")]
 	public PlayerController playerBrain;
 	public ActorController followerBrain;
 
 	[Header("Gameplay")]
-	[SerializeField]
-	private GameObject hitSpark = null;
-	[SerializeField]
-	private GameObject hitSpark2 = null;
+	[SerializeField] private GameObject hitSpark = null;
+	[SerializeField] private GameObject hitSpark2 = null;
 
+	private HUD hud;
 	private int targetIndex;
 	private List<Player> playerCharacters;
 	private readonly List<Entity> entities = new List<Entity>();
@@ -46,7 +45,10 @@ public class GameManager : MonoBehaviour
 	#region UNITY_METHODS
 	private void Awake()
 	{
-		QualitySettings.maxQueuedFrames = 1;
+		//QualitySettings.maxQueuedFrames = 1;
+		Application.targetFrameRate = 60;
+
+		hud = Instantiate(hudPrefab, transform).GetComponent<HUD>();
 
 		DontDestroyOnLoad(this);
 
