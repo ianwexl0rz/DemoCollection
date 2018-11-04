@@ -1,13 +1,13 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System;
+using System.Linq;
 
-[Serializable]
 public class WeaponCollision
 {
-	public Vector3 origin, end, lastOrigin, lastEnd = Vector3.zero;
-
-    public List<Vector3> pointBuffer = new List<Vector3>();
+	private Vector3 origin, end, lastOrigin, lastEnd = Vector3.zero;
+	private readonly List<Vector3> pointBuffer = new List<Vector3>();
+	private readonly List<Color> colors = new List<Color>();
 
 	public void SetInitialPosition(Vector3 p0, Vector3 p1)
 	{
@@ -32,42 +32,69 @@ public class WeaponCollision
         Vector3 currentVector = end - origin;
         Vector3 lastVector = lastEnd - lastOrigin;
 
-        int steps = (int)((currentVector - lastVector).magnitude / distThreshold);
-        Vector3[] points = new Vector3[steps + 1];
-        points[steps] = end;
+        int steps = 1 + (int)((currentVector - lastVector).magnitude / distThreshold);
 
-        float colorRange = ((float)steps).LinearRemap(0f, 5f, 0.5f, 0f);
+        float colorRange = ((float)steps).LinearRemap(1f, 5f, 0.5f, 0f);
         Color color = Color.HSVToRGB(Mathf.Clamp01(colorRange), 1, 1);
-        
-        for(int i = steps; i-- > 0;)
+
+		Vector3[] addPoints = new Vector3[steps * 2];
+		Color[] addColors = new Color[steps * 2];
+
+		for(int i = 0; i < steps; i++)
         {
-			float t = (i + 1f) / (steps + 1f);
+			float t = (i + 1f) / steps;
 
             Vector3 blendedOrigin = Vector3.Lerp(lastOrigin, origin, t);
-            Vector3 relativeEnd = Vector3.Slerp(lastVector, currentVector, t);
+            Vector3 blendedEnd = blendedOrigin + Vector3.Slerp(lastVector, currentVector, t);
+			attacker.CheckHit(blendedOrigin, blendedEnd);
 
-            points[i] = relativeEnd + blendedOrigin;
-			attacker.CheckHit(blendedOrigin, points[i]);
-            
-            Debug.DrawLine(blendedOrigin, points[i], color, debugTime);
-            Debug.DrawLine(points[i], points[i+1], color, debugTime);
-            
-            if(i == 0)
-            {
-                Debug.DrawLine(lastEnd, points[i], color, debugTime);
-            }
-        }
+	        addPoints[i * 2] = blendedOrigin;
+	        addPoints[i * 2 + 1] = blendedEnd;
 
-        if(steps == 0)
-        {
-            Debug.DrawLine(lastEnd, end, color, debugTime);
-        }
+	        addColors[i * 2] = addColors[i * 2 + 1] = Color.white; //color;
 
-        Debug.DrawLine(lastOrigin, lastEnd, color, debugTime);
-        Debug.DrawLine(origin, end, color, debugTime);
-        Debug.DrawLine(lastOrigin, origin, color, debugTime);
+			Debug.DrawLine(blendedOrigin, blendedEnd, color, debugTime);
+	        Debug.DrawLine(i == 0 ? lastEnd : addPoints[i * 2 - 1], blendedEnd, color, debugTime);
+	        Debug.DrawLine(i == 0 ? lastOrigin : addPoints[i * 2 - 2], blendedOrigin, color, debugTime);
+		}
 
-        SetInitialPosition(origin, end);
-        pointBuffer.AddRange(points);
+		if(pointBuffer.Count == 0)
+		{
+			Vector3[] lastPoints =
+			{
+				lastOrigin,
+				lastEnd
+				//attacker.transform.InverseTransformPoint(lastOrigin),
+				//attacker.transform.InverseTransformPoint(lastEnd),
+			};
+
+			pointBuffer.AddRange(lastPoints);
+			Debug.DrawLine(lastOrigin, lastEnd, color, debugTime);
+
+			Color[] lastColors = { color, color };
+			colors.AddRange(lastColors);
+		}
+
+		pointBuffer.AddRange(addPoints);
+		colors.AddRange(addColors);
+
+		var localPoints = new List<Vector3>(pointBuffer);
+		for(var i = localPoints.Count; i-- > 0;)
+		{
+			localPoints[i] = attacker.transform.InverseTransformPoint(localPoints[i]);
+		}
+
+		SetInitialPosition(origin, end);
+
+		if(attacker.weaponTrail != null)
+			attacker.weaponTrail.UpdateAndShowMesh(localPoints, colors);
+	}
+
+	public void ClearWeaponTrail(CombatActor attacker)
+	{
+		pointBuffer.Clear();
+		colors.Clear();
+		if(attacker.weaponTrail != null)
+			attacker.weaponTrail.HideMesh();
 	}
 }

@@ -892,10 +892,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Heavy
       objectReference: {fileID: 0}
-    - target: {fileID: 1947941858301876, guid: 09e76c50c237c544bab6b4d67100a8dc, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 09e76c50c237c544bab6b4d67100a8dc, type: 3}
 --- !u!1 &658774149
@@ -1075,42 +1071,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Wyn
       objectReference: {fileID: 0}
-    - target: {fileID: 1261901077, guid: 1447690b66c3cbd4390ad0df5ef89106, type: 3}
-      propertyPath: m_Mesh
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 23591999301820070, guid: 1447690b66c3cbd4390ad0df5ef89106, type: 3}
-      propertyPath: m_Materials.Array.data[0]
-      value: 
-      objectReference: {fileID: 2100000, guid: 1882095cb06365849b07b00339c19b55, type: 2}
-    - target: {fileID: 1849219369495232, guid: 1447690b66c3cbd4390ad0df5ef89106, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1261901078, guid: 1447690b66c3cbd4390ad0df5ef89106, type: 3}
-      propertyPath: m_Range
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1261901078, guid: 1447690b66c3cbd4390ad0df5ef89106, type: 3}
-      propertyPath: m_Intensity
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 1261901074, guid: 1447690b66c3cbd4390ad0df5ef89106, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1385781860386458, guid: 1447690b66c3cbd4390ad0df5ef89106, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 23591999301820070, guid: 1447690b66c3cbd4390ad0df5ef89106, type: 3}
-      propertyPath: m_Materials.Array.data[3]
-      value: 
-      objectReference: {fileID: 2100000, guid: 6d908d690aa38324bb3e633b0a5ed6bb, type: 2}
-    - target: {fileID: 23591999301820070, guid: 1447690b66c3cbd4390ad0df5ef89106, type: 3}
-      propertyPath: m_Materials.Array.data[4]
-      value: 
-      objectReference: {fileID: 2100000, guid: b9272eed2f420ad489ccf745a790c760, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1447690b66c3cbd4390ad0df5ef89106, type: 3}
 --- !u!1 &692385356
@@ -2178,10 +2138,6 @@ PrefabInstance:
     - target: {fileID: 1093183912855910, guid: 60fcc4cc7ee37b6479184572e6f0d931, type: 3}
       propertyPath: m_Name
       value: Girl
-      objectReference: {fileID: 0}
-    - target: {fileID: 1093183912855910, guid: 60fcc4cc7ee37b6479184572e6f0d931, type: 3}
-      propertyPath: m_IsActive
-      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 60fcc4cc7ee37b6479184572e6f0d931, type: 3}

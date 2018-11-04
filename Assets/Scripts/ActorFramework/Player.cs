@@ -19,7 +19,7 @@ public class Player : CombatActor
 	public bool RootMotionOverride { get; set; }
 
 	private CapsuleCollider capsuleCollider;
-	private Quaternion rollRotation = Quaternion.identity;
+	private float rollAngle;
 
 	public PIDConfig angleControllerConfig = null;
 	public PIDConfig angularVelocityControllerConfig = null;
@@ -33,6 +33,7 @@ public class Player : CombatActor
 
 	private bool grounded;
 	private bool queueJump;
+	private bool wasLockedOn;
 	private int remainingJumps;
 
 	protected override void Awake()
@@ -59,6 +60,15 @@ public class Player : CombatActor
 		//Gizmos.DrawSphere(transform.position + Vector3.up * 0.25f + Vector3.down * 0.1f, 0.2f);
 	}
 
+	//private void OnDrawGizmos()
+	//{
+	//	Gizmos.color = Color.black;
+	//	for(int i = 0; i < weaponCollision.pointBuffer.Count; i++)
+	//	{
+	//		Gizmos.DrawSphere(weaponCollision.pointBuffer[i], 0.02f);
+	//	}
+	//}
+
 	protected override void ProcessPhysics()
 	{
 		var dt = Time.fixedDeltaTime;
@@ -72,23 +82,31 @@ public class Player : CombatActor
 			return;
 		}
 
-		var hits = Physics.SphereCastAll(transform.position + Vector3.up * 0.25f, 0.2f, Vector3.down, 0.1f, ~LayerMask.GetMask("Actor"), QueryTriggerInteraction.Ignore);
+		var groundPoint = transform.position + (transform.up + Vector3.down) * capsuleCollider.height * 0.5f;
+
+		var point1 = transform.position + transform.up * capsuleCollider.radius;
+		var point2 = transform.position + transform.up * (capsuleCollider.height - capsuleCollider.radius);
+		var hits = Physics.CapsuleCastAll(point1, point2, 0.2f, Vector3.down, 0.1f, ~LayerMask.GetMask("Actor"), QueryTriggerInteraction.Ignore);
+
+		//var hits = Physics.SphereCastAll(groundPoint + Vector3.up * 0.25f, 0.2f, Vector3.down, 0.1f, ~LayerMask.GetMask("Actor"), QueryTriggerInteraction.Ignore);
 		var groundNormal = Vector3.down;
 
 		bool wasGrounded = grounded;
 
+		RaycastHit? groundHit = null;
+
 		if(hits.Length > 0)
 		{
-			var groundHit = hits[0];
+			groundHit = hits[0];
 
 			for(var i = 1; i < hits.Length; i++)
 			{
-				if(hits[i].normal.y > groundHit.normal.y)
+				if(hits[i].normal.y > groundHit?.normal.y)
 				{
 					groundHit = hits[i];
 				}
 			}
-			groundNormal = groundHit.normal.normalized;
+			groundNormal = (Vector3)groundHit?.normal.normalized;
 
 			if(!grounded)
 			{
@@ -161,9 +179,21 @@ public class Player : CombatActor
 			rb.velocity += Physics.gravity.y * (gravityScale - 1f) * Vector3.up * Time.fixedDeltaTime;
 		}
 
-		rb.centerOfMass = grounded ? Vector3.zero : capsuleCollider.center;
+		//rb.centerOfMass = grounded ? Vector3.zero : capsuleCollider.center;
+
+		if(grounded)
+		{
+			var groundContact = capsuleCollider.ClosestPoint((Vector3)groundHit?.point);
+			rb.centerOfMass = transform.InverseTransformPoint(groundContact);
+		}
+		else
+		{
+			rb.centerOfMass = capsuleCollider.center;
+		}
 
 		UpdateRotation();
+
+		wasLockedOn = lockOn;
 	}
 
 	protected void UpdateRotation()
@@ -177,12 +207,20 @@ public class Player : CombatActor
 			desiredDirection = currentSpeed.WithY(0f);
 		}
 
-		var rollForward = currentSpeed.WithY(0f).magnitude >= minSpeed ? -currentSpeed.WithY(0f) : -desiredDirection;
-		var rollAxis = transform.InverseTransformDirection(Vector3.Cross(rollForward, Vector3.up));
-		rollRotation = ShouldRoll ? rollRotation * Quaternion.AngleAxis(rollSpeed, rollAxis) : Quaternion.identity;
+		rollAngle = ShouldRoll ? (rollAngle + rollSpeed) % 360f : 0f;
 
-		var rotation = Quaternion.LookRotation(desiredDirection) * rollRotation;
+		var rotation = ShouldRoll ? GetRotationWithRoll() : Quaternion.LookRotation(desiredDirection);
 		rb.RotateTo(angleController, angularVelocityController, rotation, Time.fixedDeltaTime);
+
+		Quaternion GetRotationWithRoll()
+		{
+			var rollDir = lockOn && lockOnTarget != null && currentSpeed.WithY(0f).magnitude >= minSpeed
+				? Quaternion.Inverse(Quaternion.LookRotation(desiredDirection)) * currentSpeed.WithY(0f).normalized
+				: Vector3.forward;
+
+			var rollRotation = Quaternion.AngleAxis(rollAngle, Vector3.Cross(rollDir, Vector3.down));
+			return Quaternion.LookRotation(desiredDirection) * rollRotation;
+		}
 	}
 
 	/*
@@ -262,6 +300,9 @@ public class Player : CombatActor
 
 		var origin = weaponTransform.position;
 		var end = origin + weaponTransform.forward * 1.2f;
+
+		//origin = transform.InverseTransformPoint(origin);
+		//end = transform.InverseTransformPoint(end);
 
 		weaponCollision.SetCurrentPosition(origin, end);
 		weaponCollision.CheckHits(this, 0.2f);

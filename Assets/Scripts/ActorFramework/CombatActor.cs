@@ -8,23 +8,24 @@ public class CombatActor : Actor
 {
 	[Header("Melee")]
 	public AttackData attackData;
+	public Transform weaponTransform;
+	public WeaponTrail weaponTrail { get; private set; }
 	public bool isAttacking { get; set; }
 	public bool activeHit { get; set; }
 	public bool cancelOK { get; set; }
 	public AttackDataSet attackDataSet = null;
-	public Transform weaponTransform;
 	public List<GameObject> hitObjects = new List<GameObject>();
 	public WeaponCollision weaponCollision = new WeaponCollision();
 	protected Timer stunned = new Timer();
 	protected Timer jumpAllowance = new Timer();
+
 
 	protected override void Awake()
 	{
 		base.Awake();
 		actorTimerGroup.Add(stunned);
 		actorTimerGroup.Add(jumpAllowance);
-
-		
+		weaponTrail = GetComponentInChildren<WeaponTrail>();
 	}
 
 	public void NewHit(AnimationEvent animEvent)
@@ -41,15 +42,18 @@ public class CombatActor : Actor
 		Vector3 origin = weaponTransform.position;
 		Vector3 end = origin + weaponTransform.forward * 1.2f;
 
+		//origin = transform.InverseTransformPoint(origin);
+		//end = transform.InverseTransformPoint(end);
+
 		// TODO: Update all weaponCollisions in a "weapon collision set"
 		weaponCollision.SetInitialPosition(origin, end);
-		weaponCollision.pointBuffer.Clear();
+		weaponCollision.ClearWeaponTrail(this);
 	}
 
 	public void EndHit()
 	{
 		activeHit = false;
-		weaponCollision.pointBuffer.Clear();
+		weaponCollision.ClearWeaponTrail(this);
 	}
 
 	public void CancelOK()
