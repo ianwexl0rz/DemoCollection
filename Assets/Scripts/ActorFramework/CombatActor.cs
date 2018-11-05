@@ -1,21 +1,16 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Object = UnityEngine.Object;
 
 public class CombatActor : Actor
 {
 	[Header("Melee")]
 	public AttackData attackData;
-	public Transform weaponTransform;
-	public WeaponTrail weaponTrail { get; private set; }
+	public MeleeWeapon weapon = null;
 	public bool isAttacking { get; set; }
 	public bool activeHit { get; set; }
 	public bool cancelOK { get; set; }
 	public AttackDataSet attackDataSet = null;
 	public List<GameObject> hitObjects = new List<GameObject>();
-	public WeaponCollision weaponCollision = new WeaponCollision();
 	protected Timer stunned = new Timer();
 	protected Timer jumpAllowance = new Timer();
 
@@ -25,7 +20,15 @@ public class CombatActor : Actor
 		base.Awake();
 		actorTimerGroup.Add(stunned);
 		actorTimerGroup.Add(jumpAllowance);
-		weaponTrail = GetComponentInChildren<WeaponTrail>();
+
+		weapon = GetComponentInChildren<MeleeWeapon>();
+	}
+
+	public override void OnLateUpdate()
+	{
+		if(!activeHit || paused) { return; }
+
+		weapon.CheckHits(this, 0.1f);
 	}
 
 	public void NewHit(AnimationEvent animEvent)
@@ -39,21 +42,14 @@ public class CombatActor : Actor
 			hitObjects = new List<GameObject>();
 		}
 
-		Vector3 origin = weaponTransform.position;
-		Vector3 end = origin + weaponTransform.forward * 1.2f;
-
-		//origin = transform.InverseTransformPoint(origin);
-		//end = transform.InverseTransformPoint(end);
-
 		// TODO: Update all weaponCollisions in a "weapon collision set"
-		weaponCollision.SetInitialPosition(origin, end);
-		weaponCollision.ClearWeaponTrail(this);
+		weapon.ClearWeaponTrail(this);
 	}
 
 	public void EndHit()
 	{
 		activeHit = false;
-		weaponCollision.ClearWeaponTrail(this);
+		weapon.ClearWeaponTrail(this);
 	}
 
 	public void CancelOK()

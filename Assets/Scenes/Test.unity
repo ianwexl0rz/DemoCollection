@@ -2139,6 +2139,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Girl
       objectReference: {fileID: 0}
+    - target: {fileID: 2579297820314084056, guid: 60fcc4cc7ee37b6479184572e6f0d931, type: 3}
+      propertyPath: m_Name
+      value: GirlMesh
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 60fcc4cc7ee37b6479184572e6f0d931, type: 3}
 --- !u!1 &2007107300

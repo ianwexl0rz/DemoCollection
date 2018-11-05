@@ -17,7 +17,7 @@ public class AttackBehaviour : StateMachineBehaviour
 		player.isAttacking = true;
 		player.hitObjects = new List<GameObject>();
 
-		weaponTransform = player.weaponTransform.transform;
+		weaponTransform = player.weapon.transform;
 
 		if(animator.parameters.Any(p => p.name == "isAttacking"))
 		{

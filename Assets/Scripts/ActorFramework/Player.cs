@@ -294,20 +294,6 @@ public class Player : CombatActor
 		}
 	}
 
-	public override void OnLateUpdate()
-	{
-		if(!activeHit || paused) { return; }
-
-		var origin = weaponTransform.position;
-		var end = origin + weaponTransform.forward * 1.2f;
-
-		//origin = transform.InverseTransformPoint(origin);
-		//end = transform.InverseTransformPoint(end);
-
-		weaponCollision.SetCurrentPosition(origin, end);
-		weaponCollision.CheckHits(this, 0.2f);
-	}
-
 	public bool Jump()
 	{
 		bool firstJump = grounded || jumpAllowance.InProgress;

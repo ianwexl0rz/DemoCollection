@@ -113,74 +113,12 @@ ModelImporter:
     legacyGenerateAnimations: 4
     bakeSimulation: 0
     resampleCurves: 1
-    optimizeGameObjects: 0
+    optimizeGameObjects: 1
     motionNodeName: 
     rigImportErrors: 
     rigImportWarnings: 
     animationImportErrors: 
-    animationImportWarnings: "\nClip 'hammer2' has import animation warnings that
-      might lower retargeting quality:\nNote: Activate translation DOF on avatar to
-      improve retargeting quality.\n\t'shin_L' has scale animation that will be discarded.\n\t'foot_L'
-      has scale animation that will be discarded.\n\t'shin_R' has scale animation
-      that will be discarded.\n\t'foot_R' has scale animation that will be discarded.\n\nClip
-      'hammer2b' has import animation warnings that might lower retargeting quality:\nNote:
-      Activate translation DOF on avatar to improve retargeting quality.\n\t'shin_L'
-      has scale animation that will be discarded.\n\t'foot_L' has scale animation
-      that will be discarded.\n\t'shin_R' has scale animation that will be discarded.\n\t'foot_R'
-      has scale animation that will be discarded.\n\nClip 'hammer2c' has import animation
-      warnings that might lower retargeting quality:\nNote: Activate translation DOF
-      on avatar to improve retargeting quality.\n\t'shin_L' has scale animation that
-      will be discarded.\n\t'foot_L' has scale animation that will be discarded.\n\t'shin_R'
-      has scale animation that will be discarded.\n\t'foot_R' has scale animation
-      that will be discarded.\n\nClip 'hit' has import animation warnings that might
-      lower retargeting quality:\nNote: Activate translation DOF on avatar to improve
-      retargeting quality.\n\t'shin_L' has scale animation that will be discarded.\n\t'foot_L'
-      has scale animation that will be discarded.\n\t'thigh_R' has scale animation
-      that will be discarded.\n\t'shin_R' has scale animation that will be discarded.\n\t'foot_R'
-      has scale animation that will be discarded.\n\nClip 'hitb' has import animation
-      warnings that might lower retargeting quality:\nNote: Activate translation DOF
-      on avatar to improve retargeting quality.\n\t'shin_L' has scale animation that
-      will be discarded.\n\t'foot_L' has scale animation that will be discarded.\n\t'thigh_R'
-      has scale animation that will be discarded.\n\t'shin_R' has scale animation
-      that will be discarded.\n\t'foot_R' has scale animation that will be discarded.\n\nClip
-      'quick_run' has import animation warnings that might lower retargeting quality:\nNote:
-      Activate translation DOF on avatar to improve retargeting quality.\n\t'shin_L'
-      has scale animation that will be discarded.\n\t'foot_L' has scale animation
-      that will be discarded.\n\t'shin_R' has scale animation that will be discarded.\n\t'foot_R'
-      has scale animation that will be discarded.\n\nClip 'run' has import animation
-      warnings that might lower retargeting quality:\nNote: Activate translation DOF
-      on avatar to improve retargeting quality.\n\t'shin_L' has scale animation that
-      will be discarded.\n\t'foot_L' has scale animation that will be discarded.\n\t'shin_R'
-      has scale animation that will be discarded.\n\t'foot_R' has scale animation
-      that will be discarded.\n\nClip 'run2' has import animation warnings that might
-      lower retargeting quality:\nNote: Activate translation DOF on avatar to improve
-      retargeting quality.\n\t'shin_L' has scale animation that will be discarded.\n\t'foot_L'
-      has scale animation that will be discarded.\n\t'shin_R' has scale animation
-      that will be discarded.\n\t'foot_R' has scale animation that will be discarded.\n\nClip
-      'runb' has import animation warnings that might lower retargeting quality:\nNote:
-      Activate translation DOF on avatar to improve retargeting quality.\n\t'shin_L'
-      has scale animation that will be discarded.\n\t'foot_L' has scale animation
-      that will be discarded.\n\t'shin_R' has scale animation that will be discarded.\n\t'foot_R'
-      has scale animation that will be discarded.\n\nClip 'WalkBlocking' has import
-      animation warnings that might lower retargeting quality:\nNote: Activate translation
-      DOF on avatar to improve retargeting quality.\n\t'shin_L' has scale animation
-      that will be discarded.\n\t'foot_L' has scale animation that will be discarded.\n\t'shin_R'
-      has scale animation that will be discarded.\n\t'foot_R' has scale animation
-      that will be discarded.\n\nClip 'WalkHammer' has import animation warnings that
-      might lower retargeting quality:\nNote: Activate translation DOF on avatar to
-      improve retargeting quality.\n\t'shin_L' has scale animation that will be discarded.\n\t'foot_L'
-      has scale animation that will be discarded.\n\t'shin_R' has scale animation
-      that will be discarded.\n\t'foot_R' has scale animation that will be discarded.\n\nClip
-      'WalkHammer2' has import animation warnings that might lower retargeting quality:\nNote:
-      Activate translation DOF on avatar to improve retargeting quality.\n\t'shin_L'
-      has scale animation that will be discarded.\n\t'foot_L' has scale animation
-      that will be discarded.\n\t'shin_R' has scale animation that will be discarded.\n\t'foot_R'
-      has scale animation that will be discarded.\n\nClip 'WalkTweened' has import
-      animation warnings that might lower retargeting quality:\nNote: Activate translation
-      DOF on avatar to improve retargeting quality.\n\t'shin_L' has scale animation
-      that will be discarded.\n\t'foot_L' has scale animation that will be discarded.\n\t'shin_R'
-      has scale animation that will be discarded.\n\t'foot_R' has scale animation
-      that will be discarded.\n"
+    animationImportWarnings: "\nClip 'hammer2' has import animation warnings that might lower retargeting quality:\nNote: Activate translation DOF on avatar to improve retargeting quality.\n\t'shin_L' has scale animation that will be discarded.\n\t'foot_L' has scale animation that will be discarded.\n\t'shin_R' has scale animation that will be discarded.\n\t'foot_R' has scale animation that will be discarded.\n\nClip 'hammer2b' has import animation warnings that might lower retargeting quality:\nNote: Activate translation DOF on avatar to improve retargeting quality.\n\t'shin_L' has scale animation that will be discarded.\n\t'foot_L' has scale animation that will be discarded.\n\t'shin_R' has scale animation that will be discarded.\n\t'foot_R' has scale animation that will be discarded.\n\nClip 'hammer2c' has import animation warnings that might lower retargeting quality:\nNote: Activate translation DOF on avatar to improve retargeting quality.\n\t'shin_L' has scale animation that will be discarded.\n\t'foot_L' has scale animation that will be discarded.\n\t'shin_R' has scale animation that will be discarded.\n\t'foot_R' has scale animation that will be discarded.\n\nClip 'hit' has import animation warnings that might lower retargeting quality:\nNote: Activate translation DOF on avatar to improve retargeting quality.\n\t'shin_L' has scale animation that will be discarded.\n\t'foot_L' has scale animation that will be discarded.\n\t'thigh_R' has scale animation that will be discarded.\n\t'shin_R' has scale animation that will be discarded.\n\t'foot_R' has scale animation that will be discarded.\n\nClip 'hitb' has import animation warnings that might lower retargeting quality:\nNote: Activate translation DOF on avatar to improve retargeting quality.\n\t'shin_L' has scale animation that will be discarded.\n\t'foot_L' has scale animation that will be discarded.\n\t'thigh_R' has scale animation that will be discarded.\n\t'shin_R' has scale animation that will be discarded.\n\t'foot_R' has scale animation that will be discarded.\n\nClip 'quick_run' has import animation warnings that might lower retargeting quality:\nNote: Activate translation DOF on avatar to improve retargeting quality.\n\t'shin_L' has scale animation that will be discarded.\n\t'foot_L' has scale animation that will be discarded.\n\t'shin_R' has scale animation that will be discarded.\n\t'foot_R' has scale animation that will be discarded.\n\nClip 'run' has import animation warnings that might lower retargeting quality:\nNote: Activate translation DOF on avatar to improve retargeting quality.\n\t'shin_L' has scale animation that will be discarded.\n\t'foot_L' has scale animation that will be discarded.\n\t'shin_R' has scale animation that will be discarded.\n\t'foot_R' has scale animation that will be discarded.\n\nClip 'run2' has import animation warnings that might lower retargeting quality:\nNote: Activate translation DOF on avatar to improve retargeting quality.\n\t'shin_L' has scale animation that will be discarded.\n\t'foot_L' has scale animation that will be discarded.\n\t'shin_R' has scale animation that will be discarded.\n\t'foot_R' has scale animation that will be discarded.\n\nClip 'runb' has import animation warnings that might lower retargeting quality:\nNote: Activate translation DOF on avatar to improve retargeting quality.\n\t'shin_L' has scale animation that will be discarded.\n\t'foot_L' has scale animation that will be discarded.\n\t'shin_R' has scale animation that will be discarded.\n\t'foot_R' has scale animation that will be discarded.\n\nClip 'WalkBlocking' has import animation warnings that might lower retargeting quality:\nNote: Activate translation DOF on avatar to improve retargeting quality.\n\t'shin_L' has scale animation that will be discarded.\n\t'foot_L' has scale animation that will be discarded.\n\t'shin_R' has scale animation that will be discarded.\n\t'foot_R' has scale animation that will be discarded.\n\nClip 'WalkHammer' has import animation warnings that might lower retargeting quality:\nNote: Activate translation DOF on avatar to improve retargeting quality.\n\t'shin_L' has scale animation that will be discarded.\n\t'foot_L' has scale animation that will be discarded.\n\t'shin_R' has scale animation that will be discarded.\n\t'foot_R' has scale animation that will be discarded.\n\nClip 'WalkHammer2' has import animation warnings that might lower retargeting quality:\nNote: Activate translation DOF on avatar to improve retargeting quality.\n\t'shin_L' has scale animation that will be discarded.\n\t'foot_L' has scale animation that will be discarded.\n\t'shin_R' has scale animation that will be discarded.\n\t'foot_R' has scale animation that will be discarded.\n\nClip 'WalkTweened' has import animation warnings that might lower retargeting quality:\nNote: Activate translation DOF on avatar to improve retargeting quality.\n\t'shin_L' has scale animation that will be discarded.\n\t'foot_L' has scale animation that will be discarded.\n\t'shin_R' has scale animation that will be discarded.\n\t'foot_R' has scale animation that will be discarded.\n"
     animationRetargetingWarnings: 
     animationDoRetargetingWarnings: 0
     importAnimatedCustomProperties: 0
@@ -190,7 +128,8 @@ ModelImporter:
     animationPositionError: 0.5
     animationScaleError: 0.5
     animationWrapMode: 0
-    extraExposedTransformPaths: []
+    extraExposedTransformPaths:
+    - GirlArmature/rootBone/waist/chest/shoulder_L/uppderArm_L/foreArm_L/hand_L/weapon
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
@@ -938,6 +877,7 @@ ModelImporter:
     globalScale: 0.185
     meshCompression: 0
     addColliders: 0
+    useSRGBMaterialColor: 1
     importVisibility: 0
     importBlendShapes: 1
     importCameras: 0
@@ -962,6 +902,9 @@ ModelImporter:
     normalImportMode: 0
     tangentImportMode: 3
     normalCalculationMode: 4
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
   importAnimation: 1
   copyAvatar: 0
   humanDescription:
@@ -1263,7 +1206,6 @@ ModelImporter:
     legStretch: 0.05
     feetSpacing: 0
     rootMotionBoneName: 
-    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
     hasTranslationDoF: 0
     hasExtraRoot: 1
     skeletonHasParents: 1

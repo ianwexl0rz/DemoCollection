@@ -1,78 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using UnityEngine;
 
-[RequireComponent(typeof(MeshRenderer), typeof(MeshFilter))]
-public class WeaponTrail : MonoBehaviour
+
+public static class MeshExtensions
 {
-
-	private new MeshRenderer renderer;
-	private MeshFilter filter;
-	private Mesh mesh;
-
-    void Awake()
-    {
-        mesh = new Mesh();
-	    renderer = GetComponent<MeshRenderer>();
-	    filter = GetComponent<MeshFilter>();
-	    filter.mesh = mesh;
-    }
-
-	public void HideMesh()
+	public static Mesh MakeDoubleSided(this Mesh mesh)
 	{
-		renderer.enabled = false;
-	}
+		// Source: https://forum.unity.com/threads/double-sided-rendering-without-special-shaders.197923/
 
-    public void UpdateAndShowMesh(List<Vector3> pointBuffer, List<Color> colors = null)
-    {
-		if(pointBuffer.Count < 4) return;
-
-		renderer.enabled = true;
-
-		Vector3[] vertices = new Vector3[pointBuffer.Count];
-	    Vector2[] uv = new Vector2[pointBuffer.Count];
-	    int[] triangles = new int[(pointBuffer.Count - 2) * 3];
-	    Color[] newColors = new Color[pointBuffer.Count];
-
-	    for(int n = 0; n < pointBuffer.Count; n += 2)
-	    {
-		    vertices[n] = pointBuffer[n];
-		    vertices[n + 1] = pointBuffer[n + 1];
-
-		    var alpha = n / (pointBuffer.Count - 2f);
-		    //alpha *= alpha;
-
-			var c = colors?[n] ?? Color.black;
-		    c = new Color(c.r, c.g, c.b, 0f);
-			newColors[n] = c;
-
-		    c = colors?[n + 1] ?? Color.black;
-		    c = new Color(c.r, c.g, c.b, alpha);
-		    newColors[n + 1] = c;
-
-			float uvRatio = (float)n / pointBuffer.Count;
-		    uv[n] = new Vector2(uvRatio, 0);
-		    uv[n + 1] = new Vector2(uvRatio, 1);
-
-		    if(n >= 2)
-		    {
-			    var ti = (n - 2) * 3;
-			    triangles[ti] = n - 2;
-			    triangles[ti + 1] = triangles[ti + 5] = n - 1;
-			    triangles[ti + 2] = triangles[ti + 4] = n;
-			    triangles[ti + 3] = n + 1;
-		    }
-	    }
-
-	    mesh.Clear();
-	    mesh.vertices = vertices;
-	    mesh.colors = newColors;
-	    mesh.uv = uv;
-	    mesh.triangles = triangles;
-
-	    // Source: https://forum.unity.com/threads/double-sided-rendering-without-special-shaders.197923/
-		
-	    // Invert normals on duplicated geometry
+		// Invert normals on duplicated geometry
 		var oldVertexCount = mesh.vertexCount;
 		var newVertices = DoubleArray(mesh.vertices);
 		var newNormals = DoubleArray(mesh.normals);
@@ -127,10 +67,12 @@ public class WeaponTrail : MonoBehaviour
 		{
 			mesh.SetTriangles(triangleLists[submeshIndex], submeshIndex);
 		}
+
+		return mesh;
 	}
 
 	// Returns the input array concatenated with itself
-	protected static T[] DoubleArray<T>(T[] input)
+	private static T[] DoubleArray<T>(T[] input)
 	{
 		var newArray = new T[input.Length * 2];
 		Array.Copy(

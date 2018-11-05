@@ -121,7 +121,7 @@ ModelImporter:
     legacyGenerateAnimations: 4
     bakeSimulation: 0
     resampleCurves: 1
-    optimizeGameObjects: 0
+    optimizeGameObjects: 1
     motionNodeName: 
     rigImportErrors: 
     rigImportWarnings: "Avatar Rig Configuration mis-match. Inbetween bone rotation in configuration does not match rotation in animation file:\n\t'bangs1' : rotation error = 2.722463 deg\n"
@@ -136,7 +136,8 @@ ModelImporter:
     animationPositionError: 0.5
     animationScaleError: 0.5
     animationWrapMode: 0
-    extraExposedTransformPaths: []
+    extraExposedTransformPaths:
+    - Armature/rootBone/armControl_L/weaponBone_L
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
