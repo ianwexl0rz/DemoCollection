@@ -11,6 +11,10 @@ public class ActorController : ScriptableObject
 	{
 	}
 
+	protected virtual void LateTick(Actor actor)
+	{
+	}
+
 	protected virtual void Clean(Actor actor)
 	{
 	}
@@ -25,11 +29,13 @@ public class ActorController : ScriptableObject
 
 		Init(actor);
 		actor.UpdateController += Tick;
+		actor.LateUpdateController += LateTick;
 	}
 
 	public virtual void Disengage(Actor actor)
 	{
 		actor.UpdateController -= Tick;
+		actor.LateUpdateController -= LateTick;
 		Clean(actor);
 	}
 }

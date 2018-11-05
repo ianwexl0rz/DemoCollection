@@ -21,7 +21,7 @@ public class Player : CombatActor
 	public bool AimingMode { get; set; }
 	public bool RootMotionOverride { get; set; }
 
-	private CapsuleCollider capsuleCollider;
+	public CapsuleCollider capsuleCollider { get; private set; }
 	private float rollAngle;
 
 	public PIDConfig angleControllerConfig = null;

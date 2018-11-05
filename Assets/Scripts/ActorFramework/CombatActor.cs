@@ -26,6 +26,8 @@ public class CombatActor : Actor
 
 	public override void OnLateUpdate()
 	{
+		base.OnLateUpdate();
+
 		if(!activeHit || paused) { return; }
 
 		weapon.CheckHits(this, 0.1f);

@@ -16,9 +16,11 @@ public class GameManager : MonoBehaviour
 	public ActorController followerBrain;
 
 	[Header("Gameplay")]
+	[SerializeField] private GameObject lockOnIndicatorPrefab = null;
 	[SerializeField] private GameObject hitSpark = null;
 	[SerializeField] private GameObject hitSpark2 = null;
 
+	private GameObject lockOnIndicator = null;
 	private HUD hud;
 	private int targetIndex;
 	private List<Player> playerCharacters;
@@ -36,6 +38,7 @@ public class GameManager : MonoBehaviour
 		get { if(!_instance) { _instance = FindObjectOfType<GameManager>(); } return _instance; }
 	}
 
+	public static GameObject LockOnIndicator => I.lockOnIndicator;
 	public static float HitPauseTimer
 	{
 		get => I.hitPauseTimer;
@@ -49,6 +52,8 @@ public class GameManager : MonoBehaviour
 		Application.targetFrameRate = 60;
 
 		hud = Instantiate(hudPrefab, transform).GetComponent<HUD>();
+		lockOnIndicator = Instantiate(lockOnIndicatorPrefab);
+		lockOnIndicator.SetActive(false);
 
 		DontDestroyOnLoad(this);
 

@@ -18,6 +18,7 @@ public class Actor : Entity
 	public Transform lockOnTarget = null;
 
 	public Action<Actor> UpdateController = delegate { };
+	public Action<Actor> LateUpdateController = delegate { };
 	public Action OnResetAbilities = null;
 	public Action UpdateAbilities = null;
 	public Action FixedUpdateAbilities = null;
@@ -49,7 +50,7 @@ public class Actor : Entity
 	public override void OnUpdate()
 	{
 		base.OnUpdate();
-		ProcessInput();
+		UpdateController(this);
 		ProcessAnimation();
 		actorTimerGroup.Tick(Time.deltaTime);
 	}
@@ -61,19 +62,17 @@ public class Actor : Entity
 		ProcessPhysics();
 	}
 
+	public override void OnLateUpdate()
+	{
+		base.OnLateUpdate();
+		LateUpdateController(this);
+	}
+
 	protected override void OnPauseEntity(bool value)
 	{
 		if(animator != null)
 		{
 			animator.SetPaused(value);
-		}
-	}
-
-	protected virtual void ProcessInput()
-	{
-		if(isAwake)
-		{
-			UpdateController(this);
 		}
 	}
 

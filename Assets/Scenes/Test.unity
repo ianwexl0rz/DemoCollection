@@ -1993,6 +1993,7 @@ MonoBehaviour:
   hudPrefab: {fileID: 754749455905017437, guid: 91020eacd2369b64a88f97e65d9fda50, type: 3}
   playerBrain: {fileID: 11400000, guid: 197438d32256b794faf42212dfaf46b5, type: 2}
   followerBrain: {fileID: 11400000, guid: 3bd6e43a756db3642bc08e8a5ba40b8e, type: 2}
+  lockOnIndicatorPrefab: {fileID: 4632046337822859634, guid: d5b38022add3beb45b6c94117cefc6bd, type: 3}
   hitSpark: {fileID: 1312546261970878, guid: bc7a4bb76e52cad4c8ac1a9c9b37ed1c, type: 3}
   hitSpark2: {fileID: 1985286972383262, guid: 55973eedeec3c49499c7b31f6fb2037e, type: 3}
 --- !u!4 &1675173628
@@ -2155,6 +2156,14 @@ PrefabInstance:
     - target: {fileID: 2579297820314084056, guid: 60fcc4cc7ee37b6479184572e6f0d931, type: 3}
       propertyPath: m_Name
       value: GirlMesh
+      objectReference: {fileID: 0}
+    - target: {fileID: 136499514121446498, guid: 60fcc4cc7ee37b6479184572e6f0d931, type: 3}
+      propertyPath: m_Height
+      value: 1.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 136499514121446498, guid: 60fcc4cc7ee37b6479184572e6f0d931, type: 3}
+      propertyPath: m_Center.y
+      value: 0.9
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 60fcc4cc7ee37b6479184572e6f0d931, type: 3}
