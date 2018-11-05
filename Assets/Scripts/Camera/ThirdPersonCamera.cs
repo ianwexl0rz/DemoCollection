@@ -5,7 +5,8 @@ public class ThirdPersonCamera : MonoBehaviour
 {
 	public bool isEnabled = false;
 	public float distance = 2.5f;
-	public Vector2 pitchMinMax = new Vector2(-40, 85);
+	public Vector2 normalPitchMinMax = new Vector2(-40, 85);
+	public Vector2 lockOnPitchMinMax = new Vector2(10, 50);
 	public Vector3 offset = new Vector3(0f,1.6f,0.7f);
 	public Vector3 dragAmount = Vector3.zero;
 	public float posSmoothTime = 0.12f;
@@ -39,11 +40,10 @@ public class ThirdPersonCamera : MonoBehaviour
 	private float focalHeight = 0f;
 	private float desiredFocalHeight = 0f;
 	private float previousFocalHeight = 0f;
-	//private float previousLockOnHeight = 0f;
 	private Vector3 previousLookPos = Vector3.zero;
-	//private float lockOnHeight = 0f;
 	private Vector3 trackPos = Vector3.zero;
 	private Vector3 desiredLookPos;
+	private float blendCamera;
 
 	public void SetTarget(Player newPlayer, bool immediate)
 	{
@@ -71,95 +71,63 @@ public class ThirdPersonCamera : MonoBehaviour
 	{
 		if(!player || !isEnabled) return;
 
-		float smooth = 1;
-
 		if(Cursor.lockState != CursorLockMode.Locked)
 		{
 			Cursor.visible = true;
+			return;
+		}
+
+		// Cache look sensitivity from GameSettings
+		float lookSensitivityX = ControlSettings.I.lookSensitivityX;
+		float lookSensitivityY = ControlSettings.I.lookSensitivityY;
+
+		InputDevice playerInput = InputManager.ActiveDevice;
+
+		if(player.lockOn && player.lockOnTarget != null)
+		{
+			var toTarget = Quaternion.LookRotation(player.lockOnTarget.position - player.transform.position + focalHeight * Vector3.down);
+			pitch = toTarget.eulerAngles.x;
+			yaw = toTarget.eulerAngles.y;
+			rotationSmoothTime = 10f;
 		}
 		else
 		{
-			// Cache look sensitivity from GameSettings
-			float lookSensitivityX = ControlSettings.I.lookSensitivityX;
-			float lookSensitivityY = ControlSettings.I.lookSensitivityY;
-
-			InputDevice playerInput = InputManager.ActiveDevice;
-
-			if(player.lockOn && player.lockOnTarget != null)
-			{
-				// Locked on to a target
-				yaw += playerInput.RightStickX * lookSensitivityX * Time.deltaTime * 0.5f;
-
-				//yaw = Quaternion.LookRotation(player.lockOnTarget.position - player.transform.position).eulerAngles.y;
-			}
-			else if(player.AimingMode)
-			{
-				// Aiming mode - move the camera directly and the character should follow
-				yaw += playerInput.RightStickX * lookSensitivityX * Time.deltaTime * 0.5f;
-
-				// No smoothing!
-				smooth = 0f;
-			}
-			else if(player.Recenter)
-			{
-				// Re-center mode - move the character directly and the camera should follow
-				yaw = player.transform.eulerAngles.y;
-			}
-			else
-			{
-				// Not locked on
-				yaw += playerInput.RightStickX * lookSensitivityX * Time.deltaTime * 0.5f;
-			}
-
+			rotationSmoothTime = Mathf.Max(1f, rotationSmoothTime - Time.deltaTime * 9f);
+			yaw += playerInput.RightStickX * lookSensitivityX * Time.deltaTime * 0.5f;
 			pitch += playerInput.RightStickY * lookSensitivityY * Time.deltaTime;
-			pitch = Mathf.Clamp(pitch, pitchMinMax.x, pitchMinMax.y);
+		}
 
-			rotation.x = Mathf.SmoothDampAngle(rotation.x, pitch, ref rotationVelocity.x, rotationSmoothTime * smooth);
-			rotation.y = Mathf.SmoothDampAngle(rotation.y, yaw, ref rotationVelocity.y, rotationSmoothTime * smooth);
+		var minMax = Vector2.Lerp(normalPitchMinMax, lockOnPitchMinMax, (rotationSmoothTime - 1f) / 10f);
+		pitch = Mathf.Clamp(pitch, minMax.x, minMax.y);
 
+		rotation.x = Mathf.SmoothDampAngle(rotation.x, pitch, ref rotationVelocity.x, rotationSmoothTime * Time.deltaTime);
+		rotation.y = Mathf.SmoothDampAngle(rotation.y, yaw, ref rotationVelocity.y, rotationSmoothTime * Time.deltaTime);
+
+		if(!player.lockOn)
+		{
 			// Rotate the camera slightly in the direction we're moving
 			Vector3 localDragVector = transform.TransformDirection(dragVector);
 			if(localDragVector.sqrMagnitude >= 1f)
 			{
 				Vector3.Normalize(localDragVector);
 			}
+
 			float turnFactor = Vector3.Dot(localDragVector, -transform.right);
 			float turnDelta = Mathf.Abs(turnFactor) * turnFactor * turnWithPlayerFactor * Time.deltaTime;
 
 			// Add it after rotation smoothing because it's driven by drag (already smoothed)
 			yaw += turnDelta;
 			rotation.y += turnDelta;
-
-			transform.rotation = Quaternion.Euler(rotation);
 		}
+
+		transform.rotation = Quaternion.Euler(rotation);
 	}
 
 	public void UpdatePosition()
 	{
 		if(!player || !isEnabled) return;
-		bool lockedOn = player.lockOn && player.lockOnTarget != null;
 
 		Quaternion screenRotation = Quaternion.AngleAxis(transform.rotation.eulerAngles.y, Vector3.up);
-
-		if(lockedOn)
-		{
-			if(blendToLockOn < 1f)
-			{
-				blendToLockOn += Time.deltaTime / lockTime;
-				blendToLockOn = Mathf.Min(blendToLockOn, 1f);
-			}
-
-			// Set the focus halfway between the player and the enemy (similar to BotW)
-			// TODO: Dynamically shift closer to the player when close to the camera
-			// TODO: Implement "breaking" distance
-			float lockOnHeight = player.lockOnTarget.GetComponent<Collider>().bounds.extents.y;
-			desiredLookPos = player.lockOnTarget.position + Vector3.up * lockOnHeight;
-		}
-		else if(blendToLockOn > 0f)
-		{
-			blendToLockOn -= Time.deltaTime / unlockTime;
-			blendToLockOn = Mathf.Max(blendToLockOn, 0f);
-		}
 
 		if(blendToPlayer > 0f)
 		{
@@ -198,14 +166,6 @@ public class ThirdPersonCamera : MonoBehaviour
 		Vector3 modifiedPlayerPos = trackPos + screenRotation * modifiedDragVector
 			+ transform.forward * focalHeight * transform.forward.y
 			+ transform.TransformDirection(offset) * distance;
-
-		/*
-		float t = lockedOn ? Mathf.SmoothStep(0f, 1f, blendToLockOn) : blendToLockOn * blendToLockOn;
-		Vector3 lockedPos = Vector3.Lerp(trackPos, lookPos, 0.5f);
-		float lockOnDistance = Vector3.Distance(trackPos, lockedPos) * 0.25f;
-		float blendedDistance = distance + lockOnDistance * t;
-		transform.position = Vector3.Lerp(modifiedPlayerPos, lockedPos, t) - transform.forward * blendedDistance;
-		*/
 
 		transform.position = modifiedPlayerPos - transform.forward * distance;
 

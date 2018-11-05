@@ -352,7 +352,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isEnabled: 1
   distance: 2.5
-  pitchMinMax: {x: -90, y: 90}
+  normalPitchMinMax: {x: -60, y: 60}
+  lockOnPitchMinMax: {x: 10, y: 50}
   offset: {x: 0, y: 0.2, z: 0}
   dragAmount: {x: 0.2, y: 0.2, z: 0.2}
   posSmoothTime: 1
@@ -892,6 +893,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Heavy
       objectReference: {fileID: 0}
+    - target: {fileID: 114975490345739816, guid: 09e76c50c237c544bab6b4d67100a8dc, type: 3}
+      propertyPath: directionalSpeedScale.y
+      value: 0.75
+      objectReference: {fileID: 0}
+    - target: {fileID: 114975490345739816, guid: 09e76c50c237c544bab6b4d67100a8dc, type: 3}
+      propertyPath: lockOnSpeedScale
+      value: 0.8
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 09e76c50c237c544bab6b4d67100a8dc, type: 3}
 --- !u!1 &658774149
@@ -1070,6 +1079,10 @@ PrefabInstance:
     - target: {fileID: 1849219369495232, guid: 1447690b66c3cbd4390ad0df5ef89106, type: 3}
       propertyPath: m_Name
       value: Wyn
+      objectReference: {fileID: 0}
+    - target: {fileID: 1849219369495232, guid: 1447690b66c3cbd4390ad0df5ef89106, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1447690b66c3cbd4390ad0df5ef89106, type: 3}

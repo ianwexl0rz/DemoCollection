@@ -2,9 +2,12 @@
 
 public class Player : CombatActor
 {
+	[Header("Movement")]
 	public float minSpeed = 1f;
 	public float walkSpeed = 2f;
 	public float runSpeed = 4f;
+	public float lockOnSpeedScale = 1f;
+	public Vector2 directionalSpeedScale = Vector2.one;
 	public float jumpHeight = 4f;
 	public int jumpCount = 1;
 	public float gravityScale = 1f;
@@ -149,8 +152,13 @@ public class Player : CombatActor
 			// jump!
 			yVelocity = Mathf.Sqrt(2 * -Physics.gravity.y * gravityScale * jumpHeight);
 		}
-
+		
 		var targetSpeed = move * Mathf.Max(minSpeed, (Run ? runSpeed : walkSpeed));
+		var dot = Vector3.Dot(targetSpeed.normalized, transform.forward);
+		targetSpeed *= dot >= 0
+			? Mathf.Lerp(directionalSpeedScale.x, 1f, dot)
+			: Mathf.Lerp(directionalSpeedScale.y, directionalSpeedScale.x, dot + 1f);
+		targetSpeed *= lockOn ? lockOnSpeedScale : 1f;
 		currentSpeed = Vector3.SmoothDamp(currentSpeed, targetSpeed, ref speedSmoothVelocity, speedSmoothTime * (grounded ? 1f : 8f));
 
 		if(grounded) // No directional input in the air
