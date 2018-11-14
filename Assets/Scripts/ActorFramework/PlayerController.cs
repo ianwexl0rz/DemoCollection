@@ -79,7 +79,7 @@ public class PlayerController : ActorController
 	public Vector3 CalculateMove(InputDevice playerInput)
 	{
 		var move = new Vector3(playerInput.LeftStickX, 0, playerInput.LeftStickY);
-		var deadZone = ControlSettings.I.deadZone;
+		var deadZone = GameSettings.I.deadZone;
 
 		// Early out if move input is less than the dead zone.
 		if(move.magnitude < deadZone) return Vector3.zero;

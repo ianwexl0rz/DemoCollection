@@ -7,9 +7,9 @@ using UnityStandardAssets.ImageEffects;
 public class GameManager : MonoBehaviour
 {
 	public Player activePlayer;
-	public ControlSettings controlSettings;
+	public GameSettings gameSettings;
 	public ThirdPersonCamera mainCamera;
-	[SerializeField] private GameObject hudPrefab = null;
+	[SerializeField] private HUD hud = null;
 
 	[Header("Actor Controllers")]
 	public PlayerController playerBrain;
@@ -21,7 +21,6 @@ public class GameManager : MonoBehaviour
 	[SerializeField] private GameObject hitSpark2 = null;
 
 	private GameObject lockOnIndicator = null;
-	private HUD hud;
 	private int targetIndex;
 	private List<Player> playerCharacters;
 	private readonly List<Entity> entities = new List<Entity>();
@@ -51,7 +50,6 @@ public class GameManager : MonoBehaviour
 		//QualitySettings.maxQueuedFrames = 1;
 		Application.targetFrameRate = 60;
 
-		hud = Instantiate(hudPrefab, transform).GetComponent<HUD>();
 		lockOnIndicator = Instantiate(lockOnIndicatorPrefab);
 		lockOnIndicator.SetActive(false);
 

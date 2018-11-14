@@ -54,7 +54,7 @@ public class ThirdPersonCamera : MonoBehaviour
 		if(immediate)
 		{
 			focalHeight = desiredFocalHeight;
-			lastTargetPos = trackPos = player.transform.position + player.transform.up * focalHeight;
+			lastTargetPos = trackPos = player.transform.position + Vector3.up * focalHeight;
 		}
 		else
 		{
@@ -78,12 +78,12 @@ public class ThirdPersonCamera : MonoBehaviour
 		}
 
 		// Cache look sensitivity from GameSettings
-		float lookSensitivityX = ControlSettings.I.lookSensitivityX;
-		float lookSensitivityY = ControlSettings.I.lookSensitivityY;
+		float lookSensitivityX = GameSettings.I.lookSensitivityX;
+		float lookSensitivityY = GameSettings.I.lookSensitivityY;
 
 		InputDevice playerInput = InputManager.ActiveDevice;
 
-		if(player.lockOn && player.lockOnTarget != null)
+		if(player.lockOn && player.lockOnTarget != null && player.lockOnTarget.GetComponentInChildren<Renderer>().IsVisibleFrom(Camera.main))
 		{
 			var toTarget = Quaternion.LookRotation(player.lockOnTarget.position - player.transform.position + focalHeight * Vector3.down);
 			pitch = toTarget.eulerAngles.x;
