@@ -13,22 +13,11 @@ namespace MenuSystem
 
 		public void RegisterMenuItems()
 		{
-			#if UNITY_EDITOR
-			Undo.SetCurrentGroupName("Update Menu Group");
-			Undo.RegisterFullObjectHierarchyUndo(gameObject, "");
-			#endif
-
 			menu = GetComponentsInParent<Menu>(true)[0];
 
 			if(!menu)
 			{
 				Debug.Log("MenuGroupDisplay must be the child of a MenuDisplay!");
-				return;
-			}
-
-			if(!menuGroup)
-			{
-				Debug.Log("MenuGroup is not defined!");
 				return;
 			}
 
@@ -38,23 +27,36 @@ namespace MenuSystem
 				return;
 			}
 
-			items = new MenuItemDisplay[menuGroup.configs.Length];
+			if(menuGroup != null && transform.childCount == 0)
+			{
+				return;
+			}
+
+			#if UNITY_EDITOR
+			Undo.SetCurrentGroupName("Update Menu Group");
+			Undo.RegisterFullObjectHierarchyUndo(gameObject, "");
+			#endif
 
 			while(transform.childCount > 0)
 			{
 				DestroyImmediate(transform.GetChild(0).gameObject);
 			}
 
-			for(var i = 0; i < menuGroup.configs.Length; i++)
+			if(menuGroup != null)
 			{
-				var go = Instantiate(menuSkin.multipleChoice, transform);
-				var item = go.GetComponent<MenuItemDisplay>();
-				item.Initialize(menuGroup.configs[i], menuSkin.itemColors);
-				items[i] = item;
+				items = new MenuItemDisplay[menuGroup.configs.Length];
 
-				#if UNITY_EDITOR
-				Undo.RegisterCreatedObjectUndo(go, "");
-				#endif
+				for(var i = 0; i < menuGroup.configs.Length; i++)
+				{
+					var go = Instantiate(menuSkin.multipleChoice, transform);
+					var item = go.GetComponent<MenuItemDisplay>();
+					item.Initialize(menuGroup.configs[i], menuSkin.itemColors);
+					items[i] = item;
+
+					#if UNITY_EDITOR
+					Undo.RegisterCreatedObjectUndo(go, "");
+					#endif
+				}
 			}
 
 			EditorUtility.SetDirty(this);

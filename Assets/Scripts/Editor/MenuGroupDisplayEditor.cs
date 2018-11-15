@@ -7,22 +7,33 @@ class MenuGroupDisplayEditor : Editor
 {
 	private MenuGroupDisplay menuGroupDisplay;
 	private Editor menuGroupEditor;
+	private MenuGroup cachedMenuGroup;
 
 	public void OnEnable()
 	{
 		menuGroupDisplay = (MenuGroupDisplay)target;
-		menuGroupEditor = CreateEditor(menuGroupDisplay.menuGroup);
 	}
 
 	public override void OnInspectorGUI()
 	{
 		EditorGUI.BeginChangeCheck();
 		serializedObject.Update();
-		EditorGUIUtility.wideMode = true;
+
 		EditorGUILayout.PropertyField(serializedObject.FindProperty("menuGroup"));
 		EditorGUILayout.PropertyField(serializedObject.FindProperty("menuSkin"));
 		EditorGUILayout.Space();
-		menuGroupEditor.OnInspectorGUI();
+
+		if(cachedMenuGroup != menuGroupDisplay.menuGroup)
+		{
+			menuGroupEditor = CreateEditor(menuGroupDisplay.menuGroup);
+			cachedMenuGroup = menuGroupDisplay.menuGroup;
+		}
+
+		if(menuGroupEditor != null)
+		{
+			menuGroupEditor.OnInspectorGUI();
+		}
+
 		serializedObject.ApplyModifiedProperties();
 
 		GUILayout.BeginHorizontal();
