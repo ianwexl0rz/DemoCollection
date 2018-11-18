@@ -27,7 +27,7 @@ public class GameManager : MonoBehaviour
 
 	public Action<bool> PauseAllPhysics = delegate { };
 	public Action<bool> OnPauseGame = delegate { };
-	private bool gamePaused, physicsPaused;
+	private bool gamePaused, physicsPaused, togglePaused;
 	
 	private float hitPauseTimer;
 
@@ -110,8 +110,9 @@ public class GameManager : MonoBehaviour
 	{
 		entities.ForEach(entity => entity.OnLateUpdate());
 
-		if(InputManager.ActiveDevice.MenuWasPressed || Input.GetKeyDown(KeyCode.P))
+		if(InputManager.ActiveDevice.MenuWasPressed || Input.GetKeyDown(KeyCode.P) || togglePaused)
 		{
+			togglePaused = false;
 			gamePaused = !gamePaused;
 			hud.SetPaused(gamePaused);
 			OnPauseGame(gamePaused);
@@ -149,6 +150,12 @@ public class GameManager : MonoBehaviour
 	#endregion
 
 	#region PUBLIC_METHODS
+
+	public void TogglePaused()
+	{
+		togglePaused = true;
+	}
+
 	public void ClickOnPlayer(Player newTarget)
 	{
 		// Only switch targets if the mouse is unlocked.

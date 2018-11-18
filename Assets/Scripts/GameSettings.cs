@@ -40,6 +40,11 @@ public class GameSettings : ScriptableObject
 		}
 	}
 
+	public void TogglePaused()
+	{
+		GameManager.I.TogglePaused();
+	}
+
 	public void SetInvertX(bool value)
 	{
 		invertX = value;

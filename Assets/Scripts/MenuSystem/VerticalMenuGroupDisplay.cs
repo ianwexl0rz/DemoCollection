@@ -2,21 +2,18 @@
 {
 	class VerticalMenuGroupDisplay : MenuGroupDisplay
 	{
-		public override MenuItemDisplay ProcessInput(MenuDirection input)
+		public override MenuItemDisplay ProcessInput(MenuInput input)
 		{
 			switch(input)
 			{
-				case MenuDirection.Down:
+				case MenuInput.Down:
 					selectedIndex = (selectedIndex + 1) % items.Length;
 					break;
-				case MenuDirection.Up:
+				case MenuInput.Up:
 					selectedIndex = (selectedIndex + items.Length - 1) % items.Length;
 					break;
-				case MenuDirection.Right:
-					items[selectedIndex].ChangeValue(1);
-					break;
-				case MenuDirection.Left:
-					items[selectedIndex].ChangeValue(-1);
+				default:
+					items[selectedIndex].ProcessInput(input);
 					break;
 			}
 

@@ -5,27 +5,20 @@ using TMPro;
 
 namespace MenuSystem
 {
-	[Serializable]
-	public class Option
-	{
-		public string name;
-		public UnityEvent action;
-	}
-
 	public class SelectorMenuItemDisplay : MenuItemDisplay
 	{
 		[SerializeField] private TextMeshProUGUI labelText = null;
 		[SerializeField] private TextMeshProUGUI valueText = null;
 
-		private MenuItem MenuItem => config.menuItem;
-		private Option[] values => config.menuItem.values;
-		private int index => config.value;
+		private SelectorMenuItem selectorMenuItem => (SelectorMenuItem)config.menuItem;
+		private Option[] values => selectorMenuItem.values;
+		private int index => (int)config.value;
 
 		public override void Initialize(MenuItemConfig config, MenuItemColors colors)
 		{
 			base.Initialize(config, colors);
 
-			labelText.text = MenuItem.name;
+			labelText.text = selectorMenuItem.name;
 			valueText.text = "< " + values[index].name + " >";
 		}
 
@@ -39,6 +32,19 @@ namespace MenuSystem
 		public override void SetSelected(bool value)
 		{
 			valueText.color = value ? colors.selected : colors.normal;
+		}
+
+		public override void ProcessInput(MenuInput input)
+		{
+			switch(input)
+			{
+				case MenuInput.Right:
+					ChangeValue(1);
+					break;
+				case MenuInput.Left:
+					ChangeValue(-1);
+					break;
+			}
 		}
 	}
 }

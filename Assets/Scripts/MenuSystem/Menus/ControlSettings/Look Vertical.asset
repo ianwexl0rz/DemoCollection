@@ -9,7 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7989c33046d582c4b96fee76ed4657da, type: 3}
+  m_Script: {fileID: 11500000, guid: 4bb48de87152d4b4bb03baf7d5c04492, type: 3}
   m_Name: Look Vertical
   m_EditorClassIdentifier: 
   values:

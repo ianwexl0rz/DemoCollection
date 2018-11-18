@@ -27,8 +27,9 @@ namespace MenuSystem
 				return;
 			}
 
-			if(menuGroup != null && transform.childCount == 0)
+			if(menuGroup == null && transform.childCount == 0)
 			{
+				// Nothing to be done
 				return;
 			}
 
@@ -48,7 +49,21 @@ namespace MenuSystem
 
 				for(var i = 0; i < menuGroup.configs.Length; i++)
 				{
-					var go = Instantiate(menuSkin.multipleChoice, transform);
+					GameObject prefab = null;
+					switch(menuGroup.configs[i].menuItem)
+					{
+						case SelectorMenuItem s:
+							prefab = menuSkin.multipleChoice;
+							break;
+						case ButtonMenuItem b:
+							prefab = menuSkin.button;
+							break;
+						case null:
+							Debug.LogError("Element at index " + i + " in " + menuGroup.name + " is not a valid MenuItem!");
+							continue;
+					}
+
+					var go = Instantiate(prefab, transform);
 					var item = go.GetComponent<MenuItemDisplay>();
 					item.Initialize(menuGroup.configs[i], menuSkin.itemColors);
 					items[i] = item;
@@ -71,6 +86,6 @@ namespace MenuSystem
 			return items[index];
 		}
 
-		public abstract MenuItemDisplay ProcessInput(MenuDirection input);
+		public abstract MenuItemDisplay ProcessInput(MenuInput input);
 	}
 }

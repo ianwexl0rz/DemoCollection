@@ -13,7 +13,9 @@ MonoBehaviour:
   m_Name: ControlSettings
   m_EditorClassIdentifier: 
   configs:
-  - menuItem: {fileID: 11400000, guid: 005ac5ff9d2ff1d479171215e06e1c28, type: 2}
+  - menuItem: {fileID: 11400000, guid: f9f02fbb12ce761428877d670b783ceb, type: 2}
     value: 0
-  - menuItem: {fileID: 11400000, guid: d1dda641d19fc754eb17bbb40a9a706c, type: 2}
+  - menuItem: {fileID: 11400000, guid: f06aac22edb570646a7d5dac7cad1547, type: 2}
     value: 1
+  - menuItem: {fileID: 11400000, guid: ff2dc467fd1f1c943a69d33f9682fad8, type: 2}
+    value: 0

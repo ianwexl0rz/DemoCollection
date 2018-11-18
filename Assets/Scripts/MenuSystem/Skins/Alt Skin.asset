@@ -16,3 +16,4 @@ MonoBehaviour:
     normal: {r: 1, g: 1, b: 1, a: 1}
     selected: {r: 1, g: 0.7400188, b: 0, a: 1}
   multipleChoice: {fileID: 4404613478972547771, guid: 47b8bb8b7e509424aaa3028f015a5c79, type: 3}
+  button: {fileID: 4404613478972547771, guid: 024820d258d97644d880b3b3fdcdbcae, type: 3}

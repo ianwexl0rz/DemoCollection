@@ -38,12 +38,19 @@ class MenuGroupEditor : Editor
 		var menuItem = property.FindPropertyRelative("menuItem");
 		var value = property.FindPropertyRelative("value");
 
-		EditorGUI.PropertyField(new Rect(rect.x, rect.y, rect.width - 110, EditorGUIUtility.singleLineHeight),
-			menuItem, GUIContent.none);
-
-		if(menuGroup.configs[index].menuItem == null) { return; }
-
-		value.intValue = EditorGUI.Popup(new Rect(rect.x + rect.width - 100, rect.y, 100, EditorGUIUtility.singleLineHeight),
-			value.intValue, menuGroup.configs[index].menuItem.GetValueNames());
+		switch(menuGroup.configs[index].menuItem)
+		{
+			case SelectorMenuItem selectorItem:
+				EditorGUI.PropertyField(new Rect(rect.x, rect.y, rect.width - 110, EditorGUIUtility.singleLineHeight), menuItem, GUIContent.none);
+				value.floatValue = EditorGUI.Popup(new Rect(rect.x + rect.width - 100, rect.y, 100, EditorGUIUtility.singleLineHeight),
+					(int)value.floatValue, selectorItem.GetValueNames());
+				break;
+			case ButtonMenuItem buttonItem:
+				EditorGUI.PropertyField(new Rect(rect.x, rect.y, rect.width, EditorGUIUtility.singleLineHeight), menuItem, GUIContent.none);
+				break;
+			case null:
+				EditorGUI.PropertyField(new Rect(rect.x, rect.y, rect.width, EditorGUIUtility.singleLineHeight), menuItem, GUIContent.none);
+				return;
+		}
 	}
 }

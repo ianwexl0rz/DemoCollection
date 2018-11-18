@@ -7,7 +7,7 @@ namespace MenuSystem
 	public class MenuItemConfig
 	{
 		public MenuItem menuItem;
-		public int value;
+		public float value;
 	}
 
 	[CreateAssetMenu(fileName = "New Menu Group", menuName = "Menu System/Menu Group")]

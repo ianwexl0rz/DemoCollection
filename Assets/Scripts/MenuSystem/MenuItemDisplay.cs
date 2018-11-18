@@ -5,7 +5,7 @@ namespace MenuSystem
 	public abstract class MenuItemDisplay : MonoBehaviour
 	{
 		[SerializeField, HideInInspector] protected MenuItemColors colors;
-		[SerializeField] protected MenuItemConfig config;
+		[SerializeField, HideInInspector] protected MenuItemConfig config;
 
 		public virtual void Initialize(MenuItemConfig config, MenuItemColors colors)
 		{
@@ -18,5 +18,8 @@ namespace MenuSystem
 		public abstract void ChangeValue(int delta);
 
 		public abstract void SetSelected(bool value);
+
+		public abstract void ProcessInput(MenuInput input);
+
 	}
 }

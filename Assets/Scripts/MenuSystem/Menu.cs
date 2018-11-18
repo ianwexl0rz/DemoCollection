@@ -5,12 +5,13 @@ using System;
 
 namespace MenuSystem
 {
-	public enum MenuDirection
+	public enum MenuInput
 	{
 		Right,
 		Up,
 		Left,
-		Down
+		Down,
+		Submit
 	}
 
 	[Serializable]
@@ -48,8 +49,15 @@ namespace MenuSystem
 		private void Update()
 		{
 			var inputDevice = InputManager.ActiveDevice;
-			var dirInput = inputDevice.LeftStick.Vector;
+			var submit = inputDevice.Action1.WasPressed;
 
+			if(submit)
+			{
+				selectedGroup.ProcessInput(MenuInput.Submit);
+				return;
+			}
+
+			var dirInput = inputDevice.LeftStick.Vector;
 			if(dirInput.sqrMagnitude < Mathf.Epsilon)
 			{
 				inputStale = false;
@@ -66,7 +74,7 @@ namespace MenuSystem
 			int quadrant = (int)Mathf.Round(4 * angle / (2 * Mathf.PI) + 4) % 4;
 
 			var previouslySelectedItem = selectedItem;
-			selectedItem = selectedGroup.ProcessInput((MenuDirection)quadrant);
+			selectedItem = selectedGroup.ProcessInput((MenuInput)quadrant);
 
 			if(selectedItem != previouslySelectedItem)
 			{
