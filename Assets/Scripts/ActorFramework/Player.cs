@@ -89,7 +89,7 @@ public class Player : CombatActor
 
 		var point1 = transform.position + transform.up * capsuleCollider.radius;
 		var point2 = transform.position + transform.up * (capsuleCollider.height - capsuleCollider.radius);
-		var hits = Physics.CapsuleCastAll(point1, point2, 0.2f, Vector3.down, 0.1f, ~LayerMask.GetMask("Actor"), QueryTriggerInteraction.Ignore);
+		var hits = Physics.CapsuleCastAll(point1, point2, 0.2f, Vector3.down, 0.1f, ~LayerMask.GetMask("Actor","ProxyObject"), QueryTriggerInteraction.Ignore);
 
 		//var hits = Physics.SphereCastAll(groundPoint + Vector3.up * 0.25f, 0.2f, Vector3.down, 0.1f, ~LayerMask.GetMask("Actor"), QueryTriggerInteraction.Ignore);
 		var groundNormal = Vector3.down;
@@ -219,6 +219,7 @@ public class Player : CombatActor
 
 		var rotation = ShouldRoll ? GetRotationWithRoll() : Quaternion.LookRotation(desiredDirection);
 		rb.RotateTo(angleController, angularVelocityController, rotation, Time.fixedDeltaTime);
+		//rb.rotation = Quaternion.RotateTowards(rb.rotation, rotation, 5f);
 
 		Quaternion GetRotationWithRoll()
 		{

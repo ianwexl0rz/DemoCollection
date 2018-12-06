@@ -20,7 +20,7 @@ public class GameManager : MonoBehaviour
 	[SerializeField] private GameObject hitSpark = null;
 	[SerializeField] private GameObject hitSpark2 = null;
 
-	private GameObject lockOnIndicator = null;
+	private LockOnIndicator lockOnIndicator = null;
 	private int targetIndex;
 	private List<Player> playerCharacters;
 	private readonly List<Entity> entities = new List<Entity>();
@@ -37,7 +37,7 @@ public class GameManager : MonoBehaviour
 		get { if(!_instance) { _instance = FindObjectOfType<GameManager>(); } return _instance; }
 	}
 
-	public static GameObject LockOnIndicator => I.lockOnIndicator;
+	public static LockOnIndicator LockOnIndicator => I.lockOnIndicator;
 	public static float HitPauseTimer
 	{
 		get => I.hitPauseTimer;
@@ -50,8 +50,8 @@ public class GameManager : MonoBehaviour
 		//QualitySettings.maxQueuedFrames = 1;
 		Application.targetFrameRate = 60;
 
-		lockOnIndicator = Instantiate(lockOnIndicatorPrefab);
-		lockOnIndicator.SetActive(false);
+		lockOnIndicator = Instantiate(lockOnIndicatorPrefab).GetComponent<LockOnIndicator>();
+		lockOnIndicator.gameObject.SetActive(false);
 
 		DontDestroyOnLoad(this);
 

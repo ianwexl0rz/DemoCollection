@@ -35,15 +35,13 @@ public class ThirdPersonCamera : MonoBehaviour
 	private Player player = null;
 	private float blendToPlayer = 0f;
 	private Vector3 previousPlayerPosition = Vector3.zero;
-	private float blendToLockOn = 0f;
 
 	private float focalHeight = 0f;
 	private float desiredFocalHeight = 0f;
 	private float previousFocalHeight = 0f;
 	private Vector3 previousLookPos = Vector3.zero;
 	private Vector3 trackPos = Vector3.zero;
-	private Vector3 desiredLookPos;
-	private float blendCamera;
+	private Vector3 desiredLookPos = Vector3.zero;
 
 	public void SetTarget(Player newPlayer, bool immediate)
 	{

@@ -5,11 +5,13 @@ using InControl;
 public class PlayerController : ActorController
 {
 	private readonly InputBuffer inputBuffer = new InputBuffer();
+	private LockOnIndicator indicator;
 
 	protected override void Init(Actor actor)
 	{
 		var inactivePlayer = GameManager.I.GetFirstInactivePlayer();
 		actor.lockOnTarget = inactivePlayer ? inactivePlayer.transform : null;
+		indicator = GameManager.LockOnIndicator;
 		inputBuffer.Clear();
 	}
 
@@ -56,19 +58,7 @@ public class PlayerController : ActorController
 
 	protected override void LateTick(Actor actor)
 	{
-		var showIndicator = actor.lockOn && actor.lockOnTarget != null;
-		var indicator = GameManager.LockOnIndicator;
-		indicator.SetActive(showIndicator);
-		if(!showIndicator) { return; }
-
-		var targetPos = actor.lockOnTarget.position;
-		if(actor.lockOnTarget.GetComponent<Actor>() is Player target)
-		{
-			targetPos += target.capsuleCollider.height * Vector3.up;
-		}
-
-		indicator.transform.position = targetPos;
-		indicator.transform.LookAt(Camera.main.transform.position.WithY(indicator.transform.position.y), Vector3.up);
+		indicator.UpdatePosition(actor.lockOn, actor.lockOnTarget);
 	}
 
 	protected override void Clean(Actor actor)

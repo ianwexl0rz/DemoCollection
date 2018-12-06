@@ -1,0 +1,71 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!319 &31900000
+AvatarMask:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: NoHairBones
+  m_Mask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+  m_Elements:
+  - m_Path: 
+    m_Weight: 1
+  - m_Path: Cube
+    m_Weight: 1
+  - m_Path: speedSword
+    m_Weight: 1
+  - m_Path: Armature
+    m_Weight: 1
+  - m_Path: Armature/rootBone
+    m_Weight: 1
+  - m_Path: Armature/rootBone/Body
+    m_Weight: 1
+  - m_Path: Armature/rootBone/Body/thigh_L
+    m_Weight: 1
+  - m_Path: Armature/rootBone/Body/thigh_L/shin_L
+    m_Weight: 1
+  - m_Path: Armature/rootBone/Body/thigh_L/shin_L/foot_L
+    m_Weight: 1
+  - m_Path: Armature/rootBone/Body/thigh_R
+    m_Weight: 1
+  - m_Path: Armature/rootBone/Body/thigh_R/shin_R
+    m_Weight: 1
+  - m_Path: Armature/rootBone/Body/thigh_R/shin_R/foot_R
+    m_Weight: 1
+  - m_Path: Armature/rootBone/Body/Body_001
+    m_Weight: 1
+  - m_Path: Armature/rootBone/Body/Body_001/upperArm_L
+    m_Weight: 1
+  - m_Path: Armature/rootBone/Body/Body_001/upperArm_L/foreArm_L
+    m_Weight: 1
+  - m_Path: Armature/rootBone/Body/Body_001/upperArm_L/foreArm_L/handNull_L
+    m_Weight: 1
+  - m_Path: Armature/rootBone/Body/Body_001/head
+    m_Weight: 1
+  - m_Path: Armature/rootBone/Body/Body_001/head/sideBangs1_L
+    m_Weight: 0
+  - m_Path: Armature/rootBone/Body/Body_001/head/sideBangs1_L/sideBangs2_L
+    m_Weight: 0
+  - m_Path: Armature/rootBone/Body/Body_001/head/bangs1
+    m_Weight: 0
+  - m_Path: Armature/rootBone/Body/Body_001/head/bangs1/bangs2
+    m_Weight: 0
+  - m_Path: Armature/rootBone/Body/Body_001/head/sideBangs1_R
+    m_Weight: 0
+  - m_Path: Armature/rootBone/Body/Body_001/head/sideBangs1_R/sideBangs2_R
+    m_Weight: 0
+  - m_Path: Armature/rootBone/Body/Body_001/upperArm_R
+    m_Weight: 1
+  - m_Path: Armature/rootBone/Body/Body_001/upperArm_R/foreArm_R
+    m_Weight: 1
+  - m_Path: Armature/rootBone/Body/Body_001/upperArm_R/foreArm_R/handNull_R
+    m_Weight: 1
+  - m_Path: Armature/rootBone/armControl_L
+    m_Weight: 1
+  - m_Path: Armature/rootBone/armControl_L/weaponBone_L
+    m_Weight: 1
+  - m_Path: Armature/rootBone/poleLeg_L
+    m_Weight: 1
+  - m_Path: Armature/rootBone/poleLeg_R
+    m_Weight: 1
