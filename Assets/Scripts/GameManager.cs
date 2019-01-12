@@ -101,9 +101,11 @@ public class GameManager : MonoBehaviour
 		hud.OnUpdate();
 
 		//TODO: Move Camera stuff to player controller?
-		mainCamera.UpdateRotation(); // Update camera rotation first so player input direction is correct
 		entities.ForEach(entity => entity.OnUpdate()); // Update all the things!
-		mainCamera.UpdatePosition(); // Update camera position
+		mainCamera.UpdateRotation(); // Update camera rotation first so player input direction is correct
+
+		//mainCamera.UpdatePosition(); // Update camera position
+
 	}
 
 	public void LateUpdate()

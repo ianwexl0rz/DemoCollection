@@ -21,7 +21,7 @@ public class PlayerController : ActorController
 
 		var inputDevice = InputManager.ActiveDevice;
 
-		actor.move = CalculateMove(inputDevice);
+		actor.move = CalculateMove(actor, inputDevice);
 		actor.lockOn = inputDevice.LeftTrigger.IsPressed || Input.GetMouseButton(1);
 
 		if(!(actor is Player player)) return;
@@ -66,7 +66,7 @@ public class PlayerController : ActorController
 		actor.move = Vector3.zero;
 	}
 
-	public Vector3 CalculateMove(InputDevice playerInput)
+	public Vector3 CalculateMove(Actor actor, InputDevice playerInput)
 	{
 		var move = new Vector3(playerInput.LeftStickX, 0, playerInput.LeftStickY);
 		var deadZone = GameSettings.I.deadZone;
@@ -78,6 +78,19 @@ public class PlayerController : ActorController
 		move = move.normalized * (Mathf.Clamp01(move.magnitude) - deadZone) / (1f - deadZone);
 
 		// Orient the input relative to the camera.
-		return Quaternion.AngleAxis(GameManager.I.mainCamera.transform.eulerAngles.y, Vector3.up) * move;
+		//return Quaternion.AngleAxis(GameManager.I.mainCamera.transform.eulerAngles.y, Vector3.up) * move;
+
+		//*//
+		if(actor is Player player && player.lockOn && player.lockOnTarget != null)
+		{
+			var forward = (player.lockOnTarget.transform.position - player.transform.position).WithY(0);
+			forward += Camera.main.transform.forward;
+			return Quaternion.LookRotation(forward) * move;
+		}
+		else
+		{
+			return Quaternion.AngleAxis(GameManager.I.mainCamera.transform.eulerAngles.y, Vector3.up) * move;
+		}
+		//*/
 	}
 }

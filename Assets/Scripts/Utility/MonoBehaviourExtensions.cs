@@ -50,6 +50,11 @@ public static class MonoBehaviourExtensions
 		return (value - valueRangeMin) / (valueRangeMax - valueRangeMin) * (newRangeMax - newRangeMin) + newRangeMin;
 	}
 
+	public static Vector3 LowestPoint(this CapsuleCollider capsuleCollider)
+	{
+		return capsuleCollider.ClosestPoint(capsuleCollider.transform.TransformPoint(capsuleCollider.center) + Vector3.down * capsuleCollider.height * 0.5f);
+	}
+
 	/*
 	static public float GetDistPointToLine(Vector3 origin, Vector3 direction, Vector3 point)
 	{

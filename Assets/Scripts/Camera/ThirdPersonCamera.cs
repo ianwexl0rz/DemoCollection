@@ -9,6 +9,7 @@ public class ThirdPersonCamera : MonoBehaviour
 	public Vector2 lockOnPitchMinMax = new Vector2(10, 50);
 	public Vector3 offset = new Vector3(0f,1.6f,0.7f);
 	public Vector3 dragAmount = Vector3.zero;
+	public float lockOnHorizontalDrag = 0.4f;
 	public float posSmoothTime = 0.12f;
 	public float rotationSmoothTime = 0.12f;
 	public float turnWithPlayerFactor = 20f;
@@ -20,14 +21,10 @@ public class ThirdPersonCamera : MonoBehaviour
 	private float yaw; //rotation on the y axis
 	private float pitch; //rotation on the x axis
 
-	private Vector3 rotation;
+	private Vector3 manualRotation;
 	private Vector3 rotationVelocity;
+	private Vector3 lockedDrag;
 
-	//private float lockOnDistance = 0f;
-	private float distanceVel;
-	private Vector3 switchVelocity;
-
-	private Vector3 lookPos = Vector3.zero;
 	private Vector3 lastTargetPos = Vector3.zero;
 	private Vector3 dragVector = Vector3.zero;
 	private Vector3 dragVectorVelocity = Vector3.zero;
@@ -37,22 +34,21 @@ public class ThirdPersonCamera : MonoBehaviour
 	private Vector3 previousPlayerPosition = Vector3.zero;
 
 	private float focalHeight = 0f;
-	private float desiredFocalHeight = 0f;
 	private float previousFocalHeight = 0f;
 	private Vector3 previousLookPos = Vector3.zero;
 	private Vector3 trackPos = Vector3.zero;
-	private Vector3 desiredLookPos = Vector3.zero;
+
+	private float lockBlend;
+	private bool autoTurn;
 
 	public void SetTarget(Player newPlayer, bool immediate)
 	{
 		player = newPlayer;
 
-		desiredFocalHeight = player.GetComponent<Collider>().bounds.extents.y;
-
 		if(immediate)
 		{
-			focalHeight = desiredFocalHeight;
-			lastTargetPos = trackPos = player.transform.position + Vector3.up * focalHeight;
+			focalHeight = player.capsuleCollider.height * 0.5f;
+			lastTargetPos = trackPos = player.GetFeetPosition();
 		}
 		else
 		{
@@ -61,8 +57,6 @@ public class ThirdPersonCamera : MonoBehaviour
 
 		previousPlayerPosition = trackPos;
 		previousFocalHeight = focalHeight;
-		previousLookPos = lookPos;
-		//previousLockOnHeight = lockOnHeight;
 	}
 
 	public void UpdateRotation()
@@ -81,94 +75,151 @@ public class ThirdPersonCamera : MonoBehaviour
 
 		InputDevice playerInput = InputManager.ActiveDevice;
 
-		if(player.lockOn && player.lockOnTarget != null && player.lockOnTarget.GetComponentInChildren<Renderer>().IsVisibleFrom(Camera.main))
-		{
-			var toTarget = Quaternion.LookRotation(player.lockOnTarget.position - player.transform.position + focalHeight * Vector3.down);
-			pitch = toTarget.eulerAngles.x;
-			yaw = toTarget.eulerAngles.y;
-			rotationSmoothTime = 10f;
-		}
-		else
-		{
-			rotationSmoothTime = Mathf.Max(1f, rotationSmoothTime - Time.deltaTime * 9f);
-			yaw += playerInput.RightStickX * lookSensitivityX * Time.deltaTime * 0.5f;
-			pitch += playerInput.RightStickY * lookSensitivityY * Time.deltaTime;
-		}
-
-		var minMax = Vector2.Lerp(normalPitchMinMax, lockOnPitchMinMax, (rotationSmoothTime - 1f) / 10f);
-		pitch = Mathf.Clamp(pitch, minMax.x, minMax.y);
-
-		rotation.x = Mathf.SmoothDampAngle(rotation.x, pitch, ref rotationVelocity.x, rotationSmoothTime * Time.deltaTime);
-		rotation.y = Mathf.SmoothDampAngle(rotation.y, yaw, ref rotationVelocity.y, rotationSmoothTime * Time.deltaTime);
-
-		if(!player.lockOn)
-		{
-			// Rotate the camera slightly in the direction we're moving
-			Vector3 localDragVector = transform.TransformDirection(dragVector);
-			if(localDragVector.sqrMagnitude >= 1f)
-			{
-				Vector3.Normalize(localDragVector);
-			}
-
-			float turnFactor = Vector3.Dot(localDragVector, -transform.right);
-			float turnDelta = Mathf.Abs(turnFactor) * turnFactor * turnWithPlayerFactor * Time.deltaTime;
-
-			// Add it after rotation smoothing because it's driven by drag (already smoothed)
-			yaw += turnDelta;
-			rotation.y += turnDelta;
-		}
-
-		transform.rotation = Quaternion.Euler(rotation);
-	}
-
-	public void UpdatePosition()
-	{
-		if(!player || !isEnabled) return;
-
-		Quaternion screenRotation = Quaternion.AngleAxis(transform.rotation.eulerAngles.y, Vector3.up);
+		lastTargetPos = trackPos;
 
 		if(blendToPlayer > 0f)
 		{
 			blendToPlayer -= Time.deltaTime / unlockTime;
 			blendToPlayer = Mathf.Max(blendToPlayer, 0f);
 			float smoothBlend = Mathf.SmoothStep(1f, 0f, blendToPlayer);
-			trackPos = Vector3.Lerp(previousPlayerPosition, player.transform.position + player.transform.up * desiredFocalHeight, smoothBlend);
-			focalHeight = Mathf.Lerp(previousFocalHeight, desiredFocalHeight, smoothBlend);
-			lookPos = Vector3.Lerp(previousLookPos, desiredLookPos, smoothBlend);
+			trackPos = Vector3.Lerp(previousPlayerPosition, player.GetFeetPosition(), smoothBlend);
+			focalHeight = Mathf.Lerp(previousFocalHeight, player.capsuleCollider.height * 0.5f, smoothBlend);
 			dragVector *= blendToPlayer;
+			autoTurn = false;
 		}
 		else
 		{
-			trackPos = player.transform.position + player.transform.up * focalHeight;
-			lookPos = desiredLookPos;
+			trackPos = player.GetFeetPosition();
+			autoTurn = true;
 		}
 
+		var lockedOn = player.lockOn && player.lockOnTarget != null;
+
+		if(lockedOn)
+		{
+			lockBlend = Mathf.Max(0f, lockBlend - Time.deltaTime);
+			var blend = Mathf.SmoothStep(0f, 1f, lockBlend / lockTime);
+
+			var playerToTarget = (player.lockOnTarget.position - trackPos).WithY(0f);
+			var facingRotation = Quaternion.LookRotation(playerToTarget);
+
+			Vector3 dragDelta = Quaternion.Inverse(facingRotation) * (lastTargetPos - trackPos);
+			dragVector += Vector3.right * dragDelta.x * lockOnHorizontalDrag;
+			dragVector += Vector3.up * dragDelta.y * dragAmount.y;
+
+			dragVector = new Vector3()
+			{
+				x = Mathf.SmoothDamp(dragVector.x, 0f, ref dragVectorVelocity.x, posSmoothTime),
+				y = Mathf.SmoothDamp(dragVector.y, 0f, ref dragVectorVelocity.y, posSmoothTime * 0.5f),
+				z = Mathf.SmoothDamp(dragVector.z, 0f, ref dragVectorVelocity.z, posSmoothTime * 0.5f)
+			};
+
+			var dragAngle = Mathf.LerpAngle(facingRotation.eulerAngles.y, manualRotation.y, blend);
+			var drag = Quaternion.Euler(0, dragAngle, 0) * dragVector;
+			transform.position = trackPos + drag;
+
+			var camToTarget = player.lockOnTarget.position - transform.position;
+			var look = Quaternion.LookRotation(camToTarget);
+
+			float offsetAngle;
+			Quaternion screenRotation;
+
+			if(lockBlend > 0f)
+			{
+				pitch = Mathf.LerpAngle(look.eulerAngles.x, manualRotation.x, blend);
+				yaw = Mathf.LerpAngle(look.eulerAngles.y, manualRotation.y, blend);
+				transform.rotation = Quaternion.Euler(pitch, yaw, 0f);
+				screenRotation = Quaternion.Euler(0f, transform.rotation.eulerAngles.y, 0f);
+
+				var localDrag = Quaternion.Inverse(screenRotation) * drag.WithY(0f);
+				var refAngle = Vector3.Slerp(Vector3.right, localDrag * Mathf.Sign(localDrag.x), blend);
+				offsetAngle = Vector3.Angle(localDrag, refAngle);
+			}
+			else
+			{
+				pitch = look.eulerAngles.x;
+				yaw = look.eulerAngles.y;
+				transform.rotation = look;
+				screenRotation = Quaternion.Euler(0f, transform.rotation.eulerAngles.y, 0f);
+
+				var localDrag = Quaternion.Inverse(screenRotation) * drag.WithY(0f);
+				offsetAngle = Vector3.Angle(localDrag, Vector3.right);
+			}
+			
+			var offset = screenRotation * Vector3.forward * Mathf.Sin(offsetAngle * Mathf.Deg2Rad) * dragVector.WithY(0).magnitude;
+
+			lockedDrag = drag + offset;
+			transform.position += offset;
+
+			Debug.DrawLine(trackPos, trackPos + drag, Color.cyan);
+			Debug.DrawLine(trackPos + drag, trackPos + drag + offset, Color.magenta);
+			Debug.DrawLine(trackPos, trackPos + drag + offset, Color.white);
+		}
+		else
+		{
+			lockBlend = Mathf.Min(lockTime, lockBlend + Time.deltaTime);
+
+			yaw += playerInput.RightStickX * lookSensitivityX * Time.deltaTime;
+			pitch += playerInput.RightStickY * lookSensitivityY * Time.deltaTime;
+
+			if(autoTurn)
+			{
+				// Rotate the camera slightly in the direction we're moving
+				var playerVector = trackPos - lastTargetPos;
+				var playerDotCam = Vector3.Dot(playerVector, transform.right);
+				yaw += playerDotCam * turnWithPlayerFactor;
+			}
+
+			var minMax = normalPitchMinMax;
+			pitch = Mathf.Clamp(pitch, minMax.x, minMax.y);
+
+			var current = transform.eulerAngles;
+
+			current.x = Mathf.SmoothDampAngle(current.x, pitch, ref rotationVelocity.x, rotationSmoothTime);
+			current.y = Mathf.SmoothDampAngle(current.y, yaw, ref rotationVelocity.y, rotationSmoothTime);
+
+			transform.rotation = Quaternion.Euler(current);
+			manualRotation = transform.eulerAngles;
+
+			var drag = lockBlend < lockTime ? Vector3.Lerp(lockedDrag, GetLinearDrag(), lockBlend / lockTime) : GetLinearDrag();
+
+			transform.position = trackPos + drag;
+
+			Debug.DrawLine(trackPos, trackPos + drag, Color.white);
+		}
+
+		transform.position += transform.TransformDirection(offset) * distance;
+		transform.position += transform.forward * focalHeight * transform.forward.y;
+		transform.position -= transform.forward * distance;
+	}
+
+	public Vector3 GetLinearDrag()
+	{
 		// We want drag relative to camera rotation so the character doesn't "fishtail" when the player looks around
 		// 1) Get the change in player position and rotate it by the inverse of the camera rotation
 		// 2) Now we can scale the amount of drag on each axis in screen space (yay!)
 		// 3) Interpolate the accumulated drag toward zero over time
 		// NOTE: Rotate dragVector by camera rotation later to put it back into world space
 
+		var screenRotation = Quaternion.AngleAxis(transform.rotation.eulerAngles.y, Vector3.up);
+
 		// Drag less if we're running toward the camera
-		float dragAway = Vector3.Dot(screenRotation * dragVector.normalized, -transform.forward).LinearRemap(-1f, 1f, towardCameraDragScale, 1f);
+		float dragAway = Vector3.Dot(screenRotation * dragVector.normalized, -transform.forward);
+		dragAway = dragAway.LinearRemap(-1f, 1f, towardCameraDragScale, 1f);
 
 		Vector3 dragDelta = Quaternion.Inverse(screenRotation) * (lastTargetPos - trackPos);
 		dragVector += Vector3.Scale(dragDelta, dragAmount.WithZ(dragAmount.z * dragAway));
-		dragVector = Vector3.SmoothDamp(dragVector, Vector3.zero, ref dragVectorVelocity, posSmoothTime);
-		lastTargetPos = trackPos;
+		//dragVector = Vector3.SmoothDamp(dragVector, Vector3.zero, ref dragVectorVelocity, posSmoothTime);
+		dragVector = new Vector3()
+		{
+			x = Mathf.SmoothDamp(dragVector.x, 0f, ref dragVectorVelocity.x, posSmoothTime),
+			y = Mathf.SmoothDamp(dragVector.y, 0f, ref dragVectorVelocity.y, posSmoothTime * 0.5f),
+			z = Mathf.SmoothDamp(dragVector.z, 0f, ref dragVectorVelocity.z, posSmoothTime)
+		};
 
-		
-		// Drag less if we're looking at the ground
+		// Less forward drag if we're looking at the ground
 		Vector3 modifiedDragVector = dragVector.WithZ(dragVector.z * Mathf.Lerp(overheadDragScale, 1f, 1f + transform.forward.y));
 
-		Vector3 modifiedPlayerPos = trackPos + screenRotation * modifiedDragVector
-			+ transform.forward * focalHeight * transform.forward.y
-			+ transform.TransformDirection(offset) * distance;
-
-		transform.position = modifiedPlayerPos - transform.forward * distance;
-
-		Debug.DrawLine(trackPos, trackPos + screenRotation * dragVector, Color.white);
-		Debug.DrawLine(Vector3.Scale(transform.position, Vector3.one - Vector3.up), trackPos, Color.red);
-		Debug.DrawLine(Vector3.Scale(transform.position, Vector3.one - Vector3.up), trackPos + screenRotation * dragVector, Color.blue);
+		return screenRotation * modifiedDragVector;
 	}
 }

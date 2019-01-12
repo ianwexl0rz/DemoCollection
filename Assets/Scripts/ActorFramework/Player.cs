@@ -39,6 +39,9 @@ public class Player : CombatActor
 	private bool wasLockedOn;
 	private int remainingJumps;
 
+	private Rigidbody anchor;
+	private float totalMass;
+
 	protected override void Awake()
 	{
 		base.Awake();
@@ -48,8 +51,15 @@ public class Player : CombatActor
 		capsuleCollider = GetComponent<CapsuleCollider>();
 		rb.maxAngularVelocity = maxAngularVelocity;
 
+		totalMass = rb.mass;
+
 		// Timer example!
 		//actorTimerGroup.Add(5f, () => Debug.Log("Started timer."), () => Debug.Log("Time's up!"));
+
+		if(GetComponentInChildren<FixedJoint>() is FixedJoint joint)
+		{
+			anchor = joint.GetComponent<Rigidbody>();
+		}
 	}
 
 	private void OnValidate()
@@ -57,10 +67,14 @@ public class Player : CombatActor
 		if(rb != null) rb.maxAngularVelocity = maxAngularVelocity;
 	}
 
-	private void OnDrawGizmosSelected()
+	private void OnDrawGizmos()
 	{
 		// Draw foot collider
 		//Gizmos.DrawSphere(transform.position + Vector3.up * 0.25f + Vector3.down * 0.1f, 0.2f);
+		if(rb == null) { return; }
+
+		Gizmos.color = Color.red;
+		Gizmos.DrawSphere(transform.TransformPoint(rb.centerOfMass), 0.1f);
 	}
 
 	//private void OnDrawGizmos()
@@ -71,6 +85,99 @@ public class Player : CombatActor
 	//		Gizmos.DrawSphere(weaponCollision.pointBuffer[i], 0.02f);
 	//	}
 	//}
+
+	public Vector3 GetFeetPosition()
+	{
+		return transform.TransformPoint(capsuleCollider.center);
+
+		/*
+		var radius = capsuleCollider.radius * 0.75f;
+		var origin = transform.TransformPoint(capsuleCollider.center) + Vector3.up * radius;
+		var maxDistance = capsuleCollider.height * 0.5f;
+
+		var onGround = Physics.SphereCast(origin, radius, Vector3.down, out RaycastHit hit, maxDistance + 0.1f, ~LayerMask.GetMask("Actor", "ProxyObject"));
+
+		if(onGround)
+		{
+			var offset = radius * radius - (hit.point - origin).WithY(0).sqrMagnitude;
+			return origin.WithY(hit.point.y + Mathf.Sqrt(offset));
+		}
+		else
+		{
+
+			return origin + Vector3.down * maxDistance;
+			//return transform.TransformPoint(capsuleCollider.center).WithY(capsuleCollider.LowestPoint().y + radius);
+		}
+		*/
+
+		/*
+		var dist = 0.1f;
+		var toTarget = feetTarget - feetPosition;
+
+		if(toTarget.magnitude > dist)
+		{
+			feetPosition += toTarget.normalized * dist;
+		}
+		else
+		{
+			feetPosition = feetTarget;
+		}
+
+		return feetPosition;
+		*/
+	}
+
+	private Vector3 feetPosition;
+	private Vector3 feetTarget = Vector3.zero;
+	//private Vector3 groundPoint = Vector3.zero;
+	//private Vector3 feetVel = Vector3.zero;
+	//private float feetBlend;
+
+	/*
+	public override void OnUpdate()
+	{
+		base.OnUpdate();
+
+		var radius = capsuleCollider.radius * 0.75f;
+		var origin = transform.TransformPoint(capsuleCollider.center) + Vector3.up * radius;
+		var maxDistance = capsuleCollider.height * 0.5f;
+
+		var fallPoint = origin + Vector3.down * maxDistance;
+
+		var blendTime = 0.05f;
+
+		//var target = Vector3.zero;
+
+		var onGround = Physics.SphereCast(origin, radius, Vector3.down, out RaycastHit hit, maxDistance + 0.1f, ~LayerMask.GetMask("Actor", "ProxyObject"));
+
+		if(onGround)
+		{
+			var offset = radius * radius - (hit.point - origin).WithY(0).sqrMagnitude;
+			groundPoint = origin.WithY(hit.point.y + Mathf.Sqrt(offset));
+
+			//feetBlend = Mathf.Min(feetBlend + Time.deltaTime, blendTime);
+
+			feetPosition = groundPoint;
+		}
+		else
+		{
+
+			if(fallPoint.y < groundPoint.y)
+			{
+				groundPoint = groundPoint.WithY(Mathf.Max(fallPoint.y, groundPoint.y - 0.25f));
+				feetPosition = fallPoint.WithY(groundPoint.y);
+			}
+			else
+			{
+				feetPosition = fallPoint;
+			}
+		}
+
+		//feetPosition = Vector3.Lerp(fallPoint, feetTarget, feetBlend / blendTime);
+
+		//feetPosition = feetTarget;// Vector3.SmoothDamp(feetPosition, feetTarget, ref feetVel, blendTime);
+	}
+	*/
 
 	protected override void ProcessPhysics()
 	{
@@ -85,11 +192,13 @@ public class Player : CombatActor
 			return;
 		}
 
-		var groundPoint = transform.position + (transform.up + Vector3.down) * capsuleCollider.height * 0.5f;
+		//var groundPoint = transform.TransformPoint(capsuleCollider.center).WithY(capsuleCollider.LowestPoint().y);
+		//var origin = groundPoint + Vector3.up * (capsuleCollider.radius + 0.1f);
+		//var hits = Physics.SphereCastAll(origin, capsuleCollider.radius, Vector3.down, 0.2f, ~LayerMask.GetMask("Actor", "ProxyObject"));
 
 		var point1 = transform.position + transform.up * capsuleCollider.radius;
 		var point2 = transform.position + transform.up * (capsuleCollider.height - capsuleCollider.radius);
-		var hits = Physics.CapsuleCastAll(point1, point2, 0.2f, Vector3.down, 0.1f, ~LayerMask.GetMask("Actor","ProxyObject"), QueryTriggerInteraction.Ignore);
+		var hits = Physics.CapsuleCastAll(point1, point2, 0.2f, Vector3.down, 0.1f, ~LayerMask.GetMask("Actor", "ProxyObject"), QueryTriggerInteraction.Ignore);
 
 		//var hits = Physics.SphereCastAll(groundPoint + Vector3.up * 0.25f, 0.2f, Vector3.down, 0.1f, ~LayerMask.GetMask("Actor"), QueryTriggerInteraction.Ignore);
 		var groundNormal = Vector3.down;
@@ -187,16 +296,38 @@ public class Player : CombatActor
 			rb.velocity += Physics.gravity.y * (gravityScale - 1f) * Vector3.up * Time.fixedDeltaTime;
 		}
 
-		//rb.centerOfMass = grounded ? Vector3.zero : capsuleCollider.center;
+		//rb.centerOfMass = capsuleCollider.center;
 
-		if(grounded)
+		rb.centerOfMass = transform.InverseTransformPoint(capsuleCollider.LowestPoint());
+
+		/*
+		if(grounded || ShouldRoll)
 		{
-			var groundContact = capsuleCollider.ClosestPoint((Vector3)groundHit?.point);
-			rb.centerOfMass = transform.InverseTransformPoint(groundContact);
+			//rb.centerOfMass = transform.InverseTransformPoint(transform.TransformPoint(capsuleCollider.center).WithY(capsuleCollider.LowestPoint().y));
+			//rb.centerOfMass = capsuleCollider.center.WithY(transform.InverseTransformPoint(capsuleCollider.LowestPoint()).y);
+			rb.centerOfMass = transform.InverseTransformPoint(capsuleCollider.LowestPoint());
 		}
 		else
 		{
 			rb.centerOfMass = capsuleCollider.center;
+		}
+		*/
+
+		if(anchor)
+		{
+			var active = grounded && !ShouldRoll;
+			//anchor.SetActive(active);
+
+			if(active)
+			{
+				rb.mass = totalMass * 0.25f;
+				anchor.mass = totalMass * 0.75f;
+			}
+			else
+			{
+				rb.mass = totalMass;
+				anchor.mass = totalMass * 0f;
+			}
 		}
 
 		UpdateRotation();
@@ -217,9 +348,11 @@ public class Player : CombatActor
 
 		rollAngle = ShouldRoll ? (rollAngle + rollSpeed) % 360f : 0f;
 
+		//var dot = Vector3.Dot(transform.forward, rb.velocity.WithY(0f));
+		//var tiltedUpVector = Vector3.up - transform.forward * dot * 0.2f;
+
 		var rotation = ShouldRoll ? GetRotationWithRoll() : Quaternion.LookRotation(desiredDirection);
 		rb.RotateTo(angleController, angularVelocityController, rotation, Time.fixedDeltaTime);
-		//rb.rotation = Quaternion.RotateTowards(rb.rotation, rotation, 5f);
 
 		Quaternion GetRotationWithRoll()
 		{
