@@ -4,18 +4,21 @@ public class AutoDestroyParticleSystem : MonoBehaviour {
 
 	public bool destroyOnComplete = false;
 	public float offsetCloserToCamera = 0f;
-	public new Light light = null;
+	public Light light = null;
 	public AnimationCurve lightCurve = new AnimationCurve();
 	public float lightIntensity = 1f;
 
 	private ParticleSystem ps;
 	private Vector3 originalPos;
+	private Camera mainCamera = null;
 
 	private void OnEnable()
 	{
 		ps = GetComponent<ParticleSystem>();
 		originalPos = transform.position;
 		GameManager.I.OnPauseGame += ToggleParticlePlayback;
+
+		mainCamera = GameManager.I.mainCamera.GetComponent<Camera>();
 	}
 
 	private void OnDisable()
@@ -42,7 +45,7 @@ public class AutoDestroyParticleSystem : MonoBehaviour {
 
 		if(offsetCloserToCamera > 0f)
 		{
-			Vector3 dir = Camera.main.transform.position - originalPos;
+			Vector3 dir = mainCamera.transform.position - originalPos;
 			transform.position = originalPos + dir.normalized * offsetCloserToCamera;
 		}
 

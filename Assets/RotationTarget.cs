@@ -33,6 +33,7 @@ public class RotationTarget : MonoBehaviour
 	    cacheRotation = original.rotation;
     }
 
+	// TODO: Update this after the characters move
 	void FixedUpdate()
 	{
 		var dt = Time.fixedDeltaTime;

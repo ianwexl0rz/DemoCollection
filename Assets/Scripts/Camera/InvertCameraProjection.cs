@@ -12,7 +12,7 @@ public class InvertCameraProjection : MonoBehaviour
 	public Vector2 scale = Vector2.one;
 
 	private Camera cam;
-	private Vector3 _scale;
+	private Vector3 _scale = Vector3.one;
 
 
 	private void Awake()

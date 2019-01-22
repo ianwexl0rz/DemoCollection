@@ -14,10 +14,11 @@ public class LockOnIndicator : MonoBehaviour
 	    var indicatorPos = target.position;
 		if(target.GetComponent<Actor>() is Player player)
 	    {
-		    indicatorPos += player.capsuleCollider.height * Vector3.up;
+		    indicatorPos += (player.capsuleCollider.height + 0.2f) * Vector3.up;
 	    }
 
 	    transform.position = indicatorPos;
-	    transform.LookAt(Camera.main.transform.position.WithY(transform.position.y), Vector3.up);
+		var camera = GameManager.I.mainCamera;
+	    transform.LookAt(camera.transform.position.WithY(transform.position.y), Vector3.up);
 	}
 }

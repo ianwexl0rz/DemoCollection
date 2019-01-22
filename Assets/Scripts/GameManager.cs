@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using InControl;
 using System;
 using UnityStandardAssets.ImageEffects;
+using System.Collections;
 
 public class GameManager : MonoBehaviour
 {
@@ -48,7 +49,7 @@ public class GameManager : MonoBehaviour
 	private void Awake()
 	{
 		//QualitySettings.maxQueuedFrames = 1;
-		Application.targetFrameRate = 60;
+		//Application.targetFrameRate = 60;
 
 		lockOnIndicator = Instantiate(lockOnIndicatorPrefab).GetComponent<LockOnIndicator>();
 		lockOnIndicator.gameObject.SetActive(false);
@@ -56,7 +57,7 @@ public class GameManager : MonoBehaviour
 		DontDestroyOnLoad(this);
 
 		// Lock cursor by default.
-		Cursor.lockState = CursorLockMode.Locked;
+		//Cursor.lockState = CursorLockMode.Locked;
 
 		playerCharacters = new List<Player>(FindObjectsOfType<Player>());
 
@@ -64,6 +65,8 @@ public class GameManager : MonoBehaviour
 		{
 			targetIndex = playerCharacters.IndexOf(activePlayer);
 		}
+
+		StartCoroutine(LateFixedUpdate());
 	}
 
 	private void Start()
@@ -84,7 +87,19 @@ public class GameManager : MonoBehaviour
 	{
 		if(!physicsPaused)
 		{
+
 			entities.ForEach(entity => entity.OnFixedUpdate());
+
+		}
+	}
+
+	private IEnumerator LateFixedUpdate()
+	{
+		while(true)
+		{
+			yield return new WaitForFixedUpdate();
+
+			mainCamera.UpdateRotation(); // Update camera rotation first so player input direction is correct
 		}
 	}
 
@@ -101,8 +116,8 @@ public class GameManager : MonoBehaviour
 		hud.OnUpdate();
 
 		//TODO: Move Camera stuff to player controller?
+
 		entities.ForEach(entity => entity.OnUpdate()); // Update all the things!
-		mainCamera.UpdateRotation(); // Update camera rotation first so player input direction is correct
 
 		//mainCamera.UpdatePosition(); // Update camera position
 

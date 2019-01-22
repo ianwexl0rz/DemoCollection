@@ -5,7 +5,7 @@ namespace MenuSystem
 {
 	public abstract class MenuGroupDisplay : MonoBehaviour
 	{
-		[SerializeField, ReadOnly] private Menu menu;
+		private Menu menu;
 		[SerializeField] private MenuSkin menuSkin = null;
 		public MenuGroup menuGroup;
 		[SerializeField, HideInInspector] protected MenuItemDisplay[] items;
@@ -74,9 +74,8 @@ namespace MenuSystem
 				}
 			}
 
-			EditorUtility.SetDirty(this);
-
 			#if UNITY_EDITOR
+			EditorUtility.SetDirty(this);
 			Undo.CollapseUndoOperations(Undo.GetCurrentGroup());
 			#endif
 		}

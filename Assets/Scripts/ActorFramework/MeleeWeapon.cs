@@ -12,7 +12,7 @@ public class MeleeWeapon : MonoBehaviour
 	private readonly List<Vector3> pointBuffer = new List<Vector3>();
 	private readonly List<Color> colors = new List<Color>();
 
-	private new MeshRenderer renderer;
+	private MeshRenderer renderer;
 	private MeshFilter filter;
 	private Mesh mesh;
 

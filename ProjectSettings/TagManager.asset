@@ -18,7 +18,7 @@ TagManager:
   - PhysicsObject
   - PostProcessing
   - ProxyObject
-  - 
+  - Hitbox
   - 
   - 
   - 

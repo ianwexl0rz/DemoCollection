@@ -63,11 +63,15 @@ public class ThirdPersonCamera : MonoBehaviour
 	{
 		if(!player || !isEnabled) return;
 
+		var dt = Time.fixedDeltaTime;
+
+		/*
 		if(Cursor.lockState != CursorLockMode.Locked)
 		{
 			Cursor.visible = true;
 			return;
 		}
+		*/
 
 		// Cache look sensitivity from GameSettings
 		float lookSensitivityX = GameSettings.I.lookSensitivityX;
@@ -79,7 +83,7 @@ public class ThirdPersonCamera : MonoBehaviour
 
 		if(blendToPlayer > 0f)
 		{
-			blendToPlayer -= Time.deltaTime / unlockTime;
+			blendToPlayer -= dt / unlockTime;
 			blendToPlayer = Mathf.Max(blendToPlayer, 0f);
 			float smoothBlend = Mathf.SmoothStep(1f, 0f, blendToPlayer);
 			trackPos = Vector3.Lerp(previousPlayerPosition, player.GetFeetPosition(), smoothBlend);
@@ -97,7 +101,7 @@ public class ThirdPersonCamera : MonoBehaviour
 
 		if(lockedOn)
 		{
-			lockBlend = Mathf.Max(0f, lockBlend - Time.deltaTime);
+			lockBlend = Mathf.Max(0f, lockBlend - dt);
 			var blend = Mathf.SmoothStep(0f, 1f, lockBlend / lockTime);
 
 			var playerToTarget = (player.lockOnTarget.position - trackPos).WithY(0f);
@@ -120,6 +124,9 @@ public class ThirdPersonCamera : MonoBehaviour
 
 			var camToTarget = player.lockOnTarget.position - transform.position;
 			var look = Quaternion.LookRotation(camToTarget);
+
+			// Clamp pitch
+			//look = Quaternion.Euler(look.eulerAngles.WithX(Mathf.Clamp(look.eulerAngles.x, lockOnPitchMinMax.x, lockOnPitchMinMax.y)));
 
 			float offsetAngle;
 			Quaternion screenRotation;
@@ -157,10 +164,10 @@ public class ThirdPersonCamera : MonoBehaviour
 		}
 		else
 		{
-			lockBlend = Mathf.Min(lockTime, lockBlend + Time.deltaTime);
+			lockBlend = Mathf.Min(lockTime, lockBlend + dt);
 
-			yaw += playerInput.RightStickX * lookSensitivityX * Time.deltaTime;
-			pitch += playerInput.RightStickY * lookSensitivityY * Time.deltaTime;
+			yaw += playerInput.RightStickX * lookSensitivityX * dt;
+			pitch += playerInput.RightStickY * lookSensitivityY * dt;
 
 			if(autoTurn)
 			{
