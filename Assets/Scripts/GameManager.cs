@@ -99,7 +99,7 @@ public class GameManager : MonoBehaviour
 		{
 			yield return new WaitForFixedUpdate();
 
-			mainCamera.UpdateRotation(); // Update camera rotation first so player input direction is correct
+			mainCamera.UpdateRotation(); // Update camera after physics
 		}
 	}
 
@@ -159,7 +159,7 @@ public class GameManager : MonoBehaviour
 
 		if(!gamePaused && hitPauseTimer > 0)
 		{
-			hitPauseTimer -= Time.fixedDeltaTime;
+			hitPauseTimer -= Time.deltaTime;
 			hitPauseTimer = Mathf.Max(0f, hitPauseTimer);
 		}
 	}

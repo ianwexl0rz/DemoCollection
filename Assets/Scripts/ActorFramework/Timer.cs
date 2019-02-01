@@ -59,4 +59,10 @@ public class Timer
 	{
 		Current = 0;
 	}
+
+	public void Reset(float duration)
+	{
+		Current = 0;
+		Duration = duration;
+	}
 }

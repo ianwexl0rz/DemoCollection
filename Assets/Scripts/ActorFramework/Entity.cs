@@ -67,10 +67,7 @@ public class Entity : MonoBehaviour
 
 	public virtual void OnFixedUpdate()
 	{
-		if(OnEarlyFixedUpdate != null)
-		{
-			OnEarlyFixedUpdate();
-		}
+		OnEarlyFixedUpdate?.Invoke();
 		OnEarlyFixedUpdate = null;
 	}
 

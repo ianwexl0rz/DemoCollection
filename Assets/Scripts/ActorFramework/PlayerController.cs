@@ -33,7 +33,9 @@ public class PlayerController : ActorController
 		player.Run = inputDevice.RightTrigger.IsPressed || Input.GetKey(KeyCode.LeftShift);
 
 		// Roll
-		player.ShouldRoll = inputDevice.Action2.IsPressed || Input.GetKey(KeyCode.LeftControl);
+		//player.ShouldRoll = inputDevice.Action2.IsPressed || Input.GetKey(KeyCode.LeftControl);
+		if(inputDevice.Action2.WasPressed || Input.GetKeyDown(KeyCode.LeftControl))
+			inputBuffer.Add(player.Roll, 0.1f);
 
 		// Jump
 		if(inputDevice.Action1.WasPressed || inputDevice.LeftBumper.WasPressed || Input.GetKeyDown(KeyCode.Space))

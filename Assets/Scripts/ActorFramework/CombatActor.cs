@@ -82,8 +82,10 @@ public class CombatActor : Actor
 		foreach(RaycastHit hit in hits)
 		{
 			GameObject go = hit.collider.gameObject;
-			//Entity entity = go.GetComponent<Entity>();
 			Entity entity = go.GetComponentInChildren<Entity>() ?? go.GetComponentInParent<Entity>();
+
+			// Get GO of the entity because we may have hit a child GO collider
+			if(entity != null) go = entity.gameObject;
 
 			if(hitObjects.Contains(go) || entity == this) { continue; }
 			

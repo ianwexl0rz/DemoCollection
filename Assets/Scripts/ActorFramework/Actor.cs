@@ -97,10 +97,7 @@ public class Actor : Entity
 
 	private void ResetAbilities()
 	{
-		if(OnResetAbilities != null)
-		{
-			OnResetAbilities();
-		}
+		OnResetAbilities?.Invoke();
 	}
 
 	protected override void OnGetHit(Vector3 hitPoint, Vector3 direction, AttackData data)
