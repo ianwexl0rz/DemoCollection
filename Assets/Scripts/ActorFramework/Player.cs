@@ -28,7 +28,6 @@ public class Player : CombatActor
 	public bool ShouldRoll { get; set; }
 	public bool Recenter { get; set; }
 	public bool AimingMode { get; set; }
-	public bool RootMotionOverride { get; set; }
 
 	public CapsuleCollider capsuleCollider { get; private set; }
 	public PIDConfig angleControllerConfig = null;
@@ -155,14 +154,11 @@ public class Player : CombatActor
 
 		if(stunned.InProgress) return;
 
-		if(RootMotionOverride)
+		if(animator.applyRootMotion)
 		{
 			groundVelocity = Vector3.zero;
-			UpdateRotation();
 			return;
 		}
-
-		//if(!grounded) groundVelocity = rb.velocity.WithY(0f);
 
 		if(grounded)
 		{

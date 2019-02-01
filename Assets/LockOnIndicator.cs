@@ -4,18 +4,43 @@ using UnityEngine;
 
 public class LockOnIndicator : MonoBehaviour
 {
+	[SerializeField]
+	private Material activeMaterial = null;
+	[SerializeField]
+	private Material inactiveMaterial = null;
 
-    public void UpdatePosition(bool lockedOn, Transform target)
+	private new Renderer renderer;
+	private bool isActive;
+
+	public void OnEnable()
+	{
+		renderer = GetComponentInChildren<Renderer>();
+		renderer.sharedMaterial = inactiveMaterial;
+	}
+
+	public void UpdatePosition(bool lockedOn, Transform target)
     {
-		var showIndicator = lockedOn && target != null;
-	    gameObject.SetActive(showIndicator);
-	    if(!showIndicator) { return; }
+		if(target == null)
+		{
+			gameObject.SetActive(false);
+			return;
+		}
+		else if(!gameObject.activeSelf)
+		{
+			gameObject.SetActive(true);
+		}
 
 	    var indicatorPos = target.position;
 		if(target.GetComponent<Actor>() is Player player)
 	    {
 		    indicatorPos += (player.capsuleCollider.height + 0.2f) * Vector3.up;
 	    }
+
+		if(lockedOn != isActive)
+		{
+			renderer.sharedMaterial = lockedOn ? activeMaterial : inactiveMaterial;
+			isActive = lockedOn;
+		}
 
 	    transform.position = indicatorPos;
 		var camera = GameManager.I.mainCamera;

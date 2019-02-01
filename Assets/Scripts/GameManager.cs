@@ -24,6 +24,7 @@ public class GameManager : MonoBehaviour
 	private LockOnIndicator lockOnIndicator = null;
 	private int targetIndex;
 	private List<Player> playerCharacters;
+	private List<Player> potentialTargets;
 	private readonly List<Entity> entities = new List<Entity>();
 
 	public Action<bool> PauseAllPhysics = delegate { };
@@ -52,7 +53,7 @@ public class GameManager : MonoBehaviour
 		//Application.targetFrameRate = 60;
 
 		lockOnIndicator = Instantiate(lockOnIndicatorPrefab).GetComponent<LockOnIndicator>();
-		lockOnIndicator.gameObject.SetActive(false);
+		//lockOnIndicator.gameObject.SetActive(false);
 
 		DontDestroyOnLoad(this);
 
@@ -93,6 +94,18 @@ public class GameManager : MonoBehaviour
 		}
 	}
 
+	private int SortByProximityToScreenCenter(Player a, Player b)
+	{
+		var cam = Camera.main;
+		var p1 = cam.WorldToScreenPoint(a.transform.position);
+		p1 = new Vector3(p1.x.LinearRemap(0, cam.pixelWidth, -1, 1), p1.y.LinearRemap(0, cam.pixelHeight, -1, 1), 0);
+
+		var p2 = cam.WorldToScreenPoint(b.transform.position);
+		p2 = new Vector3(p2.x.LinearRemap(0, cam.pixelWidth, -1, 1), p2.y.LinearRemap(0, cam.pixelHeight, -1, 1), 0);
+
+		return p1.magnitude.CompareTo(p2.magnitude);
+	}
+
 	private IEnumerator LateFixedUpdate()
 	{
 		while(true)
@@ -100,6 +113,13 @@ public class GameManager : MonoBehaviour
 			yield return new WaitForFixedUpdate();
 
 			mainCamera.UpdateRotation(); // Update camera after physics
+
+			// Update the potential lock on target
+			if(!activePlayer.lockOn)
+			{
+				potentialTargets.Sort(SortByProximityToScreenCenter);
+				activePlayer.lockOnTarget = potentialTargets[0].transform;
+			}
 		}
 	}
 
@@ -228,6 +248,9 @@ public class GameManager : MonoBehaviour
 
 		Player oldPlayer = activePlayer;
 		activePlayer = newTarget;
+
+		potentialTargets = new List<Player>(playerCharacters);
+		potentialTargets.Remove(activePlayer);
 
 		if(oldPlayer) oldPlayer.SetController(followerBrain); // Set the old active player to use Follower Brain
 		activePlayer.SetController(playerBrain); // Set the active player to use Player Brain
