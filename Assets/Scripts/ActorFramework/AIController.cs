@@ -11,7 +11,7 @@ public class AIController : ActorController
 	{
 		if(GameManager.I.activePlayer != null)
 		{
-			actor.lockOnTarget = GameManager.I.activePlayer.transform;
+			actor.lockOnTarget = GameManager.I.activePlayer;
 		}
 	}
 

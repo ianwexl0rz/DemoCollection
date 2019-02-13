@@ -1,7 +1,6 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class Player : CombatActor
+public class CharacterMotor : MonoBehaviour
 {
 	[Header("Ground Detection")]
 	public float groundCheckHeight = 0.4f;
@@ -20,7 +19,6 @@ public class Player : CombatActor
 	public float gravityScale = 1f;
 	public float rollSpeed = 5f;
 	public float speedSmoothTime = 0.1f;
-	public float maxAngularVelocity = 12;
 	public float leanFactor;
 	public float friction;
 
@@ -28,8 +26,8 @@ public class Player : CombatActor
 	public bool ShouldRoll { get; set; }
 	public bool Recenter { get; set; }
 	public bool AimingMode { get; set; }
+	public Vector3 FeetPos => feetPos;
 
-	public CapsuleCollider capsuleCollider { get; private set; }
 	public PIDConfig angleControllerConfig = null;
 	public PIDConfig angularVelocityControllerConfig = null;
 
@@ -38,30 +36,35 @@ public class Player : CombatActor
 	private Vector3 groundVelocity = Vector3.zero;
 	private Vector3 desiredDirection;
 	private Vector3 feetPos;
+	private Vector3 groundNormal;
+	private Vector3 groundPoint;
+	private float maxAngularVelocity = 50f;
 	private float rollAngle;
 	private bool grounded;
 	private bool queueJump;
 	private bool jumping;
 	private int remainingJumps;
-	private PlayerState state;
+	private CharacterState state;
 
-	private enum PlayerState
+	private Character character = null;
+
+
+	private enum CharacterState
 	{
 		Grounded,
 		InAir,
 		Jump
 	}
 
-	protected override void Awake()
+	public void Init(Character character)
 	{
-		base.Awake();
-		desiredDirection = transform.forward;
+		this.character = character;
+		desiredDirection = character.transform.forward;
 		angleController = new PID3(angleControllerConfig);
 		angularVelocityController = new PID3(angularVelocityControllerConfig);
-		capsuleCollider = GetComponent<CapsuleCollider>();
-		rb.maxAngularVelocity = maxAngularVelocity;
-
 		remainingJumps = jumpCount;
+
+		character.rb.maxAngularVelocity = maxAngularVelocity;
 
 		// Timer example!
 		//actorTimerGroup.Add(5f, () => Debug.Log("Started timer."), () => Debug.Log("Time's up!"));
@@ -69,20 +72,16 @@ public class Player : CombatActor
 
 	private void OnValidate()
 	{
-		if(rb != null) rb.maxAngularVelocity = maxAngularVelocity;
+		if(character && character.rb)
+			character.rb.maxAngularVelocity = maxAngularVelocity;
 	}
 
 	private void OnDrawGizmos()
 	{
-		if(rb == null) { return; }
+		if(!character || !character.rb) { return; }
 
 		Gizmos.color = Color.blue;
 		Gizmos.DrawSphere(feetPos, 0.1f);
-	}
-
-	public Vector3 GetFeetPosition()
-	{
-		return transform.TransformPoint(capsuleCollider.center);
 	}
 
 	private bool CheckForGround()
@@ -139,7 +138,7 @@ public class Player : CombatActor
 		if(grounded) { goto Success; }
 
 		// Become grounded ONLY if the distance to ground is less than projected fall distance
-		var projectedFallDistance = (-rb.velocity.y - Physics.gravity.y * gravityScale) * Time.fixedDeltaTime;
+		var projectedFallDistance = (-character.rb.velocity.y - Physics.gravity.y * gravityScale) * Time.fixedDeltaTime;
 		if(averageDistance > projectedFallDistance) { return false; }
 
 		Success:
@@ -148,13 +147,11 @@ public class Player : CombatActor
 		return true;
 	}
 
-	protected override void ProcessPhysics()
+	public void UpdateMotor()
 	{
 		var dt = Time.fixedDeltaTime;
 
-		if(stunned.InProgress) return;
-
-		if(animator.applyRootMotion)
+		if(character.animator.applyRootMotion)
 		{
 			groundVelocity = Vector3.zero;
 			return;
@@ -164,48 +161,48 @@ public class Player : CombatActor
 		{
 			// Invert ground normal rotation to get unbiased ground velocity
 			var groundRotation = Quaternion.LookRotation(Vector3.forward, groundNormal);
-			groundVelocity = Quaternion.Inverse(groundRotation) * rb.velocity;
+			groundVelocity = Quaternion.Inverse(groundRotation) * character.rb.velocity;
 		}
 		else
 		{
-			groundVelocity = rb.velocity.WithY(0f);
+			groundVelocity = character.rb.velocity.WithY(0f);
 		}
 
-		var speedLimit = Run || ShouldRoll ? runSpeed : walkSpeed;
+		if(!character.hitReaction.InProgress)
+		{
+			var speedLimit = Run || ShouldRoll ? runSpeed : walkSpeed;
 
-		//TODO: Limit acceleration based on the amount of space in front of you
-		var desiredVel = groundVelocity + move.normalized * (grounded ? acceleration : acceleration * 0.25f) * dt;
-		var speed = desiredVel.magnitude;
+			//TODO: Limit acceleration based on the amount of space in front of you
+			var desiredVel = groundVelocity + character.move.normalized * (grounded ? acceleration : acceleration * 0.25f) * dt;
+			var speed = desiredVel.magnitude;
 
-		//TODO: Variable speed based on analog input
-		if(grounded && !ShouldRoll) speed = Mathf.Max(desiredVel.magnitude - friction * dt, 0f);
-		speed = Mathf.Min(speed, speedLimit);
-		groundVelocity = (desiredVel.normalized * speed).WithY(0f);
+			//TODO: Variable speed based on analog input
+			if(grounded && !ShouldRoll) speed = Mathf.Max(desiredVel.magnitude - friction * dt, 0f);
+			speed = Mathf.Min(speed, speedLimit);
+			groundVelocity = (desiredVel.normalized * speed).WithY(0f);
+		}
 
 		UpdateFeetPos();
 
-		PlayerState current = PlayerState.InAir;
+		CharacterState current = CharacterState.InAir;
 
 		if(queueJump && remainingJumps > 0)
 		{
-			current = PlayerState.Jump;
+			current = CharacterState.Jump;
 		}
 		else if(!jumping && CheckForGround())
 		{
-			current = PlayerState.Grounded;
+			current = CharacterState.Grounded;
 		}
 
 		SetState(current);
 		UpdateRotation();
 	}
 
-	private Vector3 groundNormal;
-	private Vector3 groundPoint;
-
 	private void UpdateGroundVelocity()
 	{
-		var feetOffset = rb.position - feetPos;
-		rb.MovePosition(rb.position.WithY(groundPoint.y + feetOffset.y));
+		var feetOffset = character.rb.position - feetPos;
+		character.rb.MovePosition(character.rb.position.WithY(groundPoint.y + feetOffset.y));
 
 		//var cross = Vector3.Cross(groundVelocity.normalized, Vector3.up);
 		//var finalVelocity = Vector3.Cross(groundNormal, cross) * groundVelocity.magnitude;
@@ -213,18 +210,18 @@ public class Player : CombatActor
 		var finalVelocity = Quaternion.LookRotation(Vector3.forward, groundNormal) * groundVelocity;
 
 		var point = feetPos + Vector3.up * leanFactor * groundVelocity.magnitude / runSpeed;
-		rb.AddForceAtPosition(finalVelocity - rb.velocity, point, ForceMode.VelocityChange);
+		character.rb.AddForceAtPosition(finalVelocity - character.rb.velocity, point, ForceMode.VelocityChange);
 
-		Debug.DrawLine(feetPos, feetPos + groundNormal * (groundCheckHeight + capsuleCollider.height), Color.blue);
+		Debug.DrawLine(feetPos, feetPos + groundNormal * (groundCheckHeight + character.capsuleCollider.height), Color.blue);
 	}
 
-	void SetState(PlayerState current)
+	void SetState(CharacterState current)
 	{
 		state = current;
 
 		switch(current)
 		{
-			case PlayerState.Grounded:
+			case CharacterState.Grounded:
 
 				if(!grounded)
 				{
@@ -236,21 +233,20 @@ public class Player : CombatActor
 				UpdateGroundVelocity();
 				break;
 
-			case PlayerState.InAir:
+			case CharacterState.InAir:
 
 				// Reset jump allowance if we ran off a ledge
 				//if(grounded && !jumping) jumpAllowance.Reset(Time.fixedDeltaTime * 4);
 
-				// Reset jump allowance if we were grounded
-				if(grounded) jumpAllowance.Reset(Time.fixedDeltaTime * 4);
+				// Reset jump allowance if we ran off a ledge OR jumped
+				if(grounded) character.jumpAllowance.Reset(Time.fixedDeltaTime * 4);
 
 				grounded = false;
 
 				// Ran out of coyote time and didn't jump
 				//if(!jumpAllowance.InProgress && remainingJumps == jumpCount) remainingJumps = 0;
 
-
-				if(!jumpAllowance.InProgress)
+				if(!character.jumpAllowance.InProgress)
 				{
 					// Ran out of coyote time and didn't jump
 					if(remainingJumps == jumpCount)
@@ -262,13 +258,13 @@ public class Player : CombatActor
 				}
 
 				// We passed the peak of the jump
-				if(jumping && rb.velocity.y <= 0f) jumping = false;
+				if(jumping && character.rb.velocity.y <= 0f) jumping = false;
 
-				rb.velocity = groundVelocity.WithY(rb.velocity.y);
-				rb.velocity += Physics.gravity * gravityScale * Time.fixedDeltaTime;
+				character.rb.velocity = groundVelocity.WithY(character.rb.velocity.y);
+				character.rb.velocity += Physics.gravity * gravityScale * Time.fixedDeltaTime;
 				break;
 
-			case PlayerState.Jump:
+			case CharacterState.Jump:
 
 				queueJump = false;
 				grounded = false;
@@ -276,31 +272,31 @@ public class Player : CombatActor
 				remainingJumps--;
 
 				var jumpVelocity = Mathf.Sqrt(2 * -Physics.gravity.y * gravityScale * jumpHeight);
-				rb.velocity = groundVelocity.WithY(jumpVelocity);
+				character.rb.velocity = groundVelocity.WithY(jumpVelocity);
 				break;
 		}
 	}
 
 	private void UpdateFeetPos()
 	{
-		var halfHeight = (capsuleCollider.height + groundCheckHeight) * 0.5f;
-		var radius = capsuleCollider.radius;
+		var halfHeight = (character.capsuleCollider.height + groundCheckHeight) * 0.5f;
+		var radius = character.capsuleCollider.radius;
 
 		var angle = Vector3.Angle(transform.up, Vector3.up);
 		if(angle > 90f) angle -= 180f;
 
-		feetPos = transform.position + transform.up * halfHeight + rb.velocity * Time.fixedDeltaTime;
+		feetPos = transform.position + transform.up * halfHeight + character.rb.velocity * Time.fixedDeltaTime;
 		feetPos += Vector3.down * (Mathf.Cos(angle * Mathf.Deg2Rad) * (halfHeight - radius) + radius);
 
-		rb.centerOfMass = transform.InverseTransformPoint(feetPos);
+		character.rb.centerOfMass = transform.InverseTransformPoint(feetPos);
 	}
 
 	protected void UpdateRotation()
 	{
 		
-		if(lockOn && lockOnTarget != null)
+		if(character.lockOn && character.lockOnTarget != null)
 		{
-			desiredDirection = (lockOnTarget.position - transform.position).WithY(0f).normalized;
+			desiredDirection = (character.lockOnTarget.GetLockOnPosition() - character.GetLockOnPosition()).WithY(0f).normalized;
 		}
 		else
 		{
@@ -308,9 +304,9 @@ public class Player : CombatActor
 			{
 				desiredDirection = groundVelocity.normalized;
 			}
-			else if(move != Vector3.zero)
+			else if(character.move != Vector3.zero)
 			{
-				desiredDirection = move;
+				desiredDirection = character.move;
 			}
 		}
 
@@ -326,11 +322,11 @@ public class Player : CombatActor
 
 		var rotation = rollAngle > 0f ? GetRotationWithRoll() : Quaternion.LookRotation(desiredDirection);
 
-		rb.RotateTo(angleController, angularVelocityController, rotation, Time.fixedDeltaTime);
+		character.rb.RotateTo(angleController, angularVelocityController, rotation, Time.fixedDeltaTime);
 
 		Quaternion GetRotationWithRoll()
 		{
-			var rollDir = lockOn && lockOnTarget != null && groundVelocity.magnitude >= minSpeed
+			var rollDir = character.lockOn && character.lockOnTarget != null && groundVelocity.magnitude >= minSpeed
 				? Quaternion.Inverse(Quaternion.LookRotation(desiredDirection)) * groundVelocity.normalized
 				: Vector3.forward;
 
@@ -339,52 +335,40 @@ public class Player : CombatActor
 		}
 	}
 
-	/*
-	protected override void ProcessInput()
+	public void UpdateAnimation()
 	{
-		base.ProcessInput();
-	}
-	*/
-
-	public Transform mesh = null;
-
-	private Vector3 lastPos1;
-	private Vector3 lastPos2;
-
-	protected override void ProcessAnimation()
-	{
-		if(animator == null || animator.runtimeAnimatorController == null) { return; }
+		if(character.animator == null || character.animator.runtimeAnimatorController == null) { return; }
 
 		//control speed percent in animator so that character walks or runs depending on speed
-		var animationSpeedPercent = paused ? 0f : groundVelocity.magnitude / runSpeed;
+		var animationSpeedPercent = character.IsPaused ? 0f : groundVelocity.magnitude / runSpeed;
 
 		//reference for animator
-		animator.SetFloat("speedPercent", animationSpeedPercent, speedSmoothTime, Time.deltaTime);
+		character.animator.SetFloat("speedPercent", animationSpeedPercent, speedSmoothTime, Time.deltaTime);
 
-		foreach(var parameter in animator.parameters)
+		foreach(var parameter in character.animator.parameters)
 		{
 			switch(parameter.name)
 			{
 				case "inAir":
-					animator.SetBool("inAir", !grounded);
+					character.animator.SetBool("inAir", !grounded);
 					break;
 				case "directionY":
-					var directionY = Mathf.Clamp01(Mathf.InverseLerp(1f, -1f, rb.velocity.y));
-					animator.SetFloat("directionY", directionY, speedSmoothTime, Time.deltaTime);
+					var directionY = Mathf.Clamp01(Mathf.InverseLerp(1f, -1f, character.rb.velocity.y));
+					character.animator.SetFloat("directionY", directionY, speedSmoothTime, Time.deltaTime);
 					break;
 				case "velocityX":
 					var velocityX = Vector3.Dot(groundVelocity, transform.right) / runSpeed;
-					animator.SetFloat("velocityX", velocityX, speedSmoothTime, Time.deltaTime);
+					character.animator.SetFloat("velocityX", velocityX, speedSmoothTime, Time.deltaTime);
 					break;
 				case "velocityZ":
 					var velocityZ = Vector3.Dot(groundVelocity, transform.forward) / runSpeed;
-					animator.SetFloat("velocityZ", velocityZ, speedSmoothTime, Time.deltaTime);
+					character.animator.SetFloat("velocityZ", velocityZ, speedSmoothTime, Time.deltaTime);
 					break;
 			}
 		}
 	}
 
-	public bool Jump()
+	public bool TryJump()
 	{
 		if(remainingJumps > 0)
 		{
@@ -395,7 +379,7 @@ public class Player : CombatActor
 		return false;
 	}
 
-	public bool Roll()
+	public bool TryRoll()
 	{
 		if(!ShouldRoll)
 		{
@@ -404,13 +388,5 @@ public class Player : CombatActor
 		}
 
 		return false;
-	}
-
-	public bool LightAttack()
-	{
-		if(isAttacking && !cancelOK) { return false; }
-
-		if(animator != null) { animator.SetTrigger("lightAttack"); }
-		return true;
 	}
 }

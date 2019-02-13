@@ -5,19 +5,15 @@ using System.Linq;
 public class AttackBehaviour : StateMachineBehaviour
 {
 	public bool applyRootMotion = false;
-	private Player player = null;
-	private Transform weaponTransform;
+	private MeleeCombat combat = null;
 
 	private bool fullyTransitioned = false;
 
 	// OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
 	override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
 	{
-		player = animator.GetComponent<Player>();
-		player.isAttacking = true;
-		player.hitObjects = new List<GameObject>();
-
-		weaponTransform = player.weapon.transform;
+		combat = animator.GetComponent<MeleeCombat>();
+		combat.isAttacking = true;
 
 		if(animator.parameters.Any(p => p.name == "isAttacking"))
 		{
@@ -34,8 +30,6 @@ public class AttackBehaviour : StateMachineBehaviour
 			fullyTransitioned = true;
 			animator.applyRootMotion = applyRootMotion;
 		}
-
-		//SetWeaponInitialPosition();
 	}
 
 	// OnStateExit is called when a transition ends and the state machine finishes evaluating this state
@@ -46,8 +40,8 @@ public class AttackBehaviour : StateMachineBehaviour
 			animator.SetBool("isAttacking", false);
 		}
 		animator.applyRootMotion = false;
-		player.isAttacking = false;
-		player.cancelOK = false;
+		combat.isAttacking = false;
+		combat.cancelOK = false;
 	}
 
 	// private void SetWeaponInitialPosition()

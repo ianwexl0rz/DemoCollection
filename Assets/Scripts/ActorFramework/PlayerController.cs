@@ -5,13 +5,11 @@ using InControl;
 public class PlayerController : ActorController
 {
 	private readonly InputBuffer inputBuffer = new InputBuffer();
-	private LockOnIndicator indicator;
 
 	protected override void Init(Actor actor)
 	{
 		var inactivePlayer = GameManager.I.GetFirstInactivePlayer();
-		actor.lockOnTarget = inactivePlayer ? inactivePlayer.transform : null;
-		indicator = GameManager.LockOnIndicator;
+		actor.lockOnTarget = inactivePlayer ? inactivePlayer : null;
 		inputBuffer.Clear();
 	}
 
@@ -24,13 +22,13 @@ public class PlayerController : ActorController
 		actor.move = CalculateMove(actor, inputDevice);
 		actor.lockOn = inputDevice.LeftTrigger.IsPressed || Input.GetMouseButton(1);
 
-		if(!(actor is Player player)) return;
+		if(!(actor is Character player)) return;
 
 		//player.aimingMode = gamePad.RightTrigger.IsPressed;
 		//player.Recenter = playerInput.RightStickButton.WasPressed;
 		
 		// Run
-		player.Run = inputDevice.RightTrigger.IsPressed || Input.GetKey(KeyCode.LeftShift);
+		player.motor.Run = inputDevice.RightTrigger.IsPressed || Input.GetKey(KeyCode.LeftShift);
 
 		// Roll
 		//player.ShouldRoll = inputDevice.Action2.IsPressed || Input.GetKey(KeyCode.LeftControl);
@@ -56,11 +54,6 @@ public class PlayerController : ActorController
 			}
 		}
 		*/
-	}
-
-	protected override void LateTick(Actor actor)
-	{
-		indicator.UpdatePosition(actor.lockOn, actor.lockOnTarget);
 	}
 
 	protected override void Clean(Actor actor)

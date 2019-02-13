@@ -8,6 +8,8 @@ public class LockOnIndicator : MonoBehaviour
 	private Material activeMaterial = null;
 	[SerializeField]
 	private Material inactiveMaterial = null;
+	[SerializeField]
+	private float heightOffset = 0.15f;
 
 	private new Renderer renderer;
 	private bool isActive;
@@ -18,7 +20,7 @@ public class LockOnIndicator : MonoBehaviour
 		renderer.sharedMaterial = inactiveMaterial;
 	}
 
-	public void UpdatePosition(bool lockedOn, Transform target)
+	public void UpdatePosition(bool lockedOn, Actor target)
     {
 		if(target == null)
 		{
@@ -30,10 +32,10 @@ public class LockOnIndicator : MonoBehaviour
 			gameObject.SetActive(true);
 		}
 
-	    var indicatorPos = target.position;
-		if(target.GetComponent<Actor>() is Player player)
+	    var indicatorPos = target.GetLockOnPosition();
+		if(target.GetComponent<Actor>() is Character player)
 	    {
-		    indicatorPos += (player.capsuleCollider.height + 0.2f) * Vector3.up;
+			indicatorPos += (player.capsuleCollider.height * 0.5f + heightOffset) * Vector3.up;
 	    }
 
 		if(lockedOn != isActive)

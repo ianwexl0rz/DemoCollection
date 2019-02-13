@@ -10,11 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_GeneratorAsset: {fileID: 0}
-  m_Script: {fileID: 11500000, guid: ce1734a8d3da60e419bb89b761fe8b0f, type: 3}
-  m_Name: ControlSettings
+  m_Script: {fileID: 11500000, guid: a53b9d10c1afd1b4c80353b0db64929f, type: 3}
+  m_Name: Enemy
   m_EditorClassIdentifier: 
-  configs:
-  - menuItem: {fileID: 11400000, guid: f9f02fbb12ce761428877d670b783ceb, type: 2}
-    value: 0
-  - menuItem: {fileID: 11400000, guid: f06aac22edb570646a7d5dac7cad1547, type: 2}
-    value: 1
+  behaviors:
+  - {fileID: 11400000, guid: 54875ae1de4fc02458ea4db3b360535c, type: 2}

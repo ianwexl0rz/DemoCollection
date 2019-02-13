@@ -7,7 +7,7 @@ public class HUD : MonoBehaviour
 
 	public void OnUpdate()
 	{
-		Player player = GameManager.I.activePlayer;
+		Character player = GameManager.I.activePlayer;
 
 		if(player == null) return;
 

@@ -2,6 +2,7 @@
 
 public class Timer
 {
+	private readonly Action onStart;
 	private readonly Action onEnd;
 	private readonly Action<float> overTime;
 
@@ -22,10 +23,10 @@ public class Timer
 
 		Duration = duration;
 		Persistent = persistent;
+		this.onStart = onStart;
 		this.onEnd = onEnd;
 		this.overTime = overTime;
 		this.normalizedTime = normalizedTime;
-		onStart?.Invoke();
 	}
 
 	public void SetDuration(float time)
@@ -35,6 +36,11 @@ public class Timer
 
 	public bool Tick(float dt)
 	{
+		if(Current < float.Epsilon)
+		{
+			onStart?.Invoke();
+		}
+
 		if(Math.Abs(Current - Duration) < float.Epsilon) return false;
 
 		Current += dt;

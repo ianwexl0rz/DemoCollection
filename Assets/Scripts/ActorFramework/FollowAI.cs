@@ -12,9 +12,7 @@ public class FollowAI : AIBehavior
 	{
 		if(actor.lockOnTarget == null) { return; }
 
-		Vector3 vector = actor.lockOnTarget.position - actor.transform.position;
-
-		vector = Vector3.Scale(vector, new Vector3(1, 0, 1));
+		Vector3 vector = (actor.lockOnTarget.GetLockOnPosition() - actor.GetLockOnPosition()).WithY(0f);
 
 		if(actor.move == Vector3.zero)
 		{
@@ -25,19 +23,19 @@ public class FollowAI : AIBehavior
 		}
 		else if(vector.magnitude > stopDistance)
 		{
-			if(actor is Player)
+			if(actor is Character)
 			{
-				Player player = actor as Player;
+				Character player = actor as Character;
 
-				if(!player.Run && vector.magnitude > startRunDistance)
+				if(!player.motor.Run && vector.magnitude > startRunDistance)
 				{
 					// Start running
-					player.Run = true;
+					player.motor.Run = true;
 				}
-				else if(player.Run && vector.magnitude < stopRunDistance)
+				else if(player.motor.Run && vector.magnitude < stopRunDistance)
 				{
 					// Stop running
-					player.Run = false;
+					player.motor.Run = false;
 				}
 			}
 

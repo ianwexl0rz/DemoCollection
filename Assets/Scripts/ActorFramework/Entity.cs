@@ -28,10 +28,11 @@ public class Entity : MonoBehaviour
 
 	protected bool paused;
 
-
+	public Action OnLateUpdate = delegate { };
 	protected Action OnEarlyFixedUpdate = delegate { };
 
 	public Rigidbody rb { get; private set; }
+	public bool IsPaused => paused;
 
 	// Use this for initialization
 	protected virtual void Awake()
@@ -61,9 +62,11 @@ public class Entity : MonoBehaviour
 	{
 	}
 
+	/*/
 	public virtual void OnLateUpdate()
 	{
 	}
+	//*/
 
 	public virtual void OnFixedUpdate()
 	{

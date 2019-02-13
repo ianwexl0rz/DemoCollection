@@ -7,7 +7,7 @@ using System.Collections;
 
 public class GameManager : MonoBehaviour
 {
-	public Player activePlayer;
+	public Character activePlayer;
 	public GameSettings gameSettings;
 	public ThirdPersonCamera mainCamera;
 	[SerializeField] private HUD hud = null;
@@ -23,8 +23,8 @@ public class GameManager : MonoBehaviour
 
 	private LockOnIndicator lockOnIndicator = null;
 	private int targetIndex;
-	private List<Player> playerCharacters;
-	private List<Player> potentialTargets;
+	private List<Character> playerCharacters;
+	private List<Character> potentialTargets;
 	private readonly List<Entity> entities = new List<Entity>();
 
 	public Action<bool> PauseAllPhysics = delegate { };
@@ -60,7 +60,7 @@ public class GameManager : MonoBehaviour
 		// Lock cursor by default.
 		//Cursor.lockState = CursorLockMode.Locked;
 
-		playerCharacters = new List<Player>(FindObjectsOfType<Player>());
+		playerCharacters = new List<Character>(FindObjectsOfType<Character>());
 
 		if(activePlayer != null)
 		{
@@ -78,7 +78,7 @@ public class GameManager : MonoBehaviour
 
 		SetActivePlayer(playerCharacters[targetIndex], true);
 
-		foreach(Player p in playerCharacters)
+		foreach(Character p in playerCharacters)
 		{
 			if(p != activePlayer) p.SetController(followerBrain);
 		}
@@ -94,7 +94,7 @@ public class GameManager : MonoBehaviour
 		}
 	}
 
-	private int SortByProximityToScreenCenter(Player a, Player b)
+	private int SortByProximityToScreenCenter(Character a, Character b)
 	{
 		var cam = Camera.main;
 		var p1 = cam.WorldToScreenPoint(a.transform.position);
@@ -112,13 +112,15 @@ public class GameManager : MonoBehaviour
 		{
 			yield return new WaitForFixedUpdate();
 
+			if(gamePaused) { continue; }
+
 			mainCamera.UpdateRotation(); // Update camera after physics
 
 			// Update the potential lock on target
 			if(!activePlayer.lockOn)
 			{
 				potentialTargets.Sort(SortByProximityToScreenCenter);
-				activePlayer.lockOnTarget = potentialTargets[0].transform;
+				activePlayer.lockOnTarget = potentialTargets[0];
 			}
 		}
 	}
@@ -145,7 +147,11 @@ public class GameManager : MonoBehaviour
 
 	public void LateUpdate()
 	{
-		entities.ForEach(entity => entity.OnLateUpdate());
+		if(!physicsPaused)
+		{
+			entities.ForEach(entity => entity.OnLateUpdate());
+			lockOnIndicator.UpdatePosition(activePlayer.lockOn, activePlayer.lockOnTarget);
+		}
 
 		if(InputManager.ActiveDevice.MenuWasPressed || Input.GetKeyDown(KeyCode.P) || togglePaused)
 		{
@@ -153,7 +159,7 @@ public class GameManager : MonoBehaviour
 			gamePaused = !gamePaused;
 			hud.SetPaused(gamePaused);
 			OnPauseGame(gamePaused);
-			Camera.main.GetComponent<BlurOptimized>().enabled = gamePaused;
+			//Camera.main.GetComponent<BlurOptimized>().enabled = gamePaused;
 		}
 
 		if(!gamePaused && hitPauseTimer > 0)
@@ -193,7 +199,7 @@ public class GameManager : MonoBehaviour
 		togglePaused = true;
 	}
 
-	public void ClickOnPlayer(Player newTarget)
+	public void ClickOnPlayer(Character newTarget)
 	{
 		// Only switch targets if the mouse is unlocked.
 		if(Cursor.lockState != CursorLockMode.Locked)
@@ -212,7 +218,7 @@ public class GameManager : MonoBehaviour
 		);
 	}
 
-	public Player GetFirstInactivePlayer()
+	public Character GetFirstInactivePlayer()
 	{
 		for(int i = 0; i < playerCharacters.Count; i++)
 		{
@@ -242,14 +248,14 @@ public class GameManager : MonoBehaviour
 		SetActivePlayer(playerCharacters[targetIndex]);
 	}
 
-	private void SetActivePlayer(Player newTarget, bool immediate = false)
+	private void SetActivePlayer(Character newTarget, bool immediate = false)
 	{
 		if(activePlayer == newTarget) { return; }
 
-		Player oldPlayer = activePlayer;
+		Character oldPlayer = activePlayer;
 		activePlayer = newTarget;
 
-		potentialTargets = new List<Player>(playerCharacters);
+		potentialTargets = new List<Character>(playerCharacters);
 		potentialTargets.Remove(activePlayer);
 
 		if(oldPlayer) oldPlayer.SetController(followerBrain); // Set the old active player to use Follower Brain

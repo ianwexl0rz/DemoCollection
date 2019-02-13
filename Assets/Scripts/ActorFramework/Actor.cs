@@ -7,7 +7,7 @@ public class Actor : Entity
 {
 	[SerializeField]
 	protected ActorController controller;
-	protected Animator animator;
+	public Animator animator { get; protected set; }
 
 	public bool isAwake = false;
 
@@ -15,10 +15,9 @@ public class Actor : Entity
 	public float look { get; set; }
 	public bool lockOn { get; set; }
 
-	public Transform lockOnTarget = null;
+	public Actor lockOnTarget = null;
 
 	public Action<Actor> UpdateController = delegate { };
-	public Action<Actor> LateUpdateController = delegate { };
 	public Action OnResetAbilities = null;
 	public Action UpdateAbilities = null;
 	public Action FixedUpdateAbilities = null;
@@ -28,8 +27,10 @@ public class Actor : Entity
 
 	public float health { get; set; }
 	public float maxHealth { get; protected set; }
-	public IEnumerator hitReaction;
+
 	protected readonly TimerGroup actorTimerGroup = new TimerGroup();
+	public Timer hitReaction { get; protected set; }
+	public Timer jumpAllowance { get; protected set; }
 
 	// Use this for initialization
 	protected override void Awake()
@@ -37,6 +38,9 @@ public class Actor : Entity
 		base.Awake();
 		animator = GetComponent<Animator>();
 		health = maxHealth = 100f;
+
+		actorTimerGroup.Add(hitReaction = new Timer());
+		actorTimerGroup.Add(jumpAllowance = new Timer());
 	}
 
 	private void Start()
@@ -58,14 +62,7 @@ public class Actor : Entity
 	public override void OnFixedUpdate()
 	{
 		base.OnFixedUpdate();
-		hitReaction?.MoveNext();
 		ProcessPhysics();
-	}
-
-	public override void OnLateUpdate()
-	{
-		base.OnLateUpdate();
-		LateUpdateController(this);
 	}
 
 	protected override void OnPauseEntity(bool value)
@@ -100,38 +97,24 @@ public class Actor : Entity
 		OnResetAbilities?.Invoke();
 	}
 
+	public virtual Vector3 GetLockOnPosition()
+	{
+		return transform.position;
+	}
+
 	protected override void OnGetHit(Vector3 hitPoint, Vector3 direction, AttackData data)
 	{
 		OnEarlyFixedUpdate = () =>
 		{
 			rb.AddForce(direction * data.knockback / Time.fixedDeltaTime, ForceMode.Acceleration);
-			rb.AddForceAtPosition(direction * data.knockback * 0.25f / Time.fixedDeltaTime, rb.position.WithY(hitPoint.y), ForceMode.Acceleration);
+			//rb.AddForceAtPosition(direction * data.knockback * 0.25f / Time.fixedDeltaTime, rb.position.WithY(hitPoint.y), ForceMode.Acceleration);
 		};
+
+		health = Mathf.Max(health - data.damage, 0f);
+		//Debug.Log("Hit " + name + " - HP: " + health + "/" + maxHealth);
+
+		// TODO: Get reaction type from AttackData 
+		var duration = Mathf.Max(hitReaction.Duration - hitReaction.Current, data.stun);
+		hitReaction.Reset(duration);
 	}
-
-	/*//
-	private IEnumerator SlowMo(float duration, float recovery)
-	{
-		yield return null;
-
-		float time = 0f;
-
-		while(time < duration)
-		{
-			Time.timeScale = 0.05f;
-			time += Time.unscaledDeltaTime;
-			yield return null;
-		}
-
-		time = 0f;
-		while(time < recovery)
-		{
-			Time.timeScale = Mathf.Lerp(0.02f, 1f, time / recovery);
-			time += Time.unscaledDeltaTime;
-			yield return null;
-		}
-
-		Time.timeScale = 1f;
-	}
-	//*/
 }
