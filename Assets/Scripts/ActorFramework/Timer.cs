@@ -36,7 +36,7 @@ public class Timer
 
 	public bool Tick(float dt)
 	{
-		if(Current < float.Epsilon)
+		if(Duration > 0 && Current < float.Epsilon)
 		{
 			onStart?.Invoke();
 		}

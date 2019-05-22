@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
 [CreateAssetMenu(fileName = "Follow", menuName = "Actor/AI Behaviors/Follow")]
-public class FollowAI : AIBehavior
+public class FollowAIBehavior : AIBehavior
 {
 	public float startDistance = 3f;
 	public float stopDistance = 2f;
@@ -11,6 +11,8 @@ public class FollowAI : AIBehavior
 	public override void Tick(Actor actor)
 	{
 		if(actor.lockOnTarget == null) { return; }
+
+		actor.lockOn = false;
 
 		Vector3 vector = (actor.lockOnTarget.GetLockOnPosition() - actor.GetLockOnPosition()).WithY(0f);
 

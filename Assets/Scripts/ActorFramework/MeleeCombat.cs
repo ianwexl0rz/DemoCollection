@@ -51,6 +51,7 @@ public class MeleeCombat : MonoBehaviour
 			if(weapon.forwardAxis != forwardAxis)
 			{
 				var localRot = Quaternion.FromToRotation(weapon.forwardAxis, forwardAxis);
+				//w.localPosition = localRot * w.localPosition;
 				w.localRotation = localRot;
 			}
 		}
@@ -106,7 +107,14 @@ public class MeleeCombat : MonoBehaviour
 
 	public void CancelOK()
 	{
-		cancelOK = true;
+		isAttacking = false;
+
+		if(actor is Character character)
+		{
+			character.InputEnabled = true;
+		}
+
+		//cancelOK = true;
 	}
 
 	public void CheckHits()
@@ -179,7 +187,9 @@ public class MeleeCombat : MonoBehaviour
 		lastEnd = end;
 
 		if(weapon.showTrail)
+		{
 			weaponTrail.UpdateAndShowMesh(localPoints, colors);
+		}
 	}
 
 	public void CheckHit(Vector3 origin, Vector3 end)
@@ -192,12 +202,16 @@ public class MeleeCombat : MonoBehaviour
 		foreach(RaycastHit hit in hits)
 		{
 			GameObject go = hit.collider.gameObject;
+
+			// Hit self
+			if(go.transform.root == transform) { continue; }
+
 			Entity entity = go.GetComponentInChildren<Entity>() ?? go.GetComponentInParent<Entity>();
 
 			// Get GO of the entity because we may have hit a child GO collider
 			if(entity != null) go = entity.gameObject;
 
-			if(hitObjects.Contains(go) || go.transform.root == transform) { continue; }
+			if(hitObjects.Contains(go)) { continue; }
 
 			if(entity != null)
 			{
@@ -222,59 +236,10 @@ public class MeleeCombat : MonoBehaviour
 
 		pointBuffer.Clear();
 		colors.Clear();
+
 		if(weapon.showTrail)
-			weaponTrail.HideMesh();
-	}
-
-	/*
-	public void UpdateAndShowMesh(List<Vector3> pointBuffer, List<Color> colors = null)
-	{
-		if(pointBuffer.Count < 4) return;
-
-		renderer.enabled = true;
-
-		Vector3[] vertices = new Vector3[pointBuffer.Count];
-		Vector2[] uv = new Vector2[pointBuffer.Count];
-		int[] triangles = new int[(pointBuffer.Count - 2) * 3];
-		Color[] newColors = new Color[pointBuffer.Count];
-
-		for(int n = 0; n < pointBuffer.Count; n += 2)
 		{
-			vertices[n] = pointBuffer[n];
-			vertices[n + 1] = pointBuffer[n + 1];
-
-			var alpha = n / (pointBuffer.Count - 2f);
-			alpha *= alpha;
-
-			var c = colors?[n] ?? Color.black;
-			c = new Color(c.r, c.g, c.b, 0f);
-			newColors[n] = c;
-
-			c = colors?[n + 1] ?? Color.black;
-			c = new Color(c.r, c.g, c.b, alpha);
-			newColors[n + 1] = c;
-
-			float uvRatio = (float)n / pointBuffer.Count;
-			uv[n] = new Vector2(uvRatio, 0);
-			uv[n + 1] = new Vector2(uvRatio, 1);
-
-			if(n >= 2)
-			{
-				var ti = (n - 2) * 3;
-				triangles[ti] = n - 2;
-				triangles[ti + 1] = triangles[ti + 5] = n - 1;
-				triangles[ti + 2] = triangles[ti + 4] = n;
-				triangles[ti + 3] = n + 1;
-			}
+			weaponTrail.HideMesh();
 		}
-
-		mesh.Clear();
-		mesh.vertices = vertices;
-		mesh.colors = newColors;
-		mesh.uv = uv;
-		mesh.triangles = triangles;
-
-		mesh = mesh.MakeDoubleSided();
 	}
-	*/
 }

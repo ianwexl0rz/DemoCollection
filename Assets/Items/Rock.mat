@@ -142,7 +142,7 @@ Material:
     - __dirty: 0
     m_Colors:
     - _ASEOutlineColor: {r: 0, g: 0, b: 0, a: 0}
-    - _Color: {r: 0.8509804, g: 0.8070869, b: 0.79736865, a: 1}
+    - _Color: {r: 0.62104803, g: 0.66481656, b: 0.67800003, a: 1}
     - _Color0: {r: 1, g: 0.811, b: 0.66400003, a: 1}
     - _Color1: {r: 1, g: 0, b: 0, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}

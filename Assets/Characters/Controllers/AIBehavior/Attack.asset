@@ -10,10 +10,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_GeneratorAsset: {fileID: 0}
-  m_Script: {fileID: 11500000, guid: a53b9d10c1afd1b4c80353b0db64929f, type: 3}
-  m_Name: Follower
+  m_Script: {fileID: 11500000, guid: bab0114f29bf4e34585d0d2ce9421557, type: 3}
+  m_Name: Attack
   m_EditorClassIdentifier: 
-  behaviorGroups:
-  - condition: 0
-    behaviors:
-    - {fileID: 11400000, guid: 2855722bd096d4941bf4480d9b350804, type: 2}

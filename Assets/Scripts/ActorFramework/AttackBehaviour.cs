@@ -13,7 +13,7 @@ public class AttackBehaviour : StateMachineBehaviour
 	override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
 	{
 		combat = animator.GetComponent<MeleeCombat>();
-		combat.isAttacking = true;
+		//combat.isAttacking = true;
 
 		if(animator.parameters.Any(p => p.name == "isAttacking"))
 		{
@@ -40,8 +40,8 @@ public class AttackBehaviour : StateMachineBehaviour
 			animator.SetBool("isAttacking", false);
 		}
 		animator.applyRootMotion = false;
-		combat.isAttacking = false;
-		combat.cancelOK = false;
+		//combat.isAttacking = false;
+		//combat.cancelOK = false;
 	}
 
 	// private void SetWeaponInitialPosition()

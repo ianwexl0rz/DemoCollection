@@ -10,6 +10,8 @@ public class Actor : Entity
 	public Animator animator { get; protected set; }
 
 	public bool isAwake = false;
+	public bool InputEnabled { get; set; }
+
 
 	public Vector3 move { get; set; }
 	public float look { get; set; }
@@ -36,11 +38,28 @@ public class Actor : Entity
 	protected override void Awake()
 	{
 		base.Awake();
-		animator = GetComponent<Animator>();
+		animator = GetComponentInChildren<Animator>();
 		health = maxHealth = 100f;
 
-		actorTimerGroup.Add(hitReaction = new Timer());
+		InputEnabled = true;
+
+		actorTimerGroup.Add(hitReaction = new Timer(0f, StartHitReaction, EndHitReaction, true));
 		actorTimerGroup.Add(jumpAllowance = new Timer());
+	}
+
+	private void StartHitReaction()
+	{
+		if(this is Character character)
+			character.meleeCombat.isAttacking = false;
+
+		InputEnabled = false;
+		Debug.LogFormat("Started Hit Reaction with duration of {0}.", hitReaction.Duration);
+	}
+
+	private void EndHitReaction()
+	{
+		InputEnabled = true;
+		Debug.Log("Ended Hit Reaction.");
 	}
 
 	private void Start()
@@ -116,5 +135,11 @@ public class Actor : Entity
 		// TODO: Get reaction type from AttackData 
 		var duration = Mathf.Max(hitReaction.Duration - hitReaction.Current, data.stun);
 		hitReaction.Reset(duration);
+
+		if(this is Character character)
+		{
+			character.meleeCombat.isAttacking = false;
+			character.meleeCombat.cancelOK = true;
+		}
 	}
 }

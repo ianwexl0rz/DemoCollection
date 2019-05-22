@@ -1,13 +1,15 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
+using UnityEditor;
 
-[RequireComponent(typeof(Animator), typeof(Rigidbody))]
+[RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(CharacterMotor), typeof(MeleeCombat))]
 public class Character : Actor
 {
 	public CharacterMotor motor { get; private set; }
 	public CapsuleCollider capsuleCollider { get; private set; }
-	protected MeleeCombat meleeCombat = null;
+	public MeleeCombat meleeCombat { get; private set; }
 
 	protected override void Awake()
 	{
@@ -47,7 +49,11 @@ public class Character : Actor
 
 	public bool LightAttack()
 	{
-		if(meleeCombat.isAttacking && !meleeCombat.cancelOK) { return false; }
+		if(meleeCombat.isAttacking || !InputEnabled) { return false; }
+
+		meleeCombat.isAttacking = true;
+		InputEnabled = false;
+		//meleeCombat.cancelOK = false;
 
 		if(animator != null) { animator.SetTrigger("lightAttack"); }
 		return true;

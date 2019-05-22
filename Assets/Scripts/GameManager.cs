@@ -76,12 +76,16 @@ public class GameManager : MonoBehaviour
 		// 1) can take advantage of object pooling
 		// 2) load character status from room data
 
+		SetActivePlayer(activePlayer, true);
+
+		/*
 		SetActivePlayer(playerCharacters[targetIndex], true);
 
 		foreach(Character p in playerCharacters)
 		{
 			if(p != activePlayer) p.SetController(followerBrain);
 		}
+		*/
 	}
 
 	private void FixedUpdate()
@@ -130,7 +134,7 @@ public class GameManager : MonoBehaviour
 		if(physicsPaused) { return; }
 
 		// Swap characters
-		if(InputManager.ActiveDevice.Action4.WasPressed || Input.GetKeyDown(KeyCode.Tab)) { CyclePlayer(); }
+		//if(InputManager.ActiveDevice.Action4.WasPressed || Input.GetKeyDown(KeyCode.Tab)) { CyclePlayer(); }
 
 		// Hold the right bumper for slow-mo!
 		Time.timeScale = InputManager.ActiveDevice.RightBumper.IsPressed || Input.GetKey(KeyCode.LeftAlt) ? 0.25f : 1f;
@@ -250,15 +254,15 @@ public class GameManager : MonoBehaviour
 
 	private void SetActivePlayer(Character newTarget, bool immediate = false)
 	{
-		if(activePlayer == newTarget) { return; }
+		//if(activePlayer == newTarget) { return; }
 
-		Character oldPlayer = activePlayer;
+		//Character oldPlayer = activePlayer;
 		activePlayer = newTarget;
 
 		potentialTargets = new List<Character>(playerCharacters);
 		potentialTargets.Remove(activePlayer);
 
-		if(oldPlayer) oldPlayer.SetController(followerBrain); // Set the old active player to use Follower Brain
+		//if(oldPlayer) oldPlayer.SetController(followerBrain); // Set the old active player to use Follower Brain
 		activePlayer.SetController(playerBrain); // Set the active player to use Player Brain
 		mainCamera.SetTarget(activePlayer, immediate); // Set the camera to follow the active player
 	}

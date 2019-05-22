@@ -154,6 +154,7 @@ public class CharacterMotor : MonoBehaviour
 		if(character.animator.applyRootMotion)
 		{
 			groundVelocity = Vector3.zero;
+			character.rb.angularVelocity = Vector3.zero;
 			return;
 		}
 
@@ -168,19 +169,22 @@ public class CharacterMotor : MonoBehaviour
 			groundVelocity = character.rb.velocity.WithY(0f);
 		}
 
-		if(!character.hitReaction.InProgress)
+		var desiredVel = groundVelocity;
+
+		if(character.InputEnabled && !character.hitReaction.InProgress)
 		{
-			var speedLimit = Run || ShouldRoll ? runSpeed : walkSpeed;
-
 			//TODO: Limit acceleration based on the amount of space in front of you
-			var desiredVel = groundVelocity + character.move.normalized * (grounded ? acceleration : acceleration * 0.25f) * dt;
-			var speed = desiredVel.magnitude;
-
-			//TODO: Variable speed based on analog input
-			if(grounded && !ShouldRoll) speed = Mathf.Max(desiredVel.magnitude - friction * dt, 0f);
-			speed = Mathf.Min(speed, speedLimit);
-			groundVelocity = (desiredVel.normalized * speed).WithY(0f);
+			desiredVel += character.move.normalized * (grounded ? acceleration : acceleration * 0.25f) * dt;
 		}
+
+		var speed = desiredVel.magnitude;
+
+		//TODO: Variable speed based on analog input
+		if(grounded && !ShouldRoll) speed = Mathf.Max(desiredVel.magnitude - friction * dt, 0f);
+
+		var speedLimit = Run || ShouldRoll ? runSpeed : walkSpeed;
+		speed = Mathf.Min(speed, speedLimit);
+		groundVelocity = (desiredVel.normalized * speed).WithY(0f);
 
 		UpdateFeetPos();
 
@@ -293,20 +297,25 @@ public class CharacterMotor : MonoBehaviour
 
 	protected void UpdateRotation()
 	{
-		
-		if(character.lockOn && character.lockOnTarget != null)
+		// TODO: Lock direction of a roll when roll is initiated
+
+		if(character.InputEnabled)
 		{
-			desiredDirection = (character.lockOnTarget.GetLockOnPosition() - character.GetLockOnPosition()).WithY(0f).normalized;
-		}
-		else
-		{
-			if(grounded && ShouldRoll && groundVelocity.sqrMagnitude > 0f)
+
+			if(character.lockOn && character.lockOnTarget != null)
 			{
-				desiredDirection = groundVelocity.normalized;
+				desiredDirection = (character.lockOnTarget.GetLockOnPosition() - character.GetLockOnPosition()).WithY(0f).normalized;
 			}
-			else if(character.move != Vector3.zero)
+			else
 			{
-				desiredDirection = character.move;
+				if(grounded && ShouldRoll && groundVelocity.sqrMagnitude > 0f)
+				{
+					desiredDirection = groundVelocity.normalized;
+				}
+				else if(character.move != Vector3.zero)
+				{
+					desiredDirection = character.move;
+				}
 			}
 		}
 
@@ -317,7 +326,11 @@ public class CharacterMotor : MonoBehaviour
 		{
 			ShouldRoll = false;
 			rollAngle += rollSpeed;
-			if(rollAngle >= 360f) rollAngle = 0f;
+
+			if(rollAngle >= 360f)
+			{
+				rollAngle = 0f;
+			}
 		}
 
 		var rotation = rollAngle > 0f ? GetRotationWithRoll() : Quaternion.LookRotation(desiredDirection);
@@ -363,6 +376,9 @@ public class CharacterMotor : MonoBehaviour
 				case "velocityZ":
 					var velocityZ = Vector3.Dot(groundVelocity, transform.forward) / runSpeed;
 					character.animator.SetFloat("velocityZ", velocityZ, speedSmoothTime, Time.deltaTime);
+					break;
+				case "InHitStun":
+					character.animator.SetBool("InHitStun", character.hitReaction.InProgress);
 					break;
 			}
 		}
