@@ -507,5 +507,17 @@ namespace AmplifyShaderEditor
 			m_materialValue = val;
 			m_requireMaterialUpdate = true;
 		}
+		public override void GeneratePPSInfo( ref string propertyDeclaration, ref string propertySet )
+		{
+			string additionalHeaders = string.Empty;
+			if( !m_floatMode )
+			{
+				additionalHeaders = string.Format( "Range( {0}, {1} ),", m_min, m_max );
+			}
+			propertyDeclaration += string.Format( ASEPPSHelperTool.PPSPropertyDecFormat, additionalHeaders, PropertyInspectorName,
+			ASEPPSHelperTool.WireToPPSType[ WirePortDataType.FLOAT ], PropertyName, m_defaultValue );
+
+			propertySet += string.Format( ASEPPSHelperTool.PPSPropertySetFormat, "Float", PropertyName );
+		}
 	}
 }

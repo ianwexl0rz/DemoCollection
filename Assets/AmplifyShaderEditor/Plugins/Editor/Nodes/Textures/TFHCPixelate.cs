@@ -43,9 +43,9 @@ namespace AmplifyShaderEditor
 			string pixelatedUV = "half2 pixelateduv" + OutputId + " = half2((int)(" + uv + ".x / pixelWidth" + OutputId + ") * pixelWidth" + OutputId + ", (int)(" + uv + ".y / pixelHeight" + OutputId + ") * pixelHeight" + OutputId + ");";
 			string result = "pixelateduv" + OutputId;
 
-			dataCollector.AddToLocalVariables( UniqueId, pixelWidth);
-			dataCollector.AddToLocalVariables( UniqueId, pixelHeight);
-			dataCollector.AddToLocalVariables( UniqueId, pixelatedUV);
+			dataCollector.AddLocalVariable( UniqueId, pixelWidth );
+			dataCollector.AddLocalVariable( UniqueId, pixelHeight );
+			dataCollector.AddLocalVariable( UniqueId, pixelatedUV );
 
 			return GetOutputVectorItem( 0, outputId, result);
 

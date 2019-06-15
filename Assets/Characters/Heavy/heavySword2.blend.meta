@@ -1,101 +1,296 @@
 fileFormatVersion: 2
 guid: 8c96fbc477da0405b9c477725bb7a7fe
 ModelImporter:
-  serializedVersion: 23
-  fileIDToRecycleName:
-    100000: Armature
-    100002: armControl_L
-    100004: bangs1
-    100006: bangs2
-    100008: Body
-    100010: Body_001
-    100012: Cube
-    100014: foot_L
-    100016: foot_R
-    100018: foreArm_L
-    100020: foreArm_R
-    100022: handNull_L
-    100024: handNull_R
-    100026: head
-    100028: //RootNode
-    100030: poleLeg_L
-    100032: poleLeg_R
-    100034: rootBone
-    100036: shin_L
-    100038: shin_R
-    100040: sideBangs1_L
-    100042: sideBangs1_R
-    100044: sideBangs2_L
-    100046: sideBangs2_R
-    100048: speedSword
-    100050: thigh_L
-    100052: thigh_R
-    100054: upperArm_L
-    100056: upperArm_R
-    100058: weaponBone_L
-    400000: Armature
-    400002: armControl_L
-    400004: bangs1
-    400006: bangs2
-    400008: Body
-    400010: Body_001
-    400012: Cube
-    400014: foot_L
-    400016: foot_R
-    400018: foreArm_L
-    400020: foreArm_R
-    400022: handNull_L
-    400024: handNull_R
-    400026: head
-    400028: //RootNode
-    400030: poleLeg_L
-    400032: poleLeg_R
-    400034: rootBone
-    400036: shin_L
-    400038: shin_R
-    400040: sideBangs1_L
-    400042: sideBangs1_R
-    400044: sideBangs2_L
-    400046: sideBangs2_R
-    400048: speedSword
-    400050: thigh_L
-    400052: thigh_R
-    400054: upperArm_L
-    400056: upperArm_R
-    400058: weaponBone_L
-    2100000: Material__heavy_culled_hair_psd
-    2100002: Material__heavy_culled_clothes_psd
-    2100004: Material_001__sword_UV_psd
-    4300000: Cube
-    4300002: speedSword
-    7400000: Default Take
-    7400002: dodgeBackwards
-    7400004: dodgeForward
-    7400006: dodgeL
-    7400008: dodgeR
-    7400010: idle
-    7400012: jump
-    7400014: jumpback
-    7400016: runfaster
-    7400018: runslow
-    7400020: swing
-    7400022: swing_forward
-    7400024: swing_forward_holds
-    7400026: swordSwing
-    7400028: swordSwing2
-    7400030: walk
-    7400032: walk_sidewaysL
-    7400034: walk_sidewaysR
-    7400036: walk2
-    7400038: walk3
-    7400040: walkBackwards
-    7400042: jump_start
-    7400044: jump_apogee
-    7400046: jump_land
-    9500000: //RootNode
-    13700000: Cube
-    13700002: speedSword
-    2186277476908879412: ImportLogs
+  serializedVersion: 25
+  internalIDToNameTable:
+  - first:
+      1: 100000
+    second: Armature
+  - first:
+      1: 100002
+    second: armControl_L
+  - first:
+      1: 100004
+    second: bangs1
+  - first:
+      1: 100006
+    second: bangs2
+  - first:
+      1: 100008
+    second: Body
+  - first:
+      1: 100010
+    second: Body_001
+  - first:
+      1: 100012
+    second: Cube
+  - first:
+      1: 100014
+    second: foot_L
+  - first:
+      1: 100016
+    second: foot_R
+  - first:
+      1: 100018
+    second: foreArm_L
+  - first:
+      1: 100020
+    second: foreArm_R
+  - first:
+      1: 100022
+    second: handNull_L
+  - first:
+      1: 100024
+    second: handNull_R
+  - first:
+      1: 100026
+    second: head
+  - first:
+      1: 100028
+    second: //RootNode
+  - first:
+      1: 100030
+    second: poleLeg_L
+  - first:
+      1: 100032
+    second: poleLeg_R
+  - first:
+      1: 100034
+    second: rootBone
+  - first:
+      1: 100036
+    second: shin_L
+  - first:
+      1: 100038
+    second: shin_R
+  - first:
+      1: 100040
+    second: sideBangs1_L
+  - first:
+      1: 100042
+    second: sideBangs1_R
+  - first:
+      1: 100044
+    second: sideBangs2_L
+  - first:
+      1: 100046
+    second: sideBangs2_R
+  - first:
+      1: 100048
+    second: speedSword
+  - first:
+      1: 100050
+    second: thigh_L
+  - first:
+      1: 100052
+    second: thigh_R
+  - first:
+      1: 100054
+    second: upperArm_L
+  - first:
+      1: 100056
+    second: upperArm_R
+  - first:
+      1: 100058
+    second: weaponBone_L
+  - first:
+      4: 400000
+    second: Armature
+  - first:
+      4: 400002
+    second: armControl_L
+  - first:
+      4: 400004
+    second: bangs1
+  - first:
+      4: 400006
+    second: bangs2
+  - first:
+      4: 400008
+    second: Body
+  - first:
+      4: 400010
+    second: Body_001
+  - first:
+      4: 400012
+    second: Cube
+  - first:
+      4: 400014
+    second: foot_L
+  - first:
+      4: 400016
+    second: foot_R
+  - first:
+      4: 400018
+    second: foreArm_L
+  - first:
+      4: 400020
+    second: foreArm_R
+  - first:
+      4: 400022
+    second: handNull_L
+  - first:
+      4: 400024
+    second: handNull_R
+  - first:
+      4: 400026
+    second: head
+  - first:
+      4: 400028
+    second: //RootNode
+  - first:
+      4: 400030
+    second: poleLeg_L
+  - first:
+      4: 400032
+    second: poleLeg_R
+  - first:
+      4: 400034
+    second: rootBone
+  - first:
+      4: 400036
+    second: shin_L
+  - first:
+      4: 400038
+    second: shin_R
+  - first:
+      4: 400040
+    second: sideBangs1_L
+  - first:
+      4: 400042
+    second: sideBangs1_R
+  - first:
+      4: 400044
+    second: sideBangs2_L
+  - first:
+      4: 400046
+    second: sideBangs2_R
+  - first:
+      4: 400048
+    second: speedSword
+  - first:
+      4: 400050
+    second: thigh_L
+  - first:
+      4: 400052
+    second: thigh_R
+  - first:
+      4: 400054
+    second: upperArm_L
+  - first:
+      4: 400056
+    second: upperArm_R
+  - first:
+      4: 400058
+    second: weaponBone_L
+  - first:
+      21: 2100000
+    second: Material__heavy_culled_hair_psd
+  - first:
+      21: 2100002
+    second: Material__heavy_culled_clothes_psd
+  - first:
+      21: 2100004
+    second: Material_001__sword_UV_psd
+  - first:
+      43: 4300000
+    second: Cube
+  - first:
+      43: 4300002
+    second: speedSword
+  - first:
+      74: 7400000
+    second: Default Take
+  - first:
+      74: 7400002
+    second: dodgeBackwards
+  - first:
+      74: 7400004
+    second: dodgeForward
+  - first:
+      74: 7400006
+    second: dodgeL
+  - first:
+      74: 7400008
+    second: dodgeR
+  - first:
+      74: 7400010
+    second: idle
+  - first:
+      74: 7400012
+    second: jump
+  - first:
+      74: 7400014
+    second: jumpback
+  - first:
+      74: 7400016
+    second: runfaster
+  - first:
+      74: 7400018
+    second: runslow
+  - first:
+      74: 7400020
+    second: swing
+  - first:
+      74: 7400022
+    second: swing_forward
+  - first:
+      74: 7400024
+    second: swing_forward_holds
+  - first:
+      74: 7400026
+    second: swordSwing
+  - first:
+      74: 7400028
+    second: swordSwing2
+  - first:
+      74: 7400030
+    second: walk
+  - first:
+      74: 7400032
+    second: walk_sidewaysL
+  - first:
+      74: 7400034
+    second: walk_sidewaysR
+  - first:
+      74: 7400036
+    second: walk2
+  - first:
+      74: 7400038
+    second: walk3
+  - first:
+      74: 7400040
+    second: walkBackwards
+  - first:
+      74: 7400042
+    second: jump_start
+  - first:
+      74: 7400044
+    second: jump_apogee
+  - first:
+      74: 7400046
+    second: jump_land
+  - first:
+      95: 9500000
+    second: //RootNode
+  - first:
+      137: 13700000
+    second: Cube
+  - first:
+      137: 13700002
+    second: speedSword
+  - first:
+      41386430: 2186277476908879412
+    second: ImportLogs
+  - first:
+      74: 926154299442691296
+    second: lightAttack1
+  - first:
+      74: -7651997154070197761
+    second: lightAttack2
+  - first:
+      74: 5968319991578623653
+    second: lightAttack3
   externalObjects:
   - first:
       type: UnityEngine:Material
@@ -124,9 +319,51 @@ ModelImporter:
     optimizeGameObjects: 0
     motionNodeName: 
     rigImportErrors: 
-    rigImportWarnings: "Avatar Rig Configuration mis-match. Inbetween bone rotation in configuration does not match rotation in animation file:\n\t'bangs1' : rotation error = 2.722463 deg\n"
+    rigImportWarnings: "Avatar Rig Configuration mis-match. Inbetween bone rotation
+      in configuration does not match rotation in animation file:\n\t'bangs1' : rotation
+      error = 2.722463 deg\n"
     animationImportErrors: 
-    animationImportWarnings: "\nClip 'Default Take' has import animation warnings that might lower retargeting quality:\nNote: Activate translation DOF on avatar to improve retargeting quality.\n\t'bangs1' is inbetween humanoid transforms and has rotation animation that will be discarded.\n\nClip 'dodgeL' has import animation warnings that might lower retargeting quality:\nNote: Activate translation DOF on avatar to improve retargeting quality.\n\t'foot_R' has scale animation that will be discarded.\n\nClip 'runfaster' has import animation warnings that might lower retargeting quality:\nNote: Activate translation DOF on avatar to improve retargeting quality.\n\t'bangs1' is inbetween humanoid transforms and has rotation animation that will be discarded.\n\nClip 'swing' has import animation warnings that might lower retargeting quality:\nNote: Activate translation DOF on avatar to improve retargeting quality.\n\t'bangs1' is inbetween humanoid transforms and has rotation animation that will be discarded.\n\nClip 'swing_forward' has import animation warnings that might lower retargeting quality:\nNote: Activate translation DOF on avatar to improve retargeting quality.\n\t'bangs1' is inbetween humanoid transforms and has rotation animation that will be discarded.\n\nClip 'swing_forward_holds' has import animation warnings that might lower retargeting quality:\nNote: Activate translation DOF on avatar to improve retargeting quality.\n\t'bangs1' is inbetween humanoid transforms and has rotation animation that will be discarded.\n\nClip 'swordSwing2' has import animation warnings that might lower retargeting quality:\nNote: Activate translation DOF on avatar to improve retargeting quality.\n\t'sideBangs1_L' has translation animation that will be discarded.\n\t'bangs1' is inbetween humanoid transforms and has rotation animation that will be discarded.\n\t'sideBangs1_R' has translation animation that will be discarded.\n\nClip 'walk_sidewaysL' has import animation warnings that might lower retargeting quality:\nNote: Activate translation DOF on avatar to improve retargeting quality.\n\t'sideBangs1_L' has translation animation that will be discarded.\n\t'sideBangs1_R' has translation animation that will be discarded.\n\nClip 'walk_sidewaysR' has import animation warnings that might lower retargeting quality:\nNote: Activate translation DOF on avatar to improve retargeting quality.\n\t'sideBangs1_L' has translation animation that will be discarded.\n\t'sideBangs1_R' has translation animation that will be discarded.\n\nClip 'walk2' has import animation warnings that might lower retargeting quality:\nNote: Activate translation DOF on avatar to improve retargeting quality.\n\t'sideBangs1_L' has translation animation that will be discarded.\n\t'bangs1' is inbetween humanoid transforms and has rotation animation that will be discarded.\n\t'sideBangs1_R' has translation animation that will be discarded.\n\nClip 'walk3' has import animation warnings that might lower retargeting quality:\nNote: Activate translation DOF on avatar to improve retargeting quality.\n\t'sideBangs1_L' has translation animation that will be discarded.\n\t'bangs1' is inbetween humanoid transforms and has rotation animation that will be discarded.\n\t'sideBangs1_R' has translation animation that will be discarded.\n"
+    animationImportWarnings: "\nClip 'Default Take' has import animation warnings
+      that might lower retargeting quality:\nNote: Activate translation DOF on avatar
+      to improve retargeting quality.\n\t'bangs1' is inbetween humanoid transforms
+      and has rotation animation that will be discarded.\n\nClip 'dodgeL' has import
+      animation warnings that might lower retargeting quality:\nNote: Activate translation
+      DOF on avatar to improve retargeting quality.\n\t'foot_R' has scale animation
+      that will be discarded.\n\nClip 'runfaster' has import animation warnings that
+      might lower retargeting quality:\nNote: Activate translation DOF on avatar to
+      improve retargeting quality.\n\t'bangs1' is inbetween humanoid transforms and
+      has rotation animation that will be discarded.\n\nClip 'swing' has import animation
+      warnings that might lower retargeting quality:\nNote: Activate translation DOF
+      on avatar to improve retargeting quality.\n\t'bangs1' is inbetween humanoid
+      transforms and has rotation animation that will be discarded.\n\nClip 'swing_forward'
+      has import animation warnings that might lower retargeting quality:\nNote: Activate
+      translation DOF on avatar to improve retargeting quality.\n\t'bangs1' is inbetween
+      humanoid transforms and has rotation animation that will be discarded.\n\nClip
+      'swing_forward_holds' has import animation warnings that might lower retargeting
+      quality:\nNote: Activate translation DOF on avatar to improve retargeting quality.\n\t'bangs1'
+      is inbetween humanoid transforms and has rotation animation that will be discarded.\n\nClip
+      'swordSwing2' has import animation warnings that might lower retargeting quality:\nNote:
+      Activate translation DOF on avatar to improve retargeting quality.\n\t'sideBangs1_L'
+      has translation animation that will be discarded.\n\t'bangs1' is inbetween humanoid
+      transforms and has rotation animation that will be discarded.\n\t'sideBangs1_R'
+      has translation animation that will be discarded.\n\nClip 'walk_sidewaysL' has
+      import animation warnings that might lower retargeting quality:\nNote: Activate
+      translation DOF on avatar to improve retargeting quality.\n\t'sideBangs1_L'
+      has translation animation that will be discarded.\n\t'sideBangs1_R' has translation
+      animation that will be discarded.\n\nClip 'walk_sidewaysR' has import animation
+      warnings that might lower retargeting quality:\nNote: Activate translation DOF
+      on avatar to improve retargeting quality.\n\t'sideBangs1_L' has translation
+      animation that will be discarded.\n\t'sideBangs1_R' has translation animation
+      that will be discarded.\n\nClip 'walk2' has import animation warnings that might
+      lower retargeting quality:\nNote: Activate translation DOF on avatar to improve
+      retargeting quality.\n\t'sideBangs1_L' has translation animation that will be
+      discarded.\n\t'bangs1' is inbetween humanoid transforms and has rotation animation
+      that will be discarded.\n\t'sideBangs1_R' has translation animation that will
+      be discarded.\n\nClip 'walk3' has import animation warnings that might lower
+      retargeting quality:\nNote: Activate translation DOF on avatar to improve retargeting
+      quality.\n\t'sideBangs1_L' has translation animation that will be discarded.\n\t'bangs1'
+      is inbetween humanoid transforms and has rotation animation that will be discarded.\n\t'sideBangs1_R'
+      has translation animation that will be discarded.\n"
     animationRetargetingWarnings: 
     animationDoRetargetingWarnings: 0
     importAnimatedCustomProperties: 0
@@ -143,6 +380,7 @@ ModelImporter:
     - serializedVersion: 16
       name: Default Take
       takeName: Default Take
+      internalID: 7400000
       firstFrame: -1
       lastFrame: 79
       wrapMode: 0
@@ -231,6 +469,7 @@ ModelImporter:
     - serializedVersion: 16
       name: dodgeBackwards
       takeName: dodgeBackwards
+      internalID: 7400002
       firstFrame: 0
       lastFrame: 21
       wrapMode: 0
@@ -259,6 +498,7 @@ ModelImporter:
     - serializedVersion: 16
       name: dodgeForward
       takeName: dodgeForward
+      internalID: 7400004
       firstFrame: 0
       lastFrame: 21
       wrapMode: 0
@@ -287,6 +527,7 @@ ModelImporter:
     - serializedVersion: 16
       name: dodgeL
       takeName: dodgeL
+      internalID: 7400006
       firstFrame: 0
       lastFrame: 21
       wrapMode: 0
@@ -315,6 +556,7 @@ ModelImporter:
     - serializedVersion: 16
       name: dodgeR
       takeName: dodgeR
+      internalID: 7400008
       firstFrame: 0
       lastFrame: 21
       wrapMode: 0
@@ -343,6 +585,7 @@ ModelImporter:
     - serializedVersion: 16
       name: idle
       takeName: idle
+      internalID: 7400010
       firstFrame: 0
       lastFrame: 35
       wrapMode: 0
@@ -431,6 +674,7 @@ ModelImporter:
     - serializedVersion: 16
       name: jump
       takeName: jump
+      internalID: 7400012
       firstFrame: 0
       lastFrame: 22
       wrapMode: 0
@@ -519,6 +763,7 @@ ModelImporter:
     - serializedVersion: 16
       name: jumpback
       takeName: jumpback
+      internalID: 7400014
       firstFrame: -1
       lastFrame: 16
       wrapMode: 0
@@ -547,6 +792,7 @@ ModelImporter:
     - serializedVersion: 16
       name: runfaster
       takeName: runfaster
+      internalID: 7400016
       firstFrame: -1
       lastFrame: 15
       wrapMode: 0
@@ -635,6 +881,7 @@ ModelImporter:
     - serializedVersion: 16
       name: runslow
       takeName: runslow
+      internalID: 7400018
       firstFrame: -1
       lastFrame: 25
       wrapMode: 0
@@ -663,6 +910,7 @@ ModelImporter:
     - serializedVersion: 16
       name: swing
       takeName: swing
+      internalID: 7400020
       firstFrame: -1
       lastFrame: 55
       wrapMode: 0
@@ -691,6 +939,7 @@ ModelImporter:
     - serializedVersion: 16
       name: swing_forward
       takeName: swing_forward
+      internalID: 7400022
       firstFrame: -1
       lastFrame: 51
       wrapMode: 0
@@ -719,6 +968,7 @@ ModelImporter:
     - serializedVersion: 16
       name: swing_forward_holds
       takeName: swing_forward_holds
+      internalID: 7400024
       firstFrame: -1
       lastFrame: 56
       wrapMode: 0
@@ -856,6 +1106,7 @@ ModelImporter:
     - serializedVersion: 16
       name: swordSwing
       takeName: swordSwing
+      internalID: 7400026
       firstFrame: -1
       lastFrame: 44
       wrapMode: 0
@@ -884,6 +1135,7 @@ ModelImporter:
     - serializedVersion: 16
       name: swordSwing2
       takeName: swordSwing2
+      internalID: 7400028
       firstFrame: -1
       lastFrame: 68
       wrapMode: 0
@@ -972,6 +1224,7 @@ ModelImporter:
     - serializedVersion: 16
       name: walk
       takeName: walk
+      internalID: 7400030
       firstFrame: 0
       lastFrame: 16
       wrapMode: 0
@@ -1025,6 +1278,7 @@ ModelImporter:
     - serializedVersion: 16
       name: walk_sidewaysL
       takeName: walk_sidewaysL
+      internalID: 7400032
       firstFrame: 0
       lastFrame: 23
       wrapMode: 0
@@ -1113,6 +1367,7 @@ ModelImporter:
     - serializedVersion: 16
       name: walk_sidewaysR
       takeName: walk_sidewaysR
+      internalID: 7400034
       firstFrame: 0
       lastFrame: 22
       wrapMode: 0
@@ -1201,6 +1456,7 @@ ModelImporter:
     - serializedVersion: 16
       name: walk2
       takeName: walk2
+      internalID: 7400036
       firstFrame: 0
       lastFrame: 17
       wrapMode: 0
@@ -1289,6 +1545,7 @@ ModelImporter:
     - serializedVersion: 16
       name: walk3
       takeName: walk3
+      internalID: 7400038
       firstFrame: 0
       lastFrame: 32
       wrapMode: 0
@@ -1317,6 +1574,7 @@ ModelImporter:
     - serializedVersion: 16
       name: walkBackwards
       takeName: walkBackwards
+      internalID: 7400040
       firstFrame: 0
       lastFrame: 20
       wrapMode: 0
@@ -1405,6 +1663,7 @@ ModelImporter:
     - serializedVersion: 16
       name: jump_start
       takeName: jump
+      internalID: 7400042
       firstFrame: 0
       lastFrame: 3
       wrapMode: 0
@@ -1493,6 +1752,7 @@ ModelImporter:
     - serializedVersion: 16
       name: jump_apogee
       takeName: jump
+      internalID: 7400044
       firstFrame: 4
       lastFrame: 11
       wrapMode: 0
@@ -1581,6 +1841,7 @@ ModelImporter:
     - serializedVersion: 16
       name: jump_land
       takeName: jump
+      internalID: 7400046
       firstFrame: 12
       lastFrame: 24
       wrapMode: 0
@@ -1593,6 +1854,294 @@ ModelImporter:
       loopBlend: 0
       loopBlendOrientation: 0
       loopBlendPositionY: 1
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: Armature
+        weight: 1
+      - path: Armature/rootBone
+        weight: 1
+      - path: Armature/rootBone/armControl_L
+        weight: 1
+      - path: Armature/rootBone/armControl_L/weaponBone_L
+        weight: 1
+      - path: Armature/rootBone/Body
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/head
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/head/bangs1
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/head/bangs1/bangs2
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/head/sideBangs1_L
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/head/sideBangs1_L/sideBangs2_L
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/head/sideBangs1_R
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/head/sideBangs1_R/sideBangs2_R
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/upperArm_L
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/upperArm_L/foreArm_L
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/upperArm_L/foreArm_L/handNull_L
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/upperArm_R
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/upperArm_R/foreArm_R
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/upperArm_R/foreArm_R/handNull_R
+        weight: 1
+      - path: Armature/rootBone/Body/thigh_L
+        weight: 1
+      - path: Armature/rootBone/Body/thigh_L/shin_L
+        weight: 1
+      - path: Armature/rootBone/Body/thigh_L/shin_L/foot_L
+        weight: 1
+      - path: Armature/rootBone/Body/thigh_R
+        weight: 1
+      - path: Armature/rootBone/Body/thigh_R/shin_R
+        weight: 1
+      - path: Armature/rootBone/Body/thigh_R/shin_R/foot_R
+        weight: 1
+      - path: Armature/rootBone/poleLeg_L
+        weight: 1
+      - path: Armature/rootBone/poleLeg_R
+        weight: 1
+      - path: Cube
+        weight: 0
+      - path: speedSword
+        weight: 0
+      maskType: 3
+      maskSource: {fileID: 31900000, guid: 63482078664317442a65e6950eed136c, type: 2}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: lightAttack1
+      takeName: swing_forward_holds
+      internalID: 926154299442691296
+      firstFrame: 0
+      lastFrame: 16
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events:
+      - time: 0.52400833
+        functionName: NewHit
+        data: lightAttack
+        objectReferenceParameter: {instanceID: 0}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      - time: 0.7536534
+        functionName: EndHit
+        data: 
+        objectReferenceParameter: {instanceID: 0}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      - time: 0.7724426
+        functionName: CancelOK
+        data: 
+        objectReferenceParameter: {instanceID: 0}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      transformMask:
+      - path: 
+        weight: 1
+      - path: Armature
+        weight: 1
+      - path: Armature/rootBone
+        weight: 1
+      - path: Armature/rootBone/armControl_L
+        weight: 1
+      - path: Armature/rootBone/armControl_L/weaponBone_L
+        weight: 1
+      - path: Armature/rootBone/Body
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/head
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/head/bangs1
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/head/bangs1/bangs2
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/head/sideBangs1_L
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/head/sideBangs1_L/sideBangs2_L
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/head/sideBangs1_R
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/head/sideBangs1_R/sideBangs2_R
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/upperArm_L
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/upperArm_L/foreArm_L
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/upperArm_L/foreArm_L/handNull_L
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/upperArm_R
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/upperArm_R/foreArm_R
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/upperArm_R/foreArm_R/handNull_R
+        weight: 1
+      - path: Armature/rootBone/Body/thigh_L
+        weight: 1
+      - path: Armature/rootBone/Body/thigh_L/shin_L
+        weight: 1
+      - path: Armature/rootBone/Body/thigh_L/shin_L/foot_L
+        weight: 1
+      - path: Armature/rootBone/Body/thigh_R
+        weight: 1
+      - path: Armature/rootBone/Body/thigh_R/shin_R
+        weight: 1
+      - path: Armature/rootBone/Body/thigh_R/shin_R/foot_R
+        weight: 1
+      - path: Armature/rootBone/poleLeg_L
+        weight: 1
+      - path: Armature/rootBone/poleLeg_R
+        weight: 1
+      - path: Cube
+        weight: 0
+      - path: speedSword
+        weight: 0
+      maskType: 3
+      maskSource: {fileID: 31900000, guid: 63482078664317442a65e6950eed136c, type: 2}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: lightAttack2
+      takeName: swing_forward_holds
+      internalID: -7651997154070197761
+      firstFrame: 16
+      lastFrame: 32
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: Armature
+        weight: 1
+      - path: Armature/rootBone
+        weight: 1
+      - path: Armature/rootBone/armControl_L
+        weight: 1
+      - path: Armature/rootBone/armControl_L/weaponBone_L
+        weight: 1
+      - path: Armature/rootBone/Body
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/head
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/head/bangs1
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/head/bangs1/bangs2
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/head/sideBangs1_L
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/head/sideBangs1_L/sideBangs2_L
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/head/sideBangs1_R
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/head/sideBangs1_R/sideBangs2_R
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/upperArm_L
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/upperArm_L/foreArm_L
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/upperArm_L/foreArm_L/handNull_L
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/upperArm_R
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/upperArm_R/foreArm_R
+        weight: 1
+      - path: Armature/rootBone/Body/Body_001/upperArm_R/foreArm_R/handNull_R
+        weight: 1
+      - path: Armature/rootBone/Body/thigh_L
+        weight: 1
+      - path: Armature/rootBone/Body/thigh_L/shin_L
+        weight: 1
+      - path: Armature/rootBone/Body/thigh_L/shin_L/foot_L
+        weight: 1
+      - path: Armature/rootBone/Body/thigh_R
+        weight: 1
+      - path: Armature/rootBone/Body/thigh_R/shin_R
+        weight: 1
+      - path: Armature/rootBone/Body/thigh_R/shin_R/foot_R
+        weight: 1
+      - path: Armature/rootBone/poleLeg_L
+        weight: 1
+      - path: Armature/rootBone/poleLeg_R
+        weight: 1
+      - path: Cube
+        weight: 0
+      - path: speedSword
+        weight: 0
+      maskType: 3
+      maskSource: {fileID: 31900000, guid: 63482078664317442a65e6950eed136c, type: 2}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: lightAttack3
+      takeName: swing_forward_holds
+      internalID: 5968319991578623653
+      firstFrame: 32
+      lastFrame: 56
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
       loopBlendPositionXZ: 0
       keepOriginalOrientation: 0
       keepOriginalPositionY: 1
@@ -1680,18 +2229,19 @@ ModelImporter:
     swapUVChannels: 0
     generateSecondaryUV: 0
     useFileUnits: 1
-    optimizeMeshForGPU: 1
     keepQuads: 0
     weldVertices: 1
     preserveHierarchy: 0
+    skinWeightsMode: 0
+    maxBonesPerVertex: 4
+    minBoneWeight: 0.001
+    meshOptimizationFlags: -1
     indexFormat: 0
     secondaryUVAngleDistortion: 8
     secondaryUVAreaDistortion: 15.000001
     secondaryUVHardAngle: 88
     secondaryUVPackMargin: 4
     useFileScale: 1
-    previousCalculatedGlobalScale: 0.3
-    hasPreviousCalculatedGlobalScale: 1
   tangentSpace:
     normalSmoothAngle: 60
     normalImportMode: 0
@@ -1700,10 +2250,11 @@ ModelImporter:
     legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
     blendShapeNormalImportMode: 1
     normalSmoothingSource: 0
+  referencedClips: []
   importAnimation: 1
   copyAvatar: 0
   humanDescription:
-    serializedVersion: 2
+    serializedVersion: 3
     human:
     - boneName: Body
       humanName: Hips
@@ -2007,6 +2558,7 @@ ModelImporter:
     armStretch: 0.05
     legStretch: 0.05
     feetSpacing: 0
+    globalScale: 0.3
     rootMotionBoneName: 
     hasTranslationDoF: 0
     hasExtraRoot: 1

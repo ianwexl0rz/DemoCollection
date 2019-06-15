@@ -226,6 +226,7 @@ namespace AmplifyShaderEditor
 			}
 		}
 
+
 		//public override void PropagateNodeData( NodeData nodeData, ref MasterNodeDataCollector dataCollector )
 		//{
 		//	base.PropagateNodeData( nodeData, ref dataCollector );
@@ -345,7 +346,7 @@ namespace AmplifyShaderEditor
 				m_currentSelected.CheckReferenceSelection();
 			}
 		}
-
+		
 		public RegisterLocalVarNode CurrentSelected
 		{
 			get { return m_currentSelected; }

@@ -22,7 +22,8 @@ namespace AmplifyShaderEditor
 		SAMPLER1D = 1 << 10,
 		SAMPLER2D = 1 << 11,
 		SAMPLER3D = 1 << 12,
-		SAMPLERCUBE = 1 << 13
+		SAMPLERCUBE = 1 << 13,
+		UINT = 1 << 14
 	}
 
 	public enum VariableQualifiers
@@ -93,6 +94,9 @@ namespace AmplifyShaderEditor
 
 		[SerializeField]
 		protected bool m_visible = true;
+
+		[SerializeField]
+		protected bool m_isDummy = false;
 
 		[SerializeField]
 		protected bool m_hasCustomColor = false;
@@ -217,16 +221,19 @@ namespace AmplifyShaderEditor
 		public void DummyAdd( int nodeId, int portId )
 		{
 			m_externalReferences.Insert( 0, new WireReference( nodeId, portId, WirePortDataType.OBJECT, false ) );
+			m_isDummy = true;
 		}
 
 		public void DummyRemove()
 		{
 			m_externalReferences.RemoveAt( 0 );
+			m_isDummy = false;
 		}
 
 		public void DummyClear()
 		{
 			m_externalReferences.Clear();
+			m_isDummy = false;
 		}
 
 		public WireReference GetConnection( int connID = 0 )
@@ -585,5 +592,6 @@ namespace AmplifyShaderEditor
 			get { return m_repeatButtonState; }
 			set { m_repeatButtonState = value; }
 		}
+		public bool IsDummy { get { return m_isDummy; } }
 	}
 }

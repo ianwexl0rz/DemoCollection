@@ -871,5 +871,6 @@ namespace AmplifyShaderEditor
 		public List<PropertyNode> PropertyNodesVisibleList { get { return m_propertyNodesVisibleList; } }
 		public ReorderableList PropertyReordableList { get { return m_propertyReordableList; } }
 		public int ReordableListLastCount { get { return m_lastCount; } }
+		public MasterNodeCategoriesData CurrentCategoriesData { get { return m_availableCategories[ m_masterNodeCategory ]; } }
 	}
 }

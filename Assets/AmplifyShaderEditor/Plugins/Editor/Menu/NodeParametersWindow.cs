@@ -236,6 +236,8 @@ namespace AmplifyShaderEditor
 					SerializedProperty custCat = serializedObject.FindProperty( "m_customNodeCategory" );
 					EditorGUILayout.PropertyField( custCat, new GUIContent( "Custom" ) );
 				}
+				SerializedProperty hidden = serializedObject.FindProperty( "m_hidden" );
+				EditorGUILayout.PropertyField( hidden, new GUIContent( "Hidden" ) );
 				serializedObject.ApplyModifiedProperties();
 			}
 			EditorGUIUtility.labelWidth = cacheWidth;

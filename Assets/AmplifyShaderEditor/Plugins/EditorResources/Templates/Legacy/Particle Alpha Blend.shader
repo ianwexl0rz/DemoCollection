@@ -8,6 +8,7 @@ Shader /*ase_name*/ "Hidden/Templates/Legacy/Particles Alpha Blended" /*end*/
 		/*ase_props*/
 	}
 
+
 	Category 
 	{
 		SubShader
@@ -50,14 +51,24 @@ Shader /*ase_name*/ "Hidden/Templates/Legacy/Particles Alpha Blended" /*end*/
 					#ifdef SOFTPARTICLES_ON
 					float4 projPos : TEXCOORD2;
 					#endif
+					UNITY_VERTEX_INPUT_INSTANCE_ID
 					UNITY_VERTEX_OUTPUT_STEREO
 					/*ase_interp(3,):sp=sp.xyzw;uv0=tc0;c=c*/
 				};
 				
+				
+				#if UNITY_VERSION >= 560
+				UNITY_DECLARE_DEPTH_TEXTURE( _CameraDepthTexture );
+				#else
+				uniform sampler2D_float _CameraDepthTexture;
+				#endif
+
+				//Don't delete this comment
+				// uniform sampler2D_float _CameraDepthTexture;
+
 				uniform sampler2D _MainTex;
 				uniform fixed4 _TintColor;
 				uniform float4 _MainTex_ST;
-				uniform sampler2D_float _CameraDepthTexture;
 				uniform float _InvFade;
 				/*ase_globals*/
 
@@ -66,6 +77,7 @@ Shader /*ase_name*/ "Hidden/Templates/Legacy/Particles Alpha Blended" /*end*/
 					v2f o;
 					UNITY_SETUP_INSTANCE_ID(v);
 					UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
+					UNITY_TRANSFER_INSTANCE_ID(v, o);
 					/*ase_vert_code:v=appdata_t;o=v2f*/
 
 					v.vertex.xyz += /*ase_vert_out:Offset;Float3*/ float3( 0, 0, 0 ) /*end*/;

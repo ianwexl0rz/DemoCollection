@@ -16,6 +16,7 @@ public class InputBuffer : List<InputBuffer.ActorInput>
 
 		public bool TryInput(float dt)
 		{
+			// True is action is successful OR valid window has expired.
 			return Action() || (Valid -= dt) <= 0;
 		}
 	}
@@ -27,8 +28,10 @@ public class InputBuffer : List<InputBuffer.ActorInput>
 
 	public void Update(float deltaTime)
 	{
+		// Attempt input from newest to oldest.
 		for(var i = Count; i-- > 0;)
 		{
+			// Remove from the list if success or valid window has expired.
 			if(this[i].TryInput(deltaTime))
 				RemoveAt(i);
 		}

@@ -228,11 +228,10 @@ namespace AmplifyShaderEditor
 							}
 							else
 							{
-								normal = GeneratorUtils.GenerateWorldNormal( ref dataCollector, UniqueId, m_normalizeVectors );
+								normal = GeneratorUtils.GenerateWorldNormal( ref dataCollector, UniqueId, m_currentPrecisionType, normal, OutputId );
+								dataCollector.AddToInput( UniqueId, SurfaceInputs.WORLD_NORMAL, m_currentPrecisionType );
+								dataCollector.ForceNormal = true;
 							}
-							dataCollector.AddToInput( UniqueId, SurfaceInputs.WORLD_NORMAL, m_currentPrecisionType );
-							dataCollector.ForceNormal = true;
-
 						}
 						else
 						{

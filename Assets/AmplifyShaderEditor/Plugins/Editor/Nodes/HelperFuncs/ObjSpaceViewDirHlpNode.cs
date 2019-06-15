@@ -13,7 +13,7 @@ namespace AmplifyShaderEditor
 			base.CommonInit( uniqueId );
 			m_funcType = "ObjSpaceViewDir";
 			//TODO: revisit this later
-			m_funcLWFormatOverride = "( mul(unity_WorldToObject, float4(_WorldSpaceCameraPos.xyz, 1)).xyz - {0}.xyz )";
+			m_funcLWFormatOverride = "( mul(GetWorldToObjectMatrix(), float4(_WorldSpaceCameraPos.xyz, 1)).xyz - {0}.xyz )";
 			m_funcHDFormatOverride = "( mul(GetWorldToObjectMatrix(), float4(_WorldSpaceCameraPos.xyz, 1)).xyz - {0}.xyz )";
 			m_inputPorts[ 0 ].ChangeType( WirePortDataType.FLOAT4, false );
 			m_inputPorts[ 0 ].Vector4InternalData = new UnityEngine.Vector4( 0, 0, 0, 1 );

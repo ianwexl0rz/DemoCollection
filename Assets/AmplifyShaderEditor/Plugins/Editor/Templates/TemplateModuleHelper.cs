@@ -304,6 +304,13 @@ namespace AmplifyShaderEditor
 
 				if( BlendOpHelper.BlendOpActive )
 					moduleBody += BlendOpHelper.CurrentBlendOp + "\n";
+
+			}
+
+			if( !BlendOpHelper.AlphaToMaskIndependent )
+			{
+				if( BlendOpHelper.ValidAlphaToMask && BlendOpHelper.AlphaToMaskValue )
+					moduleBody += BlendOpHelper.CurrentAlphaToMask + "\n";
 			}
 
 			if( !CullModeHelper.IndependentModule )

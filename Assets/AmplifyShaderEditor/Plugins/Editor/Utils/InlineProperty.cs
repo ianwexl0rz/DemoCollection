@@ -33,7 +33,7 @@ namespace AmplifyShaderEditor
 			m_nodeId = -1;
 			m_active = false;
 		}
-		
+
 		public void CopyFrom( InlineProperty other )
 		{
 			m_value = other.m_value;
@@ -96,6 +96,22 @@ namespace AmplifyShaderEditor
 			}
 		}
 
+		public void RangedFloatField( ref UndoParentNode owner, string content, float min, float max )
+		{
+			if( !m_active )
+			{
+				EditorGUILayout.BeginHorizontal();
+				m_value = owner.EditorGUILayoutRangedFloatField( content, m_value, min, max );
+				if( GUILayout.Button( UIUtils.FloatIntIconON, UIUtils.FloatIntPickerONOFF, GUILayout.Width( 15 ), GUILayout.Height( 15 ) ) )
+					m_active = !m_active;
+				EditorGUILayout.EndHorizontal();
+			}
+			else
+			{
+				DrawPicker( ref owner, content );
+			}
+		}
+
 
 		public void CustomDrawer( ref UndoParentNode owner, DrawPropertySection Drawer, string content )
 		{
@@ -136,7 +152,7 @@ namespace AmplifyShaderEditor
 				PropertyNode node = GetPropertyNode();
 				if( node != null )
 				{
-					return parentesis?"[" + node.PropertyName + "]": node.PropertyName;
+					return parentesis ? "[" + node.PropertyName + "]" : node.PropertyName;
 				}
 				else
 				{
@@ -158,7 +174,7 @@ namespace AmplifyShaderEditor
 				PropertyNode node = GetPropertyNode();
 				if( node != null )
 				{
-					return parentesis?"[" + node.PropertyName + "]": node.PropertyName;
+					return parentesis ? "[" + node.PropertyName + "]" : node.PropertyName;
 				}
 				else if( !string.IsNullOrEmpty( defaultValue ) )
 				{
@@ -179,9 +195,9 @@ namespace AmplifyShaderEditor
 			}
 		}
 
-		public void ReadFromString( ref uint index, ref string[] nodeParams )
+		public void ReadFromString( ref uint index, ref string[] nodeParams, bool isInt = true )
 		{
-			m_value = Convert.ToInt32( nodeParams[ index++ ] );
+			m_value = isInt ? Convert.ToInt32( nodeParams[ index++ ] ) : Convert.ToSingle( nodeParams[ index++ ] );
 			m_active = Convert.ToBoolean( nodeParams[ index++ ] );
 			m_nodeId = Convert.ToInt32( nodeParams[ index++ ] );
 		}
@@ -228,6 +244,6 @@ namespace AmplifyShaderEditor
 		public int IntValue { get { return (int)m_value; } set { m_value = value; } }
 		public float FloatValue { get { return m_value; } set { m_value = value; } }
 		public bool Active { get { return m_active; } set { m_active = value; } }
-		public int NodeId { get { return m_nodeId; } set{ m_nodeId = value; } }
+		public int NodeId { get { return m_nodeId; } set { m_nodeId = value; } }
 	}
 }

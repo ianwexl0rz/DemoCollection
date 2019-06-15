@@ -6,7 +6,7 @@ using System;
 namespace AmplifyShaderEditor
 {
 	[Serializable]
-	[NodeAttributes( "Decode Depth Normal", "Miscellaneous", "Decodes both Depth and Normal from a Float4 value" )]
+	[NodeAttributes( "Decode Depth Normal", "Miscellaneous", "Decodes both Depth and Normal from a previously encoded pixel value" )]
 	public sealed class DecodeDepthNormalNode : ParentNode
 	{
 		private const string DecodeDepthNormalFunc = "DecodeDepthNormal( {0}, {1}, {2} );";
@@ -17,6 +17,7 @@ namespace AmplifyShaderEditor
 			AddInputPort( WirePortDataType.FLOAT4, false, "Encoded" );
 			AddOutputPort( WirePortDataType.FLOAT, "Depth" );
 			AddOutputPort( WirePortDataType.FLOAT3, "Normal" );
+			m_previewShaderGUID = "dbf37c4d3ce0f0b41822584d6c9ba203";
 		}
 
 		public override string GenerateShaderForOutput( int outputId, ref MasterNodeDataCollector dataCollector, bool ignoreLocalvar )

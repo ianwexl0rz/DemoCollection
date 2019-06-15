@@ -18,7 +18,7 @@ namespace AmplifyShaderEditor
 
 	public enum VariableMode
 	{
-		Create,
+		Create = 0,
 		Fetch
 	}
 
@@ -39,7 +39,7 @@ namespace AmplifyShaderEditor
 	{
 		private const string LongNameEnder = "... )";
 		protected int m_longNameSize = 200;
-
+		//private const string InstancedPropertyWarning = "Instanced Property option shouldn't be used on official SRP templates as all property variables are already declared as instanced inside a CBuffer.\nPlease consider changing to Property option.";
 		private string TooltipFormatter = "{0}\n\nName: {1}\nValue: {2}";
 		protected string GlobalTypeWarningText = "Global variables must be set via a C# script using the Shader.SetGlobal{0}(...) method.\nPlease note that setting a global variable will affect all shaders which are using it.";
 		private const string AutoRegisterStr = "Auto-Register";
@@ -87,6 +87,9 @@ namespace AmplifyShaderEditor
 
 		[SerializeField]
 		protected bool m_autoRegister = false;
+
+		[SerializeField]
+		protected bool m_registerPropertyOnInstancing = true;
 
 		[SerializeField]
 		private List<string> m_enumNames = new List<string>();
@@ -305,11 +308,16 @@ namespace AmplifyShaderEditor
 
 			if( parameterType == PropertyType.InstancedProperty )
 			{
-				m_containerGraph.AddInstancePropertyCount();
+				//if( m_containerGraph.IsSRP )
+				//{					
+				//	UIUtils.ShowMessage( InstancedPropertyWarning,MessageSeverity.Warning );
+				//}
+
+				UIUtils.CurrentWindow.OutsideGraph.AddInstancePropertyCount();
 			}
 			else if( m_currentParameterType == PropertyType.InstancedProperty )
 			{
-				m_containerGraph.RemoveInstancePropertyCount();
+				UIUtils.CurrentWindow.OutsideGraph.RemoveInstancePropertyCount();
 			}
 
 			if( ( parameterType == PropertyType.Property || parameterType == PropertyType.InstancedProperty )
@@ -325,6 +333,11 @@ namespace AmplifyShaderEditor
 			}
 
 			m_currentParameterType = parameterType;
+			if( parameterType == PropertyType.Constant )
+			{
+				CurrentVariableMode = VariableMode.Create;
+			}
+
 		}
 
 		void InitializeAttribsArray()
@@ -840,7 +853,7 @@ namespace AmplifyShaderEditor
 		public void ShowVariableMode()
 		{
 			if( m_showVariableMode || m_freeType )
-				m_variableMode = (VariableMode)EditorGUILayoutEnumPopup( IgnoreVarDeclarationStr, m_variableMode );
+				CurrentVariableMode = (VariableMode)EditorGUILayoutEnumPopup( IgnoreVarDeclarationStr, m_variableMode );
 		}
 
 		public void ShowAutoRegister()
@@ -1042,8 +1055,36 @@ namespace AmplifyShaderEditor
 			OnPropertyNameChanged();
 		}
 
+		public void SetRawPropertyName( string name )
+		{
+			m_propertyName = name;
+		}
+
 		public void RegisterPropertyName( bool releaseOldOne, string newName, bool autoGlobal = true, bool forceUnderscore = false )
 		{
+			if( m_currentParameterType != PropertyType.Constant && m_variableMode == VariableMode.Fetch )
+			{
+				string localPropertyName = string.Empty;
+				if( autoGlobal )
+					localPropertyName = UIUtils.GeneratePropertyName( newName, m_currentParameterType, forceUnderscore );
+				else
+				{
+					localPropertyName = UIUtils.GeneratePropertyName( m_propertyName, PropertyType.Global, forceUnderscore );
+					if( UIUtils.IsNumericName( localPropertyName ) )
+					{
+						m_propertyName = m_oldName;
+					}
+
+				}
+
+				m_propertyName = localPropertyName;
+				m_propertyInspectorName = newName;
+				m_propertyNameIsDirty = true;
+				m_reRegisterName = false;
+				OnPropertyNameChanged();
+				return;
+			}
+
 			string propertyName = string.Empty;
 			if( autoGlobal )
 				propertyName = UIUtils.GeneratePropertyName( newName, m_currentParameterType, forceUnderscore );
@@ -1075,7 +1116,6 @@ namespace AmplifyShaderEditor
 			}
 			else
 			{
-
 				GUI.FocusControl( string.Empty );
 				RegisterFirstAvailablePropertyName( releaseOldOne );
 				UIUtils.ShowMessage( string.Format( "Duplicate name found on edited node.\nAssigning first valid one {0}", m_propertyInspectorName ) );
@@ -1111,24 +1151,47 @@ namespace AmplifyShaderEditor
 					dataCollector.AddToProperties( UniqueId, GetPropertyValue(), OrderIndex );
 					string dataType = string.Empty;
 					string dataName = string.Empty;
-					if( m_variableMode == VariableMode.Create && GetUniformData( out dataType, out dataName ) )
-						dataCollector.AddToUniforms( UniqueId, dataType, dataName );
+					bool fullValue = false;
+					if( m_variableMode == VariableMode.Create && GetUniformData( out dataType, out dataName, ref fullValue ) )
+					{
+						if( fullValue )
+						{
+							dataCollector.AddToUniforms( UniqueId, dataName );
+						}
+						else
+						{
+							dataCollector.AddToUniforms( UniqueId, dataType, dataName );
+						}
+					}
 					//dataCollector.AddToUniforms( m_uniqueId, GetUniformValue() );
 				}
 				break;
 				case PropertyType.InstancedProperty:
 				{
 					dataCollector.AddToPragmas( UniqueId, IOUtils.InstancedPropertiesHeader );
-					dataCollector.AddToProperties( UniqueId, GetPropertyValue(), OrderIndex );
-					dataCollector.AddToInstancedProperties( m_outputPorts[ 0 ].DataType, UniqueId, GetInstancedPropertyValue( dataCollector.IsTemplate ), OrderIndex );
+
+					if( m_registerPropertyOnInstancing )
+						dataCollector.AddToProperties( UniqueId, GetPropertyValue(), OrderIndex );
+
+					dataCollector.AddToInstancedProperties( m_outputPorts[ 0 ].DataType, UniqueId, GetInstancedUniformValue( dataCollector.IsTemplate, dataCollector.IsSRP ), OrderIndex );
 				}
 				break;
 				case PropertyType.Global:
 				{
 					string dataType = string.Empty;
 					string dataName = string.Empty;
-					if( m_variableMode == VariableMode.Create && GetUniformData( out dataType, out dataName ) )
-						dataCollector.AddToUniforms( UniqueId, dataType, dataName );
+					bool fullValue = false;
+					if( m_variableMode == VariableMode.Create && GetUniformData( out dataType, out dataName, ref fullValue ) )
+					{
+						if( fullValue )
+						{
+							dataCollector.AddToUniforms( UniqueId, dataName );
+						}
+						else
+						{
+							dataCollector.AddToUniforms( UniqueId, dataType, dataName );
+						}
+					}
 					//dataCollector.AddToUniforms( m_uniqueId, GetUniformValue() );
 				}
 				break;
@@ -1158,7 +1221,7 @@ namespace AmplifyShaderEditor
 				UIUtils.ReleaseUniformName( UniqueId, m_propertyName );
 			if( m_currentParameterType == PropertyType.InstancedProperty )
 			{
-				m_containerGraph.RemoveInstancePropertyCount();
+				UIUtils.CurrentWindow.OutsideGraph.RemoveInstancePropertyCount();
 				UIUtils.UnregisterPropertyNode( this );
 			}
 
@@ -1226,23 +1289,61 @@ namespace AmplifyShaderEditor
 
 		public virtual string GetPropertyValue() { return string.Empty; }
 
-		public string GetInstancedPropertyValue( bool isTemplate )
+		public string GetInstancedUniformValue( bool isTemplate, bool isSRP )
 		{
 			if( isTemplate )
-				return string.Format( IOUtils.InstancedPropertiesElement, UIUtils.FinalPrecisionWirePortToCgType( m_currentPrecisionType, m_outputPorts[ 0 ].DataType ), m_propertyName );
+			{
+				if( isSRP )
+				{
+					return GetUniformValue();
+				}
+				else
+				{
+					return string.Format( IOUtils.InstancedPropertiesElement, UIUtils.FinalPrecisionWirePortToCgType( m_currentPrecisionType, m_outputPorts[ 0 ].DataType ), m_propertyName );
+				}
+			}
 			else
 				return string.Format( IOUtils.InstancedPropertiesElementTabs, UIUtils.FinalPrecisionWirePortToCgType( m_currentPrecisionType, m_outputPorts[ 0 ].DataType ), m_propertyName );
 		}
 
-		public virtual string GetUniformValue()
+		public string GetInstancedUniformValue( bool isTemplate, bool isSRP, WirePortDataType dataType, string value )
 		{
-			return string.Format( Constants.UniformDec, UIUtils.FinalPrecisionWirePortToCgType( m_currentPrecisionType, m_outputPorts[ 0 ].DataType ), m_propertyName );
+			if( isTemplate )
+			{
+				if( isSRP )
+				{
+					return GetUniformValue( dataType, value );
+				}
+				else
+				{
+					return string.Format( IOUtils.InstancedPropertiesElement, UIUtils.FinalPrecisionWirePortToCgType( m_currentPrecisionType, dataType ), value );
+				}
+			}
+			else
+				return string.Format( IOUtils.InstancedPropertiesElementTabs, UIUtils.FinalPrecisionWirePortToCgType( m_currentPrecisionType, dataType ), value );
 		}
 
-		public virtual bool GetUniformData( out string dataType, out string dataName )
+		public virtual string GetUniformValue()
+		{
+			bool excludeUniformKeyword = ( m_currentParameterType == PropertyType.InstancedProperty ) ||
+											m_containerGraph.IsSRP;
+			int index = excludeUniformKeyword ? 1 : 0;
+			return string.Format( Constants.UniformDec[ index ], UIUtils.FinalPrecisionWirePortToCgType( m_currentPrecisionType, m_outputPorts[ 0 ].DataType ), m_propertyName );
+		}
+
+		public string GetUniformValue( WirePortDataType dataType, string value )
+		{
+			bool excludeUniformKeyword = ( m_currentParameterType == PropertyType.InstancedProperty ) ||
+											m_containerGraph.IsSRP;
+			int index = excludeUniformKeyword ? 1 : 0;
+			return string.Format( Constants.UniformDec[ index ], UIUtils.FinalPrecisionWirePortToCgType( m_currentPrecisionType, dataType ), value );
+		}
+
+		public virtual bool GetUniformData( out string dataType, out string dataName, ref bool fullValue )
 		{
 			dataType = UIUtils.FinalPrecisionWirePortToCgType( m_currentPrecisionType, m_outputPorts[ 0 ].DataType );
 			dataName = m_propertyName;
+			fullValue = false;
 			return true;
 		}
 
@@ -1319,7 +1420,7 @@ namespace AmplifyShaderEditor
 
 			if( m_currentParameterType == PropertyType.InstancedProperty )
 			{
-				m_containerGraph.AddInstancePropertyCount();
+				UIUtils.CurrentWindow.OutsideGraph.AddInstancePropertyCount();
 				UIUtils.RegisterPropertyNode( this );
 			}
 
@@ -1399,10 +1500,18 @@ namespace AmplifyShaderEditor
 
 			if( !m_isNodeBeingCopied )
 			{
-				UIUtils.ReleaseUniformName( UniqueId, m_oldName );
-				UIUtils.RegisterUniformName( UniqueId, m_propertyName );
+				if( m_variableMode != VariableMode.Fetch || m_currentParameterType == PropertyType.Constant )
+				{
+					UIUtils.ReleaseUniformName( UniqueId, m_oldName );
+					UIUtils.RegisterUniformName( UniqueId, m_propertyName );
+					m_oldName = m_propertyName;
+				}
 			}
-			m_oldName = m_propertyName;
+			else
+			{
+				m_oldName = m_propertyName;
+			}
+
 		}
 
 		void UpdateTooltip()
@@ -1455,6 +1564,29 @@ namespace AmplifyShaderEditor
 			get { return m_orderIndexOffset; }
 			set { m_orderIndexOffset = value; }
 		}
+
+		public VariableMode CurrentVariableMode
+		{
+			get { return m_variableMode; }
+			set
+			{
+				if( value != m_variableMode )
+				{
+					if( value == VariableMode.Fetch )
+					{
+						m_oldName = m_propertyName;
+					}
+					else
+					{
+						m_propertyName = m_oldName;
+						m_propertyInspectorName = m_oldName;
+					}
+					m_variableMode = value;
+					m_propertyNameIsDirty = true;
+					OnPropertyNameChanged();
+				}
+			}
+		}
 		public string PropertyData( MasterNodePortCategory portCategory )
 		{
 			return ( m_currentParameterType == PropertyType.InstancedProperty ) ? m_outputPorts[ 0 ].LocalValue( portCategory ) : m_propertyName;
@@ -1484,7 +1616,7 @@ namespace AmplifyShaderEditor
 			m_propertyName = data.PropertyName;
 			m_propertyInspectorName = data.PropertyInspectorName;
 		}
-
+		public virtual void GeneratePPSInfo( ref string propertyDeclaration, ref string propertySet ) { }
 		public virtual void SetGlobalValue() { }
 		public virtual void FetchGlobalValue() { }
 
@@ -1499,5 +1631,6 @@ namespace AmplifyShaderEditor
 			BeginPropertyFromInspectorCheck();
 		}
 		public override string DataToArray { get { return PropertyInspectorName; } }
+		public bool RegisterPropertyOnInstancing { get { return m_registerPropertyOnInstancing; } set { m_registerPropertyOnInstancing = value; } }
 	}
 }

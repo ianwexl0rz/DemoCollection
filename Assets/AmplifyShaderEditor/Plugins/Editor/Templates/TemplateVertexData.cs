@@ -26,6 +26,8 @@ namespace AmplifyShaderEditor
 		[SerializeField]
 		private bool m_isSingleComponent = true;
 		[SerializeField]
+		private bool m_excludeStructPrefix = false;
+		[SerializeField]
 		private string[] m_components = { "0", "0", "0", "0" };
 		[SerializeField]
 		private bool[] m_componentUsage = { false, false,false,false };
@@ -57,6 +59,7 @@ namespace AmplifyShaderEditor
 			m_available = other.m_available;
 			m_varNameWithSwizzle = other.m_varNameWithSwizzle;
 			m_isSingleComponent = other.IsSingleComponent;
+			m_excludeStructPrefix = other.ExcludeStructPrefix;
 			for( int i = 0; i < 4; i++ )
 			{
 				m_components[ i ] = other.Components[ i ];
@@ -153,6 +156,7 @@ namespace AmplifyShaderEditor
 			m_varNameWithSwizzle = newVar;
 		}
 
+		public bool ExcludeStructPrefix { get { return m_excludeStructPrefix; } set { m_excludeStructPrefix = value; } }
 		public bool IsSingleComponent { get { return m_isSingleComponent; } }
 		public string[] Components { get { return m_components; } }
 		public TemplateSemantics Semantics { get { return m_semantics; } }

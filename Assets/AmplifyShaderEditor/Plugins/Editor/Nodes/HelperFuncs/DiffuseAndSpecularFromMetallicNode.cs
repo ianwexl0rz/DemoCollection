@@ -18,6 +18,7 @@ namespace AmplifyShaderEditor
 			AddOutputPort( WirePortDataType.FLOAT3, "Out" );
 			AddOutputPort( WirePortDataType.FLOAT3, "Spec Color" );
 			AddOutputPort( WirePortDataType.FLOAT, "One Minus Reflectivity" );
+			m_previewShaderGUID = "c7c4485750948a045b5dab0985896e17";
 		}
 
 		public override string GenerateShaderForOutput( int outputId, ref MasterNodeDataCollector dataCollector, bool ignoreLocalvar )

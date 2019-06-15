@@ -24,6 +24,9 @@ Features
   * Growing sample collection
   * Open to user requests and contributions
   * Integrated Texture Array Creator tool
+  * Node API
+  * Custom Shader Templates
+  * SRP HD and Lightweight support
 
 Supported Platforms
 

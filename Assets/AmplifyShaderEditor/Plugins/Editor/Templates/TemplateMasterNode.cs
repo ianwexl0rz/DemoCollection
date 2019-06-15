@@ -502,6 +502,11 @@ namespace AmplifyShaderEditor
 				validBody = m_currentTemplate.FillTemplateBody( m_currentTemplate.BlendData.BlendOpId, ref shaderBody, m_blendOpHelper.CurrentBlendOp ) && validBody;
 			}
 
+			if( m_currentTemplate.BlendData.ValidAlphaToMask )
+			{
+				validBody = m_currentTemplate.FillTemplateBody( m_currentTemplate.BlendData.AlphaToMaskId, ref shaderBody, m_blendOpHelper.CurrentAlphaToMask ) && validBody;
+			}
+
 			if( m_currentTemplate.DepthData.ValidZWrite )
 			{
 				validBody = m_currentTemplate.FillTemplateBody( m_currentTemplate.DepthData.ZWriteModeId, ref shaderBody, m_depthOphelper.CurrentZWriteMode ) && validBody;

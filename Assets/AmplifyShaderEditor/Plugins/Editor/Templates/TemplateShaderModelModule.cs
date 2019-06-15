@@ -40,7 +40,7 @@ namespace AmplifyShaderEditor
 				m_encapsulateOnCGInlude = other.EncapsulateOnCGInlude;
 			}
 
-			m_shaderModelIdx = other.CurrentShaderModel;
+			m_shaderModelIdx = other.CurrentShaderModelIdx;
 		}
 
 		public override void ReadFromString( ref uint index, ref string[] nodeParams )
@@ -92,7 +92,8 @@ namespace AmplifyShaderEditor
 			m_validData = newValidData;
 		}
 
-		public int CurrentShaderModel { get { return m_shaderModelIdx; } }
+		public int CurrentShaderModelIdx { get { return m_shaderModelIdx; } }
+		public string CurrentShaderModel { get { return TemplateHelperFunctions.AvailableShaderModels[ m_shaderModelIdx ]; } }
 		public bool EncapsulateOnCGInlude { get { return m_encapsulateOnCGInlude; } }
 		public int InterpolatorAmount
 		{

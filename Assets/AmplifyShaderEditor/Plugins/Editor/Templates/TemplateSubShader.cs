@@ -41,29 +41,38 @@ namespace AmplifyShaderEditor
 		[SerializeField]
 		private bool m_foundMainPassTag = false;
 
-		public TemplateSubShader( int subShaderIx, TemplateIdManager idManager, string uniquePrefix, TemplateSubShaderInfo subShaderData, ref Dictionary<string, TemplateShaderPropertyData> duplicatesHelper )
+		[SerializeField]
+		TemplateOptionsContainer m_customOptionsContainer = new TemplateOptionsContainer();
+
+		public TemplateSubShader( int subShaderIx, TemplateIdManager idManager, string uniquePrefix, TemplateSubShaderInfo subShaderInfo, ref Dictionary<string, TemplateShaderPropertyData> duplicatesHelper )
 		{
 			m_idx = subShaderIx;
 
 			m_uniquePrefix = uniquePrefix;
 
-			FetchLOD( subShaderData.StartIdx, subShaderData.Modules );
+			FetchLOD( subShaderInfo.StartIdx, subShaderInfo.Modules );
 			if( m_LODContainer.Index > -1 )
 			{
 				idManager.RegisterId( m_LODContainer.Index, uniquePrefix + "Module" + m_LODContainer.Id, m_LODContainer.Id );
 			}
 
-			m_modules = new TemplateModulesData( idManager, m_templateProperties, uniquePrefix + "Module", subShaderData.StartIdx, subShaderData.Modules, true );
+			m_customOptionsContainer = TemplateOptionsToolsHelper.GenerateOptionsContainer( true, subShaderInfo.Data );
+			if( m_customOptionsContainer.Enabled )
+			{
+				idManager.RegisterId( m_customOptionsContainer.Index, uniquePrefix + m_customOptionsContainer.Body, m_customOptionsContainer.Body, true );
+			}
+
+			m_modules = new TemplateModulesData( m_customOptionsContainer, idManager, m_templateProperties, uniquePrefix + "Module", subShaderInfo.StartIdx, subShaderInfo.Modules, true );
 			if( m_modules.SRPType == TemplateSRPType.HD )
 			{
-				m_modules.SRPIsPBR = subShaderData.Data.Contains( TemplateHelperFunctions.HDPBRTag );
+				m_modules.SRPIsPBR = subShaderInfo.Data.Contains( TemplateHelperFunctions.HDPBRTag );
 			}
 
 			Dictionary<string, TemplateShaderPropertyData> ownDuplicatesDict = new Dictionary<string, TemplateShaderPropertyData>( duplicatesHelper );
 
-			TemplateHelperFunctions.CreateShaderGlobalsList( subShaderData.Modules, ref m_availableShaderGlobals, ref ownDuplicatesDict );
+			TemplateHelperFunctions.CreateShaderGlobalsList( subShaderInfo.Modules, ref m_availableShaderGlobals, ref ownDuplicatesDict );
 
-			m_passAmount = subShaderData.Passes.Count;
+			m_passAmount = subShaderInfo.Passes.Count;
 			
 			//if( !m_modules.PassTag.IsValid )
 			//{
@@ -78,7 +87,7 @@ namespace AmplifyShaderEditor
 			int currAddedPassIdx = 0;
 			for( int passIdx = 0; passIdx < m_passAmount; passIdx++ )
 			{
-				TemplatePass newPass = new TemplatePass( m_modules,subShaderIx, passIdx, idManager, uniquePrefix + "Pass" + passIdx, subShaderData.Passes[ passIdx ].GlobalStartIdx, subShaderData.Passes[ passIdx ], ref ownDuplicatesDict );
+				TemplatePass newPass = new TemplatePass( this,subShaderIx, passIdx, idManager, uniquePrefix + "Pass" + passIdx, subShaderInfo.Passes[ passIdx ].GlobalStartIdx, subShaderInfo.Passes[ passIdx ], ref ownDuplicatesDict );
 				if( newPass.AddToList )
 				{
 					if( newPass.IsMainPass && m_mainPass < 0  )
@@ -117,6 +126,8 @@ namespace AmplifyShaderEditor
 		{
 			m_LODContainer = null;
 
+			m_customOptionsContainer = null;
+
 			m_templateProperties.Destroy();
 			m_templateProperties = null;
 
@@ -152,5 +163,6 @@ namespace AmplifyShaderEditor
 		public bool FoundMainPass { get { return m_foundMainPassTag; } }
 		public int MainPass { get { return m_mainPass; } }
 		public int Idx { get { return m_idx; } }
+		public TemplateOptionsContainer CustomOptionsContainer { get { return m_customOptionsContainer; } }
 	}
 }

@@ -404,7 +404,7 @@ namespace AmplifyShaderEditor
 
 		private string SamplerWrappedData( ref MasterNodeDataCollector dataCollector )
 		{
-			m_internalData = "sampler" + PortId + UIUtils.GetNode( m_nodeId ).OutputId;
+			m_internalData = "_Sampler" + PortId + UIUtils.GetNode( m_nodeId ).OutputId;
 			dataCollector.AddToUniforms( m_nodeId, "uniform sampler2D " + m_internalData + ";" );
 
 			return m_internalData;
@@ -534,7 +534,7 @@ namespace AmplifyShaderEditor
 
 		public void WriteToString( ref string myString )
 		{
-			if( m_externalReferences.Count != 1 )
+			if( m_externalReferences.Count != 1 || m_isDummy )
 			{
 				return;
 			}
@@ -696,7 +696,38 @@ namespace AmplifyShaderEditor
 				break;
 			}
 		}
+		public bool IsZeroInternalData
+		{
+			get
+			{
+				switch( m_dataType )
+				{
+					
+					case WirePortDataType.FLOAT: return Mathf.Abs(m_previewInternalFloat) < 0.001f;
+					case WirePortDataType.UINT:
+					case WirePortDataType.INT: return m_previewInternalInt == 0;
+					case WirePortDataType.FLOAT2:
+					return (Mathf.Abs( m_previewInternalVec2.x ) < 0.001f && 
+							Mathf.Abs( m_previewInternalVec2.y ) < 0.001f);
+					case WirePortDataType.FLOAT3:
+					return (Mathf.Abs( m_previewInternalVec3.x ) < 0.001f &&
+							Mathf.Abs( m_previewInternalVec3.y ) < 0.001f &&
+							Mathf.Abs( m_previewInternalVec3.z ) < 0.001f );
+					case WirePortDataType.FLOAT4:
+					return (Mathf.Abs( m_previewInternalVec4.x ) < 0.001f &&
+							Mathf.Abs( m_previewInternalVec4.y ) < 0.001f &&
+							Mathf.Abs( m_previewInternalVec4.z ) < 0.001f &&
+							Mathf.Abs( m_previewInternalVec4.w ) < 0.001f );
+					case WirePortDataType.COLOR:
+					return (Mathf.Abs( m_previewInternalColor.r ) < 0.001f &&
+							Mathf.Abs( m_previewInternalColor.g ) < 0.001f &&
+							Mathf.Abs( m_previewInternalColor.b ) < 0.001f &&
+							Mathf.Abs( m_previewInternalColor.a ) < 0.001f);
 
+				}
+				return true;
+			}
+		}
 		public float FloatInternalData
 		{
 			set { m_previewInternalFloat = value; m_internalDataUpdated = false; }

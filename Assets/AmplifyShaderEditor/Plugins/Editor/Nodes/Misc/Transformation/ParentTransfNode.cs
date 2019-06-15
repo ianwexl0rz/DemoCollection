@@ -8,6 +8,7 @@ namespace AmplifyShaderEditor
 	{
 		protected string m_matrixName;
 		protected string m_matrixHDName;
+		protected string m_matrixLWName;
 
 		protected override void CommonInit( int uniqueId )
 		{
@@ -25,9 +26,20 @@ namespace AmplifyShaderEditor
 
 			string value = m_inputPorts[ 0 ].GeneratePortInstructions( ref dataCollector );
 			string matrixName = string.Empty;
-			if( dataCollector.IsTemplate && dataCollector.TemplateDataCollectorInstance.CurrentSRPType == TemplateSRPType.HD && !string.IsNullOrEmpty( m_matrixHDName ) )
+			if( dataCollector.IsTemplate  )
 			{
-				matrixName = m_matrixHDName;
+				if( dataCollector.TemplateDataCollectorInstance.CurrentSRPType == TemplateSRPType.HD && !string.IsNullOrEmpty( m_matrixHDName ) )
+				{
+					matrixName = m_matrixHDName;
+				}
+				else if( dataCollector.TemplateDataCollectorInstance.CurrentSRPType == TemplateSRPType.Lightweight && !string.IsNullOrEmpty( m_matrixLWName ) )
+				{
+					matrixName = m_matrixLWName;
+				}
+				else
+				{
+					matrixName = m_matrixName;
+				}
 			}
 			else
 			{

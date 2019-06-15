@@ -14,5 +14,11 @@ namespace AmplifyShaderEditor
             m_value = "unity_CameraToWorld";
 			m_drawPreview = false;
 		}
-    }
+
+		public override string GenerateShaderForOutput( int outputId, ref MasterNodeDataCollector dataCollector, bool ignoreLocalvar )
+		{
+			GeneratorUtils.RegisterUnity2019MatrixDefines( ref dataCollector );
+			return base.GenerateShaderForOutput( outputId, ref dataCollector, ignoreLocalvar );
+		}
+	}
 }

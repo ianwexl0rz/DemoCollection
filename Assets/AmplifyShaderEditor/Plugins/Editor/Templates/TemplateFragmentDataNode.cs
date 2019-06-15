@@ -251,7 +251,7 @@ namespace AmplifyShaderEditor
 				TemplateData currentTemplate = ( masterNode as TemplateMasterNode ).CurrentTemplate;
 				if( currentTemplate != null )
 				{
-					m_inVarName = currentTemplate.FragFunctionData.InVarName + ".";
+					m_inVarName = currentTemplate.FragmentFunctionData.InVarName + ".";
 					m_interpolatorData = currentTemplate.InterpolatorData.RawInterpolators;
 					FetchDataId();
 				}

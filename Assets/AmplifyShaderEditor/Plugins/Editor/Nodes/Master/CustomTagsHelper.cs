@@ -87,6 +87,7 @@ namespace AmplifyShaderEditor
 							}
 						}
 					}
+					BuildQueueTagValue();
 				}
 				break;
 
@@ -148,6 +149,7 @@ namespace AmplifyShaderEditor
 							m_renderQueue = (RenderQueue)Enum.Parse( typeof( RenderQueue ), TagValue );
 							int.TryParse( arr[ 3 ], out m_renderQueueOffset );
 						}
+						BuildQueueTagValue();
 					}
 					break;
 				}

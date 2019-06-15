@@ -224,6 +224,12 @@ namespace AmplifyShaderEditor
 			{
 				dataCollector.TemplateDataCollectorInstance.SetUVUsage( m_index, m_texcoordSize );
 			}
+			else if( m_index > 3 )
+			{
+				dataCollector.AddCustomAppData( string.Format( TemplateHelperFunctions.TexUVFullSemantic, m_index ) );
+			}
 		}
+
+		
 	}
 }

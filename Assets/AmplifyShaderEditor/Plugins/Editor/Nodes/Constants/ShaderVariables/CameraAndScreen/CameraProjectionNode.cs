@@ -80,6 +80,7 @@ namespace AmplifyShaderEditor
 		public override string GenerateShaderForOutput( int outputId, ref MasterNodeDataCollector dataCollector, bool ignoreLocalvar )
 		{
 			base.GenerateShaderForOutput( outputId, ref dataCollector, ignoreLocalvar );
+			GeneratorUtils.RegisterUnity2019MatrixDefines( ref dataCollector );
 			return m_selectedType.ToString();
 		}
 

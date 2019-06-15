@@ -34,8 +34,10 @@ namespace AmplifyShaderEditor
 				else
 				{
 					UIUtils.ShowMessage( m_nodeAttribs.Name + " does not work propery on Vertex ports" );
+					return "0";
 				}
 			}
+
 			if ( dataCollector.IsTemplate )
 			{
 				return dataCollector.TemplateDataCollectorInstance.GetVFace();

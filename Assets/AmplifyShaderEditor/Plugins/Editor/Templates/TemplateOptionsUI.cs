@@ -12,7 +12,7 @@ namespace AmplifyShaderEditor
 	[Serializable]
 	public class TemplateOptionUIItem
 	{
-		public delegate void OnActionPerformed( TemplateOptionUIItem uiItem, params TemplateActionItem[] validActions );
+		public delegate void OnActionPerformed( bool isRefreshing, bool invertAction, TemplateOptionUIItem uiItem, params TemplateActionItem[] validActions );
 		public event OnActionPerformed OnActionPerformedEvt;
 
 		[SerializeField]
@@ -27,16 +27,21 @@ namespace AmplifyShaderEditor
 		[SerializeField]
 		private bool m_checkOnExecute = false;
 
+		[SerializeField]
+		private bool m_invertActionOnDeselection = false;
+
 		public TemplateOptionUIItem( TemplateOptionsItem options )
 		{
 			m_options = options;
 			m_currentOption = m_options.DefaultOptionIndex;
+			m_invertActionOnDeselection = options.Setup == AseOptionItemSetup.InvertActionOnDeselection;
 		}
 
 		public void Draw( UndoParentNode owner )
 		{
 			if( m_isVisible )
 			{
+				int lastOption = m_currentOption;
 				EditorGUI.BeginChangeCheck();
 				switch( m_options.UIWidget )
 				{
@@ -55,7 +60,10 @@ namespace AmplifyShaderEditor
 				{
 					if( OnActionPerformedEvt != null )
 					{
-						OnActionPerformedEvt( this, m_options.ActionsPerOption[ m_currentOption ] );
+						if( m_invertActionOnDeselection )
+							OnActionPerformedEvt( false, true, this, m_options.ActionsPerOption[ lastOption ] );
+
+						OnActionPerformedEvt( false, false, this, m_options.ActionsPerOption[ m_currentOption ] );
 					}
 				}
 			}
@@ -67,20 +75,39 @@ namespace AmplifyShaderEditor
 			{
 				for( int i = 0; i < m_options.ActionsPerOption[ m_currentOption ].Length; i++ )
 				{
-					switch( m_options.ActionsPerOption[ m_currentOption ][i].ActionType )
+					switch( m_options.ActionsPerOption[ m_currentOption ][ i ].ActionType )
 					{
 						case AseOptionsActionType.SetDefine:
 						{
 							dataCollector.AddToDefines( -1, m_options.ActionsPerOption[ m_currentOption ][ i ].ActionData );
 						}
 						break;
-						case AseOptionsActionType.UnsetDefine:
+						case AseOptionsActionType.SetUndefine:
 						{
 							dataCollector.AddToDefines( -1, m_options.ActionsPerOption[ m_currentOption ][ i ].ActionData, false );
 						}
 						break;
 					}
 				}
+			}
+		}
+
+		public void Refresh()
+		{
+			if( OnActionPerformedEvt != null )
+			{
+				if( m_invertActionOnDeselection )
+				{
+					for( int i = 0; i < m_options.Count; i++ )
+					{
+						if( i != m_currentOption )
+						{
+							OnActionPerformedEvt( true, true, this, m_options.ActionsPerOption[ i ] );
+						}
+					}
+				}
+
+				OnActionPerformedEvt( true, false, this, m_options.ActionsPerOption[ m_currentOption ] );
 			}
 		}
 
@@ -108,13 +135,10 @@ namespace AmplifyShaderEditor
 			get { return m_currentOption; }
 			set
 			{
-				m_currentOption = Mathf.Clamp( value, 0, m_options.Options.Length -1 );
-				if( OnActionPerformedEvt != null )
-				{
-					OnActionPerformedEvt( this, m_options.ActionsPerOption[ m_currentOption ] );
-				}
+				m_currentOption = Mathf.Clamp( value, 0, m_options.Options.Length - 1 );
+				Refresh();
 			}
 		}
-		public bool EmptyEvent { get { return OnActionPerformedEvt == null;} }
+		public bool EmptyEvent { get { return OnActionPerformedEvt == null; } }
 	}
 }

@@ -8,20 +8,24 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Grass
-  m_Shader: {fileID: 4800000, guid: 224f8dbc635bb9c418c9ce3eb63b8baa, type: 3}
-  m_ShaderKeywords: _GLOSSYREFLECTIONS_OFF _NORMALMAP _SPECULARHIGHLIGHTS_OFF _STOCHASTIC_ALBEDO
-    _STOCHASTIC_NORMAL
+  m_Shader: {fileID: 4800000, guid: 933532a4fcc9baf4fa0491de14d08ed7, type: 3}
+  m_ShaderKeywords: _ENVIRONMENTREFLECTIONS_OFF _NORMALMAP _SPECULARHIGHLIGHTS_OFF
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
-  stringTagMap: {}
+  m_CustomRenderQueue: 2050
+  stringTagMap:
+    RenderType: Opaque
   disabledShaderPasses: []
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
+    - _BaseMap:
+        m_Texture: {fileID: 2800000, guid: ba75f79504c2f9b408589ec049531bd6, type: 3}
+        m_Scale: {x: 12.5, y: 12.5}
+        m_Offset: {x: 0, y: 0}
     - _BumpMap:
-        m_Texture: {fileID: 2800000, guid: 7ddcba51d9fc0894d98b4ba77fbdfbd7, type: 3}
+        m_Texture: {fileID: 2800000, guid: 24fc3483329347042b50e2c668f3fb0b, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BumpMapInvT:
@@ -81,7 +85,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 00d034bb5072d8043a98b8a4aae5a40d, type: 3}
+        m_Texture: {fileID: 2800000, guid: ba75f79504c2f9b408589ec049531bd6, type: 3}
         m_Scale: {x: 12.5, y: 12.5}
         m_Offset: {x: 0, y: 0}
     - _MainTexInvT:
@@ -137,12 +141,16 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
+    - _AlphaClip: 0
+    - _Blend: 0
     - _BumpScale: 1
     - _ColorMult: 0
+    - _Cull: 2
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
     - _EdgeLight: 0
+    - _EnvironmentReflections: 0
     - _Float0: 0
     - _GlossMapScale: 1
     - _Glossiness: 0.19
@@ -151,17 +159,22 @@ Material:
     - _Mode: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.02
+    - _QueueOffset: 0
+    - _ReceiveShadows: 1
     - _Shininess: 0.026
-    - _Smoothness: 0
+    - _Smoothness: 0.323
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 0
     - _SrcBlend: 1
     - _StochasticInputSelected: 5
+    - _Surface: 0
     - _Translucency: 0
     - _UVSec: 0
+    - _WorkflowMode: 1
     - _ZWrite: 1
     - __dirty: 0
     m_Colors:
+    - _BaseColor: {r: 0.6644461, g: 0.69803923, b: 0.6491765, a: 1}
     - _BumpMapColorSpaceOrigin: {r: 0.4390354, g: -0.36669827, b: 0.54811364, a: 0}
     - _BumpMapColorSpaceVector1: {r: 0.95868933, g: 0.8899831, b: 0.08104445, a: 0}
     - _BumpMapColorSpaceVector2: {r: -0.7723546, g: 0.82990384, b: 0.022798773, a: 0}
@@ -193,3 +206,16 @@ Material:
     - _SecondaryColor: {r: 0, g: 0, b: 0, a: 0}
     - _ShadowColor: {r: 0, g: 0, b: 0, a: 1}
     - _SpecColor: {r: 0.21857512, g: 0.291, b: 0.190023, a: 1}
+--- !u!114 &5483997537181847786
+MonoBehaviour:
+  m_ObjectHideFlags: 11
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0353a89b1f911e48b9e16bdc9f2e058, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  version: 1

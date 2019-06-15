@@ -3,6 +3,8 @@
 
 using System;
 
+using UnityEngine;
+
 namespace AmplifyShaderEditor
 {
 	[Serializable]
@@ -19,26 +21,7 @@ namespace AmplifyShaderEditor
 			m_previewShaderGUID = "f4edf6febb54dc743b25bd5b56facea8";
 		}
 
-		public string GenerateErrorValue()
-		{
-			switch ( m_outputPorts[0].DataType )
-			{
-				case WirePortDataType.FLOAT2:
-				{
-					return "(0).xx";
-				}
-				case WirePortDataType.FLOAT3:
-				{
-					return "(0).xxx";
-				}
-				case WirePortDataType.FLOAT4:
-				case WirePortDataType.COLOR:
-				{
-					return "(0).xxxx";
-				}
-			}
-			return "0";
-		}
+		
 
 		public override string GenerateShaderForOutput( int outputId, ref MasterNodeDataCollector dataCollector, bool ignoreLocalvar )
 		{
@@ -58,6 +41,7 @@ namespace AmplifyShaderEditor
 				else
 				{
 					UIUtils.ShowMessage( m_nodeAttribs.Name + " does not work properly on Vertex ports" );
+					return GenerateErrorValue();
 				}
 			}
 

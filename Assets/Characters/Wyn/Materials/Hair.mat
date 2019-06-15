@@ -8,9 +8,9 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Hair
-  m_Shader: {fileID: 4800000, guid: 289f6d7fd8e4d0542b05fb923a2492d0, type: 3}
-  m_ShaderKeywords: _EMISSION
-  m_LightmapFlags: 0
+  m_Shader: {fileID: 4800000, guid: dc16fca7ed95f654ba09d6b090ffda62, type: 3}
+  m_ShaderKeywords: _EMISSION _SUBSURFACESCATTERING_ON
+  m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
@@ -76,6 +76,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
+    - _Ambient: 0
     - _BumpScale: 1
     - _ColorMult: 0
     - _Cutoff: 0.5
@@ -88,22 +89,36 @@ Material:
     - _GlossMapScale: 1
     - _Glossiness: 0.691
     - _GlossyReflections: 1
-    - _Metallic: 0.305
+    - _Metallic: 0.3
     - _Mode: 0
+    - _NormalDistortion: 0.1
     - _OcclusionStrength: 1
     - _Parallax: 0.02
+    - _Power: 8
     - _Precision: 80
+    - _SSSAmbient: 0.3
+    - _SSSExponent: 8
+    - _SSSNormalDistortion: 0.6
+    - _SSSScale: 1
+    - _SSSTerminatorExponent: 5
+    - _SSSThickness: 0.7
+    - _Scale: 3
+    - _ShadowFalloff: 0.05
     - _Shininess: 0.166
-    - _Smoothness: 0.601
+    - _Smoothness: 0.362
     - _SmoothnessTextureChannel: 0
     - _SpecSize: 1.13
     - _SpecularHighlights: 1
     - _SrcBlend: 1
+    - _SubsurfaceScattering: 1
+    - _Thickness: 0.307
     - _Translucency: 0.234
+    - _TransmissionPower: 4
     - _UVSec: 0
     - _ZWrite: 1
     - __dirty: 0
     m_Colors:
+    - _Albedo: {r: 0.108569995, g: 0.3991836, b: 0.517, a: 1}
     - _Color: {r: 0, g: 0.36046794, b: 0.42, a: 1}
     - _Emission: {r: 0, g: 0, b: 0, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 0}
@@ -112,4 +127,5 @@ Material:
     - _SecondaryColor: {r: 1, g: 1, b: 1, a: 0}
     - _ShadowColor: {r: 0, g: 0.91827536, b: 1, a: 1}
     - _SpecColor: {r: 0.2864902, g: 0.34960002, b: 0.37254903, a: 1}
+    - _SubsurfaceColor: {r: 0, g: 0.91827536, b: 1, a: 1}
     - _Vector0: {r: 0, g: 0, b: 0, a: 0}

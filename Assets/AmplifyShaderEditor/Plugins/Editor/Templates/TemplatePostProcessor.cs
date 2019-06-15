@@ -26,12 +26,22 @@ namespace AmplifyShaderEditor
 			{
 				if( TemplateHelperFunctions.CheckIfTemplate( importedAssets[ i ] ) )
 				{
-
 					string guid = AssetDatabase.AssetPathToGUID( importedAssets[ i ] );
 					TemplateDataParent templateData = templatesManager.GetTemplate( guid );
 					if( templateData != null )
 					{
 						refreshMenuItems = templateData.Reload() || refreshMenuItems;
+						int windowCount = IOUtils.AllOpenedWindows.Count;
+						for( int windowIdx = 0; windowIdx < windowCount; windowIdx++ )
+						{
+							if( IOUtils.AllOpenedWindows[ windowIdx ].OutsideGraph.CurrentCanvasMode == NodeAvailability.TemplateShader )
+							{
+								if( IOUtils.AllOpenedWindows[ windowIdx ].OutsideGraph.MultiPassMasterNodes.NodesList[ 0 ].CurrentTemplate == templateData )
+								{
+									IOUtils.AllOpenedWindows[ windowIdx ].OutsideGraph.ForceMultiPassMasterNodesRefresh();
+								}
+							}
+						}
 					}
 					else
 					{

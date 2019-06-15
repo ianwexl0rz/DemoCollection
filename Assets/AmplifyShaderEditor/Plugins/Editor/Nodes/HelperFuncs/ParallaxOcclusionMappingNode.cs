@@ -318,7 +318,8 @@ namespace AmplifyShaderEditor
 
 
 			string localVarName = "OffsetPOM" + UniqueId;
-			dataCollector.AddToUniforms(UniqueId, "uniform float4 "+ texture +"_ST;");
+			string textureSTType = dataCollector.IsSRP ? "float4 " : "uniform float4 ";
+			dataCollector.AddToUniforms(UniqueId, textureSTType + texture +"_ST;");
 
 			
 
@@ -327,7 +328,7 @@ namespace AmplifyShaderEditor
 			string textureArgs = string.Empty;
 			if( m_pomTexType == POMTexTypes.TextureArray )
 			{
-				if( UIUtils.CurrentWindow.OutsideGraph.IsHDRP )
+				if( UIUtils.CurrentWindow.OutsideGraph.IsSRP )
 				{
 					textureArgs = "TEXTURE2D_ARRAY_PARAM(" + texture +" , "+"sampler##"+texture + ")";
 				}
@@ -361,7 +362,7 @@ namespace AmplifyShaderEditor
 				IOUtils.AddFunctionHeader( ref m_functionBody, "inline float2 POM( sampler3D heightMap, float3 uvs, float3 dx, float3 dy, float3 normalWorld, float3 viewWorld, float3 viewDirTan, int minSamples, int maxSamples, float parallax, float refPlane, float2 tilling, float2 curv, int index )" );
 				break;
 				case POMTexTypes.TextureArray:
-				if( UIUtils.CurrentWindow.OutsideGraph.IsHDRP )
+				if( UIUtils.CurrentWindow.OutsideGraph.IsSRP )
 					IOUtils.AddFunctionHeader( ref m_functionBody, "inline float2 POM( TEXTURE2D_ARRAY_ARGS(heightMap,sampler##heightMap), float2 uvs, float2 dx, float2 dy, float3 normalWorld, float3 viewWorld, float3 viewDirTan, int minSamples, int maxSamples, float parallax, float refPlane, float2 tilling, float2 curv, int index )" );
 				else
 					IOUtils.AddFunctionHeader( ref m_functionBody, "inline float2 POM( UNITY_ARGS_TEX2DARRAY(heightMap), float2 uvs, float2 dx, float2 dy, float3 normalWorld, float3 viewWorld, float3 viewDirTan, int minSamples, int maxSamples, float parallax, float refPlane, float2 tilling, float2 curv, int index )" );
@@ -416,7 +417,7 @@ namespace AmplifyShaderEditor
 					IOUtils.AddFunctionLine( ref m_functionBody, "	currHeight = tex3Dgrad( heightMap, uvs + float3(currTexOffset,0), dx, dy )." + m_channelTypeVal[ m_selectedChannelInt ] + " * ( 1 - result.z );" );
 					break;
 					case POMTexTypes.TextureArray:
-					if( UIUtils.CurrentWindow.OutsideGraph.IsHDRP )
+					if( UIUtils.CurrentWindow.OutsideGraph.IsSRP )
 						IOUtils.AddFunctionLine( ref m_functionBody, "	currHeight = SAMPLE_TEXTURE2D_ARRAY_GRAD( heightMap,sampler##heightMap, uvs + currTexOffset,index, dx, dy )." + m_channelTypeVal[ m_selectedChannelInt ] + " * ( 1 - result.z );" );
 					else
 						IOUtils.AddFunctionLine( ref m_functionBody, "	currHeight = ASE_SAMPLE_TEX2DARRAY_GRAD( heightMap, float3(uvs + currTexOffset,index), dx, dy )." + m_channelTypeVal[ m_selectedChannelInt ] + " * ( 1 - result.z );" );
@@ -436,7 +437,7 @@ namespace AmplifyShaderEditor
 					IOUtils.AddFunctionLine( ref m_functionBody, "	currHeight = tex3Dgrad( heightMap, uvs + float3(currTexOffset,0), dx, dy )." + m_channelTypeVal[ m_selectedChannelInt ] + ";" );
 					break;
 					case POMTexTypes.TextureArray:
-					if( UIUtils.CurrentWindow.OutsideGraph.IsHDRP )
+					if( UIUtils.CurrentWindow.OutsideGraph.IsSRP )
 						IOUtils.AddFunctionLine( ref m_functionBody, "	currHeight = SAMPLE_TEXTURE2D_ARRAY_GRAD( heightMap, sampler##heightMap, uvs + currTexOffset,index, dx, dy )." + m_channelTypeVal[ m_selectedChannelInt ] + ";" );
 					else
 						IOUtils.AddFunctionLine( ref m_functionBody, "	currHeight = ASE_SAMPLE_TEX2DARRAY_GRAD( heightMap,  float3(uvs + currTexOffset,index), dx, dy )." + m_channelTypeVal[ m_selectedChannelInt ] + ";" );
@@ -483,7 +484,7 @@ namespace AmplifyShaderEditor
 					IOUtils.AddFunctionLine( ref m_functionBody, "	newHeight = tex3Dgrad( heightMap, uvs + float3(finalTexOffset,0), dx, dy )." + m_channelTypeVal[ m_selectedChannelInt ] + ";" );
 					break;
 					case POMTexTypes.TextureArray:
-					if( UIUtils.CurrentWindow.OutsideGraph.IsHDRP )
+					if( UIUtils.CurrentWindow.OutsideGraph.IsSRP )
 						IOUtils.AddFunctionLine( ref m_functionBody, "	newHeight = SAMPLE_TEXTURE2D_ARRAY_GRAD( heightMap, sampler##heightMap, uvs + finalTexOffset,index, dx, dy )." + m_channelTypeVal[ m_selectedChannelInt ] + ";" );
 					else
 						IOUtils.AddFunctionLine( ref m_functionBody, "	newHeight = ASE_SAMPLE_TEX2DARRAY_GRAD( heightMap, float3(uvs + finalTexOffset,index), dx, dy )." + m_channelTypeVal[ m_selectedChannelInt ] + ";" );

@@ -145,9 +145,16 @@ namespace AmplifyShaderEditor
 			dataCollector.AddLocalVariable( UniqueId, "gi" + OutputId + " = UnityGlobalIllumination( data, s" + OutputId + ".Occlusion, s" + OutputId + ".Normal, g" + OutputId + " );" );
 			dataCollector.AddLocalVariable( UniqueId, "#endif\n", true );
 			dataCollector.AddLocalVariable( UniqueId, "float3 surfResult" + OutputId + " = LightingStandard" + specularMode + " ( s" + OutputId + ", viewDir, gi" + OutputId + " ).rgb;" );
+			//Emission must be always added to trick Unity, so it knows what needs to be created p.e. world pos
 			dataCollector.AddLocalVariable( UniqueId, "surfResult" + OutputId + " += s" + OutputId + ".Emission;\n" );
 
 			m_outputPorts[ 0 ].SetLocalValue( "surfResult" + OutputId, dataCollector.PortCategory );
+			
+			//Remove emission contribution from Forward Add
+			dataCollector.AddLocalVariable( UniqueId, "#ifdef UNITY_PASS_FORWARDADD//" + OutputId );
+			dataCollector.AddLocalVariable( UniqueId, string.Format( "surfResult{0} -= s{0}.Emission;", OutputId ));
+			dataCollector.AddLocalVariable( UniqueId, "#endif//" + OutputId );
+
 			return m_outputPorts[ 0 ].LocalValue( dataCollector.PortCategory );
 		}
 

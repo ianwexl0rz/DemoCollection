@@ -20,7 +20,7 @@ namespace AmplifyShaderEditor
 
 
 	[Serializable]
-	public class AdditionalDirectiveContainerSaveItem 
+	public class AdditionalDirectiveContainerSaveItem
 	{
 		public AdditionalLineType LineType = AdditionalLineType.Include;
 		public string LineValue = string.Empty;
@@ -42,7 +42,7 @@ namespace AmplifyShaderEditor
 			GUIDValue = container.GUIDValue;
 		}
 	}
-	
+
 	[Serializable]
 	public class AdditionalDirectiveContainer : ScriptableObject
 	{
@@ -82,12 +82,12 @@ namespace AmplifyShaderEditor
 						{
 							string shaderPath = AssetDatabase.GUIDToAssetPath( GUIDValue );
 							if( !string.IsNullOrEmpty( shaderPath ) )
-								return  shaderPath;
+								return shaderPath;
 						}
 						return LineValue;
 					}
-					case AdditionalLineType.Define:return LineValue;
-					case AdditionalLineType.Pragma:return LineValue;
+					case AdditionalLineType.Define: return LineValue;
+					case AdditionalLineType.Pragma: return LineValue;
 				}
 				return LineValue;
 			}
@@ -104,7 +104,7 @@ namespace AmplifyShaderEditor
 						if( GUIDToggle )
 						{
 							string shaderPath = AssetDatabase.GUIDToAssetPath( GUIDValue );
-							if( !string.IsNullOrEmpty( shaderPath ))
+							if( !string.IsNullOrEmpty( shaderPath ) )
 								return string.Format( Constants.IncludeFormat, shaderPath );
 						}
 
@@ -136,7 +136,7 @@ namespace AmplifyShaderEditor
 
 		[SerializeField]
 		private List<AdditionalDirectiveContainer> m_additionalDirectives = new List<AdditionalDirectiveContainer>();
-		
+
 		[SerializeField]
 		private List<AdditionalDirectiveContainer> m_shaderFunctionDirectives = new List<AdditionalDirectiveContainer>();
 
@@ -161,7 +161,7 @@ namespace AmplifyShaderEditor
 		private UndoParentNode m_currOwner;
 
 		public TemplateAdditionalDirectivesHelper( string moduleName ) : base( moduleName ) { }
-		
+
 		//public void AddShaderFunctionItem( AdditionalLineType type, string item )
 		//{
 		//	UpdateShaderFunctionDictionary();
@@ -180,7 +180,7 @@ namespace AmplifyShaderEditor
 		public void AddShaderFunctionItems( List<AdditionalDirectiveContainer> functionList )
 		{
 			if( functionList.Count > 0 )
-				m_shaderFunctionDirectives.AddRange( functionList );				
+				m_shaderFunctionDirectives.AddRange( functionList );
 		}
 
 		public void RemoveShaderFunctionItems( List<AdditionalDirectiveContainer> functionList )
@@ -270,23 +270,25 @@ namespace AmplifyShaderEditor
 					{
 						if( m_additionalDirectives[ index ] != null )
 						{
+							float labelWidthStyleAdjust = 0;
 							if( style )
 							{
 								rect.xMin -= 10;
+								labelWidthStyleAdjust = 15;
 							}
 							else
 							{
 								rect.xMin -= 1;
 							}
 
-							float popUpWidth = style?75:65f;
-
+							float popUpWidth = style ? 75 : 60f;
+							float widthAdjust = m_additionalDirectives[ index ].LineType == AdditionalLineType.Include ? -14 : 0;
 							Rect popupPos = new Rect( rect.x, rect.y, popUpWidth, EditorGUIUtility.singleLineHeight );
-							Rect GUIDTogglePos = m_additionalDirectives[ index ].LineType == AdditionalLineType.Include?new Rect( rect.x + rect.width - 3 * Constants.PlusMinusButtonLayoutWidth, rect.y, Constants.PlusMinusButtonLayoutWidth, Constants.PlusMinusButtonLayoutWidth ):new Rect();
-							Rect buttonPlusPos = new Rect( rect.x + rect.width - 2* Constants.PlusMinusButtonLayoutWidth, rect.y - 2, Constants.PlusMinusButtonLayoutWidth, Constants.PlusMinusButtonLayoutWidth );
+							Rect GUIDTogglePos = m_additionalDirectives[ index ].LineType == AdditionalLineType.Include ? new Rect( rect.x + rect.width - 3 * Constants.PlusMinusButtonLayoutWidth, rect.y, Constants.PlusMinusButtonLayoutWidth, Constants.PlusMinusButtonLayoutWidth ) : new Rect();
+							Rect buttonPlusPos = new Rect( rect.x + rect.width - 2 * Constants.PlusMinusButtonLayoutWidth, rect.y - 2, Constants.PlusMinusButtonLayoutWidth, Constants.PlusMinusButtonLayoutWidth );
 							Rect buttonMinusPos = new Rect( rect.x + rect.width - Constants.PlusMinusButtonLayoutWidth, rect.y - 2, Constants.PlusMinusButtonLayoutWidth, Constants.PlusMinusButtonLayoutWidth );
-							Rect labelPos = new Rect( rect.x + popupPos.width -14, rect.y, rect.width - popupPos.width - buttonPlusPos.width - buttonMinusPos.width, rect.height );
-							labelPos.height = EditorGUIUtility.singleLineHeight;
+							float labelWidthBuffer = EditorGUIUtility.labelWidth;
+							Rect labelPos = new Rect( rect.x + popupPos.width - labelWidthStyleAdjust, rect.y, labelWidthStyleAdjust + rect.width - popupPos.width - buttonPlusPos.width - buttonMinusPos.width + widthAdjust, EditorGUIUtility.singleLineHeight );
 							m_additionalDirectives[ index ].LineType = (AdditionalLineType)m_currOwner.EditorGUIEnumPopup( popupPos, m_additionalDirectives[ index ].LineType );
 
 							if( m_additionalDirectives[ index ].LineType == AdditionalLineType.Include )
@@ -509,10 +511,10 @@ namespace AmplifyShaderEditor
 					AdditionalDirectiveContainer newItem = ScriptableObject.CreateInstance<AdditionalDirectiveContainer>();
 					newItem.hideFlags = HideFlags.HideAndDontSave;
 					newItem.LineType = lineType;
-					newItem.LineValue = lineValue;
+					newItem.LineValue = lineValue.Replace( Constants.SemiColonSeparator, ';' );
 					if( UIUtils.CurrentShaderVersion() > 15607 )
 					{
-						newItem.GUIDToggle = Convert.ToBoolean( nodeParams[ index++ ]);
+						newItem.GUIDToggle = Convert.ToBoolean( nodeParams[ index++ ] );
 						newItem.GUIDValue = nodeParams[ index++ ];
 						if( newItem.GUIDToggle )
 						{
@@ -531,14 +533,14 @@ namespace AmplifyShaderEditor
 				Debug.LogException( e );
 			}
 		}
-		
+
 		public override void WriteToString( ref string nodeInfo )
 		{
 			IOUtils.AddFieldValueToString( ref nodeInfo, m_additionalDirectives.Count );
 			for( int i = 0; i < m_additionalDirectives.Count; i++ )
 			{
 				IOUtils.AddFieldValueToString( ref nodeInfo, m_additionalDirectives[ i ].LineType );
-				IOUtils.AddFieldValueToString( ref nodeInfo, m_additionalDirectives[ i ].LineValue );
+				IOUtils.AddFieldValueToString( ref nodeInfo, m_additionalDirectives[ i ].LineValue.Replace( ';', Constants.SemiColonSeparator ) );
 				IOUtils.AddFieldValueToString( ref nodeInfo, m_additionalDirectives[ i ].GUIDToggle );
 				IOUtils.AddFieldValueToString( ref nodeInfo, m_additionalDirectives[ i ].GUIDValue );
 			}
@@ -563,7 +565,7 @@ namespace AmplifyShaderEditor
 
 			if( foundNull )
 			{
-				m_additionalDirectives.RemoveAll( item => item == null);
+				m_additionalDirectives.RemoveAll( item => item == null );
 			}
 		}
 
@@ -616,7 +618,7 @@ namespace AmplifyShaderEditor
 			m_reordableList = null;
 		}
 
-	
+
 		public List<AdditionalDirectiveContainer> DirectivesList { get { return m_additionalDirectives; } }
 		public bool IsValid { get { return m_validData; } set { m_validData = value; } }
 	}

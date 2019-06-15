@@ -35,7 +35,10 @@ namespace AmplifyShaderEditor
 			m_previewShaderGUID = "a5e7295278a404175b732f1516fb68a6";
 
 			if( UIUtils.CurrentWindow != null && UIUtils.CurrentWindow.CurrentGraph != null && UIUtils.CurrentShaderVersion() <= 2400 )
+			{
 				m_outputTypeInt = 1;
+				m_previewMaterialPassId = m_outputTypeInt;
+			}
 
 			ConfigureHeader();
 		}
@@ -66,6 +69,7 @@ namespace AmplifyShaderEditor
 		void ConfigureHeader()
 		{
 			SetAdditonalTitleText( string.Format( Constants.SubTitleTypeFormatStr, m_outputTypeStr[ m_outputTypeInt ] ) );
+			m_previewMaterialPassId = m_outputTypeInt;
 		}
 
 		public override void Reset()
@@ -113,8 +117,6 @@ namespace AmplifyShaderEditor
 				}
 			}
 			
-			
-
 			m_outputPorts[ 0 ].SetLocalValue( screenPos, dataCollector.PortCategory );
 			return GetOutputVectorItem( 0, outputId, screenPos );
 

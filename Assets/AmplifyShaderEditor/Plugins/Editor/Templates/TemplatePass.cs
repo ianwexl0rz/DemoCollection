@@ -63,12 +63,12 @@ namespace AmplifyShaderEditor
 		[SerializeField]
 		TemplateOptionsContainer m_customOptionsContainer = new TemplateOptionsContainer();
 #endif
-		public TemplatePass( TemplateModulesData subShaderModule, int subshaderIdx, int passIdx, TemplateIdManager idManager, string uniquePrefix, int offsetIdx, TemplatePassInfo passInfo, ref Dictionary<string, TemplateShaderPropertyData> duplicatesHelper )
+		public TemplatePass( TemplateSubShader subShader,  int subshaderIdx, int passIdx, TemplateIdManager idManager, string uniquePrefix, int offsetIdx, TemplatePassInfo passInfo, ref Dictionary<string, TemplateShaderPropertyData> duplicatesHelper )
 		{
 			m_idx = passIdx;
 
 			m_uniquePrefix = uniquePrefix;
-
+			idManager.RegisterPassId( passInfo.Data );
 			m_isMainPass = passInfo.Data.Contains( TemplatesManager.TemplateMainPassTag );
 			if( !m_isMainPass )
 			{
@@ -80,13 +80,7 @@ namespace AmplifyShaderEditor
 					idManager.RegisterId( idIndex, uniquePrefix + id, id, true );
 				}
 			}
-#if CUSTOM_OPTIONS_AVAILABLE
-			m_customOptionsContainer = TemplateOptionsToolsHelper.GenerateOptionsContainer( passInfo.Data );
-			if( m_customOptionsContainer.Enabled )
-			{
-				idManager.RegisterId( m_customOptionsContainer.Index, uniquePrefix + m_customOptionsContainer.Body, m_customOptionsContainer.Body, true );
-			}
-#endif
+
 			FetchPassName( offsetIdx, passInfo.Data );
 			if( m_passNameContainer.Index > -1 )
 			{
@@ -97,7 +91,15 @@ namespace AmplifyShaderEditor
 				m_passNameContainer.Data = string.Format( DefaultPassNameStr, subshaderIdx, passIdx );
 			}
 
-			m_modules = new TemplateModulesData( idManager, m_templateProperties, uniquePrefix + "Module", offsetIdx, passInfo.Data, false );
+#if CUSTOM_OPTIONS_AVAILABLE
+			m_customOptionsContainer = TemplateOptionsToolsHelper.GenerateOptionsContainer( false, passInfo.Data );
+			if( m_customOptionsContainer.Enabled )
+			{
+				idManager.RegisterId( m_customOptionsContainer.Index, uniquePrefix + m_customOptionsContainer.Body, m_customOptionsContainer.Body, true );
+			}
+			//m_customOptionsContainer.CopyPortOptionsFrom( subShader.CustomOptionsContainer, m_passNameContainer.Data );
+#endif
+			m_modules = new TemplateModulesData( m_customOptionsContainer,idManager, m_templateProperties, uniquePrefix + "Module", offsetIdx, passInfo.Data, false );
 
 			if( !m_modules.PassTag.IsValid )
 			{
@@ -107,12 +109,20 @@ namespace AmplifyShaderEditor
 				//m_templateProperties.PropertyDict[ m_modules.PassTag.Id ].UseIndentationAtStart = false;
 				idManager.RegisterId( m_modules.PassTag.StartIdx, m_modules.UniquePrefix + m_modules.PassTag.Id, string.Empty );
 			}
-			
+			m_modules.SetPassUniqueNameIfUndefined( m_passNameContainer.Data );
+
+			m_modules.SRPType = subShader.Modules.SRPType;
+			if( m_modules.SRPType == TemplateSRPType.HD )
+			{
+				m_modules.SRPIsPBR = passInfo.Data.Contains( TemplateHelperFunctions.HDPBRTag );
+
+			}
+
 			Dictionary<string, TemplateShaderPropertyData> ownDuplicatesDict = new Dictionary<string, TemplateShaderPropertyData>( duplicatesHelper );
 			TemplateHelperFunctions.CreateShaderGlobalsList( passInfo.Data, ref m_availableShaderGlobals, ref ownDuplicatesDict );
 
 			// Vertex and Interpolator data
-			FetchVertexAndInterpData( subShaderModule, offsetIdx, passInfo.Data );
+			FetchVertexAndInterpData( subShader.Modules, offsetIdx, passInfo.Data );
 			if( m_vertexDataContainer != null )
 				idManager.RegisterId( m_vertexDataContainer.VertexDataStartIdx, uniquePrefix + m_vertexDataContainer.VertexDataId, m_vertexDataContainer.VertexDataId );
 

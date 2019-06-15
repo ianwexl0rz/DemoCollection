@@ -12,12 +12,16 @@ namespace AmplifyShaderEditor
 	{
 		private const string ConvertToLinearStr = "Convert To Linear";
 		private const string SaturateStr = "Saturate";
+		private const string MirrorStr = "Mirror";
 
 		[SerializeField]
 		private bool m_convertToLinear = true;
 
 		[SerializeField]
 		private bool m_saturate = false;
+
+		[SerializeField]
+		private bool m_mirror = true;
 
 		protected override void CommonInit( int uniqueId )
 		{
@@ -45,7 +49,20 @@ namespace AmplifyShaderEditor
 				dataCollector.AddToIncludes( UniqueId, Constants.UnityCgLibFuncs );
 
 			if( !dataCollector.IsTemplate || dataCollector.TemplateDataCollectorInstance.CurrentSRPType != TemplateSRPType.HD )
-				dataCollector.AddToUniforms( UniqueId, "uniform sampler2D _CameraDepthTexture;" );
+			{
+				if( dataCollector.IsTemplate && dataCollector.CurrentSRPType == TemplateSRPType.Lightweight )
+				{
+					//dataCollector.AddToUniforms( UniqueId, Constants.CameraDepthTextureSRPVar );
+					//dataCollector.AddToUniforms( UniqueId, Constants.CameraDepthTextureSRPSampler );
+					dataCollector.AddToDefines( UniqueId, Constants.CameraDepthTextureLWEnabler );
+				}
+				else
+				{
+					dataCollector.AddToUniforms( UniqueId, Constants.CameraDepthTextureValue );
+				}
+
+				dataCollector.AddToUniforms( UniqueId, Constants.CameraDepthTextureTexelSize );
+			}
 
 			string screenPos = string.Empty;
 			string screenPosNorm = string.Empty;
@@ -59,8 +76,25 @@ namespace AmplifyShaderEditor
 			}
 			else
 			{
-				screenPos = GeneratorUtils.GenerateScreenPosition( ref dataCollector, UniqueId, m_currentPrecisionType, !dataCollector.UsingCustomScreenPos );
-				screenPosNorm = GeneratorUtils.GenerateScreenPositionNormalized( ref dataCollector, UniqueId, m_currentPrecisionType, !dataCollector.UsingCustomScreenPos );
+				if( dataCollector.IsTemplate )
+				{
+					string ppsScreenPos = string.Empty;
+					if( !dataCollector.TemplateDataCollectorInstance.GetCustomInterpolatedData( TemplateInfoOnSematics.SCREEN_POSITION_NORMALIZED, WirePortDataType.FLOAT4, PrecisionType.Float, ref ppsScreenPos, true, MasterNodePortCategory.Fragment ) )
+					{
+						screenPos = GeneratorUtils.GenerateScreenPosition( ref dataCollector, UniqueId, m_currentPrecisionType, !dataCollector.UsingCustomScreenPos );
+						screenPosNorm = GeneratorUtils.GenerateScreenPositionNormalized( ref dataCollector, UniqueId, m_currentPrecisionType, !dataCollector.UsingCustomScreenPos );
+					}
+					else
+					{
+						screenPos = ppsScreenPos;
+						screenPosNorm = ppsScreenPos;
+					}
+				}
+				else
+				{
+					screenPos = GeneratorUtils.GenerateScreenPosition( ref dataCollector, UniqueId, m_currentPrecisionType, !dataCollector.UsingCustomScreenPos );
+					screenPosNorm = GeneratorUtils.GenerateScreenPositionNormalized( ref dataCollector, UniqueId, m_currentPrecisionType, !dataCollector.UsingCustomScreenPos );
+				}
 			}
 
 			string screenDepth = TemplateHelperFunctions.CreateDepthFetch( dataCollector, screenPos );
@@ -83,9 +117,14 @@ namespace AmplifyShaderEditor
 			string finalVarName = "distanceDepth" + OutputId;
 			string finalVarValue = string.Empty;
 			if( dataCollector.IsTemplate && dataCollector.IsSRP )
-				finalVarValue  = "abs( ( screenDepth" + OutputId + " - LinearEyeDepth( " + screenPosNorm + ".z,_ZBufferParams ) ) / ( " + distance + " ) )";
+				finalVarValue  = "( screenDepth" + OutputId + " - LinearEyeDepth( " + screenPosNorm + ".z,_ZBufferParams ) ) / ( " + distance + " )";
 			else
-				finalVarValue =  "abs( ( screenDepth" + OutputId + " - LinearEyeDepth( " + screenPosNorm + ".z ) ) / ( " + distance + " ) )";
+				finalVarValue =  "( screenDepth" + OutputId + " - LinearEyeDepth( " + screenPosNorm + ".z ) ) / ( " + distance + " )";
+
+			if( m_mirror )
+			{
+				finalVarValue = string.Format( "abs( {0} )", finalVarValue );
+			}
 
 			if( m_saturate )
 			{
@@ -101,6 +140,7 @@ namespace AmplifyShaderEditor
 		{
 			base.DrawProperties();
 			m_convertToLinear = EditorGUILayoutToggle( ConvertToLinearStr, m_convertToLinear );
+			m_mirror = EditorGUILayoutToggle( MirrorStr, m_mirror );
 			m_saturate = EditorGUILayoutToggle( SaturateStr, m_saturate );
 		}
 
@@ -115,6 +155,11 @@ namespace AmplifyShaderEditor
 			{
 				m_saturate = Convert.ToBoolean( GetCurrentParam( ref nodeParams ) );
 			}
+
+			if( UIUtils.CurrentShaderVersion() > 15700 )
+			{
+				m_mirror = Convert.ToBoolean( GetCurrentParam( ref nodeParams ) );
+			}
 		}
 
 		public override void WriteToString( ref string nodeInfo, ref string connectionsInfo )
@@ -122,6 +167,7 @@ namespace AmplifyShaderEditor
 			base.WriteToString( ref nodeInfo, ref connectionsInfo );
 			IOUtils.AddFieldValueToString( ref nodeInfo, m_convertToLinear );
 			IOUtils.AddFieldValueToString( ref nodeInfo, m_saturate );
+			IOUtils.AddFieldValueToString( ref nodeInfo, m_mirror );
 		}
 	}
 }

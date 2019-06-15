@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using UnityEditor;
+using System.Collections.Generic;
 
 namespace AmplifyShaderEditor
 {
@@ -19,6 +20,18 @@ namespace AmplifyShaderEditor
 			"NotEqual" ,
 			"Always" ,
 			"Never"
+		};
+
+		public static readonly Dictionary<string,int> StencilComparisonValuesDict = new Dictionary<string, int>()
+		{
+			{"Greater" , 1},
+			{"GEqual" ,	 2},
+			{"Less" ,	 3},
+			{"LEqual" ,	 4},
+			{"Equal" ,	 5},
+			{"NotEqual", 6},
+			{"Always" ,	 7},
+			{"Never"  ,  8},
 		};
 
 		public static readonly string[] StencilComparisonLabels =
@@ -46,6 +59,18 @@ namespace AmplifyShaderEditor
 			"Invert",
 			"IncrWrap",
 			"DecrWrap"
+		};
+
+		public static readonly Dictionary<string,int> StencilOpsValuesDict = new Dictionary<string, int>()
+		{
+			{"Keep",	1},
+			{"Zero",	2},
+			{"Replace",	3},
+			{"IncrSat",	4},
+			{"DecrSat",	5},
+			{"Invert",	6},
+			{"IncrWrap",7},
+			{"DecrWrap",8},
 		};
 
 		public static readonly string[] StencilOpsLabels =

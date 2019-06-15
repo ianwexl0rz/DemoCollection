@@ -11,6 +11,7 @@ namespace AmplifyShaderEditor
 	[Serializable]
 	public sealed class TemplatesBlendModule : TemplateModuleParent
 	{
+		private const string AlphaToMaskStr = "Alpha To Coverage"; 
 		private const string BlendModeStr = " Blend Mode";
 
 		private const string BlendModesRGBStr = "Blend RGB";
@@ -22,6 +23,7 @@ namespace AmplifyShaderEditor
 		private const string SourceFactorStr = "Src";
 		private const string DstFactorStr = "Dst";
 
+		private const string AlphaToMaskFormat = "AlphaToMask {0}";
 		private const string BlendFactorOff = "Blend Off";
 		private const string SingleBlendFactorStr = "Blend {0} {1}";
 		private const string SeparateBlendFactorStr = "Blend {0} {1} , {2} {3}";
@@ -53,6 +55,15 @@ namespace AmplifyShaderEditor
 
 		[SerializeField]
 		private bool m_blendModeEnabled = false;
+
+		[SerializeField]
+		private bool m_validAlphaToMask = false;
+
+		[SerializeField]
+		private bool m_alphaToMaskValue = false;
+
+		[SerializeField]
+		private bool m_alphaToMaskIndependent = false;
 
 		// Blend Factor
 		// RGB
@@ -113,10 +124,12 @@ namespace AmplifyShaderEditor
 			if( allData )
 			{
 				m_independentModule = other.IndependentModule;
+				m_alphaToMaskIndependent = other.AlphaToMaskIndependent;
 				m_validBlendMode = other.ValidBlendMode;
 				m_validBlendOp = other.ValidBlendOp;
+				m_validAlphaToMask = other.ValidAlphaToMask;
 			}
-
+			m_alphaToMaskValue = other.AlphaToMaskValue;
 			m_blendModeEnabled = other.BlendModeEnabled;
 			m_currentRGBIndex = other.CurrentRGBIndex;
 			m_sourceFactorRGB = other.SourceFactorRGB;
@@ -137,6 +150,16 @@ namespace AmplifyShaderEditor
 
 		public void ConfigureFromTemplateData( TemplateBlendData blendData )
 		{
+			if( blendData.ValidAlphaToMask )
+			{
+				if( m_validAlphaToMask != blendData.ValidAlphaToMask )
+				{
+					m_alphaToMaskValue = blendData.AlphaToMaskValue;
+					m_validAlphaToMask = blendData.ValidAlphaToMask;
+					m_alphaToMaskIndependent = blendData.IndependentAlphaToMask;
+				}
+			}
+
 			if( blendData.ValidBlendMode )
 			{
 				if( m_validBlendMode != blendData.ValidBlendMode )
@@ -405,6 +428,12 @@ namespace AmplifyShaderEditor
 					//m_blendOpAlpha = (AvailableBlendOps)owner.EditorGUILayoutEnumPopup( BlendOpsAlphaStr, m_blendOpAlpha );
 					m_blendOpAlphaInline.CustomDrawer( ref owner, ( x ) => { m_blendOpAlpha = (AvailableBlendOps)x.EditorGUILayoutPopup( BlendOpsAlphaStr, (int)m_blendOpAlpha, BlendOpsHelper.BlendOpsLabels ); }, BlendOpsAlphaStr );
 				}
+
+				if( m_validAlphaToMask )
+				{
+					EditorGUILayout.Space();
+					m_alphaToMaskValue = owner.EditorGUILayoutToggle( AlphaToMaskStr, m_alphaToMaskValue );
+				}
 			}
 
 			if( EditorGUI.EndChangeCheck() )
@@ -445,6 +474,18 @@ namespace AmplifyShaderEditor
 
 			if( m_currentAlphaIndex > 0 && m_currentRGBIndex == 0 )
 				m_currentRGBIndex = 1;
+		}
+
+		public void ReadAlphaToMaskFromString( ref uint index, ref string[] nodeParams )
+		{
+			if( UIUtils.CurrentShaderVersion() > 16102 )
+			{
+				m_validAlphaToMask = Convert.ToBoolean( nodeParams[ index++ ] );
+				if( m_validAlphaToMask )
+				{
+					m_alphaToMaskValue = Convert.ToBoolean( nodeParams[ index++ ] );
+				}
+			}
 		}
 
 		public void ReadBlendModeFromString( ref uint index, ref string[] nodeParams )
@@ -517,6 +558,14 @@ namespace AmplifyShaderEditor
 				//m_blendOpEnabled = ( m_blendOpRGB != AvailableBlendOps.OFF );
 			}
 		}
+		public void WriteAlphaToMaskToString( ref string nodeInfo )
+		{
+			IOUtils.AddFieldValueToString( ref nodeInfo, m_validAlphaToMask );
+			if( m_validAlphaToMask )
+			{
+				IOUtils.AddFieldValueToString( ref nodeInfo, m_alphaToMaskValue );
+			}
+		}
 
 		public void WriteBlendModeToString( ref string nodeInfo )
 		{
@@ -556,14 +605,15 @@ namespace AmplifyShaderEditor
 		{
 			ReadBlendModeFromString( ref index, ref nodeParams );
 			ReadBlendOpFromString( ref index, ref nodeParams );
+			ReadAlphaToMaskFromString( ref index, ref nodeParams );
 		}
 
 		public override void WriteToString( ref string nodeInfo )
 		{
 			WriteBlendModeToString( ref nodeInfo );
 			WriteBlendOpToString( ref nodeInfo );
+			WriteAlphaToMaskToString( ref nodeInfo );
 		}
-
 
 		public override void Destroy()
 		{
@@ -576,6 +626,13 @@ namespace AmplifyShaderEditor
 			m_blendOpAlphaInline = null;
 		}
 
+		public string CurrentAlphaToMask
+		{
+			get
+			{
+				return string.Format( AlphaToMaskFormat, m_alphaToMaskValue ? "On" : "Off" );
+			}
+		}
 		public string CurrentBlendFactorSingle
 		{
 			get
@@ -639,22 +696,87 @@ namespace AmplifyShaderEditor
 		public bool ValidBlendMode { get { return m_validBlendMode; } }
 		public bool ValidBlendOp { get { return m_validBlendOp; } }
 		public int CurrentRGBIndex { get { return m_currentRGBIndex; } }
-		public AvailableBlendFactor SourceFactorRGB { get { return m_sourceFactorRGB; } }
-		public AvailableBlendFactor DestFactorRGB { get { return m_destFactorRGB; } }
+
+		public AvailableBlendFactor SourceFactorRGB
+		{
+			get { return m_sourceFactorRGB; }
+			set
+			{
+				m_sourceFactorRGB = value;
+				m_sourceFactorRGBInline.IntValue = (int)m_sourceFactorRGB;
+				m_sourceFactorRGBInline.Active = false;
+			}
+
+		}
+		public AvailableBlendFactor DestFactorRGB
+		{
+			get { return m_destFactorRGB; }
+			set
+			{
+				m_destFactorRGB = value;
+				m_destFactorRGBInline.IntValue = (int)value;
+			}
+		}
+
 		public int CurrentAlphaIndex { get { return m_currentAlphaIndex; } }
-		public AvailableBlendFactor SourceFactorAlpha { get { return m_sourceFactorAlpha; } }
-		public AvailableBlendFactor DestFactorAlpha { get { return m_destFactorAlpha; } }
+
+		public AvailableBlendFactor SourceFactorAlpha
+		{
+			get { return m_sourceFactorAlpha; }
+			set
+			{
+				m_sourceFactorAlpha = value;
+				m_sourceFactorAlphaInline.IntValue = (int)value;
+				m_sourceFactorAlphaInline.Active = false;
+			}
+		}
+
+		public AvailableBlendFactor DestFactorAlpha
+		{
+			get { return m_destFactorAlpha; }
+			set
+			{
+				m_destFactorAlpha = value;
+				m_destFactorAlphaInline.IntValue = (int)value;
+				m_destFactorAlphaInline.Active = false;
+
+			}
+		}
+
 		public bool BlendModeEnabled { get { return m_blendModeEnabled; } }
 		public bool BlendOpEnabled { get { return m_blendOpEnabled; } }
-		public AvailableBlendOps BlendOpRGB { get { return m_blendOpRGB; } }
-		public AvailableBlendOps BlendOpAlpha { get { return m_blendOpAlpha; } }
+		public AvailableBlendOps BlendOpRGB
+		{
+			get { return m_blendOpRGB; }
+			set
+			{
+				m_blendOpRGB = value;
+				m_blendOpRGBInline.IntValue = (int)value;
+				m_blendOpRGBInline.Active = false;
+			}
+		}
+
+		public AvailableBlendOps BlendOpAlpha
+		{
+			get { return m_blendOpAlpha; }
+			set
+			{
+				m_blendOpAlpha = value;
+				m_blendOpAlphaInline.IntValue = (int)value;
+				m_blendOpAlphaInline.Active = false;
+			}
+		}
+
 		public InlineProperty SourceFactorRGBInline { get { return m_sourceFactorRGBInline; } }
 		public InlineProperty DestFactorRGBInline { get { return m_destFactorRGBInline; } }
 		public InlineProperty SourceFactorAlphaInline { get { return m_sourceFactorAlphaInline; } }
 		public InlineProperty DestFactorAlphaInline { get { return m_destFactorAlphaInline; } }
 		public InlineProperty BlendOpRGBInline { get { return m_blendOpRGBInline; } }
 		public InlineProperty BlendOpAlphaInline { get { return m_blendOpAlphaInline; } }
-		public bool IsAdditiveRGB { get { return m_validBlendMode && m_blendModeEnabled   && ( m_currentRGBIndex >0 ) && ( m_sourceFactorRGB == AvailableBlendFactor.One ) && ( m_destFactorRGB == AvailableBlendFactor.One ); } }
-		public bool IsAlphaBlendRGB { get { return m_validBlendMode && m_blendModeEnabled && ( m_currentRGBIndex>0 ) && ( m_sourceFactorRGB == AvailableBlendFactor.SrcAlpha ) && ( m_destFactorRGB == AvailableBlendFactor.OneMinusSrcAlpha ); } }
+		public bool IsAdditiveRGB { get { return m_validBlendMode && m_blendModeEnabled && ( m_currentRGBIndex > 0 ) && ( m_sourceFactorRGB == AvailableBlendFactor.One ) && ( m_destFactorRGB == AvailableBlendFactor.One ); } }
+		public bool IsAlphaBlendRGB { get { return m_validBlendMode && m_blendModeEnabled && ( m_currentRGBIndex > 0 ) && ( m_sourceFactorRGB == AvailableBlendFactor.SrcAlpha ) && ( m_destFactorRGB == AvailableBlendFactor.OneMinusSrcAlpha ); } }
+		public bool ValidAlphaToMask { get { return m_validAlphaToMask; } }
+		public bool AlphaToMaskValue { get { return m_alphaToMaskValue; } }
+		public bool AlphaToMaskIndependent { get { return m_alphaToMaskIndependent; } }
 	}
 }

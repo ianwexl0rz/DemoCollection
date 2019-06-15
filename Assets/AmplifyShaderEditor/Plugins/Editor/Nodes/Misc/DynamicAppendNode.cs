@@ -211,7 +211,7 @@ namespace AmplifyShaderEditor
 			if( ( m_containerGraph.IsLoading || m_isNodeBeingCopied ) && UIUtils.CurrentShaderVersion() < 13206 )
 				return;
 
-			NewUpdateBehaviorConn( portId, ( m_containerGraph.IsLoading || m_isNodeBeingCopied ) );
+			NewUpdateBehaviorConn( portId, ( UIUtils.IsLoading|| m_isNodeBeingCopied ) );
 			RenamePorts();
 
 		}
@@ -220,7 +220,7 @@ namespace AmplifyShaderEditor
 		{
 			base.OnInputPortDisconnected( portId );
 
-			if( ( m_containerGraph.IsLoading || m_isNodeBeingCopied ) && UIUtils.CurrentShaderVersion() < 13206 )
+			if( ( UIUtils.IsLoading || m_isNodeBeingCopied ) && UIUtils.CurrentShaderVersion() < 13206 )
 				return;
 
 			NewUpdateBehaviorDisconn( portId );
@@ -231,10 +231,10 @@ namespace AmplifyShaderEditor
 		{
 			base.OnConnectedOutputNodeChanges( portId, otherNodeId, otherPortId, name, type );
 
-			if( ( m_containerGraph.IsLoading || m_isNodeBeingCopied ) && UIUtils.CurrentShaderVersion() < 13206 )
+			if( ( UIUtils.IsLoading || m_isNodeBeingCopied ) && UIUtils.CurrentShaderVersion() < 13206 )
 				return;
 
-			NewUpdateBehaviorConn( portId, ( m_containerGraph.IsLoading || m_isNodeBeingCopied ) );
+			NewUpdateBehaviorConn( portId, ( UIUtils.IsLoading || m_isNodeBeingCopied ) );
 			RenamePorts();
 		}
 

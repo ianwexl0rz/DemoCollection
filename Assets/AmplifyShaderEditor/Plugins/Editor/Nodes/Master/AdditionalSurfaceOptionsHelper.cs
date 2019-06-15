@@ -21,9 +21,9 @@ namespace AmplifyShaderEditor
 		public void Draw( ParentNode owner )
 		{
 			m_currentOwner = owner;
-			bool value = owner.ContainerGraph.ParentWindow.InnerWindowVariables.ExpandedCustomTags;
+			bool value = owner.ContainerGraph.ParentWindow.InnerWindowVariables.ExpandedAdditionalSurfaceOptions;
 			NodeUtils.DrawPropertyGroup( ref value, AdditionalOptionsStr, DrawMainBody, DrawButtons );
-			owner.ContainerGraph.ParentWindow.InnerWindowVariables.ExpandedCustomTags = value;
+			owner.ContainerGraph.ParentWindow.InnerWindowVariables.ExpandedAdditionalSurfaceOptions = value;
 		}
 
 		void DrawButtons()
@@ -124,7 +124,7 @@ namespace AmplifyShaderEditor
 			}
 		}
 
-		public void WriteToOptionalSurfaceOptions( ref string currentOptions)
+		public void WriteToOptionalSurfaceOptions( ref string currentOptions )
 		{
 			int tagsCount = m_availableOptions.Count;
 			if( tagsCount == 0 )
@@ -140,7 +140,7 @@ namespace AmplifyShaderEditor
 					result += " ";
 				}
 			}
-			currentOptions = currentOptions +  result;
+			currentOptions = currentOptions + result;
 		}
 
 		public void Destroy()

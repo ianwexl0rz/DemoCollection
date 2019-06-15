@@ -15,6 +15,8 @@ namespace AmplifyShaderEditor
 
 	public class AmplifyShaderEditorWindow : SearchableEditorWindow, ISerializationCallbackReceiver
 	{
+		public const string PreviewSizeGlobalVariable = "_ASEPreviewSize";
+
 		public const double InactivitySaveTime = 1.0;
 
 		public const string CopyCommand = "Copy";
@@ -33,6 +35,7 @@ namespace AmplifyShaderEditor
 		private bool m_initialized = false;
 		private bool m_checkInvalidConnections = false;
 		private bool m_afterDeserializeFlag = true;
+		
 
 		[SerializeField]
 		private ParentGraph m_customGraph = null;
@@ -44,7 +47,10 @@ namespace AmplifyShaderEditor
 		private GUIStyle m_graphFontStyle;
 		//private GUIStyle _borderStyle;
 		private Texture2D m_wireTexture;
-
+		#if UNITY_2018_3_OR_NEWER
+		[SerializeField]
+		private ASEPackageManagerHelper m_packageManagerHelper = new ASEPackageManagerHelper();
+		#endif
 		[SerializeField]
 		TemplatesManager m_templatesManager;
 
@@ -80,6 +86,8 @@ namespace AmplifyShaderEditor
 		// Camera control
 		[SerializeField]
 		private Vector2 m_cameraOffset;
+
+		private float m_cameraSpeed = 1;
 
 		private Rect m_cameraInfo;
 
@@ -286,6 +294,8 @@ namespace AmplifyShaderEditor
 		private bool m_nodesLoadedCorrectly = false;
 		private GUIContent NodesExceptionMessage = new GUIContent( "ASE is unable to load correctly due to some faulty other classes/plugin in your project. We advise to review all your imported plugins." );
 
+
+		private bool m_outdatedShaderFromTemplateLoaded = false;
 		private bool m_replaceMasterNode = false;
 		private AvailableShaderTypes m_replaceMasterNodeType;
 		private string m_replaceMasterNodeData;
@@ -393,7 +403,12 @@ namespace AmplifyShaderEditor
 			else
 			{
 				UIUtils.CreateEmptyFromInvalid( shader );
-				UIUtils.ShowMessage( "Convertion complete. Old data will be lost when saving it" );
+				UIUtils.ShowMessage( "Trying to open shader not created on ASE!\nBEWARE, old data will be lost if saving it here!", MessageSeverity.Warning );
+				if( UIUtils.CurrentWindow.LiveShaderEditing )
+				{
+					UIUtils.ShowMessage( "Disabling Live Shader Editing. Must manually re-enable it.", MessageSeverity.Warning );
+					UIUtils.CurrentWindow.LiveShaderEditing = false;
+				}
 			}
 		}
 
@@ -542,6 +557,11 @@ namespace AmplifyShaderEditor
 		public override void OnEnable()
 		{
 			base.OnEnable();
+			Shader.SetGlobalVector( PreviewSizeGlobalVariable, new Vector4( ParentNode.PreviewWidth, ParentNode.PreviewHeight, 0, 0 ));
+
+			#if UNITY_2018_3_OR_NEWER
+			m_packageManagerHelper.RequestInfo();
+			#endif
 			if( m_templatesManager == null )
 			{
 				m_templatesManager = IOUtils.FirstValidTemplatesManager;
@@ -859,6 +879,7 @@ namespace AmplifyShaderEditor
 			m_registeredMenus = null;
 
 			m_mainGraphInstance.Destroy();
+			ScriptableObject.DestroyImmediate( m_mainGraphInstance );
 			m_mainGraphInstance = null;
 
 			Resources.UnloadAsset( m_graphBgTexture );
@@ -878,6 +899,7 @@ namespace AmplifyShaderEditor
 
 			m_nodeParametersWindow.Destroy();
 			m_nodeParametersWindow = null;
+
 
 			m_modeWindow.Destroy();
 			m_modeWindow = null;
@@ -1300,6 +1322,7 @@ namespace AmplifyShaderEditor
 			m_mainGraphInstance.OnShaderUpdatedEvent += OnShaderUpdated;
 			m_mainGraphInstance.OnEmptyGraphDetectedEvt += OnEmptyGraphDetected;
 			m_mainGraphInstance.OnNodeRemovedEvent += m_toolsWindow.OnNodeRemovedFromGraph;
+			m_outdatedShaderFromTemplateLoaded = false;
 			GraphCount = 1;
 
 			FullCleanUndoStack();
@@ -2904,6 +2927,8 @@ namespace AmplifyShaderEditor
 
 		void OnKeyboardUp()
 		{
+			CheckKeyboardCameraUp();
+
 			if( m_altPressDown )
 			{
 				m_altPressDown = false;
@@ -2919,6 +2944,64 @@ namespace AmplifyShaderEditor
 		bool OnKeyboardPress( KeyCode code )
 		{
 			return ( m_currentEvent.keyCode == code && m_lastKeyPressed == KeyCode.None );
+		}
+
+		void CheckKeyboardCameraDown()
+		{
+			if( m_contextPalette.IsActive )
+				return;
+			if( m_currentEvent.alt )
+			{
+				bool foundKey = false;
+				float dir = 0;
+				switch( m_currentEvent.keyCode )
+				{
+					case KeyCode.UpArrow: foundKey = true; dir = 1; break;
+					case KeyCode.DownArrow: foundKey = true; dir = -1; break;
+					case KeyCode.LeftArrow: foundKey = true; dir = 1; break;
+					case KeyCode.RightArrow: foundKey = true; dir = -1; break;
+				}
+				if( foundKey )
+				{
+					ModifyZoom( Constants.ALT_CAMERA_ZOOM_SPEED * dir * m_cameraSpeed, new Vector2( m_cameraInfo.width * 0.5f, m_cameraInfo.height * 0.5f ) );
+					if( m_cameraSpeed < 15 )
+						m_cameraSpeed += 0.2f;
+					UseCurrentEvent();
+				}
+
+				
+			}
+			else
+			{
+				bool foundKey = false;
+				Vector2 dir = Vector2.zero;
+				switch( m_currentEvent.keyCode )
+				{
+					case KeyCode.UpArrow: foundKey = true; dir = Vector2.up; break;
+					case KeyCode.DownArrow: foundKey = true; dir = Vector2.down; break;
+					case KeyCode.LeftArrow: foundKey = true; dir = Vector2.right; break;
+					case KeyCode.RightArrow: foundKey = true; dir = Vector2.left; break;
+				}
+				if( foundKey )
+				{
+					m_cameraOffset += m_cameraZoom * m_cameraSpeed * dir;
+					if( m_cameraSpeed < 15 )
+						m_cameraSpeed += 0.2f;
+
+					UseCurrentEvent();
+				}
+			}
+		}
+
+		void CheckKeyboardCameraUp()
+		{
+			switch( m_currentEvent.keyCode )
+			{
+				case KeyCode.UpArrow:
+				case KeyCode.DownArrow:
+				case KeyCode.LeftArrow:
+				case KeyCode.RightArrow: m_cameraSpeed = 1;break;
+			}
 		}
 
 		void OnKeyboardDown()
@@ -2945,6 +3028,8 @@ namespace AmplifyShaderEditor
 			//		m_nodeExporterUtils.CalculateShaderInstructions( CurrentGraph.CurrentShader );
 			//	}
 			//}
+
+			CheckKeyboardCameraDown();
 
 			if( m_lastKeyPressed == KeyCode.None )
 			{
@@ -3030,9 +3115,11 @@ namespace AmplifyShaderEditor
 			m_lostFocus = true;
 			m_multipleSelectionActive = false;
 			m_wireReferenceUtils.InvalidateReferences();
-			m_genericMessageUI.CleanUpMessageStack();
+			if( m_genericMessageUI != null )
+				m_genericMessageUI.CleanUpMessageStack();
 			m_nodeParametersWindow.OnLostFocus();
 			m_paletteWindow.OnLostFocus();
+			m_contextMenu.ResetShortcutKeyStates();
 		}
 
 		void CopyToClipboard()
@@ -3965,12 +4052,23 @@ namespace AmplifyShaderEditor
 
 			switch( severity )
 			{
-				case MessageSeverity.Normal: { m_genericMessageContent.text = string.Empty; } break;
-				case MessageSeverity.Warning: { m_genericMessageContent.text = "Warning!\n"; } break;
-				case MessageSeverity.Error: { m_genericMessageContent.text = "Error!!!\n"; } break;
+				case MessageSeverity.Normal:
+				{
+					m_genericMessageContent.text = message;
+					Debug.Log( message );
+				}break;
+				case MessageSeverity.Warning:
+				{
+					m_genericMessageContent.text = "Warning!\n"+ message;
+					Debug.LogWarning( message );
+				} break;
+				case MessageSeverity.Error:
+				{
+					m_genericMessageContent.text = "Error!!!\n"+ message;
+					Debug.LogError( message );
+				} break;
 			}
-			m_genericMessageContent.text += message;
-			Debug.Log( message );
+
 			try
 			{
 				ShowNotification( m_genericMessageContent );
@@ -3984,37 +4082,7 @@ namespace AmplifyShaderEditor
 		public bool MouseInteracted = false;
 
 
-		void CheckNodeReplacement()
-		{
-			if( m_replaceMasterNode )
-			{
-				m_replaceMasterNode = false;
-				switch( m_replaceMasterNodeType )
-				{
-					default:
-					case AvailableShaderTypes.SurfaceShader:
-					{
-						SetStandardShader();
-					}
-					break;
-					case AvailableShaderTypes.Template:
-					{
-
-						if( m_replaceMasterNodeDataFromCache )
-						{
-							TemplateDataParent templateData = m_templatesManager.GetTemplate( m_replaceMasterNodeData );
-							m_mainGraphInstance.CrossCheckTemplateNodes( templateData );
-							//m_clipboard.GetMultiPassNodesFromClipboard( m_mainGraphInstance.MultiPassMasterNodes.NodesList );
-						}
-						else
-						{
-							SetTemplateShader( m_replaceMasterNodeData, false );
-						}
-					}
-					break;
-				}
-			}
-		}
+		
 
 		void OnGUI()
 		{
@@ -4520,6 +4588,10 @@ namespace AmplifyShaderEditor
 		
 		void OnInspectorUpdate()
 		{
+			#if UNITY_2018_3_OR_NEWER
+			m_packageManagerHelper.Update();
+			#endif
+
 			if( m_afterDeserializeFlag )
 			{
 				m_afterDeserializeFlag = false;
@@ -4922,6 +4994,11 @@ namespace AmplifyShaderEditor
 			}
 		}
 
+		public void SetOutdatedShaderFromTemplate()
+		{
+			m_outdatedShaderFromTemplateLoaded = true;
+		}
+
 		public void ReplaceMasterNode( MasterNodeCategoriesData data, bool cacheMasterNodes )
 		{
 			m_replaceMasterNodeType = data.Category;
@@ -4931,6 +5008,47 @@ namespace AmplifyShaderEditor
 			if( cacheMasterNodes )
 			{
 				m_clipboard.AddMultiPassNodesToClipboard( m_mainGraphInstance.MultiPassMasterNodes.NodesList );
+			}
+		}
+
+		void CheckNodeReplacement()
+		{
+			if( m_replaceMasterNode )
+			{
+				m_replaceMasterNode = false;
+				switch( m_replaceMasterNodeType )
+				{
+					default:
+					case AvailableShaderTypes.SurfaceShader:
+					{
+						SetStandardShader();
+					}
+					break;
+					case AvailableShaderTypes.Template:
+					{
+
+						if( m_replaceMasterNodeDataFromCache )
+						{
+							TemplateDataParent templateData = m_templatesManager.GetTemplate( m_replaceMasterNodeData );
+							m_mainGraphInstance.CrossCheckTemplateNodes( templateData );
+							m_clipboard.GetMultiPassNodesFromClipboard( m_mainGraphInstance.MultiPassMasterNodes.NodesList );
+						}
+						else
+						{
+							SetTemplateShader( m_replaceMasterNodeData, false );
+						}
+					}
+					break;
+				}
+			}
+			else if( m_outdatedShaderFromTemplateLoaded )
+			{
+				m_outdatedShaderFromTemplateLoaded = false;
+				TemplateMultiPassMasterNode masterNode = m_mainGraphInstance.CurrentMasterNode as TemplateMultiPassMasterNode;
+				if( masterNode != null )
+				{
+					ReplaceMasterNode( masterNode.CurrentCategoriesData, true );
+				}
 			}
 		}
 
@@ -5082,6 +5200,17 @@ namespace AmplifyShaderEditor
 			}
 		}
 
+		public bool LiveShaderEditing
+		{
+			get { return m_liveShaderEditing; }
+			set
+			{
+				m_liveShaderEditing = value;
+				m_innerEditorVariables.LiveMode = m_liveShaderEditing;
+				UpdateLiveUI();
+			}
+		}
+
 		public NodeAvailability CurrentNodeAvailability
 		{
 			get { return m_currentNodeAvailability; }
@@ -5128,5 +5257,8 @@ namespace AmplifyShaderEditor
 		public InnerWindowEditorVariables InnerWindowVariables { get { return m_innerEditorVariables; } }
 		public TemplatesManager TemplatesManagerInstance { get { return m_templatesManager; } }
 		public Material CurrentMaterial { get { return CurrentGraph.CurrentMaterial; } }
+		#if UNITY_2018_3_OR_NEWER
+		public ASEPackageManagerHelper PackageManagerHelper { get { return m_packageManagerHelper; } }
+		#endif
 	}
 }

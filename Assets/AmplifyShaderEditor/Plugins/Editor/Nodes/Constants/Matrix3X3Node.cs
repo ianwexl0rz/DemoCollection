@@ -197,7 +197,7 @@ namespace AmplifyShaderEditor
 			}
 		}
 
-		public override bool GetUniformData( out string dataType, out string dataName )
+		public override bool GetUniformData( out string dataType, out string dataName, ref bool fullValue )
 		{
 			dataType = UIUtils.FinalPrecisionWirePortToCgType( m_currentPrecisionType, WirePortDataType.FLOAT4x4 );
 			dataName = m_propertyName;

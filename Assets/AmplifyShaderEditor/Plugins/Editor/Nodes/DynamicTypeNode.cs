@@ -397,8 +397,8 @@ namespace AmplifyShaderEditor
 		{
 			if( !m_extensibleInputPorts )
 				return;
-
-			if( !m_containerGraph.ParentWindow.WireReferenceUtils.OutputPortReference.IsValid )
+			NodeWireReferencesUtils wireReferenceUtils = m_containerGraph.ParentWindow.WireReferenceUtils;
+			if( !wireReferenceUtils.OutputPortReference.IsValid )
 			{
 				if( recordUndo )
 				{
@@ -413,6 +413,12 @@ namespace AmplifyShaderEditor
 					if( !m_inputPorts[ i ].IsConnected )
 					{
 						hasDeleted = true;
+						if( wireReferenceUtils.InputPortReference.IsValid &&
+							wireReferenceUtils.InputPortReference.NodeId == UniqueId &&
+							wireReferenceUtils.InputPortReference.PortId == m_inputPorts[ i ].PortId )
+						{
+							wireReferenceUtils.InputPortReference.Invalidate();
+						}
 						DeleteInputPortByArrayIdx( i );
 					}
 					else

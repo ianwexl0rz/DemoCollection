@@ -36,6 +36,7 @@ Shader /*ase_name*/ "Hidden/Templates/Legacy/DefaultUnlit" /*end*/
 			{
 				float4 vertex : SV_POSITION;
 				float4 texcoord : TEXCOORD0;
+				UNITY_VERTEX_INPUT_INSTANCE_ID
 				UNITY_VERTEX_OUTPUT_STEREO
 				/*ase_interp(1,):sp=sp.xyzw;uv0=tc0.xy;uv1=tc0.zw*/
 			};
@@ -49,6 +50,7 @@ Shader /*ase_name*/ "Hidden/Templates/Legacy/DefaultUnlit" /*end*/
 				v2f o;
 				UNITY_SETUP_INSTANCE_ID(v);
 				UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
+				UNITY_TRANSFER_INSTANCE_ID(v, o);
 				o.texcoord.xy = v.texcoord.xy;
 				o.texcoord.zw = v.texcoord1.xy;
 				

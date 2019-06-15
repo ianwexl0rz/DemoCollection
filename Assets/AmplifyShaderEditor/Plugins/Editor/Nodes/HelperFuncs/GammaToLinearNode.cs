@@ -70,6 +70,7 @@ namespace AmplifyShaderEditor
 			}
 			else
 			{
+				dataCollector.AddToIncludes( UniqueId, TemplateHelperFunctions.CoreCommonLib );
 				dataCollector.AddToIncludes( UniqueId, TemplateHelperFunctions.CoreColorLib );
 				switch( m_selectedMode )
 				{

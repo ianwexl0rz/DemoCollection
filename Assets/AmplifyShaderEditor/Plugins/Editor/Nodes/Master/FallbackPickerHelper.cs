@@ -17,8 +17,9 @@ namespace AmplifyShaderEditor
 		[SerializeField]
 		private string m_fallbackShader = string.Empty;
 
-		public FallbackPickerHelper()
+		public void Init()
 		{
+			hideFlags = HideFlags.HideAndDontSave;
 			m_dummyMaterial = null;
 			m_dummyCommand = null;
 		}

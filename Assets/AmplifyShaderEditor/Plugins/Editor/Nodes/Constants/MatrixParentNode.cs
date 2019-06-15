@@ -8,8 +8,8 @@ namespace AmplifyShaderEditor
 	[Serializable]
 	public class MatrixParentNode : PropertyNode
 	{
-		private readonly string[] AvailablePropertyTypeLabels = { PropertyType.Constant.ToString(), PropertyType.Global.ToString() };
-		private readonly int[] AvailablePropertyTypeValues = { (int)PropertyType.Constant, (int)PropertyType.Global };
+		private readonly string[] AvailablePropertyTypeLabels = { PropertyType.Constant.ToString(), PropertyType.Global.ToString(), "Instanced" };
+		private readonly int[] AvailablePropertyTypeValues = { (int)PropertyType.Constant, (int)PropertyType.Global , (int)PropertyType.InstancedProperty };
 
 		protected bool m_isEditingFields;
 
@@ -31,7 +31,7 @@ namespace AmplifyShaderEditor
 		{
 			base.CommonInit( uniqueId );
 			m_freeType = false;
-
+			m_showVariableMode = true;
 		}
 
 		public override void AfterCommonInit()

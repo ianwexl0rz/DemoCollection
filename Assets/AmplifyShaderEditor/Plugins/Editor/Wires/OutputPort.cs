@@ -61,6 +61,19 @@ namespace AmplifyShaderEditor
 			UIUtils.DeleteConnection( false, m_nodeId, m_portId, true, true );
 		}
 
+		public bool HasConnectedNode
+		{
+			get
+			{
+				int count = m_externalReferences.Count;
+				for( int i = 0; i < count; i++ )
+				{
+					if( UIUtils.GetNode( m_externalReferences[ i ].NodeId ).IsConnected )
+						return true;
+				}
+				return false;
+			}
+		}
 		public InputPort GetInputConnection( int connID = 0 )
 		{
 			if( connID < m_externalReferences.Count )

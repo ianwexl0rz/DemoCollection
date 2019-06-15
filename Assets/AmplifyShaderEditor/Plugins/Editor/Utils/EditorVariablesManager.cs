@@ -131,6 +131,7 @@ namespace AmplifyShaderEditor
 		public static EditorVariableBool ExpandedAdditionalDefines = new EditorVariableBool( "ASEExpandedAdditionalDefines", " ExpandedAdditionalDefines", false );
 		public static EditorVariableBool ExpandedAdditionalDirectives = new EditorVariableBool( "ASEExpandedAdditionalDirectives", " ExpandedAdditionalDirectives", false );
 		public static EditorVariableBool ExpandedCustomTags = new EditorVariableBool( "ASEExpandedCustomTags", " ExpandedCustomTags", false );
+		public static EditorVariableBool ExpandedAdditionalSurfaceOptions = new EditorVariableBool( "ASEExpandedAdditionalSurfaceOptions", " ExpandedAdditionalSurfaceOptions", false );
 		public static EditorVariableBool ExpandedAdditionalPragmas = new EditorVariableBool( "ASEExpandedAdditionalPragmas", " ExpandedAdditionalPragmas", false );
 		public static EditorVariableBool ExpandedDependencies = new EditorVariableBool( "ASEExpandedDependencies", " ExpandedDependencies", false );
 		public static EditorVariableBool ExpandedDepth = new EditorVariableBool( "ASEExpandedDepth", " ExpandedDepth", false );
@@ -179,6 +180,8 @@ namespace AmplifyShaderEditor
 		[SerializeField]
 		private bool m_expandedCustomTags = false;
 		[SerializeField]
+		private bool m_expandedAdditionalSurfaceOptions = false;
+		[SerializeField]
 		private bool m_expandedAdditionalPragmas = false;
 		[SerializeField]
 		private bool m_expandedDependencies = false;
@@ -212,6 +215,7 @@ namespace AmplifyShaderEditor
 			m_expandedAdditionalDefines = EditorVariablesManager.ExpandedAdditionalDefines.Value;
 			m_expandedAdditionalDirectives = EditorVariablesManager.ExpandedAdditionalDirectives.Value;
 			m_expandedCustomTags = EditorVariablesManager.ExpandedCustomTags.Value;
+			m_expandedAdditionalSurfaceOptions = EditorVariablesManager.ExpandedAdditionalSurfaceOptions.Value;
 			m_expandedAdditionalPragmas = EditorVariablesManager.ExpandedAdditionalPragmas.Value;
 			m_expandedDependencies = EditorVariablesManager.ExpandedDependencies.Value;
 			m_expandedBlendModeModule = EditorVariablesManager.ExpandedBlendModeModule.Value;
@@ -238,6 +242,7 @@ namespace AmplifyShaderEditor
 		public bool ExpandedAdditionalDefines { get { return m_expandedAdditionalDefines; } set { m_expandedAdditionalDefines = value; EditorVariablesManager.ExpandedAdditionalDefines.Value = value; } }
 		public bool ExpandedAdditionalDirectives { get { return m_expandedAdditionalDirectives; } set { m_expandedAdditionalDirectives = value; EditorVariablesManager.ExpandedAdditionalDirectives.Value = value; } }
 		public bool ExpandedCustomTags { get { return m_expandedCustomTags; } set { m_expandedCustomTags = value; EditorVariablesManager.ExpandedCustomTags.Value = value; } }
+		public bool ExpandedAdditionalSurfaceOptions { get { return m_expandedAdditionalSurfaceOptions; } set { m_expandedAdditionalSurfaceOptions = value; EditorVariablesManager.ExpandedAdditionalSurfaceOptions.Value = value; } }
 		public bool ExpandedAdditionalPragmas { get { return m_expandedAdditionalPragmas; } set { m_expandedAdditionalPragmas = value; EditorVariablesManager.ExpandedAdditionalPragmas.Value = value; } }
 		public bool ExpandedDependencies { get { return m_expandedDependencies; } set { m_expandedDependencies = value; EditorVariablesManager.ExpandedDependencies.Value = value; } }
 		public bool ExpandedBlendModeModule { get { return m_expandedBlendModeModule; } set { m_expandedBlendModeModule = value; EditorVariablesManager.ExpandedBlendModeModule.Value = value; } }

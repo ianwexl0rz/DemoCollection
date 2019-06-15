@@ -8,9 +8,9 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Shirt
-  m_Shader: {fileID: 4800000, guid: 289f6d7fd8e4d0542b05fb923a2492d0, type: 3}
+  m_Shader: {fileID: 4800000, guid: ed4d8d2cd5e9cb64683419fe59fd50a4, type: 3}
   m_ShaderKeywords: _EMISSION _SPECULARHIGHLIGHTS_OFF
-  m_LightmapFlags: 0
+  m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
@@ -80,6 +80,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
+    - _Ambient: 0
     - _BumpScale: 1
     - _ColorMult: 0
     - _Cutoff: 0.5
@@ -95,19 +96,33 @@ Material:
     - _Metallic: 0
     - _Mode: 0
     - _NoiseMapStrength: 0
+    - _NormalDistortion: 1
     - _OcclusionStrength: 1
     - _Parallax: 0.02
+    - _Power: 1
+    - _SSSAmbient: 0
+    - _SSSExponent: 1
+    - _SSSNormalDistortion: 1
+    - _SSSScale: 1
+    - _SSSTerminatorExponent: 0
+    - _SSSThickness: 1
+    - _Scale: 1
+    - _ShadowFalloff: 0.05
     - _Shininess: 0.07
-    - _Smoothness: 0.4
+    - _Smoothness: 0
     - _SmoothnessTextureChannel: 0
     - _SpecSize: 1
     - _SpecularHighlights: 0
     - _SrcBlend: 1
+    - _SubsurfaceScattering: 0
+    - _Thickness: 0
     - _Translucency: 0
+    - _TransmissionPower: 4
     - _UVSec: 0
     - _ZWrite: 1
     - __dirty: 0
     m_Colors:
+    - _Albedo: {r: 0.3207547, g: 0.06808473, b: 0.07598067, a: 0}
     - _Color: {r: 0.189014, g: 0.2672599, b: 0.322, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _MainColor: {r: 0.566, g: 0.296584, b: 0.38865682, a: 1}
@@ -117,4 +132,5 @@ Material:
     - _SecondaryColor: {r: 0, g: 0, b: 0, a: 0}
     - _ShadowColor: {r: 0, g: 0.3311911, b: 0.65882355, a: 1}
     - _SpecColor: {r: 0.219373, g: 0.259, b: 0.259, a: 1}
+    - _SubsurfaceColor: {r: 1, g: 1, b: 1, a: 0}
     - _Tint: {r: 0, g: 0, b: 0, a: 0}

@@ -8,7 +8,7 @@ namespace AmplifyShaderEditor
 	[Serializable]
 	public class TemplateTagsModule : TemplateModuleParent
 	{
-		private const string CustomTagsStr = " SubShader Tags";
+		private const string CustomTagsStr = "Tags";
 		private const string TagNameStr = "Name";
 		private const string TagValueStr = "Value";
 		private const string QueueIndexStr = "Index";
@@ -28,7 +28,7 @@ namespace AmplifyShaderEditor
 
 		private Dictionary<string, CustomTagData> m_availableTagsDict = new Dictionary<string, CustomTagData>();
 
-		public TemplateTagsModule() : base( "SubShader Tags" ) { }
+		public TemplateTagsModule() : base( "Tags" ) { }
 
 		public void CopyFrom( TemplateTagsModule other )
 		{
@@ -233,6 +233,56 @@ namespace AmplifyShaderEditor
 			{
 				m_isDirty = true;
 			}
+		}
+
+		//Method used by template options
+		// As such. Render Queue will have value and offset separated by ,
+		public void AddSpecialTag( TemplateSpecialTags tag, TemplateActionItem item )
+		{
+			if( tag == TemplateSpecialTags.None )
+				return;
+
+			int count = m_availableTags.Count;
+			for( int i = 0; i < count; i++ )
+			{
+				if( m_availableTags[ i ].SpecialTag == tag )
+				{
+					switch( tag )
+					{
+						case TemplateSpecialTags.RenderType:
+						{
+							m_availableTags[ i ].RenderType = TemplateHelperFunctions.StringToRenderType[ item.ActionData ];
+							return;
+						}
+						case TemplateSpecialTags.Queue:
+						{
+							
+							m_availableTags[ i ].RenderQueue = TemplateHelperFunctions.StringToRenderQueue[ item.ActionData ];
+							m_availableTags[ i ].RenderQueueOffset = item.ActionDataIdx;
+							m_availableTags[ i ].BuildQueueTagValue();
+							return;
+						}
+					}
+				}
+			}
+
+			CustomTagData data = new CustomTagData();
+			switch( tag )
+			{
+				case TemplateSpecialTags.RenderType:
+				{
+					data.RenderType = TemplateHelperFunctions.StringToRenderType[ item.ActionData ];
+				}
+				break;
+				case TemplateSpecialTags.Queue:
+				{
+					data.RenderQueue = TemplateHelperFunctions.StringToRenderQueue[ item.ActionData ];
+					data.RenderQueueOffset = item.ActionDataIdx;
+					data.BuildQueueTagValue();
+				}
+				break;
+			}
+			m_availableTags.Add( data );
 		}
 
 		void AddTagFromRead( string data )

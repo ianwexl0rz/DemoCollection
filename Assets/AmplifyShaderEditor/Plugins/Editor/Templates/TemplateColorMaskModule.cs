@@ -161,7 +161,15 @@ namespace AmplifyShaderEditor
 			}
 		}
 
-		public bool[] ColorMask { get { return m_colorMask; } }
+		public bool[] ColorMask
+		{
+			get { return m_colorMask; }
+			set
+			{
+				m_colorMask = value;
+				m_inlineColorMask.Active = false;
+			}
+		}
 
 		public override void Destroy()
 		{

@@ -43,6 +43,12 @@ namespace AmplifyShaderEditor
 
 		private bool m_isEditingFields;
 
+		[SerializeField]
+		private bool m_autoGammaToLinearConversion = true;
+
+		private const string AutoGammaToLinearConversion = "IsGammaSpace() ? {0} : {1}";
+		private const string AutoGammaToLinearStr = "Auto Gamma To Linear";
+
 		public ColorNode() : base() { }
 		public ColorNode( int uniqueId, float x, float y, float width, float height ) : base( uniqueId, x, y, width, height ) { }
 
@@ -81,11 +87,18 @@ namespace AmplifyShaderEditor
 
 		public override void DrawSubProperties()
 		{
+			m_textLabelWidth = ( m_currentParameterType == PropertyType.Constant ) ? 152 : 105;
+
 #if UNITY_2018_1_OR_NEWER
 			m_defaultValue = EditorGUILayoutColorField( Constants.DefaultValueLabelContent, m_defaultValue, false, true, m_isHDR );
 #else
 			m_defaultValue = EditorGUILayoutColorField( Constants.DefaultValueLabelContent, m_defaultValue, false, true, m_isHDR, m_hdrConfig );
 #endif
+			if( m_currentParameterType == PropertyType.Constant )
+			{
+				
+				m_autoGammaToLinearConversion = EditorGUILayoutToggle( AutoGammaToLinearStr, m_autoGammaToLinearConversion );
+			}
 		}
 
 		//public override void DrawMainPropertyBlock()
@@ -259,56 +272,74 @@ namespace AmplifyShaderEditor
 			if( m_currentParameterType != PropertyType.Constant )
 				return GetOutputVectorItem( 0, outputId, PropertyData( dataCollector.PortCategory ) );
 
+			// Constant Only Code
+
 			if( m_outputPorts[ outputId ].IsLocalValue(dataCollector.PortCategory) )
 			{
 				return m_outputPorts[ outputId ].LocalValue( dataCollector.PortCategory );
 			}
-
-			if( CheckLocalVariable( ref dataCollector ) )
+			if( m_autoGammaToLinearConversion )
 			{
-				return m_outputPorts[ outputId ].LocalValue( dataCollector.PortCategory );
+				if( m_outputPorts[ 0 ].IsLocalValue( dataCollector.PortCategory ) )
+					return GetOutputColorItem( 0, outputId, m_outputPorts[ 0 ].LocalValue(dataCollector.PortCategory) );
+				
+				Color linear = m_defaultValue.linear;
+
+				string colorGamma = m_precisionString + "(" + m_defaultValue.r + "," + m_defaultValue.g + "," + m_defaultValue.b + "," + m_defaultValue.a + ")";
+				string colorLinear = m_precisionString + "(" + linear.r + "," + linear.g + "," + linear.b + "," + m_defaultValue.a + ")";
+
+				string result = string.Format( AutoGammaToLinearConversion, colorGamma, colorLinear );
+				RegisterLocalVariable( 0, result, ref dataCollector, "color" + OutputId );
+				return GetOutputColorItem( 0, outputId, m_outputPorts[ 0 ].LocalValue( dataCollector.PortCategory ) );
 			}
-
-			Color color = m_defaultValue;
-			//switch( m_colorSpace )
-			//{
-			//	default:
-			//	case ASEColorSpace.Auto: color = m_defaultValue; break;
-			//	case ASEColorSpace.Gamma: color = m_defaultValue.gamma; break;
-			//	case ASEColorSpace.Linear: color = m_defaultValue.linear; break;
-			//}
-			string result = string.Empty;
-
-			switch( outputId )
+			else
 			{
-				case 0:
+				if( CheckLocalVariable( ref dataCollector ) )
 				{
-					result = m_precisionString + "(" + color.r + "," + color.g + "," + color.b + "," + color.a + ")";
+					return m_outputPorts[ outputId ].LocalValue( dataCollector.PortCategory );
 				}
-				break;
 
-				case 1:
+				Color color = m_defaultValue;
+				//switch( m_colorSpace )
+				//{
+				//	default:
+				//	case ASEColorSpace.Auto: color = m_defaultValue; break;
+				//	case ASEColorSpace.Gamma: color = m_defaultValue.gamma; break;
+				//	case ASEColorSpace.Linear: color = m_defaultValue.linear; break;
+				//}
+				string result = string.Empty;
+
+				switch( outputId )
 				{
-					result = color.r.ToString();
+					case 0:
+					{
+						result = m_precisionString + "(" + color.r + "," + color.g + "," + color.b + "," + color.a + ")";
+					}
+					break;
+
+					case 1:
+					{
+						result = color.r.ToString();
+					}
+					break;
+					case 2:
+					{
+						result = color.g.ToString();
+					}
+					break;
+					case 3:
+					{
+						result = color.b.ToString();
+					}
+					break;
+					case 4:
+					{
+						result = color.a.ToString();
+					}
+					break;
 				}
-				break;
-				case 2:
-				{
-					result = color.g.ToString();
-				}
-				break;
-				case 3:
-				{
-					result = color.b.ToString();
-				}
-				break;
-				case 4:
-				{
-					result = color.a.ToString();
-				}
-				break;
+				return result;
 			}
-			return result;
 		}
 
 		protected override void OnAtrributesChanged()
@@ -405,6 +436,14 @@ namespace AmplifyShaderEditor
 				m_materialValue = IOUtils.StringToColor( GetCurrentParam( ref nodeParams ) );
 			}
 
+			if( UIUtils.CurrentShaderVersion() > 15900 )
+			{
+				m_autoGammaToLinearConversion = Convert.ToBoolean( GetCurrentParam( ref nodeParams ) );
+			}
+			else
+			{
+				m_autoGammaToLinearConversion = false;
+			}
 			//if( UIUtils.CurrentShaderVersion() > 14202 )
 			//{
 			//	m_colorSpace = (ASEColorSpace)Enum.Parse( typeof( ASEColorSpace ), GetCurrentParam( ref nodeParams ) );
@@ -416,6 +455,7 @@ namespace AmplifyShaderEditor
 			base.WriteToString( ref nodeInfo, ref connectionsInfo );
 			IOUtils.AddFieldValueToString( ref nodeInfo, IOUtils.ColorToString( m_defaultValue ) );
 			IOUtils.AddFieldValueToString( ref nodeInfo, IOUtils.ColorToString( m_materialValue ) );
+			IOUtils.AddFieldValueToString( ref nodeInfo, m_autoGammaToLinearConversion );
 			//IOUtils.AddFieldValueToString( ref nodeInfo, m_colorSpace );
 		}
 

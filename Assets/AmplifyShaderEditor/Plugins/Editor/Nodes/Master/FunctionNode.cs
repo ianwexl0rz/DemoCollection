@@ -91,7 +91,7 @@ namespace AmplifyShaderEditor
 			if( function == null )
 				return;
 
-			m_refreshIdsRequired = m_containerGraph.IsLoading && ( UIUtils.CurrentShaderVersion() < 14004 );
+			m_refreshIdsRequired = UIUtils.IsLoading && ( UIUtils.CurrentShaderVersion() < 14004 );
 
 			m_function = function;
 

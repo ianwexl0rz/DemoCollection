@@ -195,7 +195,7 @@ namespace AmplifyShaderEditor
 			return "uniform sampler2D " + PropertyName + ";";
 		}
 
-		public override bool GetUniformData( out string dataType, out string dataName )
+		public override bool GetUniformData( out string dataType, out string dataName, ref bool fullValue )
 		{
 			dataType = "sampler2D";
 			dataName = PropertyName;

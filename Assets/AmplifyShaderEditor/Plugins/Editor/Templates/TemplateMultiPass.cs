@@ -8,6 +8,13 @@ using UnityEditor;
 namespace AmplifyShaderEditor
 {
 	[Serializable]
+	public class TemplateUniquePassData
+	{
+		public int SubShaderIdx;
+		public int PassIdx;
+	}
+
+	[Serializable]
 	public sealed class TemplateMultiPass : TemplateDataParent
 	{
 		[SerializeField]
@@ -49,6 +56,12 @@ namespace AmplifyShaderEditor
 		[SerializeField]
 		TemplateInfoContainer m_fallbackContainer = new TemplateInfoContainer();
 
+		[SerializeField]
+		private CustomTemplatePropertyUIEnum m_customTemplatePropertyUI = CustomTemplatePropertyUIEnum.None;
+
+		private Dictionary<string, TemplateUniquePassData> m_passUniqueIdData = new Dictionary<string, TemplateUniquePassData>();
+
+
 		public TemplateMultiPass()
 		{
 			m_templateType = TemplateDataType.MultiPass;
@@ -70,6 +83,7 @@ namespace AmplifyShaderEditor
 
 		void LoadTemplateBody( string guid )
 		{
+			m_passUniqueIdData.Clear();
 			m_guid = guid;
 			string datapath = AssetDatabase.GUIDToAssetPath( guid );
 			string shaderBody = string.Empty;
@@ -116,6 +130,7 @@ namespace AmplifyShaderEditor
 				m_isValid = false;
 			}
 
+			m_customTemplatePropertyUI = TemplateHelperFunctions.FetchCustomUI( shaderBody );
 			TemplateHelperFunctions.FetchDependencies( m_dependenciesContainer, ref m_shaderBody );
 			if( m_dependenciesContainer.IsValid )
 			{
@@ -123,8 +138,6 @@ namespace AmplifyShaderEditor
 				m_templateProperties.AddId( new TemplateProperty( m_dependenciesContainer.Id, m_dependenciesContainer.Id.Substring( 0, index ), true ) );
 				m_templateIdManager.RegisterId( m_dependenciesContainer.Index, m_dependenciesContainer.Id, m_dependenciesContainer.Id );
 			}
-
-
 
 			TemplateHelperFunctions.FetchCustomInspector( m_customInspectorContainer, ref m_shaderBody );
 			if( m_customInspectorContainer.IsValid )
@@ -158,6 +171,9 @@ namespace AmplifyShaderEditor
 			int firstVisiblePassId = -1;
 			bool foundMainPass = false;
 			bool foundFirstVisible = false;
+
+			m_templateIdManager.RegisterTag( TemplatesManager.TemplatePassesEndTag );
+			m_templateIdManager.RegisterTag( TemplatesManager.TemplateMainPassTag );
 
 			for( int i = 0; i < subShaderCount; i++ )
 			{
@@ -286,6 +302,10 @@ namespace AmplifyShaderEditor
 				case TemplateModuleDataType.ModuleBlendOp:
 				{
 					m_templateIdManager.SetReplacementText( prefix + m_subShaders[ subShaderId ].Modules.BlendData.BlendOpId, text );
+				}break;
+				case TemplateModuleDataType.ModuleAlphaToMask:
+				{
+					m_templateIdManager.SetReplacementText( prefix + m_subShaders[ subShaderId ].Modules.BlendData.AlphaToMaskId, text );
 				}
 				break;
 				case TemplateModuleDataType.ModuleCullMode:
@@ -392,6 +412,11 @@ namespace AmplifyShaderEditor
 					prefix = addPrefix ? m_subShaders[ subShaderId ].Modules.UniquePrefix : string.Empty;
 					return prefix + m_subShaders[ subShaderId ].Modules.BlendData.BlendOpId;
 				}
+				case TemplateModuleDataType.ModuleAlphaToMask:
+				{
+					prefix = addPrefix ? m_subShaders[ subShaderId ].Modules.UniquePrefix : string.Empty;
+					return prefix + m_subShaders[ subShaderId ].Modules.BlendData.AlphaToMaskId;
+				}
 				case TemplateModuleDataType.ModuleCullMode:
 				{
 					prefix = addPrefix ? m_subShaders[ subShaderId ].Modules.UniquePrefix : string.Empty;
@@ -483,6 +508,11 @@ namespace AmplifyShaderEditor
 				{
 					prefix = addPrefix ? m_subShaders[ subShaderId ].Passes[ passId ].Modules.UniquePrefix : string.Empty;
 					return prefix + m_subShaders[ subShaderId ].Passes[ passId ].Modules.BlendData.BlendOpId;
+				}
+				case TemplateModuleDataType.ModuleAlphaToMask:
+				{
+					prefix = addPrefix ? m_subShaders[ subShaderId ].Passes[ passId ].Modules.UniquePrefix : string.Empty;
+					return prefix + m_subShaders[ subShaderId ].Passes[ passId ].Modules.BlendData.AlphaToMaskId;
 				}
 				case TemplateModuleDataType.ModuleCullMode:
 				{
@@ -631,6 +661,12 @@ namespace AmplifyShaderEditor
 				{
 					prefix = m_subShaders[ subShaderId ].Passes[ passId ].Modules.UniquePrefix;
 					m_templateIdManager.SetReplacementText( prefix + m_subShaders[ subShaderId ].Passes[ passId ].Modules.BlendData.BlendOpId, text );
+				}
+				break;
+				case TemplateModuleDataType.ModuleAlphaToMask:
+				{
+					prefix = m_subShaders[ subShaderId ].Passes[ passId ].Modules.UniquePrefix;
+					m_templateIdManager.SetReplacementText( prefix + m_subShaders[ subShaderId ].Passes[ passId ].Modules.BlendData.AlphaToMaskId, text );
 				}
 				break;
 				case TemplateModuleDataType.ModuleCullMode:
@@ -986,8 +1022,38 @@ namespace AmplifyShaderEditor
 			return !oldName.Equals( m_defaultShaderName );
 		}
 
+		public bool GetSubShaderandPassFor( string passUniqueId, ref int subShaderId, ref int passId )
+		{
+			if( string.IsNullOrEmpty( passUniqueId ) )
+				return false;
+
+			if( m_passUniqueIdData.Count == 0 )
+			{
+				for( int subShaderIdx = 0; subShaderIdx < m_subShaders.Count; subShaderIdx++ )
+				{
+					for( int passIdx = 0; passIdx < m_subShaders[subShaderIdx].Passes.Count; passIdx++ )
+					{
+						if( m_subShaders[ subShaderIdx ].Passes[ passIdx ].Modules.HasPassUniqueName )
+						{
+							m_passUniqueIdData.Add( m_subShaders[ subShaderIdx ].Passes[ passIdx ].Modules.PassUniqueName, new TemplateUniquePassData() { PassIdx = passIdx, SubShaderIdx = subShaderIdx } );
+						}
+					}
+				}
+			}
+
+			if( m_passUniqueIdData.ContainsKey( passUniqueId ) )
+			{
+				subShaderId = m_passUniqueIdData[ passUniqueId ].SubShaderIdx;
+				passId = m_passUniqueIdData[ passUniqueId ].PassIdx;
+				return true;
+			}
+			subShaderId = -1;
+			passId = -1;
+			return false;
+		}
+
 		public TemplateSRPType SRPtype { get { return m_subShaders[ 0 ].Modules.SRPType; } }
-		public bool SRPIsPBRHD { get { return m_subShaders[0].Modules.SRPIsPBRHD ; } }
+		//public bool SRPIsPBRHD { get { return m_subShaders[0].Modules.SRPIsPBRHD ; } }
 		public List<TemplateSubShader> SubShaders { get { return m_subShaders; } }
 		public List<TemplateShaderPropertyData> AvailableShaderProperties { get { return m_availableShaderProperties; } }
 		public TemplateTagData PropertyTag { get { return m_propertyTag; } }
@@ -997,5 +1063,6 @@ namespace AmplifyShaderEditor
 		public TemplateInfoContainer FallbackContainer { get { return m_fallbackContainer; } }
 		public bool IsSinglePass { get { return m_isSinglePass; } }
 		public int MasterNodesRequired { get { return m_masterNodesRequired; } }
+		public CustomTemplatePropertyUIEnum CustomTemplatePropertyUI { get { return m_customTemplatePropertyUI; } }
 	}
 }

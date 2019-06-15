@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor;
 
 namespace AmplifyShaderEditor
 {
@@ -22,6 +23,7 @@ namespace AmplifyShaderEditor
 		private readonly static GUIContent LODCrossfadeContent = new GUIContent( " LOD Group Cross Fade", "Applies a dither crossfade to be used with LOD groups for smoother transitions. Uses one interpolator\nDefault: OFF" );
 		private readonly static GUIContent DisableBatchingContent = new GUIContent( "Disable Batching", "\nDisables objects to be batched and used with DrawCallBatching Default: False" );
 		private readonly static GUIContent IgnoreProjectorContent = new GUIContent( " Ignore Projector", "\nIf True then an object that uses this shader will not be affected by Projectors Default: False" );
+		private readonly static GUIContent UseDefaultCasterContent = new GUIContent( " Use Default Shadow Caster", "\nIf True always use surface default shadow caster Default: False" );
 		private readonly static GUIContent ForceNoShadowCastingContent = new GUIContent( " Force No Shadow Casting", "\nIf True then an object that is rendered using this subshader will never cast shadows Default: False" );
 		private readonly static GUIContent ForceEnableInstancingContent = new GUIContent( " Force Enable Instancing", "\nIf True forces instancing on shader independent of having instanced properties" );
 #if UNITY_5_6_OR_NEWER
@@ -52,6 +54,9 @@ namespace AmplifyShaderEditor
 		private bool m_ignoreProjector = false;
 
 		[SerializeField]
+		private bool m_useDefaultShadowCaster = false;
+
+		[SerializeField]
 		private bool m_forceNoShadowCasting = false;
 
 		[SerializeField]
@@ -79,7 +84,7 @@ namespace AmplifyShaderEditor
 			return !m_codeGenerationDataList.Find( x => x.Name.Equals( option ) ).IsActive;
 		}
 
-		public void Draw( ParentNode owner )
+		public void Draw( StandardSurfaceOutputNode owner )
 		{
 			bool value = owner.ContainerGraph.ParentWindow.InnerWindowVariables.ExpandedRenderingOptions;
 			NodeUtils.DrawPropertyGroup( ref value, RenderingOptionsStr, () =>
@@ -92,6 +97,9 @@ namespace AmplifyShaderEditor
 				}
 				m_lodCrossfade = owner.EditorGUILayoutToggleLeft( LODCrossfadeContent, m_lodCrossfade );
 				m_ignoreProjector = owner.EditorGUILayoutToggleLeft( IgnoreProjectorContent, m_ignoreProjector );
+				EditorGUI.BeginDisabledGroup( !owner.CastShadows );
+				m_useDefaultShadowCaster = owner.EditorGUILayoutToggleLeft( UseDefaultCasterContent, m_useDefaultShadowCaster );
+				EditorGUI.EndDisabledGroup();
 				m_forceNoShadowCasting = owner.EditorGUILayoutToggleLeft( ForceNoShadowCastingContent, m_forceNoShadowCasting );
 				if( owner.ContainerGraph.IsInstancedShader )
 				{
@@ -173,6 +181,11 @@ namespace AmplifyShaderEditor
 				m_specularHighlightToggle = Convert.ToBoolean( nodeParams[ index++ ] );
 				m_reflectionsToggle = Convert.ToBoolean( nodeParams[ index++ ] );
 			}
+
+			if( UIUtils.CurrentShaderVersion() > 16307 )
+			{
+				m_useDefaultShadowCaster = Convert.ToBoolean( nodeParams[ index++ ] );
+			}
 		}
 
 		public void WriteToString( ref string nodeInfo )
@@ -190,6 +203,7 @@ namespace AmplifyShaderEditor
 			IOUtils.AddFieldValueToString( ref nodeInfo, m_forceDisableInstancing );
 			IOUtils.AddFieldValueToString( ref nodeInfo, m_specularHighlightToggle );
 			IOUtils.AddFieldValueToString( ref nodeInfo, m_reflectionsToggle );
+			IOUtils.AddFieldValueToString( ref nodeInfo, m_useDefaultShadowCaster );
 		}
 		
 		public void Destroy()
@@ -197,7 +211,7 @@ namespace AmplifyShaderEditor
 			m_codeGenerationDataList.Clear();
 			m_codeGenerationDataList = null;
 		}
-
+		public bool UseDefaultShadowCaster { get { return m_useDefaultShadowCaster; } }
 		public bool ForceEnableInstancing { get { return m_forceEnableInstancing; } }
 		public bool ForceDisableInstancing { get { return m_forceDisableInstancing; } }
 

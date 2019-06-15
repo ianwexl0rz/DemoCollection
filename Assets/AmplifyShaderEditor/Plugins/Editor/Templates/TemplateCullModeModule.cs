@@ -110,7 +110,16 @@ namespace AmplifyShaderEditor
 			m_inlineCullMode = null;
 		}
 
-		public CullMode CurrentCullMode { get { return m_cullMode; } }
+		public CullMode CurrentCullMode
+		{
+			get { return m_cullMode; }
+			set
+			{
+				m_cullMode = value;
+				m_inlineCullMode.IntValue = (int)value;
+				m_inlineCullMode.Active = false;
+			}
+		}
 		public InlineProperty CullInlineProperty { get { return m_inlineCullMode; } }
 	}
 }
