@@ -50,7 +50,7 @@ public class GameManager : MonoBehaviour
 	private void Awake()
 	{
 		//QualitySettings.maxQueuedFrames = 1;
-		//Application.targetFrameRate = 60;
+		Application.targetFrameRate = 60;
 
 		lockOnIndicator = Instantiate(lockOnIndicatorPrefab).GetComponent<LockOnIndicator>();
 		//lockOnIndicator.gameObject.SetActive(false);

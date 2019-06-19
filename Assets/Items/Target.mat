@@ -21,13 +21,14 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Target
-  m_Shader: {fileID: 4800000, guid: dc16fca7ed95f654ba09d6b090ffda62, type: 3}
+  m_Shader: {fileID: 4800000, guid: 933532a4fcc9baf4fa0491de14d08ed7, type: 3}
   m_ShaderKeywords: _ENVIRONMENTREFLECTIONS_OFF _SPECULARHIGHLIGHTS_OFF
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
-  stringTagMap: {}
+  m_CustomRenderQueue: 2050
+  stringTagMap:
+    RenderType: Opaque
   disabledShaderPasses: []
   m_SavedProperties:
     serializedVersion: 3
@@ -104,6 +105,7 @@ Material:
     - _Float0: 0
     - _GlossMapScale: 1
     - _Glossiness: 0.693
+    - _GlossinessSource: 0
     - _GlossyReflections: 0
     - _Metallic: 0
     - _Mode: 0
@@ -124,8 +126,10 @@ Material:
     - _ShadowFalloff: 0.05
     - _Shininess: 1
     - _Smoothness: 0.38
+    - _SmoothnessSource: 0
     - _SmoothnessTextureChannel: 0
     - _SpecSize: 1
+    - _SpecSource: 0
     - _SpecularHighlights: 0
     - _SrcBlend: 1
     - _Stencil: 0
@@ -150,5 +154,5 @@ Material:
     - _MainColor: {r: 1, g: 1, b: 1, a: 0}
     - _SecondaryColor: {r: 0, g: 0, b: 0, a: 0}
     - _ShadowColor: {r: 0, g: 0, b: 0, a: 1}
-    - _SpecColor: {r: 0.3019608, g: 0.3529412, b: 0.31792408, a: 1}
+    - _SpecColor: {r: 0.30196074, g: 0.35294113, b: 0.31792402, a: 0.38}
     - _SubsurfaceColor: {r: 1, g: 1, b: 1, a: 0}

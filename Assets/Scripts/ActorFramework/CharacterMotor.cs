@@ -26,7 +26,10 @@ public class CharacterMotor : MonoBehaviour
 	public bool ShouldRoll { get; set; }
 	public bool Recenter { get; set; }
 	public bool AimingMode { get; set; }
+
 	public Vector3 FeetPos => feetPos;
+	public bool IsGrounded => grounded;
+	public Vector3 GroundVelocity => groundVelocity;
 
 	public PIDConfig angleControllerConfig = null;
 	public PIDConfig angularVelocityControllerConfig = null;
@@ -344,43 +347,9 @@ public class CharacterMotor : MonoBehaviour
 				: Vector3.forward;
 
 			var rollRotation = Quaternion.AngleAxis(rollAngle, Vector3.Cross(rollDir, Vector3.down));
+
+			//TODO: look rotation might be zero - fix that!
 			return Quaternion.LookRotation(desiredDirection) * rollRotation;
-		}
-	}
-
-	public void UpdateAnimation()
-	{
-		if(character.animator == null || character.animator.runtimeAnimatorController == null) { return; }
-
-		//control speed percent in animator so that character walks or runs depending on speed
-		var animationSpeedPercent = character.IsPaused ? 0f : groundVelocity.magnitude / runSpeed;
-
-		//reference for animator
-		character.animator.SetFloat("speedPercent", animationSpeedPercent, speedSmoothTime, Time.deltaTime);
-
-		foreach(var parameter in character.animator.parameters)
-		{
-			switch(parameter.name)
-			{
-				case "inAir":
-					character.animator.SetBool("inAir", !grounded);
-					break;
-				case "directionY":
-					var directionY = Mathf.Clamp01(Mathf.InverseLerp(1f, -1f, character.rb.velocity.y));
-					character.animator.SetFloat("directionY", directionY, speedSmoothTime, Time.deltaTime);
-					break;
-				case "velocityX":
-					var velocityX = Vector3.Dot(groundVelocity, transform.right) / runSpeed;
-					character.animator.SetFloat("velocityX", velocityX, speedSmoothTime, Time.deltaTime);
-					break;
-				case "velocityZ":
-					var velocityZ = Vector3.Dot(groundVelocity, transform.forward) / runSpeed;
-					character.animator.SetFloat("velocityZ", velocityZ, speedSmoothTime, Time.deltaTime);
-					break;
-				case "InHitStun":
-					character.animator.SetBool("InHitStun", character.hitReaction.InProgress);
-					break;
-			}
 		}
 	}
 

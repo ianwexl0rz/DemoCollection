@@ -18,6 +18,7 @@ public class AttackBehaviour : StateMachineBehaviour
 		if(animator.parameters.Any(p => p.name == "isAttacking"))
 		{
 			animator.SetBool("isAttacking", true);
+			Debug.Log("is this getting called?");
 		}
 		fullyTransitioned = false;
 	}

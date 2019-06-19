@@ -53,13 +53,13 @@ public class Actor : Entity
 			character.meleeCombat.isAttacking = false;
 
 		InputEnabled = false;
-		Debug.LogFormat("Started Hit Reaction with duration of {0}.", hitReaction.Duration);
+		//Debug.LogFormat("Started Hit Reaction with duration of {0}.", hitReaction.Duration);
 	}
 
 	private void EndHitReaction()
 	{
 		InputEnabled = true;
-		Debug.Log("Ended Hit Reaction.");
+		//Debug.Log("Ended Hit Reaction.");
 	}
 
 	private void Start()
@@ -74,7 +74,7 @@ public class Actor : Entity
 	{
 		base.OnUpdate();
 		UpdateController(this);
-		ProcessAnimation();
+		//ProcessAnimation();
 		actorTimerGroup.Tick(Time.deltaTime);
 	}
 

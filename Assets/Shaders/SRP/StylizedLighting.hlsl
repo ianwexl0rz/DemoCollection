@@ -44,11 +44,13 @@ half3 DirectBDRFStylized(BRDFData brdfData, half3 normalWS, half3 lightDirection
     half3 edgeLight = (1.0 - saturate(dot(normalWS, viewDirectionWS))) * saturate(NoL);
     edgeLight = saturate(pow(edgeLight + 0.4, 32));
 
+    /*
     if (brdfData.roughness2 < 1)
     {
         half hardEdge = saturate(InvLerp(specularTerm, saturate(0.5 - brdfData.roughness2), 1));
         specularTerm *= hardEdge;
     }
+    */
 
     // on mobiles (where half actually means something) denominator have risk of overflow
     // clamp below was added specifically to "fix" that, but dx compiler (we convert bytecode to metal/gles)

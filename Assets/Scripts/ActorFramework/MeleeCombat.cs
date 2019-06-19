@@ -1,7 +1,5 @@
 using UnityEngine;
 using System.Collections.Generic;
-using UnityEngine.Rendering;
-using System;
 
 [RequireComponent(typeof(Actor))]
 public class MeleeCombat : MonoBehaviour
@@ -11,17 +9,18 @@ public class MeleeCombat : MonoBehaviour
 	[SerializeField] private MeleeWeapon weapon = null;
 	[SerializeField] private float distThreshold = 0.1f;
 
-	public Animator animatorTest = null;
-
 	public bool isAttacking { get; set; }
 	public bool cancelOK { get; set; }
+	public bool ActiveHit { get; set; }
+
+	public Transform WeaponRoot => weaponRoot;
 
 	private AttackData attackData;
 	private List<GameObject> hitObjects = new List<GameObject>();
 
-	private Vector3 origin, end, lastOrigin, lastEnd = Vector3.zero;
-	private readonly List<Vector3> pointBuffer = new List<Vector3>();
-	private readonly List<Color> colors = new List<Color>();
+	private Vector3 origin, end, lastOrigin, lastEnd, finalOrigin, finalEnd = Vector3.zero;
+	private List<Vector3> pointBuffer = new List<Vector3>();
+	private List<Color> colors = new List<Color>();
 
 	private WeaponTrail weaponTrail = null;
 
@@ -96,18 +95,18 @@ public class MeleeCombat : MonoBehaviour
 		ClearWeaponTrail();
 
 		// TODO: Update all weaponCollisions in a "weapon collision set"
-		actor.OnLateUpdate += CheckHits;
+		ActiveHit = true;
 	}
 
 	public void EndHit()
 	{
 		ClearWeaponTrail();
-		actor.OnLateUpdate -= CheckHits;
+		ActiveHit = false;
 	}
 
 	public void CancelOK()
 	{
-		isAttacking = false;
+		 isAttacking = false;
 
 		if(actor is Character character)
 		{
@@ -117,20 +116,19 @@ public class MeleeCombat : MonoBehaviour
 		//cancelOK = true;
 	}
 
-	public void CheckHits()
+	public bool CheckHits(float completion, Vector3 lastWeaponPosition, Quaternion lastWeaponRotation)
 	{
 		//if(!owner.IsPaused) { return; }
 
         float debugTime = Time.fixedDeltaTime * 8;
 
-		origin = weaponRoot.position;
-		end = origin + weaponRoot.rotation * forwardAxis * weapon.length;
+		var pos = Vector3.Lerp(lastWeaponPosition, weaponRoot.position, completion);
+		var rot = Quaternion.Slerp(lastWeaponRotation, weaponRoot.rotation, completion);
 
-		CheckHit(origin, end);
-        CheckHit(end, origin);
-		CheckHit(lastOrigin, origin);
+		origin = pos;
+		end = origin + rot * forwardAxis * weapon.length;
 
-        Vector3 currentVector = end - origin;
+		Vector3 currentVector = end - origin;
         Vector3 lastVector = lastEnd - lastOrigin;
 
         int steps = 1 + (int)((currentVector - lastVector).magnitude / distThreshold);
@@ -141,26 +139,32 @@ public class MeleeCombat : MonoBehaviour
 		Vector3[] addPoints = new Vector3[steps * 2];
 		Color[] addColors = new Color[steps * 2];
 
-		for(int i = 0; i < steps; i++)
+		var success = false;
+
+		for(var i = 0; i < steps; i++)
         {
-			float t = (i + 1f) / steps;
+			var progress = (i + 1f) / steps;
 
-            Vector3 blendedOrigin = Vector3.Lerp(lastOrigin, origin, t);
-            Vector3 blendedEnd = blendedOrigin + Vector3.Slerp(lastVector, currentVector, t);
-			CheckHit(blendedOrigin, blendedEnd);
-
-	        addPoints[i * 2] = blendedOrigin;
-	        addPoints[i * 2 + 1] = blendedEnd;
-
-	        addColors[i * 2] = addColors[i * 2 + 1] = Color.white; //color;
+			Vector3 blendedOrigin = Vector3.Lerp(lastOrigin, origin, progress);
+            Vector3 blendedEnd = blendedOrigin + Vector3.Slerp(lastVector, currentVector, progress);
 
 			Debug.DrawLine(blendedOrigin, blendedEnd, color, debugTime);
 	        Debug.DrawLine(i == 0 ? lastEnd : addPoints[i * 2 - 1], blendedEnd, color, debugTime);
 	        Debug.DrawLine(i == 0 ? lastOrigin : addPoints[i * 2 - 2], blendedOrigin, color, debugTime);
+
+			addPoints[i * 2] = finalOrigin = blendedOrigin;
+			addPoints[i * 2 + 1] = finalEnd = blendedEnd;
+			addColors[i * 2] = addColors[i * 2 + 1] = Color.white;
+
+			success = CheckHit(blendedOrigin, blendedEnd);
+			success |= CheckHit(blendedEnd, blendedOrigin);
+
+			if(success) break;
 		}
 
 		if(pointBuffer.Count == 0)
 		{
+
 			Vector3[] lastPoints =
 			{
 				lastOrigin,
@@ -174,6 +178,34 @@ public class MeleeCombat : MonoBehaviour
 			colors.AddRange(lastColors);
 		}
 
+		// Only necessary if the hit check loop can be broken out of early...
+		// Requires "i" to be declared in the function scope 
+		//if(i < steps - 1)
+		//{
+		//	var newLength = (i + 1) * 2;
+
+		//	Vector3[] validPoints = new Vector3[newLength];
+		//	Color[] validColors = new Color[newLength];
+
+		//	Array.Copy(addPoints, validPoints, newLength);
+		//	Array.Copy(addColors, validColors, newLength);
+
+		//	pointBuffer.AddRange(validPoints);
+		//	colors.AddRange(validColors);
+		//}
+		//else
+		//{
+		//	pointBuffer.AddRange(addPoints);
+		//	colors.AddRange(addColors);
+		//}
+
+		// Fade colors over time (probably don't want to fade whole chunks like this)
+		//for(var i = 0; i < colors.Count; i++)
+		//{
+		//	var oldColor = colors[i];
+		//	colors[i] *= 0.5f;
+		//}
+
 		pointBuffer.AddRange(addPoints);
 		colors.AddRange(addColors);
 
@@ -183,21 +215,25 @@ public class MeleeCombat : MonoBehaviour
 			localPoints[i] = transform.InverseTransformPoint(localPoints[i]);
 		}
 		
-		lastOrigin = origin;
-		lastEnd = end;
+		lastOrigin = finalOrigin;
+		lastEnd = finalEnd;
 
 		if(weapon.showTrail)
 		{
 			weaponTrail.UpdateAndShowMesh(localPoints, colors);
 		}
+
+		return success;
 	}
 
-	public void CheckHit(Vector3 origin, Vector3 end)
+	public bool CheckHit(Vector3 origin, Vector3 end)
 	{
 		RaycastHit[] hits = Physics.RaycastAll(
 			origin,
 			(end - origin).normalized,
 			(end - origin).magnitude);
+
+		var success = false;
 
 		foreach(RaycastHit hit in hits)
 		{
@@ -218,6 +254,8 @@ public class MeleeCombat : MonoBehaviour
 				Vector3 hitDirection = (go.transform.position - transform.position).WithY(0f).normalized;
 				entity.GetHit(hit.point, hitDirection, attackData);
 				GameManager.HitPauseTimer = Time.fixedDeltaTime * attackData.hitPause;
+
+				//success = true;
 			}
 
 			if(GameManager.GetHitSpark(entity, out GameObject hitspark))
@@ -227,6 +265,8 @@ public class MeleeCombat : MonoBehaviour
 
 			hitObjects.Add(go);
 		}
+
+		return success;
 	}
 
 	public void ClearWeaponTrail()
