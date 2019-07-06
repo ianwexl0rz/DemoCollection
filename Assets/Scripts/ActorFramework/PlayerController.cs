@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using InControl;
+using System.Collections.Generic;
 
 [CreateAssetMenu(fileName = "Player Controller", menuName = "Actor/Controllers/Player Controller")]
 public class PlayerController : ActorController
@@ -15,7 +16,8 @@ public class PlayerController : ActorController
 
 	protected override void Tick(Actor actor)
 	{
-		inputBuffer.Update(Time.deltaTime);
+		if(!GameManager.I.PhysicsPaused)
+			inputBuffer.Update(Time.deltaTime);
 
 		var inputDevice = InputManager.ActiveDevice;
 
@@ -26,7 +28,7 @@ public class PlayerController : ActorController
 
 		//player.aimingMode = gamePad.RightTrigger.IsPressed;
 		//player.Recenter = playerInput.RightStickButton.WasPressed;
-		
+
 		// Run
 		player.motor.Run = inputDevice.RightTrigger.IsPressed || Input.GetKey(KeyCode.LeftShift);
 
@@ -41,7 +43,7 @@ public class PlayerController : ActorController
 
 		// Attack
 		if(inputDevice.Action3.WasPressed || Input.GetMouseButtonDown(0))
-			inputBuffer.Add(player.LightAttack, 0.5f);
+			inputBuffer.Add(player.LightAttack, 0.5f); 
 
 		/*
 		// Update ability input

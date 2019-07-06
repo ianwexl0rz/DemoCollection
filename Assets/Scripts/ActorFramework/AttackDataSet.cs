@@ -3,6 +3,21 @@ using System.Collections.Generic;
 using System;
 
 [Serializable]
+public class HitData
+{
+	public Vector3 point;
+	public Vector3 direction;
+	public AttackData attackData;
+
+	public HitData(Vector3 point, Vector3 direction, AttackData attackData)
+	{
+		this.point = point;
+		this.direction = direction;
+		this.attackData = attackData;
+	}
+}
+
+[Serializable]
 public class AttackData
 {
 	public string name = "New Attack";

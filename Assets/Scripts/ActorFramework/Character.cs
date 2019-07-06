@@ -27,18 +27,10 @@ public class Character : Actor
 		lastTRS = Matrix4x4.TRS(transform.position, transform.rotation, transform.localScale);
 	}
 
-	protected override void OnEnable()
+	protected virtual void LateUpdate()
 	{
-		base.OnEnable();
-
-		OnLateUpdate += ProcessAnimation;
-	}
-
-	protected override void OnDisable()
-	{
-		base.OnDisable();
-
-		OnLateUpdate -= ProcessAnimation;
+		if(!GameManager.I.PhysicsPaused)
+			ProcessAnimation();
 	}
 
 	protected override void ProcessPhysics()

@@ -39,6 +39,9 @@ public class GameManager : MonoBehaviour
 		get { if(!_instance) { _instance = FindObjectOfType<GameManager>(); } return _instance; }
 	}
 
+	public bool PhysicsPaused => physicsPaused;
+	public bool GamePaused => gamePaused;
+
 	public static LockOnIndicator LockOnIndicator => I.lockOnIndicator;
 	public static float HitPauseTimer
 	{
@@ -88,16 +91,6 @@ public class GameManager : MonoBehaviour
 		*/
 	}
 
-	private void FixedUpdate()
-	{
-		if(!physicsPaused)
-		{
-
-			entities.ForEach(entity => entity.OnFixedUpdate());
-
-		}
-	}
-
 	private int SortByProximityToScreenCenter(Character a, Character b)
 	{
 		var cam = Camera.main;
@@ -131,7 +124,7 @@ public class GameManager : MonoBehaviour
 
 	private void Update()
 	{
-		if(physicsPaused) { return; }
+		//if(physicsPaused) { return; }
 
 		// Swap characters
 		//if(InputManager.ActiveDevice.Action4.WasPressed || Input.GetKeyDown(KeyCode.Tab)) { CyclePlayer(); }
@@ -143,7 +136,7 @@ public class GameManager : MonoBehaviour
 
 		//TODO: Move Camera stuff to player controller?
 
-		entities.ForEach(entity => entity.OnUpdate()); // Update all the things!
+		//entities.ForEach(entity => entity.OnUpdate()); // Update all the things!
 
 		//mainCamera.UpdatePosition(); // Update camera position
 
@@ -152,10 +145,7 @@ public class GameManager : MonoBehaviour
 	public void LateUpdate()
 	{
 		if(!physicsPaused)
-		{
-			entities.ForEach(entity => entity.OnLateUpdate());
 			lockOnIndicator.UpdatePosition(activePlayer.lockOn, activePlayer.lockOnTarget);
-		}
 
 		if(InputManager.ActiveDevice.MenuWasPressed || Input.GetKeyDown(KeyCode.P) || togglePaused)
 		{

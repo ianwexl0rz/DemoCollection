@@ -28,8 +28,7 @@ public class Entity : MonoBehaviour
 
 	protected bool paused;
 
-	public Action OnLateUpdate = delegate { };
-	protected Action OnEarlyFixedUpdate = delegate { };
+	protected List<HitData> hits = new List<HitData>();
 
 	public Rigidbody rb { get; private set; }
 	public bool IsPaused => paused;
@@ -38,8 +37,6 @@ public class Entity : MonoBehaviour
 	protected virtual void Awake()
 	{
 		rb = GetComponent<Rigidbody>();
-
-		Physics.autoSyncTransforms = true;
 	}
 
 	protected virtual void OnEnable()
@@ -58,27 +55,18 @@ public class Entity : MonoBehaviour
 		if(paused) { PauseEntity(false); }
 	}
 
-	public virtual void OnUpdate()
+	protected virtual void FixedUpdate()
 	{
-	}
+		if(GameManager.I.PhysicsPaused) { return; }
 
-	/*/
-	public virtual void OnLateUpdate()
-	{
-	}
-	//*/
-
-	public virtual void OnFixedUpdate()
-	{
-		OnEarlyFixedUpdate?.Invoke();
-		OnEarlyFixedUpdate = null;
+		for(var i = hits.Count; i-- > 0;)
+		{
+			ApplyHit(hits[i]);
+			hits.Remove(hits[i]);
+		}
 	}
 
 	protected virtual void OnPauseEntity(bool value)
-	{
-	}
-
-	protected virtual void OnGetHit(Vector3 direction, AttackData data)
 	{
 	}
 
@@ -110,13 +98,16 @@ public class Entity : MonoBehaviour
 		OnPauseEntity(value);
 	}
 
-	protected virtual void OnGetHit(Vector3 hitPoint, Vector3 direction, AttackData data)
+	protected virtual void ApplyHit(HitData hit)
 	{
-		OnEarlyFixedUpdate = () => rb.AddForceAtPosition(direction * data.knockback / Time.fixedDeltaTime, hitPoint, ForceMode.Acceleration);
+		var velocity = hit.direction * hit.attackData.knockback / Time.fixedDeltaTime;
+		//rb.AddForceAtPosition(velocity, hit.point, ForceMode.Acceleration);
+		rb.AddForce(velocity, ForceMode.Acceleration);
 	}
 
-	public void GetHit(Vector3 hitPoint, Vector3 direction, AttackData data)
+	public void GetHit(Vector3 point, Vector3 direction, AttackData data)
 	{
-		OnGetHit(hitPoint, direction, data);
+		var newHit = new HitData(point, direction, data);
+		hits.Add(newHit);
 	}
 }

@@ -231,7 +231,8 @@ public class MeleeCombat : MonoBehaviour
 		RaycastHit[] hits = Physics.RaycastAll(
 			origin,
 			(end - origin).normalized,
-			(end - origin).magnitude);
+			(end - origin).magnitude,
+			LayerMask.GetMask("Actor", "PhysicsObject"));
 
 		var success = false;
 

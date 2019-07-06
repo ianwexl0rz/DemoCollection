@@ -537,6 +537,8 @@ MonoBehaviour:
       Culture=neutral, PublicKeyToken=null
   - assemblyQualifiedName: Kino.PostProcessing.Sharpen, Kino.Postprocessing, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
+  - assemblyQualifiedName: Grayscale, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
 --- !u!114 &198612201
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2023,9 +2025,12 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 1577172458, guid: 09e76c50c237c544bab6b4d67100a8dc, type: 3}
-    - {fileID: 356313708, guid: 09e76c50c237c544bab6b4d67100a8dc, type: 3}
+    - target: {fileID: 114975490345739816, guid: 09e76c50c237c544bab6b4d67100a8dc,
+        type: 3}
+      propertyPath: jumpCount
+      value: 2
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 09e76c50c237c544bab6b4d67100a8dc, type: 3}
 --- !u!1 &658774149
 GameObject:
@@ -5508,7 +5513,7 @@ PrefabInstance:
     - target: {fileID: 707289323, guid: 60fcc4cc7ee37b6479184572e6f0d931, type: 3}
       propertyPath: controller
       value: 
-      objectReference: {fileID: 11400000, guid: 3bd6e43a756db3642bc08e8a5ba40b8e,
+      objectReference: {fileID: 11400000, guid: 74f1afebb7d9527499848e5d4038a7ec,
         type: 2}
     - target: {fileID: 2579297820314084038, guid: 60fcc4cc7ee37b6479184572e6f0d931,
         type: 3}

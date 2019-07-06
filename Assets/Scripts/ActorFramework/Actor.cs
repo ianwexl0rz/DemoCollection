@@ -70,26 +70,27 @@ public class Actor : Entity
 		}
 	}
 
-	public override void OnUpdate()
+	 protected virtual void Update()
 	{
-		base.OnUpdate();
+		if(GameManager.I.GamePaused) { return; }
+
 		UpdateController(this);
 		//ProcessAnimation();
 		actorTimerGroup.Tick(Time.deltaTime);
 	}
 
-	public override void OnFixedUpdate()
+	protected override void FixedUpdate()
 	{
-		base.OnFixedUpdate();
-		ProcessPhysics();
+		base.FixedUpdate();
+
+		if(!GameManager.I.PhysicsPaused)
+			ProcessPhysics();
 	}
 
 	protected override void OnPauseEntity(bool value)
 	{
 		if(animator != null)
-		{
 			animator.SetPaused(value);
-		}
 	}
 
 	protected virtual void ProcessAnimation()
@@ -121,19 +122,16 @@ public class Actor : Entity
 		return transform.position;
 	}
 
-	protected override void OnGetHit(Vector3 hitPoint, Vector3 direction, AttackData data)
+	protected override void ApplyHit(HitData hit)
 	{
-		OnEarlyFixedUpdate = () =>
-		{
-			rb.AddForce(direction * data.knockback / Time.fixedDeltaTime, ForceMode.Acceleration);
-			//rb.AddForceAtPosition(direction * data.knockback * 0.25f / Time.fixedDeltaTime, rb.position.WithY(hitPoint.y), ForceMode.Acceleration);
-		};
+		// Applies knockback.
+		base.ApplyHit(hit);
 
-		health = Mathf.Max(health - data.damage, 0f);
+		health = Mathf.Max(health - hit.attackData.damage, 0f);
 		//Debug.Log("Hit " + name + " - HP: " + health + "/" + maxHealth);
 
 		// TODO: Get reaction type from AttackData 
-		var duration = Mathf.Max(hitReaction.Duration - hitReaction.Current, data.stun);
+		var duration = Mathf.Max(hitReaction.Duration - hitReaction.Current, hit.attackData.stun);
 		hitReaction.Reset(duration);
 
 		if(this is Character character)
