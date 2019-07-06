@@ -181,11 +181,11 @@ public class CharacterMotor : MonoBehaviour
 		}
 
 		var speed = desiredVel.magnitude;
-
-		//TODO: Variable speed based on analog input
 		if(grounded && !ShouldRoll) speed = Mathf.Max(desiredVel.magnitude - friction * dt, 0f);
 
-		var speedLimit = Run || ShouldRoll ? runSpeed : walkSpeed;
+		// Speed is only variable when NOT sprinting.
+		var normalSpeed = Mathf.Max(minSpeed, walkSpeed * character.move.sqrMagnitude);
+		var speedLimit = Run || ShouldRoll ? runSpeed : normalSpeed;
 		speed = Mathf.Min(speed, speedLimit);
 		groundVelocity = (desiredVel.normalized * speed).WithY(0f);
 

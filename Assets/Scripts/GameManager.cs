@@ -81,6 +81,8 @@ public class GameManager : MonoBehaviour
 
 		SetActivePlayer(activePlayer, true);
 
+		Cursor.lockState = CursorLockMode.Locked;
+
 		/*
 		SetActivePlayer(playerCharacters[targetIndex], true);
 
@@ -111,7 +113,7 @@ public class GameManager : MonoBehaviour
 
 			if(gamePaused) { continue; }
 
-			mainCamera.UpdateRotation(); // Update camera after physics
+			mainCamera.UpdatePositionAndRotation(); // Update camera after physics
 
 			// Update the potential lock on target
 			if(!activePlayer.lockOn)
@@ -124,22 +126,14 @@ public class GameManager : MonoBehaviour
 
 	private void Update()
 	{
-		//if(physicsPaused) { return; }
-
 		// Swap characters
 		//if(InputManager.ActiveDevice.Action4.WasPressed || Input.GetKeyDown(KeyCode.Tab)) { CyclePlayer(); }
 
 		// Hold the right bumper for slow-mo!
 		Time.timeScale = InputManager.ActiveDevice.RightBumper.IsPressed || Input.GetKey(KeyCode.LeftAlt) ? 0.25f : 1f;
 
+		// TODO: Should be entirely event driven.
 		hud.OnUpdate();
-
-		//TODO: Move Camera stuff to player controller?
-
-		//entities.ForEach(entity => entity.OnUpdate()); // Update all the things!
-
-		//mainCamera.UpdatePosition(); // Update camera position
-
 	}
 
 	public void LateUpdate()
@@ -153,7 +147,6 @@ public class GameManager : MonoBehaviour
 			gamePaused = !gamePaused;
 			hud.SetPaused(gamePaused);
 			OnPauseGame(gamePaused);
-			//Camera.main.GetComponent<BlurOptimized>().enabled = gamePaused;
 		}
 
 		if(!gamePaused && hitPauseTimer > 0)

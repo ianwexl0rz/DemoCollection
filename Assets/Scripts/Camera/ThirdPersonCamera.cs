@@ -5,6 +5,7 @@ public class ThirdPersonCamera : MonoBehaviour
 {
 	public bool isEnabled = false;
 	public float distance = 2.5f;
+	public float lowDistance = 1f;
 	public Vector2 normalPitchMinMax = new Vector2(-40, 85);
 	public Vector2 lockOnPitchMinMax = new Vector2(10, 50);
 	public Vector3 offset = new Vector3(0f,1.6f,0.7f);
@@ -19,7 +20,7 @@ public class ThirdPersonCamera : MonoBehaviour
 	public float overheadDragScale = 0.5f;
 
 	private float yaw; //rotation on the y axis
-	private float pitch; //rotation on the x axis
+	private float _pitch; //rotation on the x axis
 
 	private Vector3 manualRotation;
 	private Vector3 rotationVelocity;
@@ -41,6 +42,18 @@ public class ThirdPersonCamera : MonoBehaviour
 	private float lockBlend;
 	private bool autoTurn;
 
+	private float pitch
+	{
+		get => _pitch;
+		set
+		{
+			_pitch = value % 360f;
+
+			if(_pitch > 180f) _pitch -= 360f;
+			if(_pitch < -180f) _pitch += 360f;
+		}
+	}
+
 	public void SetTarget(Character newPlayer, bool immediate)
 	{
 		player = newPlayer;
@@ -59,19 +72,11 @@ public class ThirdPersonCamera : MonoBehaviour
 		previousFocalHeight = focalHeight;
 	}
 
-	public void UpdateRotation()
+	public void UpdatePositionAndRotation()
 	{
 		if(!player || !isEnabled) return;
 
 		var dt = Time.fixedDeltaTime;
-
-		/*
-		if(Cursor.lockState != CursorLockMode.Locked)
-		{
-			Cursor.visible = true;
-			return;
-		}
-		*/
 
 		// Cache look sensitivity from GameSettings
 		float lookSensitivityX = GameSettings.I.lookSensitivityX;
@@ -177,9 +182,6 @@ public class ThirdPersonCamera : MonoBehaviour
 				yaw += playerDotCam * turnWithPlayerFactor;
 			}
 
-			//var minMax = normalPitchMinMax;
-			if(pitch > 180f) pitch -= 360f;
-			if(pitch <= -180) pitch += 360f;
 			pitch = Mathf.Clamp(pitch, normalPitchMinMax.x, normalPitchMinMax.y);
 
 			var current = transform.eulerAngles;
@@ -197,9 +199,16 @@ public class ThirdPersonCamera : MonoBehaviour
 			Debug.DrawLine(trackPos, trackPos + drag, Color.white);
 		}
 
-		transform.position += transform.TransformDirection(offset) * distance;
+		// Closer camera and less drag at low angle.
+		var t = Mathf.InverseLerp(normalPitchMinMax.x, normalPitchMinMax.y, pitch);
+		var dist = Mathf.Lerp(lowDistance, distance, t * t);
+		var minDragScale = overheadDragScale;
+		var dragScale = minDragScale + (1 - minDragScale) * t;
+
+		transform.position = trackPos + (transform.position - trackPos) * dragScale;
+		transform.position += transform.TransformDirection(offset) * dist;
 		transform.position += transform.forward * focalHeight * transform.forward.y;
-		transform.position -= transform.forward * distance;
+		transform.position -= transform.forward * dist;
 	}
 
 	public Vector3 GetLinearDrag()
@@ -218,7 +227,7 @@ public class ThirdPersonCamera : MonoBehaviour
 
 		Vector3 dragDelta = Quaternion.Inverse(screenRotation) * (lastTargetPos - trackPos);
 		dragVector += Vector3.Scale(dragDelta, dragAmount.WithZ(dragAmount.z * dragAway));
-		//dragVector = Vector3.SmoothDamp(dragVector, Vector3.zero, ref dragVectorVelocity, posSmoothTime);
+
 		dragVector = new Vector3()
 		{
 			x = Mathf.SmoothDamp(dragVector.x, 0f, ref dragVectorVelocity.x, posSmoothTime),

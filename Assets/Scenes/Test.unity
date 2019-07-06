@@ -553,7 +553,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isEnabled: 1
   distance: 2.5
-  normalPitchMinMax: {x: -20, y: 60}
+  lowDistance: 1.8
+  normalPitchMinMax: {x: -60, y: 60}
   lockOnPitchMinMax: {x: 10, y: 50}
   offset: {x: 0, y: 0.25, z: 0}
   dragAmount: {x: 0.1, y: 0.2, z: 0.2}
@@ -564,7 +565,7 @@ MonoBehaviour:
   lockTime: 0.3
   unlockTime: 0.5
   towardCameraDragScale: 0.2
-  overheadDragScale: 0.5
+  overheadDragScale: 0.4
 --- !u!54 &198612206
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -2029,6 +2030,16 @@ PrefabInstance:
         type: 3}
       propertyPath: jumpCount
       value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114975490345739816, guid: 09e76c50c237c544bab6b4d67100a8dc,
+        type: 3}
+      propertyPath: minSpeed
+      value: 0.125
+      objectReference: {fileID: 0}
+    - target: {fileID: 114975490345739816, guid: 09e76c50c237c544bab6b4d67100a8dc,
+        type: 3}
+      propertyPath: walkSpeed
+      value: 3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 09e76c50c237c544bab6b4d67100a8dc, type: 3}
@@ -5513,7 +5524,7 @@ PrefabInstance:
     - target: {fileID: 707289323, guid: 60fcc4cc7ee37b6479184572e6f0d931, type: 3}
       propertyPath: controller
       value: 
-      objectReference: {fileID: 11400000, guid: 74f1afebb7d9527499848e5d4038a7ec,
+      objectReference: {fileID: 11400000, guid: 3bd6e43a756db3642bc08e8a5ba40b8e,
         type: 2}
     - target: {fileID: 2579297820314084038, guid: 60fcc4cc7ee37b6479184572e6f0d931,
         type: 3}

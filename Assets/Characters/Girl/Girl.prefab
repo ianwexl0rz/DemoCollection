@@ -151,7 +151,6 @@ MonoBehaviour:
   forwardAxis: {x: 1, y: 0, z: 0}
   weapon: {fileID: 11400000, guid: 90fb807831acc3143ae1a8a0242e70fd, type: 2}
   distThreshold: 0.1
-  animatorTest: {fileID: 0}
 --- !u!1 &1387081973337918690
 GameObject:
   m_ObjectHideFlags: 0
