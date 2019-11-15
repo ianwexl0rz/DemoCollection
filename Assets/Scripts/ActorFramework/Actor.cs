@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections;
 
-public class Actor : Entity
+public class Actor : Entity, ILockOnTarget, IDestructable
 {
 	[SerializeField]
 	protected ActorController controller;
@@ -12,12 +12,14 @@ public class Actor : Entity
 	public bool isAwake = false;
 	public bool InputEnabled { get; set; }
 
-
 	public Vector3 move { get; set; }
 	public float look { get; set; }
 	public bool lockOn { get; set; }
+	public bool IsVisible { get; set; }
+	public bool Recenter { get; set; }
 
-	public Actor lockOnTarget = null;
+
+	public ILockOnTarget lockOnTarget = null;
 
 	public Action<Actor> UpdateController = delegate { };
 	public Action OnResetAbilities = null;
@@ -34,6 +36,10 @@ public class Actor : Entity
 	public Timer hitReaction { get; protected set; }
 	public Timer jumpAllowance { get; protected set; }
 
+	public Action OnDestroyCallback { get; set; }
+
+	private Renderer[] renderers = null;
+
 	// Use this for initialization
 	protected override void Awake()
 	{
@@ -42,6 +48,8 @@ public class Actor : Entity
 		health = maxHealth = 100f;
 
 		InputEnabled = true;
+
+		renderers = GetComponentsInChildren<Renderer>();
 
 		actorTimerGroup.Add(hitReaction = new Timer(0f, StartHitReaction, EndHitReaction, true));
 		actorTimerGroup.Add(jumpAllowance = new Timer());
@@ -77,6 +85,19 @@ public class Actor : Entity
 		UpdateController(this);
 		//ProcessAnimation();
 		actorTimerGroup.Tick(Time.deltaTime);
+
+		var visibility = false;
+		for (var i = 0; i < renderers.Length; i++)
+		{
+			var renderer = renderers[i];
+			if (renderer != null && renderer.isVisible)
+			{
+				visibility = true;
+				break;
+			}
+		}
+
+		IsVisible = visibility;
 	}
 
 	protected override void FixedUpdate()
@@ -85,6 +106,11 @@ public class Actor : Entity
 
 		if(!GameManager.I.PhysicsPaused)
 			ProcessPhysics();
+	}
+
+	protected virtual void OnDestroy()
+	{
+		OnDestroyCallback();
 	}
 
 	protected override void OnPauseEntity(bool value)
@@ -117,7 +143,12 @@ public class Actor : Entity
 		OnResetAbilities?.Invoke();
 	}
 
-	public virtual Vector3 GetLockOnPosition()
+	public virtual Vector3 GetLookPosition()
+	{
+		return transform.position;
+	}
+
+	public virtual Vector3 GetGroundPosition()
 	{
 		return transform.position;
 	}

@@ -100,7 +100,7 @@ Material:
     - __dirty: 0
     m_Colors:
     - _BaseColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
-    - _Color: {r: 0.41033468, g: 0.566, b: 0.316394, a: 0}
+    - _Color: {r: 0.41033465, g: 0.5659999, b: 0.31639397, a: 0}
     - _ColorSpaceOrigin: {r: 0.2401372, g: -0.08902974, b: -0.3312318, a: 0}
     - _ColorSpaceVector1: {r: 1.213327, g: 0.9427675, b: 0.599833, a: 0}
     - _ColorSpaceVector2: {r: -0.3470023, g: 0.3909135, b: 0.08750208, a: 0}

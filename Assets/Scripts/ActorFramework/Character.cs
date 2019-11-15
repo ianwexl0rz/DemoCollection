@@ -2,6 +2,7 @@
 using System.Collections;
 using System;
 using UnityEditor;
+using UnityEngine.Playables;
 
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(CharacterMotor), typeof(MeleeCombat))]
@@ -31,6 +32,10 @@ public class Character : Actor
 	{
 		if(!GameManager.I.PhysicsPaused)
 			ProcessAnimation();
+
+		// TODO: Planes should be cached.
+		//Plane[] planes = GeometryUtility.CalculateFrustumPlanes(Camera.main);
+		//IsVisible = GeometryUtility.TestPlanesAABB(planes, capsuleCollider.bounds);
 	}
 
 	protected override void ProcessPhysics()
@@ -62,10 +67,15 @@ public class Character : Actor
 		lastTRS = Matrix4x4.TRS(transform.position, transform.rotation, transform.localScale);
 	}
 
-	public override Vector3 GetLockOnPosition()
+	public override Vector3 GetLookPosition()
 	{
 		return transform.TransformPoint(capsuleCollider.center);
 		//return motor.FeetPos;
+	}
+
+	public override Vector3 GetGroundPosition()
+	{
+		return transform.position;
 	}
 
 	public bool Jump()

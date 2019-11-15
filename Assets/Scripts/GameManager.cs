@@ -17,14 +17,15 @@ public class GameManager : MonoBehaviour
 	public ActorController followerBrain;
 
 	[Header("Gameplay")]
-	[SerializeField] private GameObject lockOnIndicatorPrefab = null;
+	[SerializeField] private LockOnCollider lockOnColliderPrefab = null;
+	[SerializeField] private LockOnIndicator lockOnIndicatorPrefab = null;
 	[SerializeField] private GameObject hitSpark = null;
 	[SerializeField] private GameObject hitSpark2 = null;
 
+	private LockOnCollider lockOnCollider = null;
 	private LockOnIndicator lockOnIndicator = null;
-	private int targetIndex;
+	private int playerIndex;
 	private List<Character> playerCharacters;
-	private List<Character> potentialTargets;
 	private readonly List<Entity> entities = new List<Entity>();
 
 	public Action<bool> PauseAllPhysics = delegate { };
@@ -55,8 +56,10 @@ public class GameManager : MonoBehaviour
 		//QualitySettings.maxQueuedFrames = 1;
 		Application.targetFrameRate = 60;
 
-		lockOnIndicator = Instantiate(lockOnIndicatorPrefab).GetComponent<LockOnIndicator>();
-		//lockOnIndicator.gameObject.SetActive(false);
+		lockOnCollider = Instantiate(lockOnColliderPrefab);
+
+		lockOnIndicator = Instantiate(lockOnIndicatorPrefab);
+		lockOnIndicator.gameObject.SetActive(false);
 
 		DontDestroyOnLoad(this);
 
@@ -67,7 +70,7 @@ public class GameManager : MonoBehaviour
 
 		if(activePlayer != null)
 		{
-			targetIndex = playerCharacters.IndexOf(activePlayer);
+			playerIndex = playerCharacters.IndexOf(activePlayer);
 		}
 
 		StartCoroutine(LateFixedUpdate());
@@ -93,18 +96,6 @@ public class GameManager : MonoBehaviour
 		*/
 	}
 
-	private int SortByProximityToScreenCenter(Character a, Character b)
-	{
-		var cam = Camera.main;
-		var p1 = cam.WorldToScreenPoint(a.transform.position);
-		p1 = new Vector3(p1.x.LinearRemap(0, cam.pixelWidth, -1, 1), p1.y.LinearRemap(0, cam.pixelHeight, -1, 1), 0);
-
-		var p2 = cam.WorldToScreenPoint(b.transform.position);
-		p2 = new Vector3(p2.x.LinearRemap(0, cam.pixelWidth, -1, 1), p2.y.LinearRemap(0, cam.pixelHeight, -1, 1), 0);
-
-		return p1.magnitude.CompareTo(p2.magnitude);
-	}
-
 	private IEnumerator LateFixedUpdate()
 	{
 		while(true)
@@ -118,8 +109,10 @@ public class GameManager : MonoBehaviour
 			// Update the potential lock on target
 			if(!activePlayer.lockOn)
 			{
-				potentialTargets.Sort(SortByProximityToScreenCenter);
-				activePlayer.lockOnTarget = potentialTargets[0];
+				activePlayer.lockOnTarget = lockOnCollider.GetTargetClosestToCenter(activePlayer);
+
+				//potentialTargets.Sort(SortByProximityToScreenCenter);
+				//activePlayer.lockOnTarget = potentialTargets[0];
 			}
 		}
 	}
@@ -127,7 +120,7 @@ public class GameManager : MonoBehaviour
 	private void Update()
 	{
 		// Swap characters
-		//if(InputManager.ActiveDevice.Action4.WasPressed || Input.GetKeyDown(KeyCode.Tab)) { CyclePlayer(); }
+		if(InputManager.ActiveDevice.Action4.WasPressed || Input.GetKeyDown(KeyCode.Tab)) { CyclePlayer(); }
 
 		// Hold the right bumper for slow-mo!
 		Time.timeScale = InputManager.ActiveDevice.RightBumper.IsPressed || Input.GetKey(KeyCode.LeftAlt) ? 0.25f : 1f;
@@ -231,21 +224,19 @@ public class GameManager : MonoBehaviour
 	#region PRIVATE_METHODS
 	private void CyclePlayer()
 	{
-		targetIndex = (targetIndex + 1) % playerCharacters.Count;
-		SetActivePlayer(playerCharacters[targetIndex]);
+		playerIndex = (playerIndex + 1) % playerCharacters.Count;
+		SetActivePlayer(playerCharacters[playerIndex]);
 	}
 
 	private void SetActivePlayer(Character newTarget, bool immediate = false)
 	{
 		//if(activePlayer == newTarget) { return; }
 
-		//Character oldPlayer = activePlayer;
+		Character oldPlayer = activePlayer;
 		activePlayer = newTarget;
+		lockOnCollider.Init(activePlayer.transform);
 
-		potentialTargets = new List<Character>(playerCharacters);
-		potentialTargets.Remove(activePlayer);
-
-		//if(oldPlayer) oldPlayer.SetController(followerBrain); // Set the old active player to use Follower Brain
+		if(oldPlayer) oldPlayer.SetController(followerBrain); // Set the old active player to use Follower Brain
 		activePlayer.SetController(playerBrain); // Set the active player to use Player Brain
 		mainCamera.SetTarget(activePlayer, immediate); // Set the camera to follow the active player
 	}

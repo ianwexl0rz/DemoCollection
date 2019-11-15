@@ -20,7 +20,7 @@ public class LockOnIndicator : MonoBehaviour
 		renderer.sharedMaterial = inactiveMaterial;
 	}
 
-	public void UpdatePosition(bool lockedOn, Actor target)
+	public void UpdatePosition(bool lockedOn, ILockOnTarget target)
     {
 		if(target == null)
 		{
@@ -32,10 +32,10 @@ public class LockOnIndicator : MonoBehaviour
 			gameObject.SetActive(true);
 		}
 
-	    var indicatorPos = target.GetLockOnPosition();
-		if(target.GetComponent<Actor>() is Character player)
+	    var indicatorPos = target.GetLookPosition();
+		if(target is Character character)
 	    {
-			indicatorPos += (player.capsuleCollider.height * 0.5f + heightOffset) * Vector3.up;
+			indicatorPos += (character.capsuleCollider.height * 0.5f + heightOffset) * Vector3.up;
 	    }
 
 		if(lockedOn != isActive)

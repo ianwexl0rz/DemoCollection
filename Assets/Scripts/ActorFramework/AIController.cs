@@ -59,7 +59,7 @@ public class AIController : ActorController
 	{
 		if(actor.lockOnTarget == null) { return false; }
 
-		var vector = (actor.lockOnTarget.GetLockOnPosition() - actor.GetLockOnPosition()).WithY(0f);
+		var vector = (actor.lockOnTarget.GetLookPosition() - actor.GetLookPosition()).WithY(0f);
 		return vector.magnitude <= threshold;
 	}
 }

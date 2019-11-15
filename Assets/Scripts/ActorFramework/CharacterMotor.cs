@@ -307,7 +307,7 @@ public class CharacterMotor : MonoBehaviour
 
 			if(character.lockOn && character.lockOnTarget != null)
 			{
-				desiredDirection = (character.lockOnTarget.GetLockOnPosition() - character.GetLockOnPosition()).WithY(0f).normalized;
+				desiredDirection = (character.lockOnTarget.GetLookPosition() - character.GetLookPosition()).WithY(0f).normalized;
 			}
 			else
 			{

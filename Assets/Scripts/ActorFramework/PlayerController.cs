@@ -23,8 +23,9 @@ public class PlayerController : ActorController
 
 		actor.move = CalculateMove(actor, inputDevice);
 		actor.lockOn = inputDevice.LeftTrigger.IsPressed || Input.GetMouseButton(1);
+		actor.Recenter = inputDevice.LeftTrigger.WasPressed || Input.GetMouseButtonDown(1);
 
-		if(!(actor is Character player)) return;
+		if (!(actor is Character player)) return;
 
 		//player.aimingMode = gamePad.RightTrigger.IsPressed;
 		//player.Recenter = playerInput.RightStickButton.WasPressed;

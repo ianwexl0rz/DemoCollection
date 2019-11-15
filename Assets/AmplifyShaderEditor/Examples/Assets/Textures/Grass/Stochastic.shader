@@ -83,7 +83,6 @@ Shader "Stochastic (Amplify)"
         	#include "Packages/com.unity.render-pipelines.core/ShaderLibrary/UnityInstancing.hlsl"
         	#include "Packages/com.unity.render-pipelines.lightweight/ShaderLibrary/ShaderGraphFunctions.hlsl"
 
-			float4 _Color;
 			float3 _MainTexColorSpaceOrigin;
 			float3 _MainTexColorSpaceVector1;
 			sampler2D _MainTexInvT;
@@ -94,6 +93,7 @@ Shader "Stochastic (Amplify)"
 			uniform float4 _MainTexInvT_TexelSize;
 			float3 _MainTexColorSpaceVector2;
 			float3 _MainTexColorSpaceVector3;
+			float4 _Color;
 			float3 _NormalColorSpaceOrigin;
 			float3 _NormalColorSpaceVector1;
 			sampler2D _NormalInvT;
@@ -190,39 +190,38 @@ Shader "Stochastic (Amplify)"
 				float3 WorldSpaceViewDirection = SafeNormalize( _WorldSpaceCameraPos.xyz  - WorldSpacePosition );
     
 				float2 uv0_MainTexTinput = IN.ase_texcoord7.xy * _MainTexTinput_ST.xy + _MainTexTinput_ST.zw;
-				float2 break31_g92 = ( uv0_MainTexTinput * 3.464 );
-				float2 appendResult32_g92 = (float2(( break31_g92.x + ( -0.5773503 * break31_g92.y ) ) , ( break31_g92.y * 1.154701 )));
-				float2 temp_output_13_0_g92 = frac( appendResult32_g92 );
-				float2 break12_g92 = temp_output_13_0_g92;
-				float temp_output_3_0_g92 = ( 1.0 - ( break12_g92.x + break12_g92.y ) );
-				float3 appendResult38_g92 = (float3(temp_output_13_0_g92 , temp_output_3_0_g92));
-				float3 appendResult25_g92 = (float3(( 1.0 - temp_output_13_0_g92 ) , ( temp_output_3_0_g92 * -1.0 )));
-				float3 temp_output_26_0_g92 = (( temp_output_3_0_g92 > 0.0 ) ? appendResult38_g92 :  appendResult25_g92 );
-				float3 break5_g92 = temp_output_26_0_g92;
-				float3 break42_g92 = ( temp_output_26_0_g92 * temp_output_26_0_g92 );
-				float4 appendResult45_g92 = (float4(break5_g92.z , break5_g92.y , break5_g92.x , rsqrt( ( break42_g92.x + break42_g92.y + break42_g92.z ) )));
-				float4 temp_output_169_0 = appendResult45_g92;
-				float4 break135_g101 = temp_output_169_0;
-				float2 temp_output_2_0_g95 = ( floor( appendResult32_g92 ) + (( temp_output_3_0_g92 > 0.0 ) ? 0.0 :  1.0 ) );
-				float2 break10_g95 = ( float2( 127.1,269.5 ) * temp_output_2_0_g95 );
-				float2 break11_g95 = ( float2( 311.7,183.3 ) * temp_output_2_0_g95 );
-				float2 appendResult14_g95 = (float2(( break10_g95.x + break10_g95.y ) , ( break11_g95.x + break11_g95.y )));
-				float2 temp_output_169_46 = ( frac( ( sin( appendResult14_g95 ) * 43758.55 ) ) + uv0_MainTexTinput );
+				float2 break31_g1 = ( uv0_MainTexTinput * 3.464 );
+				float2 appendResult32_g1 = (float2(( break31_g1.x + ( -0.5773503 * break31_g1.y ) ) , ( break31_g1.y * 1.154701 )));
+				float2 temp_output_13_0_g1 = frac( appendResult32_g1 );
+				float2 break12_g1 = temp_output_13_0_g1;
+				float temp_output_3_0_g1 = ( 1.0 - ( break12_g1.x + break12_g1.y ) );
+				float3 appendResult38_g1 = (float3(temp_output_13_0_g1 , temp_output_3_0_g1));
+				float3 appendResult25_g1 = (float3(( 1.0 - temp_output_13_0_g1 ) , -temp_output_3_0_g1));
+				float3 temp_output_26_0_g1 = (( temp_output_3_0_g1 > 0.0 ) ? appendResult38_g1 :  appendResult25_g1 );
+				float3 break42_g1 = ( temp_output_26_0_g1 * temp_output_26_0_g1 );
+				float4 appendResult55_g1 = (float4((temp_output_26_0_g1).zyx , rsqrt( ( break42_g1.x + break42_g1.y + break42_g1.z ) )));
+				float4 temp_output_181_0 = appendResult55_g1;
+				float4 break135_g101 = temp_output_181_0;
+				float2 temp_output_2_0_g19 = ( floor( appendResult32_g1 ) + (( temp_output_3_0_g1 > 0.0 ) ? 0.0 :  1.0 ) );
+				float2 break10_g19 = ( float2( 127.1,269.5 ) * temp_output_2_0_g19 );
+				float2 break11_g19 = ( float2( 311.7,183.3 ) * temp_output_2_0_g19 );
+				float2 appendResult14_g19 = (float2(( break10_g19.x + break10_g19.y ) , ( break11_g19.x + break11_g19.y )));
+				float2 temp_output_181_46 = ( frac( ( sin( appendResult14_g19 ) * 43758.55 ) ) + uv0_MainTexTinput );
 				float2 temp_output_48_0_g101 = ddx( uv0_MainTexTinput );
 				float2 temp_output_49_0_g101 = ddy( uv0_MainTexTinput );
 				float2 _Vector0 = float2(0,1);
 				float2 _Vector1 = float2(1,0);
-				float2 temp_output_2_0_g93 = ( floor( appendResult32_g92 ) + (( temp_output_3_0_g92 > 0.0 ) ? _Vector0 :  _Vector1 ) );
-				float2 break10_g93 = ( float2( 127.1,269.5 ) * temp_output_2_0_g93 );
-				float2 break11_g93 = ( float2( 311.7,183.3 ) * temp_output_2_0_g93 );
-				float2 appendResult14_g93 = (float2(( break10_g93.x + break10_g93.y ) , ( break11_g93.x + break11_g93.y )));
-				float2 temp_output_169_47 = ( frac( ( sin( appendResult14_g93 ) * 43758.55 ) ) + uv0_MainTexTinput );
-				float2 temp_output_2_0_g94 = ( floor( appendResult32_g92 ) + (( temp_output_3_0_g92 > 0.0 ) ? _Vector1 :  _Vector0 ) );
-				float2 break10_g94 = ( float2( 127.1,269.5 ) * temp_output_2_0_g94 );
-				float2 break11_g94 = ( float2( 311.7,183.3 ) * temp_output_2_0_g94 );
-				float2 appendResult14_g94 = (float2(( break10_g94.x + break10_g94.y ) , ( break11_g94.x + break11_g94.y )));
-				float2 temp_output_169_48 = ( frac( ( sin( appendResult14_g94 ) * 43758.55 ) ) + uv0_MainTexTinput );
-				float4 break84_g101 = ( ( break135_g101.w * ( ( tex2D( _MainTexTinput, temp_output_169_46, temp_output_48_0_g101, temp_output_49_0_g101 ) * break135_g101.x ) + ( tex2D( _MainTexTinput, temp_output_169_47, temp_output_48_0_g101, temp_output_49_0_g101 ) * break135_g101.y ) + ( tex2D( _MainTexTinput, temp_output_169_48, temp_output_48_0_g101, temp_output_49_0_g101 ) * break135_g101.z ) + -0.5 ) * float4( _MainTexDXTScalars , 0.0 ) ) + 0.5 );
+				float2 temp_output_2_0_g20 = ( floor( appendResult32_g1 ) + (( temp_output_3_0_g1 > 0.0 ) ? _Vector0 :  _Vector1 ) );
+				float2 break10_g20 = ( float2( 127.1,269.5 ) * temp_output_2_0_g20 );
+				float2 break11_g20 = ( float2( 311.7,183.3 ) * temp_output_2_0_g20 );
+				float2 appendResult14_g20 = (float2(( break10_g20.x + break10_g20.y ) , ( break11_g20.x + break11_g20.y )));
+				float2 temp_output_181_47 = ( frac( ( sin( appendResult14_g20 ) * 43758.55 ) ) + uv0_MainTexTinput );
+				float2 temp_output_2_0_g18 = ( floor( appendResult32_g1 ) + (( temp_output_3_0_g1 > 0.0 ) ? _Vector1 :  _Vector0 ) );
+				float2 break10_g18 = ( float2( 127.1,269.5 ) * temp_output_2_0_g18 );
+				float2 break11_g18 = ( float2( 311.7,183.3 ) * temp_output_2_0_g18 );
+				float2 appendResult14_g18 = (float2(( break10_g18.x + break10_g18.y ) , ( break11_g18.x + break11_g18.y )));
+				float2 temp_output_181_48 = ( frac( ( sin( appendResult14_g18 ) * 43758.55 ) ) + uv0_MainTexTinput );
+				float4 break84_g101 = ( ( break135_g101.w * ( ( tex2D( _MainTexTinput, temp_output_181_46, temp_output_48_0_g101, temp_output_49_0_g101 ) * break135_g101.x ) + ( tex2D( _MainTexTinput, temp_output_181_47, temp_output_48_0_g101, temp_output_49_0_g101 ) * break135_g101.y ) + ( tex2D( _MainTexTinput, temp_output_181_48, temp_output_48_0_g101, temp_output_49_0_g101 ) * break135_g101.z ) + -0.5 ) * float4( _MainTexDXTScalars , 0.0 ) ) + 0.5 );
 				float2 appendResult42_g101 = (float2(_MainTexTinput_TexelSize.z , _MainTexTinput_TexelSize.w));
 				float2 temp_output_56_0_g101 = ( temp_output_48_0_g101 * appendResult42_g101 );
 				float dotResult58_g101 = dot( temp_output_56_0_g101 , temp_output_56_0_g101 );
@@ -233,11 +232,11 @@ Shader "Stochastic (Amplify)"
 				float2 appendResult86_g101 = (float2(break84_g101.g , temp_output_85_0_g101));
 				float2 appendResult87_g101 = (float2(0.0 , temp_output_85_0_g101));
 				
-				float4 break135_g102 = temp_output_169_0;
+				float4 break135_g102 = temp_output_181_0;
 				float2 uv0_NormalTinput = IN.ase_texcoord7.xy * _NormalTinput_ST.xy + _NormalTinput_ST.zw;
 				float2 temp_output_48_0_g102 = ddx( uv0_NormalTinput );
 				float2 temp_output_49_0_g102 = ddy( uv0_NormalTinput );
-				float4 break84_g102 = ( ( break135_g102.w * ( ( tex2D( _NormalTinput, temp_output_169_46, temp_output_48_0_g102, temp_output_49_0_g102 ) * break135_g102.x ) + ( tex2D( _NormalTinput, temp_output_169_47, temp_output_48_0_g102, temp_output_49_0_g102 ) * break135_g102.y ) + ( tex2D( _NormalTinput, temp_output_169_48, temp_output_48_0_g102, temp_output_49_0_g102 ) * break135_g102.z ) + -0.5 ) * float4( _NormalDXTScalars , 0.0 ) ) + 0.5 );
+				float4 break84_g102 = ( ( break135_g102.w * ( ( tex2D( _NormalTinput, temp_output_181_46, temp_output_48_0_g102, temp_output_49_0_g102 ) * break135_g102.x ) + ( tex2D( _NormalTinput, temp_output_181_47, temp_output_48_0_g102, temp_output_49_0_g102 ) * break135_g102.y ) + ( tex2D( _NormalTinput, temp_output_181_48, temp_output_48_0_g102, temp_output_49_0_g102 ) * break135_g102.z ) + -0.5 ) * float4( _NormalDXTScalars , 0.0 ) ) + 0.5 );
 				float2 appendResult42_g102 = (float2(_NormalTinput_TexelSize.z , _NormalTinput_TexelSize.w));
 				float2 temp_output_56_0_g102 = ( temp_output_48_0_g102 * appendResult42_g102 );
 				float dotResult58_g102 = dot( temp_output_56_0_g102 , temp_output_56_0_g102 );
@@ -249,7 +248,7 @@ Shader "Stochastic (Amplify)"
 				float2 appendResult87_g102 = (float2(0.0 , temp_output_85_0_g102));
 				
 				
-		        float3 Albedo = ( _Color * float4( ( _MainTexColorSpaceOrigin + ( _MainTexColorSpaceVector1 * tex2D( _MainTexInvT, appendResult88_g101 ).r ) + ( _MainTexColorSpaceVector2 * tex2D( _MainTexInvT, appendResult86_g101 ).g ) + ( _MainTexColorSpaceVector3 * tex2D( _MainTexInvT, appendResult87_g101 ).b ) ) , 0.0 ) ).rgb;
+		        float3 Albedo = ( float4( ( _MainTexColorSpaceOrigin + ( _MainTexColorSpaceVector1 * tex2D( _MainTexInvT, appendResult88_g101 ).r ) + ( _MainTexColorSpaceVector2 * tex2D( _MainTexInvT, appendResult86_g101 ).g ) + ( _MainTexColorSpaceVector3 * tex2D( _MainTexInvT, appendResult87_g101 ).b ) ) , 0.0 ) * _Color ).rgb;
 				float3 Normal = ( _NormalColorSpaceOrigin + ( _NormalColorSpaceVector1 * tex2D( _NormalInvT, appendResult88_g102 ).r ) + ( _NormalColorSpaceVector2 * tex2D( _NormalInvT, appendResult86_g102 ).g ) + ( _NormalColorSpaceVector3 * tex2D( _NormalInvT, appendResult87_g102 ).b ) );
 				float3 Emission = 0;
 				float3 Specular = float3(0.5, 0.5, 0.5);
@@ -538,7 +537,6 @@ Shader "Stochastic (Amplify)"
             #include "Packages/com.unity.render-pipelines.lightweight/ShaderLibrary/ShaderGraphFunctions.hlsl"
             #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Color.hlsl"
 
-			float4 _Color;
 			float3 _MainTexColorSpaceOrigin;
 			float3 _MainTexColorSpaceVector1;
 			sampler2D _MainTexInvT;
@@ -549,6 +547,7 @@ Shader "Stochastic (Amplify)"
 			uniform float4 _MainTexInvT_TexelSize;
 			float3 _MainTexColorSpaceVector2;
 			float3 _MainTexColorSpaceVector3;
+			float4 _Color;
 
             #pragma shader_feature _ _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
             #pragma shader_feature EDITOR_VISUALIZATION
@@ -602,39 +601,38 @@ Shader "Stochastic (Amplify)"
                 UNITY_SETUP_INSTANCE_ID(IN);
 
            		float2 uv0_MainTexTinput = IN.ase_texcoord.xy * _MainTexTinput_ST.xy + _MainTexTinput_ST.zw;
-           		float2 break31_g92 = ( uv0_MainTexTinput * 3.464 );
-           		float2 appendResult32_g92 = (float2(( break31_g92.x + ( -0.5773503 * break31_g92.y ) ) , ( break31_g92.y * 1.154701 )));
-           		float2 temp_output_13_0_g92 = frac( appendResult32_g92 );
-           		float2 break12_g92 = temp_output_13_0_g92;
-           		float temp_output_3_0_g92 = ( 1.0 - ( break12_g92.x + break12_g92.y ) );
-           		float3 appendResult38_g92 = (float3(temp_output_13_0_g92 , temp_output_3_0_g92));
-           		float3 appendResult25_g92 = (float3(( 1.0 - temp_output_13_0_g92 ) , ( temp_output_3_0_g92 * -1.0 )));
-           		float3 temp_output_26_0_g92 = (( temp_output_3_0_g92 > 0.0 ) ? appendResult38_g92 :  appendResult25_g92 );
-           		float3 break5_g92 = temp_output_26_0_g92;
-           		float3 break42_g92 = ( temp_output_26_0_g92 * temp_output_26_0_g92 );
-           		float4 appendResult45_g92 = (float4(break5_g92.z , break5_g92.y , break5_g92.x , rsqrt( ( break42_g92.x + break42_g92.y + break42_g92.z ) )));
-           		float4 temp_output_169_0 = appendResult45_g92;
-           		float4 break135_g101 = temp_output_169_0;
-           		float2 temp_output_2_0_g95 = ( floor( appendResult32_g92 ) + (( temp_output_3_0_g92 > 0.0 ) ? 0.0 :  1.0 ) );
-           		float2 break10_g95 = ( float2( 127.1,269.5 ) * temp_output_2_0_g95 );
-           		float2 break11_g95 = ( float2( 311.7,183.3 ) * temp_output_2_0_g95 );
-           		float2 appendResult14_g95 = (float2(( break10_g95.x + break10_g95.y ) , ( break11_g95.x + break11_g95.y )));
-           		float2 temp_output_169_46 = ( frac( ( sin( appendResult14_g95 ) * 43758.55 ) ) + uv0_MainTexTinput );
+           		float2 break31_g1 = ( uv0_MainTexTinput * 3.464 );
+           		float2 appendResult32_g1 = (float2(( break31_g1.x + ( -0.5773503 * break31_g1.y ) ) , ( break31_g1.y * 1.154701 )));
+           		float2 temp_output_13_0_g1 = frac( appendResult32_g1 );
+           		float2 break12_g1 = temp_output_13_0_g1;
+           		float temp_output_3_0_g1 = ( 1.0 - ( break12_g1.x + break12_g1.y ) );
+           		float3 appendResult38_g1 = (float3(temp_output_13_0_g1 , temp_output_3_0_g1));
+           		float3 appendResult25_g1 = (float3(( 1.0 - temp_output_13_0_g1 ) , -temp_output_3_0_g1));
+           		float3 temp_output_26_0_g1 = (( temp_output_3_0_g1 > 0.0 ) ? appendResult38_g1 :  appendResult25_g1 );
+           		float3 break42_g1 = ( temp_output_26_0_g1 * temp_output_26_0_g1 );
+           		float4 appendResult55_g1 = (float4((temp_output_26_0_g1).zyx , rsqrt( ( break42_g1.x + break42_g1.y + break42_g1.z ) )));
+           		float4 temp_output_181_0 = appendResult55_g1;
+           		float4 break135_g101 = temp_output_181_0;
+           		float2 temp_output_2_0_g19 = ( floor( appendResult32_g1 ) + (( temp_output_3_0_g1 > 0.0 ) ? 0.0 :  1.0 ) );
+           		float2 break10_g19 = ( float2( 127.1,269.5 ) * temp_output_2_0_g19 );
+           		float2 break11_g19 = ( float2( 311.7,183.3 ) * temp_output_2_0_g19 );
+           		float2 appendResult14_g19 = (float2(( break10_g19.x + break10_g19.y ) , ( break11_g19.x + break11_g19.y )));
+           		float2 temp_output_181_46 = ( frac( ( sin( appendResult14_g19 ) * 43758.55 ) ) + uv0_MainTexTinput );
            		float2 temp_output_48_0_g101 = ddx( uv0_MainTexTinput );
            		float2 temp_output_49_0_g101 = ddy( uv0_MainTexTinput );
            		float2 _Vector0 = float2(0,1);
            		float2 _Vector1 = float2(1,0);
-           		float2 temp_output_2_0_g93 = ( floor( appendResult32_g92 ) + (( temp_output_3_0_g92 > 0.0 ) ? _Vector0 :  _Vector1 ) );
-           		float2 break10_g93 = ( float2( 127.1,269.5 ) * temp_output_2_0_g93 );
-           		float2 break11_g93 = ( float2( 311.7,183.3 ) * temp_output_2_0_g93 );
-           		float2 appendResult14_g93 = (float2(( break10_g93.x + break10_g93.y ) , ( break11_g93.x + break11_g93.y )));
-           		float2 temp_output_169_47 = ( frac( ( sin( appendResult14_g93 ) * 43758.55 ) ) + uv0_MainTexTinput );
-           		float2 temp_output_2_0_g94 = ( floor( appendResult32_g92 ) + (( temp_output_3_0_g92 > 0.0 ) ? _Vector1 :  _Vector0 ) );
-           		float2 break10_g94 = ( float2( 127.1,269.5 ) * temp_output_2_0_g94 );
-           		float2 break11_g94 = ( float2( 311.7,183.3 ) * temp_output_2_0_g94 );
-           		float2 appendResult14_g94 = (float2(( break10_g94.x + break10_g94.y ) , ( break11_g94.x + break11_g94.y )));
-           		float2 temp_output_169_48 = ( frac( ( sin( appendResult14_g94 ) * 43758.55 ) ) + uv0_MainTexTinput );
-           		float4 break84_g101 = ( ( break135_g101.w * ( ( tex2D( _MainTexTinput, temp_output_169_46, temp_output_48_0_g101, temp_output_49_0_g101 ) * break135_g101.x ) + ( tex2D( _MainTexTinput, temp_output_169_47, temp_output_48_0_g101, temp_output_49_0_g101 ) * break135_g101.y ) + ( tex2D( _MainTexTinput, temp_output_169_48, temp_output_48_0_g101, temp_output_49_0_g101 ) * break135_g101.z ) + -0.5 ) * float4( _MainTexDXTScalars , 0.0 ) ) + 0.5 );
+           		float2 temp_output_2_0_g20 = ( floor( appendResult32_g1 ) + (( temp_output_3_0_g1 > 0.0 ) ? _Vector0 :  _Vector1 ) );
+           		float2 break10_g20 = ( float2( 127.1,269.5 ) * temp_output_2_0_g20 );
+           		float2 break11_g20 = ( float2( 311.7,183.3 ) * temp_output_2_0_g20 );
+           		float2 appendResult14_g20 = (float2(( break10_g20.x + break10_g20.y ) , ( break11_g20.x + break11_g20.y )));
+           		float2 temp_output_181_47 = ( frac( ( sin( appendResult14_g20 ) * 43758.55 ) ) + uv0_MainTexTinput );
+           		float2 temp_output_2_0_g18 = ( floor( appendResult32_g1 ) + (( temp_output_3_0_g1 > 0.0 ) ? _Vector1 :  _Vector0 ) );
+           		float2 break10_g18 = ( float2( 127.1,269.5 ) * temp_output_2_0_g18 );
+           		float2 break11_g18 = ( float2( 311.7,183.3 ) * temp_output_2_0_g18 );
+           		float2 appendResult14_g18 = (float2(( break10_g18.x + break10_g18.y ) , ( break11_g18.x + break11_g18.y )));
+           		float2 temp_output_181_48 = ( frac( ( sin( appendResult14_g18 ) * 43758.55 ) ) + uv0_MainTexTinput );
+           		float4 break84_g101 = ( ( break135_g101.w * ( ( tex2D( _MainTexTinput, temp_output_181_46, temp_output_48_0_g101, temp_output_49_0_g101 ) * break135_g101.x ) + ( tex2D( _MainTexTinput, temp_output_181_47, temp_output_48_0_g101, temp_output_49_0_g101 ) * break135_g101.y ) + ( tex2D( _MainTexTinput, temp_output_181_48, temp_output_48_0_g101, temp_output_49_0_g101 ) * break135_g101.z ) + -0.5 ) * float4( _MainTexDXTScalars , 0.0 ) ) + 0.5 );
            		float2 appendResult42_g101 = (float2(_MainTexTinput_TexelSize.z , _MainTexTinput_TexelSize.w));
            		float2 temp_output_56_0_g101 = ( temp_output_48_0_g101 * appendResult42_g101 );
            		float dotResult58_g101 = dot( temp_output_56_0_g101 , temp_output_56_0_g101 );
@@ -646,7 +644,7 @@ Shader "Stochastic (Amplify)"
            		float2 appendResult87_g101 = (float2(0.0 , temp_output_85_0_g101));
            		
 				
-		        float3 Albedo = ( _Color * float4( ( _MainTexColorSpaceOrigin + ( _MainTexColorSpaceVector1 * tex2D( _MainTexInvT, appendResult88_g101 ).r ) + ( _MainTexColorSpaceVector2 * tex2D( _MainTexInvT, appendResult86_g101 ).g ) + ( _MainTexColorSpaceVector3 * tex2D( _MainTexInvT, appendResult87_g101 ).b ) ) , 0.0 ) ).rgb;
+		        float3 Albedo = ( float4( ( _MainTexColorSpaceOrigin + ( _MainTexColorSpaceVector1 * tex2D( _MainTexInvT, appendResult88_g101 ).r ) + ( _MainTexColorSpaceVector2 * tex2D( _MainTexInvT, appendResult86_g101 ).g ) + ( _MainTexColorSpaceVector3 * tex2D( _MainTexInvT, appendResult87_g101 ).b ) ) , 0.0 ) * _Color ).rgb;
 				float3 Emission = 0;
 				float Alpha = 1;
 				float AlphaClipThreshold = 0;
@@ -672,60 +670,60 @@ Shader "Stochastic (Amplify)"
 }
 /*ASEBEGIN
 Version=16700
--1937.5;142;1908;1023;-2818.52;184.1788;2.482796;True;False
-Node;AmplifyShaderEditor.TexturePropertyNode;79;3824,64;Float;True;Property;_MainTexTinput;MainTexTinput;1;0;Create;True;0;0;False;0;None;27f20a6f68ca6c7489298f1342b8f138;False;gray;Auto;Texture2D;0;1;SAMPLER2D;0
-Node;AmplifyShaderEditor.WireNode;160;4688,16;Float;False;1;0;SAMPLER2D;;False;1;SAMPLER2D;0
-Node;AmplifyShaderEditor.TexturePropertyNode;92;4448,64;Float;True;Property;_MainTexInvT;MainTexInvT;2;1;[NoScaleOffset];Create;True;0;0;False;0;None;f737e9a7d609cb448bf9acff0a945d07;False;white;Auto;Texture2D;0;1;SAMPLER2D;0
-Node;AmplifyShaderEditor.FunctionNode;169;4176,798.5217;Float;False;StochasticUV;-1;;92;2a9d09a929865a142ba749e628813d62;0;1;53;SAMPLER2D;;False;4;FLOAT2;46;FLOAT2;47;FLOAT2;48;FLOAT4;0
-Node;AmplifyShaderEditor.Vector3Node;108;4480,704;Float;False;Property;_MainTexColorSpaceVector3;MainTexColorSpaceVector3;8;0;Create;True;0;0;False;0;0,0,0;-0.117331,-0.24264,0.6186954;0;4;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3
-Node;AmplifyShaderEditor.Vector3Node;107;4480,560;Float;False;Property;_MainTexColorSpaceVector2;MainTexColorSpaceVector2;7;0;Create;True;0;0;False;0;0,0,0;-0.3470023,0.3909135,0.08750208;0;4;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3
-Node;AmplifyShaderEditor.Vector3Node;109;4480,848;Float;False;Property;_MainTexDXTScalars;MainTexDXTScalars;9;0;Create;True;0;0;False;0;1,1,1;0.6062531,1.886858,1.481807;0;4;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3
-Node;AmplifyShaderEditor.Vector3Node;106;4480,416;Float;False;Property;_MainTexColorSpaceVector1;MainTexColorSpaceVector1;6;0;Create;True;0;0;False;0;0,0,0;1.213327,0.9427675,0.599833;0;4;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3
-Node;AmplifyShaderEditor.Vector3Node;105;4480,272;Float;False;Property;_MainTexColorSpaceOrigin;MainTexColorSpaceOrigin;5;0;Create;True;0;0;False;0;0,0,0;0.2401372,-0.08902974,-0.3312318;0;4;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3
-Node;AmplifyShaderEditor.FunctionNode;179;4896,240;Float;True;StochasticTextureSampler;-1;;101;444ae51c65aa4be4a80703bd19859863;0;11;104;SAMPLER2D;;False;105;SAMPLER2D;;False;139;FLOAT2;0,0;False;141;FLOAT2;0,0;False;142;FLOAT2;0,0;False;138;FLOAT4;0,0,0,0;False;106;FLOAT3;0,0,0;False;107;FLOAT3;0,0,0;False;108;FLOAT3;0,0,0;False;109;FLOAT3;0,0,0;False;110;FLOAT3;0,0,0;False;1;FLOAT3;103
-Node;AmplifyShaderEditor.ColorNode;104;5040,32;Float;False;Property;_Color;Color;0;0;Create;True;0;0;False;0;0,0,0,0;0.4339623,0.4339623,0.4339623,0;True;0;5;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
-Node;AmplifyShaderEditor.TexturePropertyNode;136;4480,1008;Float;True;Property;_NormalTinput;NormalTinput;3;1;[NoScaleOffset];Create;True;0;0;False;0;None;eab474d4d707863498d4a3b7cd7e2fdc;False;gray;Auto;Texture2D;0;1;SAMPLER2D;0
-Node;AmplifyShaderEditor.RangedFloatNode;128;5648,208;Float;False;Property;_Smoothness;Smoothness;15;0;Create;True;0;0;False;0;0;0.25;0;1;0;1;FLOAT;0
-Node;AmplifyShaderEditor.FunctionNode;178;4896,1344;Float;True;StochasticTextureSampler;-1;;102;444ae51c65aa4be4a80703bd19859863;0;11;104;SAMPLER2D;;False;105;SAMPLER2D;;False;139;FLOAT2;0,0;False;141;FLOAT2;0,0;False;142;FLOAT2;0,0;False;138;FLOAT4;0,0,0,0;False;106;FLOAT3;0,0,0;False;107;FLOAT3;0,0,0;False;108;FLOAT3;0,0,0;False;109;FLOAT3;0,0,0;False;110;FLOAT3;0,0,0;False;1;FLOAT3;103
-Node;AmplifyShaderEditor.TexturePropertyNode;137;4480,1200;Float;True;Property;_NormalInvT;NormalInvT;4;1;[NoScaleOffset];Create;True;0;0;False;0;None;eaed06054abc59f47875c87934a44d43;False;white;Auto;Texture2D;0;1;SAMPLER2D;0
-Node;AmplifyShaderEditor.SimpleMultiplyOpNode;103;5392,128;Float;True;2;2;0;COLOR;0,0,0,0;False;1;FLOAT3;0,0,0;False;1;COLOR;0
-Node;AmplifyShaderEditor.Vector3Node;141;4480,1680;Float;False;Property;_NormalColorSpaceVector2;NormalColorSpaceVector2;12;0;Create;True;0;0;False;0;0,0,0;-0.7723546,0.8299038,0.02279877;0;4;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3
-Node;AmplifyShaderEditor.Vector3Node;142;4480,1392;Float;False;Property;_NormalColorSpaceOrigin;NormalColorSpaceOrigin;10;0;Create;True;0;0;False;0;0,0,0;0.4390354,-0.3666983,0.5481136;0;4;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3
-Node;AmplifyShaderEditor.Vector3Node;138;4480,1536;Float;False;Property;_NormalColorSpaceVector1;NormalColorSpaceVector1;11;0;Create;True;0;0;False;0;0,0,0;0.9586893,0.8899831,0.08104445;0;4;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3
-Node;AmplifyShaderEditor.Vector3Node;140;4480,1824;Float;False;Property;_NormalColorSpaceVector3;NormalColorSpaceVector3;13;0;Create;True;0;0;False;0;0,0,0;-0.01343385,-0.02415477,0.424165;0;4;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3
-Node;AmplifyShaderEditor.Vector3Node;139;3971.027,2059.864;Float;False;Property;_NormalDXTScalars;NormalDXTScalars;14;0;Create;True;0;0;False;0;1,1,1;0.762998,0.8818905,2.352584;0;4;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3
-Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;4;346,-134;Float;False;False;2;Float;ASEMaterialInspector;0;1;Hidden/Templates/LightWeightSRPPBR;1976390536c6c564abb90fe41f6ee334;True;Meta;0;3;Meta;0;False;False;False;True;0;False;-1;False;False;False;False;False;True;3;RenderPipeline=LightweightPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;True;2;0;False;False;False;True;2;False;-1;False;False;False;False;False;True;1;LightMode=Meta;False;0;;0;0;Standard;0;6;0;FLOAT3;0,0,0;False;1;FLOAT3;0,0,0;False;2;FLOAT;0;False;3;FLOAT;0;False;4;FLOAT3;0,0,0;False;5;FLOAT3;0,0,0;False;0
-Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;2;346,-134;Float;False;False;2;Float;ASEMaterialInspector;0;1;Hidden/Templates/LightWeightSRPPBR;1976390536c6c564abb90fe41f6ee334;True;ShadowCaster;0;1;ShadowCaster;0;False;False;False;True;0;False;-1;False;False;False;False;False;True;3;RenderPipeline=LightweightPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;True;2;0;False;False;False;False;False;False;True;1;False;-1;True;3;False;-1;False;True;1;LightMode=ShadowCaster;False;0;;0;0;Standard;0;4;0;FLOAT;0;False;1;FLOAT;0;False;2;FLOAT3;0,0,0;False;3;FLOAT3;0,0,0;False;0
-Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;3;346,-134;Float;False;False;2;Float;ASEMaterialInspector;0;1;Hidden/Templates/LightWeightSRPPBR;1976390536c6c564abb90fe41f6ee334;True;DepthOnly;0;2;DepthOnly;0;False;False;False;True;0;False;-1;False;False;False;False;False;True;3;RenderPipeline=LightweightPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;True;2;0;False;False;False;False;True;False;False;False;False;0;False;-1;False;True;1;False;-1;False;False;True;1;LightMode=DepthOnly;False;0;;0;0;Standard;0;4;0;FLOAT;0;False;1;FLOAT;0;False;2;FLOAT3;0,0,0;False;3;FLOAT3;0,0,0;False;0
-Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;1;5993,19;Float;False;True;2;Float;ASEMaterialInspector;0;2;Stochastic (Amplify);1976390536c6c564abb90fe41f6ee334;True;Base;0;0;Base;11;False;False;False;True;0;False;-1;False;False;False;False;False;True;3;RenderPipeline=LightweightPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;True;2;0;True;1;1;False;-1;0;False;-1;0;1;False;-1;0;False;-1;False;False;False;True;True;True;True;True;0;False;-1;True;False;255;False;-1;255;False;-1;255;False;-1;7;False;-1;1;False;-1;1;False;-1;1;False;-1;7;False;-1;1;False;-1;1;False;-1;1;False;-1;True;1;False;-1;True;3;False;-1;True;True;0;False;-1;0;False;-1;True;1;LightMode=LightweightForward;False;0;;0;0;Standard;2;Vertex Position,InvertActionOnDeselection;1;Receive Shadows;1;1;_FinalColorxAlpha;0;4;True;True;True;True;False;11;0;FLOAT3;0,0,0;False;1;FLOAT3;0,0,0;False;2;FLOAT3;0,0,0;False;9;FLOAT3;0,0,0;False;3;FLOAT;0;False;4;FLOAT;0;False;5;FLOAT;0;False;6;FLOAT;0;False;7;FLOAT;0;False;8;FLOAT3;0,0,0;False;10;FLOAT3;0,0,0;False;0
-WireConnection;160;0;79;0
-WireConnection;169;53;79;0
-WireConnection;179;104;160;0
+463;73;960;518;-1858.715;54.80331;3.83144;True;False
+Node;AmplifyShaderEditor.TexturePropertyNode;79;3824,64;Float;True;Property;_MainTexTinput;MainTexTinput;1;0;Create;True;0;0;False;0;None;22d11f0dd8b20084bb77a147b9c2f0d3;False;gray;Auto;Texture2D;0;1;SAMPLER2D;0
+Node;AmplifyShaderEditor.TexturePropertyNode;92;3824,256;Float;True;Property;_MainTexInvT;MainTexInvT;2;1;[NoScaleOffset];Create;True;0;0;False;0;None;10082244b49df384e9240507fcf2400d;False;white;Auto;Texture2D;0;1;SAMPLER2D;0
+Node;AmplifyShaderEditor.Vector3Node;105;3824,448;Float;False;Property;_MainTexColorSpaceOrigin;MainTexColorSpaceOrigin;5;0;Create;True;0;0;False;0;0,0,0;0.2401372,-0.08902974,-0.3312318;0;4;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3
+Node;AmplifyShaderEditor.Vector3Node;106;3824,592;Float;False;Property;_MainTexColorSpaceVector1;MainTexColorSpaceVector1;6;0;Create;True;0;0;False;0;0,0,0;1.213327,0.9427675,0.599833;0;4;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3
+Node;AmplifyShaderEditor.Vector3Node;109;3824,1024;Float;False;Property;_MainTexDXTScalars;MainTexDXTScalars;9;0;Create;True;0;0;False;0;1,1,1;0.6062531,1.886858,1.481807;0;4;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3
+Node;AmplifyShaderEditor.Vector3Node;108;3824,880;Float;False;Property;_MainTexColorSpaceVector3;MainTexColorSpaceVector3;8;0;Create;True;0;0;False;0;0,0,0;-0.117331,-0.24264,0.6186954;0;4;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3
+Node;AmplifyShaderEditor.Vector3Node;107;3824,736;Float;False;Property;_MainTexColorSpaceVector2;MainTexColorSpaceVector2;7;0;Create;True;0;0;False;0;0,0,0;-0.3470023,0.3909135,0.08750208;0;4;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3
+Node;AmplifyShaderEditor.FunctionNode;181;4560,704;Float;False;StochasticUV;-1;;1;2a9d09a929865a142ba749e628813d62;0;1;53;SAMPLER2D;;False;4;FLOAT2;46;FLOAT2;47;FLOAT2;48;FLOAT4;0
+Node;AmplifyShaderEditor.ColorNode;104;5024,384;Float;False;Property;_Color;Color;0;0;Create;True;0;0;False;0;0,0,0,0;0.4103346,0.5659999,0.316394,0;True;0;5;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
+Node;AmplifyShaderEditor.FunctionNode;179;4896,64;Float;True;StochasticTextureSampler;-1;;101;444ae51c65aa4be4a80703bd19859863;0;11;104;SAMPLER2D;;False;105;SAMPLER2D;;False;139;FLOAT2;0,0;False;141;FLOAT2;0,0;False;142;FLOAT2;0,0;False;138;FLOAT4;0,0,0,0;False;106;FLOAT3;0,0,0;False;107;FLOAT3;0,0,0;False;108;FLOAT3;0,0,0;False;109;FLOAT3;0,0,0;False;110;FLOAT3;0,0,0;False;1;FLOAT3;103
+Node;AmplifyShaderEditor.SimpleMultiplyOpNode;103;5344,64;Float;True;2;2;0;FLOAT3;0,0,0;False;1;COLOR;0,0,0,0;False;1;COLOR;0
+Node;AmplifyShaderEditor.FunctionNode;178;4896,1184;Float;True;StochasticTextureSampler;-1;;102;444ae51c65aa4be4a80703bd19859863;0;11;104;SAMPLER2D;;False;105;SAMPLER2D;;False;139;FLOAT2;0,0;False;141;FLOAT2;0,0;False;142;FLOAT2;0,0;False;138;FLOAT4;0,0,0,0;False;106;FLOAT3;0,0,0;False;107;FLOAT3;0,0,0;False;108;FLOAT3;0,0,0;False;109;FLOAT3;0,0,0;False;110;FLOAT3;0,0,0;False;1;FLOAT3;103
+Node;AmplifyShaderEditor.Vector3Node;139;3824,2144;Float;False;Property;_NormalDXTScalars;NormalDXTScalars;14;0;Create;True;0;0;False;0;1,1,1;0.762998,0.8818905,2.352584;0;4;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3
+Node;AmplifyShaderEditor.Vector3Node;141;3824,1856;Float;False;Property;_NormalColorSpaceVector2;NormalColorSpaceVector2;12;0;Create;True;0;0;False;0;0,0,0;-0.7723546,0.8299038,0.02279877;0;4;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3
+Node;AmplifyShaderEditor.Vector3Node;142;3824,1568;Float;False;Property;_NormalColorSpaceOrigin;NormalColorSpaceOrigin;10;0;Create;True;0;0;False;0;0,0,0;0.4390354,-0.3666983,0.5481136;0;4;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3
+Node;AmplifyShaderEditor.TexturePropertyNode;137;3824,1376;Float;True;Property;_NormalInvT;NormalInvT;4;1;[NoScaleOffset];Create;True;0;0;False;0;None;877e255f7f911d042bf2a944b6336d52;False;white;Auto;Texture2D;0;1;SAMPLER2D;0
+Node;AmplifyShaderEditor.WireNode;182;5552,240;Float;False;1;0;FLOAT3;0,0,0;False;1;FLOAT3;0
+Node;AmplifyShaderEditor.Vector3Node;138;3824,1712;Float;False;Property;_NormalColorSpaceVector1;NormalColorSpaceVector1;11;0;Create;True;0;0;False;0;0,0,0;0.9586893,0.8899831,0.08104445;0;4;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3
+Node;AmplifyShaderEditor.Vector3Node;140;3824,2000;Float;False;Property;_NormalColorSpaceVector3;NormalColorSpaceVector3;13;0;Create;True;0;0;False;0;0,0,0;-0.01343385,-0.02415477,0.424165;0;4;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3
+Node;AmplifyShaderEditor.TexturePropertyNode;136;3824,1184;Float;True;Property;_NormalTinput;NormalTinput;3;1;[NoScaleOffset];Create;True;0;0;False;0;None;24fc3483329347042b50e2c668f3fb0b;False;gray;Auto;Texture2D;0;1;SAMPLER2D;0
+Node;AmplifyShaderEditor.RangedFloatNode;128;5584,384;Float;False;Property;_Smoothness;Smoothness;15;0;Create;True;0;0;False;0;0;0.046;0;1;0;1;FLOAT;0
+Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;3;346,-134;Float;False;False;2;Float;ASEMaterialInspector;0;2;Hidden/Templates/LightWeightSRPPBR;1976390536c6c564abb90fe41f6ee334;True;DepthOnly;0;2;DepthOnly;0;False;False;False;True;0;False;-1;False;False;False;False;False;True;3;RenderPipeline=LightweightPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;True;2;0;False;False;False;False;True;False;False;False;False;0;False;-1;False;True;1;False;-1;False;False;True;1;LightMode=DepthOnly;False;0;;0;0;Standard;0;4;0;FLOAT;0;False;1;FLOAT;0;False;2;FLOAT3;0,0,0;False;3;FLOAT3;0,0,0;False;0
+Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;2;346,-134;Float;False;False;2;Float;ASEMaterialInspector;0;2;Hidden/Templates/LightWeightSRPPBR;1976390536c6c564abb90fe41f6ee334;True;ShadowCaster;0;1;ShadowCaster;0;False;False;False;True;0;False;-1;False;False;False;False;False;True;3;RenderPipeline=LightweightPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;True;2;0;False;False;False;False;False;False;True;1;False;-1;True;3;False;-1;False;True;1;LightMode=ShadowCaster;False;0;;0;0;Standard;0;4;0;FLOAT;0;False;1;FLOAT;0;False;2;FLOAT3;0,0,0;False;3;FLOAT3;0,0,0;False;0
+Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;4;346,-134;Float;False;False;2;Float;ASEMaterialInspector;0;2;Hidden/Templates/LightWeightSRPPBR;1976390536c6c564abb90fe41f6ee334;True;Meta;0;3;Meta;0;False;False;False;True;0;False;-1;False;False;False;False;False;True;3;RenderPipeline=LightweightPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;True;2;0;False;False;False;True;2;False;-1;False;False;False;False;False;True;1;LightMode=Meta;False;0;;0;0;Standard;0;6;0;FLOAT3;0,0,0;False;1;FLOAT3;0,0,0;False;2;FLOAT;0;False;3;FLOAT;0;False;4;FLOAT3;0,0,0;False;5;FLOAT3;0,0,0;False;0
+Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;1;5936,64;Float;False;True;2;Float;ASEMaterialInspector;0;2;Stochastic (Amplify);1976390536c6c564abb90fe41f6ee334;True;Base;0;0;Base;11;False;False;False;True;0;False;-1;False;False;False;False;False;True;3;RenderPipeline=LightweightPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;True;2;0;True;1;1;False;-1;0;False;-1;0;1;False;-1;0;False;-1;False;False;False;True;True;True;True;True;0;False;-1;True;False;255;False;-1;255;False;-1;255;False;-1;7;False;-1;1;False;-1;1;False;-1;1;False;-1;7;False;-1;1;False;-1;1;False;-1;1;False;-1;True;1;False;-1;True;3;False;-1;True;True;0;False;-1;0;False;-1;True;1;LightMode=LightweightForward;False;0;;0;0;Standard;2;Vertex Position,InvertActionOnDeselection;1;Receive Shadows;1;1;_FinalColorxAlpha;0;4;True;True;True;True;False;11;0;FLOAT3;0,0,0;False;1;FLOAT3;0,0,0;False;2;FLOAT3;0,0,0;False;9;FLOAT3;0,0,0;False;3;FLOAT;0;False;4;FLOAT;0;False;5;FLOAT;0;False;6;FLOAT;0;False;7;FLOAT;0;False;8;FLOAT3;0,0,0;False;10;FLOAT3;0,0,0;False;0
+WireConnection;181;53;79;0
+WireConnection;179;104;79;0
 WireConnection;179;105;92;0
-WireConnection;179;139;169;46
-WireConnection;179;141;169;47
-WireConnection;179;142;169;48
-WireConnection;179;138;169;0
+WireConnection;179;139;181;46
+WireConnection;179;141;181;47
+WireConnection;179;142;181;48
+WireConnection;179;138;181;0
 WireConnection;179;106;105;0
 WireConnection;179;107;106;0
 WireConnection;179;108;107;0
 WireConnection;179;109;108;0
 WireConnection;179;110;109;0
+WireConnection;103;0;179;103
+WireConnection;103;1;104;0
 WireConnection;178;104;136;0
 WireConnection;178;105;137;0
-WireConnection;178;139;169;46
-WireConnection;178;141;169;47
-WireConnection;178;142;169;48
-WireConnection;178;138;169;0
+WireConnection;178;139;181;46
+WireConnection;178;141;181;47
+WireConnection;178;142;181;48
+WireConnection;178;138;181;0
 WireConnection;178;106;142;0
 WireConnection;178;107;138;0
 WireConnection;178;108;141;0
 WireConnection;178;109;140;0
 WireConnection;178;110;139;0
-WireConnection;103;0;104;0
-WireConnection;103;1;179;103
+WireConnection;182;0;178;103
 WireConnection;1;0;103;0
-WireConnection;1;1;178;103
+WireConnection;1;1;182;0
 WireConnection;1;4;128;0
 ASEEND*/
-//CHKSM=218806B9F89EC665FD645DD92AB832992FDBE6DB
+//CHKSM=A5D415249C7A3F50816CC1913B7E3C5C70184824

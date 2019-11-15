@@ -548,7 +548,7 @@ Shader "Lightweight Render Pipeline/Stylized/Cel Shaded"
 }
 /*ASEBEGIN
 Version=16700
--1914;23;1908;1006;1476.735;136.825;1.338018;True;False
+280;73;1143;638;1475.397;136.825;1.338018;True;False
 Node;AmplifyShaderEditor.SamplerNode;4;-592,368;Float;True;Property;_MainTex;MainTex;0;1;[NoScaleOffset];Create;True;0;0;False;0;None;987ec52fb66994cb1bfbf67a7b42d8df;True;0;False;white;Auto;False;Object;-1;Auto;Texture2D;6;0;SAMPLER2D;;False;1;FLOAT2;0,0;False;2;FLOAT;0;False;3;FLOAT2;0,0;False;4;FLOAT2;0,0;False;5;FLOAT;1;False;5;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
 Node;AmplifyShaderEditor.ColorNode;140;-512,160;Float;False;Property;_Albedo;Albedo;1;0;Create;True;0;0;False;0;1,1,1,0;1,1,1,0;True;0;5;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
 Node;AmplifyShaderEditor.RangedFloatNode;5;-240,464;Float;False;Property;_Smoothness;Smoothness;3;0;Create;True;0;0;False;0;0.3;0.318;0;1;0;1;FLOAT;0
@@ -566,4 +566,4 @@ WireConnection;218;3;129;0
 WireConnection;218;4;5;0
 WireConnection;218;11;13;0
 ASEEND*/
-//CHKSM=677EE398F244788529D8EEBA7D600E76CC883A3C
+//CHKSM=2C9F28BC1000930057830C7BDB48EFD9B1514474

@@ -43,11 +43,18 @@ public static class MonoBehaviourExtensions
 		return new Vector3(v.x, v.y, z);
 	}
 
-	public static float LinearRemap(this float value,
-									 float valueRangeMin, float valueRangeMax,
-									 float newRangeMin, float newRangeMax)
+	public static float LinearRemap(this float value, float oldMin, float oldMax, float newMin, float newMax)
 	{
-		return (value - valueRangeMin) / (valueRangeMax - valueRangeMin) * (newRangeMax - newRangeMin) + newRangeMin;
+		return (value - oldMin) / (oldMax - oldMin) * (newMax - newMin) + newMin;
+	}
+
+	public static Vector2 LinearRemap(this Vector2 value, Vector2 oldMin, Vector2 oldMax, Vector2 newMin, Vector2 newMax)
+	{
+		return new Vector2()
+		{
+			x = (value.x - oldMin.x) / (oldMax.x - oldMin.x) * (newMax.x - newMin.x) + newMin.x,
+			y = (value.y - oldMin.y) / (oldMax.y - oldMin.y) * (newMax.y - newMin.y) + newMin.y
+		};
 	}
 
 	public static Vector3 LowestPoint(this CapsuleCollider capsuleCollider)

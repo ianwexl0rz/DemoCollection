@@ -61,7 +61,7 @@ public class ThirdPersonCamera : MonoBehaviour
 		if(immediate)
 		{
 			focalHeight = player.capsuleCollider.height * 0.5f;
-			lastTargetPos = trackPos = player.GetLockOnPosition();
+			lastTargetPos = trackPos = player.GetLookPosition();
 		}
 		else
 		{
@@ -91,14 +91,14 @@ public class ThirdPersonCamera : MonoBehaviour
 			blendToPlayer -= dt / unlockTime;
 			blendToPlayer = Mathf.Max(blendToPlayer, 0f);
 			float smoothBlend = Mathf.SmoothStep(1f, 0f, blendToPlayer);
-			trackPos = Vector3.Lerp(previousPlayerPosition, player.GetLockOnPosition(), smoothBlend);
+			trackPos = Vector3.Lerp(previousPlayerPosition, player.GetLookPosition(), smoothBlend);
 			focalHeight = Mathf.Lerp(previousFocalHeight, player.capsuleCollider.height * 0.5f, smoothBlend);
 			dragVector *= blendToPlayer;
 			autoTurn = false;
 		}
 		else
 		{
-			trackPos = player.GetLockOnPosition();
+			trackPos = player.GetLookPosition();
 			autoTurn = true;
 		}
 
@@ -109,7 +109,7 @@ public class ThirdPersonCamera : MonoBehaviour
 			lockBlend = Mathf.Max(0f, lockBlend - dt);
 			var blend = Mathf.SmoothStep(0f, 1f, lockBlend / lockTime);
 
-			var playerToTarget = (player.lockOnTarget.transform.position - trackPos).WithY(0f);
+			var playerToTarget = (player.lockOnTarget.GetGroundPosition() - trackPos).WithY(0f);
 			var facingRotation = Quaternion.LookRotation(playerToTarget);
 
 			Vector3 dragDelta = Quaternion.Inverse(facingRotation) * (lastTargetPos - trackPos);
@@ -127,7 +127,7 @@ public class ThirdPersonCamera : MonoBehaviour
 			var drag = Quaternion.Euler(0, dragAngle, 0) * dragVector;
 			transform.position = trackPos + drag;
 
-			var camToTarget = player.lockOnTarget.transform.position - transform.position + Vector3.up * player.capsuleCollider.height * 0.5f;
+			var camToTarget = player.lockOnTarget.GetGroundPosition() - transform.position + Vector3.up * player.capsuleCollider.height * 0.5f;
 			var look = Quaternion.LookRotation(camToTarget);
 
 			// Clamp pitch
@@ -171,6 +171,11 @@ public class ThirdPersonCamera : MonoBehaviour
 		{
 			lockBlend = Mathf.Min(lockTime, lockBlend + dt);
 
+			if (player.Recenter)
+			{
+				yaw = player.transform.eulerAngles.y;
+			}
+
 			yaw += playerInput.RightStickX * lookSensitivityX * dt;
 			pitch += playerInput.RightStickY * lookSensitivityY * dt;
 
@@ -200,10 +205,10 @@ public class ThirdPersonCamera : MonoBehaviour
 		}
 
 		// Closer camera and less drag at low angle.
-		var t = Mathf.InverseLerp(normalPitchMinMax.x, normalPitchMinMax.y, pitch);
-		var dist = Mathf.Lerp(lowDistance, distance, t * t);
+		var t = 1f - Mathf.InverseLerp(normalPitchMinMax.x, normalPitchMinMax.y, pitch);
+		var dist = Mathf.Lerp(lowDistance, distance, 1f - t * t);
 		var minDragScale = overheadDragScale;
-		var dragScale = minDragScale + (1 - minDragScale) * t;
+		var dragScale = minDragScale + (1 - minDragScale) * (1f - t);
 
 		transform.position = trackPos + (transform.position - trackPos) * dragScale;
 		transform.position += transform.TransformDirection(offset) * dist;
