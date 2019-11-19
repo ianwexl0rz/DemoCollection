@@ -33,6 +33,11 @@ namespace AmplifyShaderEditor
 		[SerializeField]
 		private bool m_createToggle = true;
 
+		private const string IsLocalStr = "Is Local";
+
+		[SerializeField]
+		private bool m_isLocal = false;
+
 		private GUIContent m_checkContent;
 		private GUIContent m_popContent;
 
@@ -152,6 +157,7 @@ namespace AmplifyShaderEditor
 		protected override void OnUniqueIDAssigned()
 		{
 			base.OnUniqueIDAssigned();
+
 			if( m_createToggle )
 				UIUtils.RegisterPropertyNode( this );
 			else
@@ -161,6 +167,9 @@ namespace AmplifyShaderEditor
 			{
 				ContainerGraph.StaticSwitchNodes.AddNode( this );
 			}
+
+			if( UniqueId > -1 )
+				ContainerGraph.StaticSwitchNodes.OnReorderEventComplete += OnReorderEventComplete;
 		}
 
 		public override void Destroy()
@@ -170,6 +179,20 @@ namespace AmplifyShaderEditor
 			if( CurrentVarMode != StaticSwitchVariableMode.Reference )
 			{
 				ContainerGraph.StaticSwitchNodes.RemoveNode( this );
+			}
+
+			if( UniqueId > -1 )
+				ContainerGraph.StaticSwitchNodes.OnReorderEventComplete -= OnReorderEventComplete;
+		}
+
+		void OnReorderEventComplete()
+		{
+			if( CurrentVarMode == StaticSwitchVariableMode.Reference )
+			{
+				if( m_reference != null )
+				{
+					m_referenceArrayId = ContainerGraph.StaticSwitchNodes.GetNodeRegisterIdx( m_reference.UniqueId );
+				}
 			}
 		}
 
@@ -227,12 +250,27 @@ namespace AmplifyShaderEditor
 			else
 				return string.Empty;
 		}
+
+		public string KeywordEnum( int index )
+		{
+			if( m_createToggle )
+			{
+				return string.IsNullOrEmpty( PropertyName ) ? KeywordEnumList( index ) : ( PropertyName + "_" + KeywordEnumList( index ) );
+			}
+			else
+			{
+				return string.IsNullOrEmpty( PropertyName ) ? KeywordEnumList( index ) : ( PropertyName + KeywordEnumList( index ) );
+			}
+		}
+
 		public string KeywordEnumList( int index )
 		{
 			if( CurrentVarMode == StaticSwitchVariableMode.Fetch )
 				return m_keywordEnumList[ index ];
 			else
-				return m_keywordEnumList[ index ].ToUpper();
+			{
+				return m_createToggle ? m_keywordEnumList[ index ].ToUpper() : m_keywordEnumList[ index ];
+			}
 
 		}
 		public override string PropertyName
@@ -242,7 +280,9 @@ namespace AmplifyShaderEditor
 				if( CurrentVarMode == StaticSwitchVariableMode.Fetch )
 					return m_currentKeyword;
 				else
-					return base.PropertyName.ToUpper();
+				{
+					return m_createToggle ? base.PropertyName.ToUpper() : base.PropertyName;
+				}
 			}
 		}
 
@@ -253,7 +293,7 @@ namespace AmplifyShaderEditor
 			else if( CurrentVarMode == StaticSwitchVariableMode.Fetch )
 				return m_currentKeyword;
 			else
-				return PropertyName + ( m_createToggle ? OnOffStr : "_ON" );
+				return PropertyName + OnOffStr;
 		}
 
 		private string GetKeywordEnumPropertyList()
@@ -275,9 +315,9 @@ namespace AmplifyShaderEditor
 			for( int i = 0; i < m_keywordEnumList.Length; i++ )
 			{
 				if( i == 0 )
-					result = PropertyName + "_" + KeywordEnumList( i );
+					result = KeywordEnum( i );
 				else
-					result += " " + PropertyName + "_" + KeywordEnumList( i );
+					result += " " + KeywordEnum( i );
 			}
 			return result;
 		}
@@ -355,8 +395,16 @@ namespace AmplifyShaderEditor
 
 		void PropertyGroup()
 		{
-
+			EditorGUI.BeginChangeCheck();
 			CurrentVarMode = (StaticSwitchVariableMode)EditorGUILayoutEnumPopup( ModeStr, CurrentVarMode );
+			if( EditorGUI.EndChangeCheck() )
+			{
+				if( CurrentVarMode == StaticSwitchVariableMode.Fetch )
+				{
+					m_keywordModeType = KeywordModeType.Toggle;
+					UpdateLabels();
+				}
+			}
 
 			if( CurrentVarMode == StaticSwitchVariableMode.Create )
 			{
@@ -402,13 +450,15 @@ namespace AmplifyShaderEditor
 				return;
 			}
 
-			EditorGUI.BeginChangeCheck();
-			m_keywordModeType = (KeywordModeType)EditorGUILayoutEnumPopup( TypeStr, m_keywordModeType );
-			if( EditorGUI.EndChangeCheck() )
+			if( CurrentVarMode == StaticSwitchVariableMode.Create )
 			{
-				UpdateLabels();
+				EditorGUI.BeginChangeCheck();
+				m_keywordModeType = (KeywordModeType)EditorGUILayoutEnumPopup( TypeStr, m_keywordModeType );
+				if( EditorGUI.EndChangeCheck() )
+				{
+					UpdateLabels();
+				}
 			}
-
 
 			if( m_keywordModeType != KeywordModeType.KeywordEnum )
 			{
@@ -421,38 +471,52 @@ namespace AmplifyShaderEditor
 					EditorGUILayout.TextField( KeywordNameStr, GetPropertyValStr() );
 					GUI.enabled = guiEnabledBuffer;
 				}
-				else
-				{
-					ShowPropertyInspectorNameGUI();
-					EditorGUI.BeginChangeCheck();
-					m_currentKeywordId = EditorGUILayoutPopup( KeywordStr, m_currentKeywordId, UIUtils.AvailableKeywords );
-					if( EditorGUI.EndChangeCheck() )
-					{
-						if( m_currentKeywordId != 0 )
-						{
-							m_currentKeyword = UIUtils.AvailableKeywords[ m_currentKeywordId ];
-						}
-					}
-
-					if( m_currentKeywordId == 0 )
-					{
-						EditorGUI.BeginChangeCheck();
-						m_currentKeyword = EditorGUILayoutTextField( CustomStr, m_currentKeyword );
-						if( EditorGUI.EndChangeCheck() )
-						{
-							m_currentKeyword = UIUtils.RemoveInvalidCharacters( m_currentKeyword );
-						}
-					}
-				}
+				
 			}
 			else
 			{
-				ShowPropertyInspectorNameGUI();
-				ShowPropertyNameGUI( true );
-				DrawEnumList();
+				if( CurrentVarMode == StaticSwitchVariableMode.Create )
+				{
+					ShowPropertyInspectorNameGUI();
+					ShowPropertyNameGUI( true );
+					DrawEnumList();
+				}
+				
 			}
 
-			ShowAutoRegister();
+			if( CurrentVarMode == StaticSwitchVariableMode.Fetch )
+			{
+				//ShowPropertyInspectorNameGUI();
+				EditorGUI.BeginChangeCheck();
+				m_currentKeywordId = EditorGUILayoutPopup( KeywordStr, m_currentKeywordId, UIUtils.AvailableKeywords );
+				if( EditorGUI.EndChangeCheck() )
+				{
+					if( m_currentKeywordId != 0 )
+					{
+						m_currentKeyword = UIUtils.AvailableKeywords[ m_currentKeywordId ];
+					}
+				}
+
+				if( m_currentKeywordId == 0 )
+				{
+					EditorGUI.BeginChangeCheck();
+					m_currentKeyword = EditorGUILayoutTextField( CustomStr, m_currentKeyword );
+					if( EditorGUI.EndChangeCheck() )
+					{
+						m_currentKeyword = UIUtils.RemoveInvalidCharacters( m_currentKeyword );
+					}
+				}
+			}
+
+#if UNITY_2019_1_OR_NEWER
+			m_isLocal = EditorGUILayoutToggle( IsLocalStr, m_isLocal );
+#endif
+
+			if( CurrentVarMode == StaticSwitchVariableMode.Create )
+			{
+				ShowAutoRegister();
+			}
+
 			EditorGUI.BeginChangeCheck();
 			m_createToggle = EditorGUILayoutToggle( MaterialToggleStr, m_createToggle );
 			if( EditorGUI.EndChangeCheck() )
@@ -462,7 +526,8 @@ namespace AmplifyShaderEditor
 				else
 					UIUtils.UnregisterPropertyNode( this );
 			}
-
+			
+			
 			if( m_createToggle )
 			{
 				EditorGUILayout.BeginHorizontal();
@@ -488,7 +553,7 @@ namespace AmplifyShaderEditor
 						if( m_keywordModeType != KeywordModeType.KeywordEnum )
 							m_defaultValue = EditorGUILayoutToggle( ToggleDefaultValueStr, m_defaultValue == 1 ) ? 1 : 0;
 						else
-							m_defaultValue = EditorGUILayoutPopup( ToggleDefaultValueStr, m_materialValue, m_keywordEnumList );
+							m_defaultValue = EditorGUILayoutPopup( ToggleDefaultValueStr, m_defaultValue, m_keywordEnumList );
 					}
 					break;
 				}
@@ -500,6 +565,23 @@ namespace AmplifyShaderEditor
 			//	"You can set keywords using the material property using the \"Property Name\" or you can set the keyword directly using the \"Keyword Name\".", MessageType.None );
 		}
 
+		public override void CheckPropertyFromInspector( bool forceUpdate = false )
+		{
+			if( m_propertyFromInspector )
+			{
+				if( forceUpdate || ( EditorApplication.timeSinceStartup - m_propertyFromInspectorTimestamp ) > MaxTimestamp )
+				{
+					m_propertyFromInspector = false;
+					RegisterPropertyName( true, m_propertyInspectorName, m_autoGlobalName, m_underscoredGlobal );
+					m_propertyNameIsDirty = true;
+
+					if( CurrentVarMode != StaticSwitchVariableMode.Reference )
+					{
+						ContainerGraph.StaticSwitchNodes.UpdateDataOnNode( UniqueId, DataToArray );
+					}
+				}
+			}
+		}
 
 		public override void OnNodeLayout( DrawInfo drawInfo )
 		{
@@ -543,7 +625,7 @@ namespace AmplifyShaderEditor
 				m_imgRect.height = m_imgRect.width;
 			}
 
-			CheckReferenceValues(false);
+			CheckReferenceValues( false );
 
 			if( m_staticSwitchVarMode == StaticSwitchVariableMode.Reference )
 			{
@@ -556,7 +638,7 @@ namespace AmplifyShaderEditor
 			}
 
 		}
-		
+
 		void CheckReferenceValues( bool forceUpdate )
 		{
 			if( m_staticSwitchVarMode == StaticSwitchVariableMode.Reference )
@@ -632,6 +714,7 @@ namespace AmplifyShaderEditor
 					if( GUI.Button( m_varRect, GUIContent.none, UIUtils.GraphButton ) )
 					{
 						CurrentSelectedInput = CurrentSelectedInput == 1 ? 0 : 1;
+						PreviewIsDirty = true;
 						m_editing = false;
 						if( m_materialMode )
 							m_requireMaterialUpdate = true;
@@ -648,6 +731,7 @@ namespace AmplifyShaderEditor
 					CurrentSelectedInput = EditorGUIPopup( m_varRect, CurrentSelectedInput, m_keywordEnumList, UIUtils.GraphDropDown );
 					if( EditorGUI.EndChangeCheck() )
 					{
+						PreviewIsDirty = true;
 						m_editing = false;
 						if( m_materialMode )
 							m_requireMaterialUpdate = true;
@@ -686,14 +770,32 @@ namespace AmplifyShaderEditor
 						GUI.Label( m_imgRect, m_popContent, UIUtils.GraphButtonIcon );
 					}
 				}
-			}			
+			}
 		}
 
 		private string OnOffStr
 		{
 			get
 			{
-				switch( m_keywordModeType )
+				StaticSwitch node = null;
+				switch( CurrentVarMode )
+				{
+					default:
+					case StaticSwitchVariableMode.Create:
+					case StaticSwitchVariableMode.Fetch:
+					node = this;
+					break;
+					case StaticSwitchVariableMode.Reference:
+					{
+						node = ( m_reference != null ) ? m_reference : this;
+					}
+					break;
+				}
+
+				if( !node.CreateToggle )
+					return string.Empty;
+
+				switch( node.KeywordModeTypeValue )
 				{
 					default:
 					case KeywordModeType.Toggle:
@@ -703,24 +805,34 @@ namespace AmplifyShaderEditor
 				}
 			}
 		}
+		string GetStaticSwitchType()
+		{
+			string staticSwitchType = ( m_multiCompile == 1 ) ? "multi_compile" : "shader_feature";
+#if UNITY_2019_1_OR_NEWER
+			if( m_isLocal )
+				staticSwitchType += "_local";
+#endif
+			return staticSwitchType;
+		}
 
 		void RegisterPragmas( ref MasterNodeDataCollector dataCollector )
 		{
 			if( CurrentVarMode == StaticSwitchVariableMode.Create )
 			{
+				string staticSwitchType = GetStaticSwitchType();
 				if( m_keywordModeType == KeywordModeType.KeywordEnum )
 				{
 					if( m_multiCompile == 1 )
-						dataCollector.AddToPragmas( UniqueId, "multi_compile " + GetKeywordEnumPragmaList() );
+						dataCollector.AddToPragmas( UniqueId, staticSwitchType + " " + GetKeywordEnumPragmaList() );
 					else if( m_multiCompile == 0 )
-						dataCollector.AddToPragmas( UniqueId, "shader_feature " + GetKeywordEnumPragmaList() );
+						dataCollector.AddToPragmas( UniqueId, staticSwitchType + " " + GetKeywordEnumPragmaList() );
 				}
 				else
 				{
 					if( m_multiCompile == 1 )
-						dataCollector.AddToPragmas( UniqueId, "multi_compile __ " + PropertyName + OnOffStr );
+						dataCollector.AddToPragmas( UniqueId, staticSwitchType + " __ " + PropertyName + OnOffStr );
 					else if( m_multiCompile == 0 )
-						dataCollector.AddToPragmas( UniqueId, "shader_feature " + PropertyName + OnOffStr );
+						dataCollector.AddToPragmas( UniqueId, staticSwitchType + " " + PropertyName + OnOffStr );
 				}
 			}
 		}
@@ -734,7 +846,9 @@ namespace AmplifyShaderEditor
 			}
 			else
 			{
-				base.RegisterProperty( ref dataCollector );
+				if( m_createToggle )
+					base.RegisterProperty( ref dataCollector );
+
 				RegisterPragmas( ref dataCollector );
 			}
 		}
@@ -751,7 +865,7 @@ namespace AmplifyShaderEditor
 
 			//node.RegisterPragmas( ref dataCollector );
 
-			string outType = UIUtils.PrecisionWirePortToCgType(  m_currentPrecisionType, m_outputPorts[ 0 ].DataType );
+			string outType = UIUtils.PrecisionWirePortToCgType( CurrentPrecisionType, m_outputPorts[ 0 ].DataType );
 
 			if( node.KeywordModeTypeValue == KeywordModeType.KeywordEnum )
 			{
@@ -763,7 +877,7 @@ namespace AmplifyShaderEditor
 
 				for( int i = 0; i < node.KeywordEnumAmount; i++ )
 				{
-					string keyword = node.PropertyName + "_" + node.KeywordEnumList( i );
+					string keyword = node.KeywordEnum( i );
 					if( i == 0 )
 						dataCollector.AddLocalVariable( UniqueId, "#if defined(" + keyword + ")", true );
 					else
@@ -782,7 +896,7 @@ namespace AmplifyShaderEditor
 			{
 				string falseCode = m_inputPorts[ 0 ].GeneratePortInstructions( ref dataCollector );
 				string trueCode = m_inputPorts[ 1 ].GeneratePortInstructions( ref dataCollector );
-				
+
 				if( node.CurrentVarMode == StaticSwitchVariableMode.Fetch )
 					dataCollector.AddLocalVariable( UniqueId, "#ifdef " + node.CurrentKeyword, true );
 				else
@@ -830,10 +944,11 @@ namespace AmplifyShaderEditor
 				{
 					for( int i = 0; i < m_keywordEnumAmount; i++ )
 					{
-						string key = PropertyName + "_" + KeywordEnumList( i );
+						string key = KeywordEnum( i );
 						mat.DisableKeyword( key );
 					}
-					mat.EnableKeyword( PropertyName + "_" + KeywordEnumList( m_materialValue ) );
+					mat.EnableKeyword( KeywordEnum( m_materialValue ));
+					mat.SetFloat( m_propertyName, m_materialValue );
 				}
 				else
 				{
@@ -925,7 +1040,41 @@ namespace AmplifyShaderEditor
 			{
 				CurrentVarMode = (StaticSwitchVariableMode)m_variableMode;
 			}
-			
+
+			if( UIUtils.CurrentShaderVersion() > 16700 )
+			{
+				m_isLocal = Convert.ToBoolean( GetCurrentParam( ref nodeParams ) );
+			}
+
+			SetMaterialToggleRetrocompatibility();
+
+			if( !m_isNodeBeingCopied && CurrentVarMode != StaticSwitchVariableMode.Reference )
+			{
+				ContainerGraph.StaticSwitchNodes.UpdateDataOnNode( UniqueId, DataToArray );
+			}
+		}
+
+		void SetMaterialToggleRetrocompatibility()
+		{
+			if( UIUtils.CurrentShaderVersion() < 17108 )
+			{
+				if( !m_createToggle && m_staticSwitchVarMode == StaticSwitchVariableMode.Create )
+				{
+					if( m_keywordModeType != KeywordModeType.KeywordEnum )
+					{
+						m_propertyName = m_propertyName.ToUpper() + "_ON";
+					}
+					else
+					{
+						m_propertyName = m_propertyName.ToUpper();
+						for( int i = 0; i < m_keywordEnumList.Length; i++ )
+						{
+							m_keywordEnumList[ i ] = "_" + m_keywordEnumList[ i ].ToUpper();
+						}
+					}
+					m_autoGlobalName = false;
+				}
+			}
 		}
 
 		public override void ReadFromDeprecated( ref string[] nodeParams, Type oldType = null )
@@ -962,12 +1111,13 @@ namespace AmplifyShaderEditor
 				int referenceId = ( m_reference != null ) ? m_reference.UniqueId : -1;
 				IOUtils.AddFieldValueToString( ref nodeInfo, referenceId );
 			}
+			IOUtils.AddFieldValueToString( ref nodeInfo, m_isLocal );
 		}
 
 		public override void RefreshExternalReferences()
 		{
 			base.RefreshExternalReferences();
-			CheckReferenceValues(true);
+			CheckReferenceValues( true );
 		}
 
 		StaticSwitchVariableMode CurrentVarMode
@@ -1001,6 +1151,7 @@ namespace AmplifyShaderEditor
 		public int DefaultValue { get { return m_defaultValue; } }
 		public int MaterialValue { get { return m_materialValue; } }
 		public string CurrentKeyword { get { return m_currentKeyword; } }
+		public bool CreateToggle { get { return m_createToggle; } }
 
 	}
 }

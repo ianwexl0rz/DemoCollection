@@ -363,7 +363,7 @@ namespace AmplifyShaderEditor
 			if( m_referenceType == TexReferenceType.Instance )
 				return GenerateInstancedShaderForOutput( outputId, ref dataCollector, ignoreLocalvar );
 
-			string dataType = UIUtils.FinalPrecisionWirePortToCgType( m_currentPrecisionType, AvailableTypesValues[ m_type ] );
+			string dataType = UIUtils.PrecisionWirePortToCgType( CurrentPrecisionType, AvailableTypesValues[ m_type ] );
 
 			InputPort indexXPort = GetInputPortByUniqueId( 0 );
 			InputPort arrayLengthXPort = GetInputPortByUniqueId( 1 );
@@ -411,7 +411,7 @@ namespace AmplifyShaderEditor
 		{
 			if( m_referenceType == TexReferenceType.Object && m_autoRegister && m_connStatus != NodeConnectionStatus.Connected )
 			{
-				string dataType = UIUtils.FinalPrecisionWirePortToCgType( m_currentPrecisionType, AvailableTypesValues[ m_type ] );
+				string dataType = UIUtils.PrecisionWirePortToCgType( CurrentPrecisionType, AvailableTypesValues[ m_type ] );
 				if( m_isJagged )
 				{
 					dataCollector.AddToUniforms( UniqueId, dataType, string.Format( JaggedArrayFormatStr, m_name, m_arrayLengthX, m_arrayLengthY ) );

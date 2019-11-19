@@ -13,9 +13,9 @@ Shader "Hidden/WorldPosInputsNode"
 			{
 				float2 xy = 2 * i.uv - 1;
 				float z = -sqrt(1-saturate(dot(xy,xy)));
-				float3 vertexPos = float3(xy, z);
-				float3 worldPos = mul(unity_ObjectToWorld, vertexPos).xyz;
-				return float4 (worldPos, 1);
+				float4 vertexPos = float4(xy, z,1);
+				float4 worldPos = mul(unity_ObjectToWorld, vertexPos);
+				return float4 (worldPos.xyz, 1);
 			}
 			ENDCG
 		}

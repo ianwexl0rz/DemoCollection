@@ -107,32 +107,39 @@ namespace AmplifyShaderEditor
 
         public override string GenerateShaderForOutput( int outputId, ref MasterNodeDataCollector dataCollector, bool ignoreLocalvar )
         {
-            base.GenerateShaderForOutput( outputId, ref dataCollector, ignoreLocalvar );
-            m_inputPorts[ 0 ].GeneratePortInstructions( ref dataCollector );
-            string texTransform = string.Empty;
+			if( !m_outputPorts[ 0 ].IsLocalValue( dataCollector.PortCategory ) )
+			{
+				base.GenerateShaderForOutput( outputId, ref dataCollector, ignoreLocalvar );
+				m_inputPorts[ 0 ].GeneratePortInstructions( ref dataCollector );
+				string texTransform = string.Empty;
 
-            if( m_inputPorts[ 0 ].IsConnected )
-            {
-                texTransform = m_inputPorts[ 0 ].GeneratePortInstructions( ref dataCollector ) + "_ST";
-            }
-            else if( m_referenceNode != null )
-            {
-                m_referenceNode.BaseGenerateShaderForOutput( outputId, ref dataCollector, ignoreLocalvar );
-                texTransform = m_referenceNode.PropertyName + "_ST";
-            }
-            else
-            {
-                texTransform = "_ST";
-                UIUtils.ShowMessage( "Please specify a texture sample on the Texture Transform Size node", MessageSeverity.Warning );
-            }
+				if( m_inputPorts[ 0 ].IsConnected )
+				{
+					texTransform = m_inputPorts[ 0 ].GeneratePortInstructions( ref dataCollector ) + "_ST";
+				}
+				else if( m_referenceNode != null )
+				{
+					m_referenceNode.BaseGenerateShaderForOutput( outputId, ref dataCollector, ignoreLocalvar );
+					texTransform = m_referenceNode.PropertyName + "_ST";
+				}
+				else
+				{
+					texTransform = "_ST";
+					UIUtils.ShowMessage( UniqueId, "Please specify a texture sample on the Texture Transform Size node", MessageSeverity.Warning );
+				}
 
-            dataCollector.AddToUniforms( UniqueId, "uniform float4 " + texTransform + ";" );
+				bool excludeUniformKeyword = UIUtils.CurrentWindow.OutsideGraph.IsInstancedShader || UIUtils.CurrentWindow.OutsideGraph.IsSRP;
+
+				string uniformRegister = UIUtils.GenerateUniformName( excludeUniformKeyword, WirePortDataType.FLOAT4, texTransform );
+
+				dataCollector.AddToUniforms( UniqueId, uniformRegister, true );
+				m_outputPorts[ 0 ].SetLocalValue( texTransform, dataCollector.PortCategory );
+			}
 
             switch( outputId )
             {
-                case 0: return ( texTransform + ".xy" );
-                case 1: return ( texTransform + ".zw" );
-                
+                case 0: return ( m_outputPorts[ 0 ].LocalValue( dataCollector.PortCategory ) + ".xy" );
+                case 1: return ( m_outputPorts[ 0 ].LocalValue( dataCollector.PortCategory ) + ".zw" );
             }
 
             return string.Empty;

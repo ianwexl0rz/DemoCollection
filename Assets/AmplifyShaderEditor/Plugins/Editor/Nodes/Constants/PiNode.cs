@@ -41,7 +41,7 @@ namespace AmplifyShaderEditor
 
 			if ( finalValue.Equals( string.Empty ) )
 			{
-				UIUtils.ShowMessage( "PINode generating empty code", MessageSeverity.Warning );
+				UIUtils.ShowMessage( UniqueId, "PINode generating empty code", MessageSeverity.Warning );
 			}
 			return finalValue;
 		}

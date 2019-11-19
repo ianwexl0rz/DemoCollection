@@ -34,10 +34,10 @@ namespace AmplifyShaderEditor
 			AddOutputPort( WirePortDataType.INT, Constants.EmptyPortValue );
 			m_insideSize.Set( 50, 10 );
 			m_selectedLocation = PreviewLocation.BottomCenter;
-			m_precisionString = UIUtils.PrecisionWirePortToCgType( m_currentPrecisionType, m_outputPorts[ 0 ].DataType );
 			m_drawPrecisionUI = false;
 			m_availableAttribs.Add( new PropertyAttributes( "Enum", "[Enum]" ) );
 			m_previewShaderGUID = "0f64d695b6ffacc469f2dd31432a232a";
+			m_srpBatcherCompatible = true;
 		}
 
 		protected override void OnUniqueIDAssigned()
@@ -152,6 +152,7 @@ namespace AmplifyShaderEditor
 					m_materialValue = EditorGUIIntField( m_propertyDrawPos, "  ", m_materialValue, UIUtils.MainSkin.textField );
 					if( EditorGUI.EndChangeCheck() )
 					{
+						PreviewIsDirty = true;
 						m_requireMaterialUpdate = true;
 						if( m_currentParameterType != PropertyType.Constant )
 							BeginDelayedDirtyProperty();
@@ -164,7 +165,10 @@ namespace AmplifyShaderEditor
 					m_defaultValue = EditorGUIIntField( m_propertyDrawPos, "  ", m_defaultValue, UIUtils.MainSkin.textField );
 
 					if( EditorGUI.EndChangeCheck() )
+					{
+						PreviewIsDirty = true;
 						BeginDelayedDirtyProperty();
+					}
 				}
 				EditorGUIUtility.labelWidth = labelWidth;
 			}

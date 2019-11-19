@@ -81,7 +81,7 @@ namespace AmplifyShaderEditor
 			string vertexTangent = string.Empty;
 			if ( dataCollector.MasterNodeCategory == AvailableShaderTypes.Template )
 			{
-				vertexTangent = dataCollector.TemplateDataCollectorInstance.GetVertexTangent( WirePortDataType.FLOAT4,m_currentPrecisionType );
+				vertexTangent = dataCollector.TemplateDataCollectorInstance.GetVertexTangent( WirePortDataType.FLOAT4, CurrentPrecisionType );
 				if( m_sizeOption == 0 )
 					vertexTangent += ".xyz";
 
@@ -91,13 +91,13 @@ namespace AmplifyShaderEditor
 			if ( dataCollector.PortCategory == MasterNodePortCategory.Fragment || dataCollector.PortCategory == MasterNodePortCategory.Debug )
 			{
 				dataCollector.ForceNormal = true;
-				dataCollector.AddToInput( UniqueId, SurfaceInputs.WORLD_NORMAL, m_currentPrecisionType );
+				dataCollector.AddToInput( UniqueId, SurfaceInputs.WORLD_NORMAL, CurrentPrecisionType );
 				dataCollector.AddToInput( UniqueId, SurfaceInputs.INTERNALDATA, addSemiColon: false );
 			}
 
 			WirePortDataType sizeType = m_sizeOption == 0 ? WirePortDataType.FLOAT3 : WirePortDataType.FLOAT4;
 
-			vertexTangent = GeneratorUtils.GenerateVertexTangent( ref dataCollector, UniqueId, m_currentPrecisionType , sizeType  );
+			vertexTangent = GeneratorUtils.GenerateVertexTangent( ref dataCollector, UniqueId, CurrentPrecisionType, sizeType  );
 			return GetOutputVectorItem( 0, outputId, vertexTangent );
 		}
 

@@ -30,6 +30,7 @@ namespace AmplifyShaderEditor
 			m_previewShaderGUID = "fab445eb945d63047822a7a6b81b959d";
 			m_useInternalPortData = true;
 			m_autoWrapProperties = true;
+			m_customPrecision = true;
 		}
 
 		public override void DrawProperties()
@@ -71,7 +72,7 @@ namespace AmplifyShaderEditor
 			if ( m_outputPorts[ 0 ].IsLocalValue( dataCollector.PortCategory ) )
 				return GetOutputVectorItem( 0, outputId, m_outputPorts[ 0 ].LocalValue( dataCollector.PortCategory ) );
 
-			string precisionString = UIUtils.FinalPrecisionWirePortToCgType( m_currentPrecisionType, WirePortDataType.FLOAT );
+			string precisionString = UIUtils.PrecisionWirePortToCgType( CurrentPrecisionType, WirePortDataType.FLOAT );
 
 			AddHSVToRGBFunction( ref dataCollector , precisionString );
 

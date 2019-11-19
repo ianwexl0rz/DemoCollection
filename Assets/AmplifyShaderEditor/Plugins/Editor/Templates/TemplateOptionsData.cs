@@ -67,7 +67,8 @@ namespace AmplifyShaderEditor
 		ExcludePass,
 		IncludePass,
 		SetPropertyOnPass,
-		SetPropertyOnSubShader
+		SetPropertyOnSubShader,
+		SetShaderProperty
 	}
 
 	public enum PropertyActionsEnum
@@ -141,7 +142,9 @@ namespace AmplifyShaderEditor
 		public int ActionStencilFail;
 		public int ActionStencilZFail;
 
+		public bool CopyFromSubShader = false;
 
+		public string ActionBuffer;
 		public override string ToString()
 		{
 			return ActionType + " " + ActionData + " " + ActionDataIdx;
@@ -195,6 +198,8 @@ namespace AmplifyShaderEditor
 		public string Name = string.Empty;
 		public string DefaultOption = string.Empty;
 		public string[] Options = null;
+		public string[] DisplayOptions = null;
+		public int DisableIdx = -1;
 
 		public TemplateActionItemGrid ActionsPerOption = null;
 
@@ -240,6 +245,7 @@ namespace AmplifyShaderEditor
 				return 0;
 			}
 		}
+
 	}
 
 	[Serializable]
@@ -294,9 +300,10 @@ namespace AmplifyShaderEditor
 
 	public class TemplateOptionsToolsHelper
 	{
-		public const string PassOptionsMainPattern = @"\/\*ase_pass_options:([\w:= ]*)[\n]([\w: \t;\n&|,_\+-]*)\*\/";
-		public const string SubShaderOptionsMainPattern = @"\/\*ase_subshader_options:([\w:= ]*)[\n]([\w: \t;\n&|,_\+-]*)\*\/";
-
+		//public const string PassOptionsMainPattern = @"\/\*ase_pass_options:([\w:= ]*)[\n]([\w: \t;\n&|,_\+-]*)\*\/";
+		//public const string SubShaderOptionsMainPattern = @"\/\*ase_subshader_options:([\w:= ]*)[\n]([\w: \t;\n&|,_\+-]*)\*\/";
+		public const string PassOptionsMainPattern = "\\/\\*ase_pass_options:([\\w:= ]*)[\n]([\\w: \t;\n&|,_\\+\\-\\(\\)\\[\\]\\\"\\=]*)\\*\\/";
+		public const string SubShaderOptionsMainPattern = "\\/\\*ase_subshader_options:([\\w:= ]*)[\n]([\\w: \t;\n&|,_\\+\\-\\(\\)\\[\\]\\\"\\=]*)\\*\\/";
 		public static readonly char OptionsDataSeparator = ',';
 		public static Dictionary<string, AseOptionsSetup> AseOptionsSetupDict = new Dictionary<string, AseOptionsSetup>()
 		{
@@ -327,6 +334,7 @@ namespace AmplifyShaderEditor
 			{"IncludePass", AseOptionsActionType.IncludePass },
 			{"SetPropertyOnPass", AseOptionsActionType.SetPropertyOnPass },
 			{"SetPropertyOnSubShader", AseOptionsActionType.SetPropertyOnSubShader },
+			{"SetShaderProperty", AseOptionsActionType.SetShaderProperty }
 		};
 
 		public static Dictionary<string, AseOptionItemSetup> AseOptionItemSetupDict = new Dictionary<string, AseOptionItemSetup>
@@ -447,7 +455,7 @@ namespace AmplifyShaderEditor
 									currentOption = new TemplateOptionsItem();
 									currentOption.Type = AseOptionsType.Option;
 									string[] optionItemSetup = optionItems[ 1 ].Split( OptionsDataSeparator );
-									currentOption.Name = optionItemSetup[0];
+									currentOption.Name = optionItemSetup[ 0 ];
 									if( optionItemSetup.Length > 1 )
 									{
 										if( AseOptionItemSetupDict.ContainsKey( optionItemSetup[ 1 ] ) )
@@ -455,6 +463,9 @@ namespace AmplifyShaderEditor
 									}
 
 									currentOption.Id = itemIds.Length > 1 ? itemIds[ 1 ] : optionItems[ 1 ];
+									currentOption.DisplayOptions = optionItems[ 2 ].Split( OptionsDataSeparator );
+									currentOption.DisableIdx = currentOption.DisplayOptions.Length;
+									optionItems[ 2 ] += ",disable";
 									currentOption.Options = optionItems[ 2 ].Split( OptionsDataSeparator );
 									currentOption.Count = currentOption.Options.Length;
 
@@ -473,11 +484,7 @@ namespace AmplifyShaderEditor
 										currentOption.DefaultOption = currentOption.Options[ 0 ];
 									}
 
-									if( currentOption.Options.Length > 2 )
-									{
-										currentOption.UIWidget = AseOptionsUIWidget.Dropdown;
-									}
-									else if( currentOption.Options.Length == 2 )
+									if( currentOption.Options.Length == 2 || ( currentOption.Options.Length == 3 && currentOption.Options[ 2 ].Equals( "disable" ) ) )
 									{
 										if( ( currentOption.Options[ 0 ].Equals( "true" ) && currentOption.Options[ 1 ].Equals( "false" ) ) ||
 											( currentOption.Options[ 0 ].Equals( "false" ) && currentOption.Options[ 1 ].Equals( "true" ) ) )
@@ -487,6 +494,10 @@ namespace AmplifyShaderEditor
 											currentOption.Options[ 1 ] = "true";
 											currentOption.UIWidget = AseOptionsUIWidget.Toggle;
 										}
+									}
+									else if( currentOption.Options.Length > 2 )
+									{
+										currentOption.UIWidget = AseOptionsUIWidget.Dropdown;
 									}
 									else
 									{
@@ -533,6 +544,8 @@ namespace AmplifyShaderEditor
 										if( currentOption != null && currentOption.UIWidget == AseOptionsUIWidget.Toggle )
 										{
 											idx = ( optionItems[ 0 ].Equals( "true" ) ) ? 1 : 0;
+											if( optionItems[ 0 ].Equals( "disable" ) )
+												idx = 2;
 										}
 										else
 										{
@@ -587,8 +600,9 @@ namespace AmplifyShaderEditor
 		{
 			if( currentOption != null )
 			{
-				currentOption.ActionsPerOption = new TemplateActionItemGrid( actionItemsList.Count );
-				for( int i = 0; i < actionItemsList.Count; i++ )
+				int count = actionItemsList.Count;
+				currentOption.ActionsPerOption = new TemplateActionItemGrid( count );
+				for( int i = 0; i < count; i++ )
 				{
 					currentOption.ActionsPerOption[ i ] = actionItemsList[ i ].ToArray();
 					actionItemsList[ i ].Clear();
@@ -669,157 +683,174 @@ namespace AmplifyShaderEditor
 					case AseOptionsActionType.ExcludePass:
 					case AseOptionsActionType.IncludePass:
 					break;
+					case AseOptionsActionType.SetShaderProperty:
+					{
+						int optIndex = optionItems[ optionsIdx ].IndexOf( OptionsDataSeparator );
+						if( optIndex > -1 )
+						{
+							actionItem.ActionData = optionItems[ optionsIdx ].Substring( 0, optIndex );
+							actionItem.ActionBuffer = optionItems[ optionsIdx ].Substring( optIndex + 1, optionItems[ optionsIdx ].Length - optIndex - 1);
+						}
+						//Debug.Log( "CreateActionItem:SetShaderProperty" );
+					}break;
 					case AseOptionsActionType.SetPropertyOnPass:
 					case AseOptionsActionType.SetPropertyOnSubShader:
 					{
 						string[] arr = optionItems[ optionsIdx ].Split( OptionsDataSeparator );
 						actionItem.PropertyAction = (PropertyActionsEnum)Enum.Parse( typeof( PropertyActionsEnum ), arr[ 0 ] );
-						switch( actionItem.PropertyAction )
+						if( arr.Length == 1 && actionItem.ActionType == AseOptionsActionType.SetPropertyOnPass )
 						{
-							case PropertyActionsEnum.CullMode:
+							actionItem.CopyFromSubShader = true;
+						}
+						else
+						{
+							switch( actionItem.PropertyAction )
 							{
-								if( arr.Length > 1 )
-									actionItem.ActionCullMode = (CullMode)Enum.Parse( typeof( CullMode ), arr[ 1 ] );
-							}
-							break;
-							case PropertyActionsEnum.ColorMask:
-							{
-								if( arr.Length > 4 )
+								case PropertyActionsEnum.CullMode:
 								{
-									actionItem.ColorMask[ 0 ] = Convert.ToBoolean( arr[ 1 ] );
-									actionItem.ColorMask[ 1 ] = Convert.ToBoolean( arr[ 2 ] );
-									actionItem.ColorMask[ 2 ] = Convert.ToBoolean( arr[ 3 ] );
-									actionItem.ColorMask[ 3 ] = Convert.ToBoolean( arr[ 4 ] );
+									if( arr.Length > 1 )
+										actionItem.ActionCullMode = (CullMode)Enum.Parse( typeof( CullMode ), arr[ 1 ] );
 								}
-							}
-							break;
-							case PropertyActionsEnum.ZWrite:
-							{
-								if( arr.Length > 1 )
-									actionItem.ActionZWrite = (ZWriteMode)Enum.Parse( typeof( ZWriteMode ), arr[ 1 ] );
-							}
-							break;
-							case PropertyActionsEnum.ZTest:
-							{
-								if( arr.Length > 1 )
-									actionItem.ActionZTest = (ZTestMode)Enum.Parse( typeof( ZTestMode ), arr[ 1 ] );
-							}
-							break;
-							case PropertyActionsEnum.ZOffsetFactor:
-							{
-								if( arr.Length > 1 )
-									actionItem.ActionZOffsetFactor = Convert.ToSingle( arr[ 1 ] );
-							}
-							break;
-							case PropertyActionsEnum.ZOffsetUnits:
-							{
-								if( arr.Length > 1 )
-									actionItem.ActionZOffsetUnits = Convert.ToSingle( arr[ 1 ] );
-							}
-							break;
-							case PropertyActionsEnum.BlendRGB:
-							{
-								if( arr.Length > 2 )
+								break;
+								case PropertyActionsEnum.ColorMask:
 								{
-									actionItem.ActionBlendRGBSource = (AvailableBlendFactor)Enum.Parse( typeof( AvailableBlendFactor ), arr[ 1 ] );
-									actionItem.ActionBlendRGBDest = (AvailableBlendFactor)Enum.Parse( typeof( AvailableBlendFactor ), arr[ 2 ] );
+									if( arr.Length > 4 )
+									{
+										actionItem.ColorMask[ 0 ] = Convert.ToBoolean( arr[ 1 ] );
+										actionItem.ColorMask[ 1 ] = Convert.ToBoolean( arr[ 2 ] );
+										actionItem.ColorMask[ 2 ] = Convert.ToBoolean( arr[ 3 ] );
+										actionItem.ColorMask[ 3 ] = Convert.ToBoolean( arr[ 4 ] );
+									}
 								}
-							}
-							break;
-							case PropertyActionsEnum.BlendAlpha:
-							{
-								if( arr.Length > 2 )
+								break;
+								case PropertyActionsEnum.ZWrite:
 								{
-									actionItem.ActionBlendAlphaSource = (AvailableBlendFactor)Enum.Parse( typeof( AvailableBlendFactor ), arr[ 1 ] );
-									actionItem.ActionBlendAlphaDest = (AvailableBlendFactor)Enum.Parse( typeof( AvailableBlendFactor ), arr[ 2 ] );
+									if( arr.Length > 1 )
+										actionItem.ActionZWrite = (ZWriteMode)Enum.Parse( typeof( ZWriteMode ), arr[ 1 ] );
 								}
-							}
-							break;
-							case PropertyActionsEnum.BlendOpRGB:
-							{
-								if( arr.Length > 1 )
+								break;
+								case PropertyActionsEnum.ZTest:
 								{
-									actionItem.ActionBlendOpRGB = (AvailableBlendOps)Enum.Parse( typeof( AvailableBlendOps ), arr[ 1 ] );
+									if( arr.Length > 1 )
+										actionItem.ActionZTest = (ZTestMode)Enum.Parse( typeof( ZTestMode ), arr[ 1 ] );
+								}
+								break;
+								case PropertyActionsEnum.ZOffsetFactor:
+								{
+									if( arr.Length > 1 )
+										actionItem.ActionZOffsetFactor = Convert.ToSingle( arr[ 1 ] );
+								}
+								break;
+								case PropertyActionsEnum.ZOffsetUnits:
+								{
+									if( arr.Length > 1 )
+										actionItem.ActionZOffsetUnits = Convert.ToSingle( arr[ 1 ] );
+								}
+								break;
+								case PropertyActionsEnum.BlendRGB:
+								{
+									if( arr.Length > 2 )
+									{
+										actionItem.ActionBlendRGBSource = (AvailableBlendFactor)Enum.Parse( typeof( AvailableBlendFactor ), arr[ 1 ] );
+										actionItem.ActionBlendRGBDest = (AvailableBlendFactor)Enum.Parse( typeof( AvailableBlendFactor ), arr[ 2 ] );
+									}
+								}
+								break;
+								case PropertyActionsEnum.BlendAlpha:
+								{
+									if( arr.Length > 2 )
+									{
+										actionItem.ActionBlendAlphaSource = (AvailableBlendFactor)Enum.Parse( typeof( AvailableBlendFactor ), arr[ 1 ] );
+										actionItem.ActionBlendAlphaDest = (AvailableBlendFactor)Enum.Parse( typeof( AvailableBlendFactor ), arr[ 2 ] );
+									}
+								}
+								break;
+								case PropertyActionsEnum.BlendOpRGB:
+								{
+									if( arr.Length > 1 )
+									{
+										actionItem.ActionBlendOpRGB = (AvailableBlendOps)Enum.Parse( typeof( AvailableBlendOps ), arr[ 1 ] );
 
+									}
 								}
-							}
-							break;
-							case PropertyActionsEnum.BlendOpAlpha:
-							{
-								if( arr.Length > 1 )
+								break;
+								case PropertyActionsEnum.BlendOpAlpha:
 								{
-									actionItem.ActionBlendOpAlpha = (AvailableBlendOps)Enum.Parse( typeof( AvailableBlendOps ), arr[ 1 ] );
+									if( arr.Length > 1 )
+									{
+										actionItem.ActionBlendOpAlpha = (AvailableBlendOps)Enum.Parse( typeof( AvailableBlendOps ), arr[ 1 ] );
+									}
 								}
-							}
-							break;
-							case PropertyActionsEnum.StencilReference:
-							{
-								if( arr.Length > 1 )
+								break;
+								case PropertyActionsEnum.StencilReference:
 								{
-									int.TryParse( arr[ 1 ], out actionItem.ActionStencilReference );
+									if( arr.Length > 1 )
+									{
+										int.TryParse( arr[ 1 ], out actionItem.ActionStencilReference );
+									}
 								}
-							}
-							break;
-							case PropertyActionsEnum.StencilReadMask:
-							{
-								if( arr.Length > 1 )
+								break;
+								case PropertyActionsEnum.StencilReadMask:
 								{
-									int.TryParse( arr[ 1 ], out actionItem.ActionStencilReadMask );
+									if( arr.Length > 1 )
+									{
+										int.TryParse( arr[ 1 ], out actionItem.ActionStencilReadMask );
+									}
 								}
-							}
-							break;
-							case PropertyActionsEnum.StencilWriteMask:
-							{
-								if( arr.Length > 1 )
+								break;
+								case PropertyActionsEnum.StencilWriteMask:
 								{
-									int.TryParse( arr[ 1 ], out actionItem.ActionStencilWriteMask );
+									if( arr.Length > 1 )
+									{
+										int.TryParse( arr[ 1 ], out actionItem.ActionStencilWriteMask );
+									}
 								}
-							}
-							break;
-							case PropertyActionsEnum.StencilComparison:
-							{
-								if( arr.Length > 1 )
-									actionItem.ActionStencilComparison = StencilBufferOpHelper.StencilComparisonValuesDict[ arr[ 1 ] ];
-							}
-							break;
-							case PropertyActionsEnum.StencilPass:
-							{
-								if( arr.Length > 1 )
-									actionItem.ActionStencilPass = StencilBufferOpHelper.StencilOpsValuesDict[ arr[ 1 ] ];
-							}
-							break;
-							case PropertyActionsEnum.StencilFail:
-							{
-								if( arr.Length > 1 )
-									actionItem.ActionStencilFail = StencilBufferOpHelper.StencilOpsValuesDict[ arr[ 1 ] ];
-							}
-							break;
-							case PropertyActionsEnum.StencilZFail:
-							{
-								if( arr.Length > 1 )
-									actionItem.ActionStencilZFail = StencilBufferOpHelper.StencilOpsValuesDict[ arr[ 1 ] ];
-							}
-							break;
-							case PropertyActionsEnum.RenderType:
-							{
-								if( arr.Length > 1 )
-									actionItem.ActionData = arr[ 1 ];
-							}
-							break;
-							case PropertyActionsEnum.RenderQueue:
-							{
-								if( arr.Length > 1 )
-									actionItem.ActionData = arr[ 1 ];
-								if( arr.Length > 2 )
+								break;
+								case PropertyActionsEnum.StencilComparison:
 								{
-									int.TryParse( arr[ 2 ], out actionItem.ActionDataIdx );
+									if( arr.Length > 1 )
+										actionItem.ActionStencilComparison = StencilBufferOpHelper.StencilComparisonValuesDict[ arr[ 1 ] ];
 								}
-								else
+								break;
+								case PropertyActionsEnum.StencilPass:
 								{
-									actionItem.ActionDataIdx = 0;
+									if( arr.Length > 1 )
+										actionItem.ActionStencilPass = StencilBufferOpHelper.StencilOpsValuesDict[ arr[ 1 ] ];
 								}
+								break;
+								case PropertyActionsEnum.StencilFail:
+								{
+									if( arr.Length > 1 )
+										actionItem.ActionStencilFail = StencilBufferOpHelper.StencilOpsValuesDict[ arr[ 1 ] ];
+								}
+								break;
+								case PropertyActionsEnum.StencilZFail:
+								{
+									if( arr.Length > 1 )
+										actionItem.ActionStencilZFail = StencilBufferOpHelper.StencilOpsValuesDict[ arr[ 1 ] ];
+								}
+								break;
+								case PropertyActionsEnum.RenderType:
+								{
+									if( arr.Length > 1 )
+										actionItem.ActionData = arr[ 1 ];
+								}
+								break;
+								case PropertyActionsEnum.RenderQueue:
+								{
+									if( arr.Length > 1 )
+										actionItem.ActionData = arr[ 1 ];
+									if( arr.Length > 2 )
+									{
+										int.TryParse( arr[ 2 ], out actionItem.ActionDataIdx );
+									}
+									else
+									{
+										actionItem.ActionDataIdx = 0;
+									}
+								}
+								break;
 							}
-							break;
 						}
 					}
 					break;

@@ -58,7 +58,7 @@ namespace AmplifyShaderEditor
 		{
 			EventType currentEventType = Event.current.type;
 
-			if ( !( currentEventType == EventType.Repaint || currentEventType == EventType.MouseDown ) )
+			if( !( currentEventType == EventType.Repaint || currentEventType == EventType.MouseDown || currentEventType == EventType.MouseMove ) )
 				return;
 
 			if ( m_init )
@@ -100,6 +100,9 @@ namespace AmplifyShaderEditor
 				GUI.color = mouseOnTop ? OverallColorOn : OverallColorOff;
 				GUI.Label( m_leftButtonRect, m_leftAuxContent, m_leftButtonStyle );
 
+				if( currentEventType == EventType.MouseMove && mouseOnTop )
+					m_parentWindow.MarkToRepaint();
+
 				if ( currentEventType == EventType.MouseDown && mouseOnTop && currentShader != null )
 				{
 					Event.current.Use();
@@ -130,6 +133,9 @@ namespace AmplifyShaderEditor
 					bool mouseOnTopRight = m_rightButtonRect.Contains( mousePos );
 					GUI.color = mouseOnTopRight ? OverallColorOn : OverallColorOff;
 					GUI.Label( m_rightButtonRect, m_rightAuxContent, m_rightButtonStyle );
+
+					if( currentEventType == EventType.MouseMove && mouseOnTopRight )
+						m_parentWindow.MarkToRepaint();
 
 					if ( currentEventType == EventType.MouseDown && mouseOnTopRight )
 					{

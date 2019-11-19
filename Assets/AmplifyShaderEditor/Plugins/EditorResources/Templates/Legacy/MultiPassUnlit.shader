@@ -9,6 +9,7 @@ Shader /*ase_name*/ "Hidden/Templates/Legacy/Multi Pass Unlit" /*end*/
 	{
 		Tags { "RenderType"="Opaque" }
 		LOD 100
+
 		Cull Off
 		CGINCLUDE
 		#pragma target 3.0 
@@ -20,6 +21,8 @@ Shader /*ase_name*/ "Hidden/Templates/Legacy/Multi Pass Unlit" /*end*/
 			/*ase_main_pass*/
 			Name "ForwardBase"
 			Tags { "LightMode"="ForwardBase" }
+
+			/*ase_all_modules*/
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
@@ -156,6 +159,8 @@ Shader /*ase_name*/ "Hidden/Templates/Legacy/Multi Pass Unlit" /*end*/
 		{
 			Name "Deferred"
 			Tags { "LightMode" = "Deferred" }
+
+			/*ase_all_modules*/
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
@@ -218,7 +223,7 @@ Shader /*ase_name*/ "Hidden/Templates/Legacy/Multi Pass Unlit" /*end*/
 		/*ase_pass*/
 		Pass
 		{
-			/*ase_hide_pass*/
+			/*ase_hide_pass:SyncP*/
 			Name "ShadowCaster"
 			Tags { "LightMode"="ShadowCaster" }
 			ZWrite On 

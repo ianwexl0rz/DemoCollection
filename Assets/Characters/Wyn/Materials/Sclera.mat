@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Sclera
-  m_Shader: {fileID: 4800000, guid: ed4d8d2cd5e9cb64683419fe59fd50a4, type: 3}
+  m_Shader: {fileID: 4800000, guid: 5a58b7dec1cab0c45b3c765629594b41, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -99,7 +99,7 @@ Material:
     - _Scale: 1
     - _ShadowFalloff: 0.05
     - _Shininess: 0.441
-    - _Smoothness: 0.66
+    - _Smoothness: 0.8
     - _SmoothnessTextureChannel: 0
     - _SpecSize: 1
     - _SpecularHighlights: 1
@@ -113,6 +113,7 @@ Material:
     - _Albedo: {r: 1, g: 1, b: 1, a: 0}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _MainColor: {r: 1, g: 1, b: 1, a: 1}
     - _ShadowColor: {r: 1, g: 1, b: 1, a: 1}
     - _SpecColor: {r: 0.1544118, g: 0.1544118, b: 0.1544118, a: 1}
     - _SubsurfaceColor: {r: 1, g: 0, b: 0, a: 0}

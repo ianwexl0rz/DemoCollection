@@ -54,11 +54,11 @@ namespace AmplifyShaderEditor
 
 					string eyeInstruction = string.Format( formatStr, varName );
 					eyeDepth = "customEye" + OutputId;
-					dataCollector.TemplateDataCollectorInstance.RegisterCustomInterpolatedData( eyeDepth, WirePortDataType.FLOAT, m_currentPrecisionType, eyeInstruction );
+					dataCollector.TemplateDataCollectorInstance.RegisterCustomInterpolatedData( eyeDepth, WirePortDataType.FLOAT, CurrentPrecisionType, eyeInstruction );
 				}
 				else
 				{
-					eyeDepth = dataCollector.TemplateDataCollectorInstance.GetEyeDepth( m_currentPrecisionType );
+					eyeDepth = dataCollector.TemplateDataCollectorInstance.GetEyeDepth( CurrentPrecisionType );
 				}
 
 				value = string.Format( CameraDepthFadeFormat, eyeDepth, offset, distance );
@@ -96,7 +96,7 @@ namespace AmplifyShaderEditor
 				}
 				else
 				{
-					eyeDepth = GeneratorUtils.GenerateScreenDepthOnFrag( ref dataCollector, UniqueId, m_currentPrecisionType );
+					eyeDepth = GeneratorUtils.GenerateScreenDepthOnFrag( ref dataCollector, UniqueId, CurrentPrecisionType );
 				}
 			}
 			else

@@ -23,13 +23,13 @@ namespace AmplifyShaderEditor
 
 			if( dataCollector.MasterNodeCategory == AvailableShaderTypes.Template )
 			{
-				vertexNormal = dataCollector.TemplateDataCollectorInstance.GetVertexNormal( m_currentPrecisionType );
+				vertexNormal = dataCollector.TemplateDataCollectorInstance.GetVertexNormal( CurrentPrecisionType );
 				return GetOutputVectorItem( 0, outputId, vertexNormal );
 			}
 
 			if( dataCollector.PortCategory == MasterNodePortCategory.Fragment || dataCollector.PortCategory == MasterNodePortCategory.Debug )
 			{
-				dataCollector.AddToInput( UniqueId, SurfaceInputs.WORLD_NORMAL, m_currentPrecisionType );
+				dataCollector.AddToInput( UniqueId, SurfaceInputs.WORLD_NORMAL, CurrentPrecisionType );
 				if( dataCollector.DirtyNormal )
 				{
 					dataCollector.AddToInput( UniqueId, SurfaceInputs.INTERNALDATA, addSemiColon: false );
@@ -37,7 +37,7 @@ namespace AmplifyShaderEditor
 				}
 			}
 
-			vertexNormal = GeneratorUtils.GenerateVertexNormal( ref dataCollector, UniqueId, m_currentPrecisionType );
+			vertexNormal = GeneratorUtils.GenerateVertexNormal( ref dataCollector, UniqueId, CurrentPrecisionType );
 			return GetOutputVectorItem( 0, outputId, vertexNormal );
 		}
 	}

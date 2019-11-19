@@ -98,22 +98,22 @@ namespace AmplifyShaderEditor
 			{
 				if( dataCollector.IsTemplate )
 				{
-					screenPos = dataCollector.TemplateDataCollectorInstance.GetScreenPosNormalized();
+					screenPos = dataCollector.TemplateDataCollectorInstance.GetScreenPosNormalized( CurrentPrecisionType );
 				}
 				else
 				{
-					screenPos = GeneratorUtils.GenerateScreenPositionNormalized( ref dataCollector, UniqueId, m_currentPrecisionType, false );
+					screenPos = GeneratorUtils.GenerateScreenPositionNormalized( ref dataCollector, UniqueId, CurrentPrecisionType, false );
 				}
 			}
 			else
 			{
 				if( dataCollector.IsTemplate )
 				{
-					screenPos = dataCollector.TemplateDataCollectorInstance.GetScreenPos();
+					screenPos = dataCollector.TemplateDataCollectorInstance.GetScreenPos( CurrentPrecisionType );
 				}
 				else
 				{
-					screenPos = GeneratorUtils.GenerateScreenPosition( ref dataCollector, UniqueId, m_currentPrecisionType, false );
+					screenPos = GeneratorUtils.GenerateScreenPosition( ref dataCollector, UniqueId, CurrentPrecisionType, false );
 				}
 			}
 			

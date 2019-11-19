@@ -35,7 +35,7 @@ namespace AmplifyShaderEditor
 
 			string result = string.Empty;
 			string localVarName = "layeredBlendVar" + OutputId;
-			dataCollector.AddLocalVariable( UniqueId, m_currentPrecisionType, m_inputPorts[ 0 ].DataType, localVarName, m_inputData[ 0 ] );
+			dataCollector.AddLocalVariable( UniqueId, CurrentPrecisionType, m_inputPorts[ 0 ].DataType, localVarName, m_inputData[ 0 ] );
 			
 			if ( m_activeCount == 1 )
 			{

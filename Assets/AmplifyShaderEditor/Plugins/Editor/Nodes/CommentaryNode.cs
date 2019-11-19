@@ -617,7 +617,7 @@ namespace AmplifyShaderEditor
 				}
 				else
 				{
-					UIUtils.ShowMessage( "Incorrect number of color values", MessageSeverity.Error );
+					UIUtils.ShowMessage( UniqueId, "Incorrect number of color values", MessageSeverity.Error );
 				}
 			}
 		}

@@ -82,9 +82,9 @@ namespace AmplifyShaderEditor
 			string localVarName = string.Empty;
 
 			if( m_outputTypeInt == 0 )
-				localVarName = GeneratorUtils.GenerateGrabScreenPositionNormalized( ref dataCollector, UniqueId, m_currentPrecisionType, !dataCollector.UsingCustomScreenPos );
+				localVarName = GeneratorUtils.GenerateGrabScreenPositionNormalized( ref dataCollector, UniqueId, CurrentPrecisionType, !dataCollector.UsingCustomScreenPos );
 			else
-				localVarName = GeneratorUtils.GenerateGrabScreenPosition( ref dataCollector, UniqueId, m_currentPrecisionType, !dataCollector.UsingCustomScreenPos );
+				localVarName = GeneratorUtils.GenerateGrabScreenPosition( ref dataCollector, UniqueId, CurrentPrecisionType, !dataCollector.UsingCustomScreenPos );
 
 			m_outputPorts[ 0 ].SetLocalValue( localVarName, dataCollector.PortCategory );
 			return GetOutputColorItem( 0, outputId, localVarName );

@@ -76,10 +76,19 @@ namespace AmplifyShaderEditor
 
 		public override void RenderNodePreview()
 		{
+			//Runs at least one time
 			if( !m_initialized )
+			{
+				// nodes with no preview don't update at all
+				PreviewIsDirty = false;
+				return;
+			}
+
+			if( !PreviewIsDirty )
 				return;
 
 			SetPreviewInputs();
+
 			PreviewMaterial.SetInt( "_CustomUVs", m_inputPorts[ 0 ].IsConnected ? 1 : 0 );
 
 			if( m_proceduralMaterial == null )
@@ -100,6 +109,8 @@ namespace AmplifyShaderEditor
 					Graphics.Blit( null, m_outputPorts[ i ].OutputPreviewTexture, PreviewMaterial, 0 );
 				RenderTexture.active = temp;
 			}
+
+			PreviewIsDirty = m_continuousPreviewRefresh;
 		}
 
 		public override void OnOutputPortConnected( int portId, int otherNodeId, int otherPortId )
@@ -204,6 +215,7 @@ namespace AmplifyShaderEditor
 					newValue = EditorGUIUtility.GetObjectPickerObject();
 					if( newValue != (UnityEngine.Object)m_proceduralMaterial )
 					{
+						PreviewIsDirty = true;
 						UndoRecordObject( "Changing value EditorGUIObjectField on node Substance Sample" );
 
 						m_proceduralMaterial = newValue != null ? (ProceduralMaterial)newValue : null;
@@ -216,6 +228,7 @@ namespace AmplifyShaderEditor
 					newValue = EditorGUIUtility.GetObjectPickerObject();
 					if( newValue != (UnityEngine.Object)m_proceduralMaterial )
 					{
+						PreviewIsDirty = true;
 						UndoRecordObject( "Changing value EditorGUIObjectField on node Substance Sample" );
 
 						m_proceduralMaterial = newValue != null ? (ProceduralMaterial)newValue : null;
@@ -501,7 +514,7 @@ namespace AmplifyShaderEditor
 				if( dataCollector.IsTemplate )
 				{
 					string propertyHelperVar = propertyName + "_ST";
-					dataCollector.AddToUniforms( UniqueId, "float4", propertyHelperVar );
+					dataCollector.AddToUniforms( UniqueId, "float4", propertyHelperVar, dataCollector.IsSRP );
 					string uvName = string.Empty;
 					if( dataCollector.TemplateDataCollectorInstance.HasUV( m_textureCoordSet ) )
 					{
@@ -519,11 +532,11 @@ namespace AmplifyShaderEditor
 						string lodLevel = "0";
 
 						value = "float4( " + value + ", 0 , " + lodLevel + " )";
-						dataCollector.AddLocalVariable( UniqueId, m_currentPrecisionType, WirePortDataType.FLOAT4, uvChannelName, value );
+						dataCollector.AddLocalVariable( UniqueId, CurrentPrecisionType, WirePortDataType.FLOAT4, uvChannelName, value );
 					}
 					else
 					{
-						dataCollector.AddLocalVariable( UniqueId, m_currentPrecisionType, WirePortDataType.FLOAT2, uvChannelName, string.Format( Constants.TilingOffsetFormat, uvName, propertyHelperVar + ".xy", propertyHelperVar + ".zw" ) );
+						dataCollector.AddLocalVariable( UniqueId, CurrentPrecisionType, WirePortDataType.FLOAT2, uvChannelName, string.Format( Constants.TilingOffsetFormat, uvName, propertyHelperVar + ".xy", propertyHelperVar + ".zw" ) );
 					}
 				}
 				else
@@ -616,7 +629,7 @@ namespace AmplifyShaderEditor
 				}
 				else
 				{
-					UIUtils.ShowMessage( "Substance not found ", MessageSeverity.Error );
+					UIUtils.ShowMessage( UniqueId, "Substance not found ", MessageSeverity.Error );
 				}
 			}
 		}
@@ -1151,7 +1164,7 @@ namespace AmplifyShaderEditor
 				if( dataCollector.IsTemplate )
 				{
 					string propertyHelperVar = propertyName + "_ST";
-					dataCollector.AddToUniforms( UniqueId, "float4", propertyHelperVar );
+					dataCollector.AddToUniforms( UniqueId, "float4", propertyHelperVar, dataCollector.IsSRP );
 					string uvName = string.Empty;
 					if( dataCollector.TemplateDataCollectorInstance.HasUV( m_textureCoordSet ) )
 					{

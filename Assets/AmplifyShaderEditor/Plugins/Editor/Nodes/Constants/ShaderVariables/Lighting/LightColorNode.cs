@@ -21,7 +21,15 @@ namespace AmplifyShaderEditor
 
 		public override void RenderNodePreview()
 		{
+			//Runs at least one time
 			if( !m_initialized )
+			{
+				// nodes with no preview don't update at all
+				PreviewIsDirty = false;
+				return;
+			}
+
+			if( !PreviewIsDirty )
 				return;
 
 			int count = m_outputPorts.Count;
@@ -32,6 +40,8 @@ namespace AmplifyShaderEditor
 				Graphics.Blit( null, m_outputPorts[ i ].OutputPreviewTexture, PreviewMaterial, i );
 				RenderTexture.active = temp;
 			}
+
+			PreviewIsDirty = m_continuousPreviewRefresh;
 		}
 
 		public override string GenerateShaderForOutput( int outputId, ref MasterNodeDataCollector dataCollector, bool ignoreLocalvar )

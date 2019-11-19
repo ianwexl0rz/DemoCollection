@@ -43,12 +43,12 @@ namespace AmplifyShaderEditor
 			string fraction = m_inputPorts[ 1 ].GeneratePortInstructions( ref dataCollector );
 
 			string initialColorVarName = "desaturateInitialColor" + OutputId;
-			dataCollector.AddLocalVariable( UniqueId, m_currentPrecisionType, WirePortDataType.FLOAT3, initialColorVarName, initalColorValue );
+			dataCollector.AddLocalVariable( UniqueId, CurrentPrecisionType, WirePortDataType.FLOAT3, initialColorVarName, initalColorValue );
 
 			string dotVarName = "desaturateDot" + OutputId;
 			string dotVarValue = string.Format( GenericDesaturateOp0, initialColorVarName );
 
-			dataCollector.AddLocalVariable( UniqueId, m_currentPrecisionType,WirePortDataType.FLOAT, dotVarName, dotVarValue );
+			dataCollector.AddLocalVariable( UniqueId, CurrentPrecisionType, WirePortDataType.FLOAT, dotVarName, dotVarValue );
 			RegisterLocalVariable( 0, string.Format( GenericDesaturateOp1, initialColorVarName, dotVarName,fraction ), ref dataCollector, "desaturateVar" + OutputId );
 
 			return m_outputPorts[ 0 ].LocalValue( dataCollector.PortCategory );

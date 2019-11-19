@@ -141,10 +141,21 @@ namespace AmplifyShaderEditor
 				break;
 				case 2:
 				{
+					bool sampleThroughMacros = UIUtils.CurrentWindow.OutsideGraph.SamplingThroughMacros;
+
 					m_functionBody = string.Empty;
 					m_functionHeader = "Dither" + PatternsFuncStr[ m_selectedPatternInt ] + "( {0}, {1}, {2})";
-					IOUtils.AddFunctionHeader( ref m_functionBody, "inline float Dither" + PatternsFuncStr[ m_selectedPatternInt ] + "( float4 screenPos, sampler2D noiseTexture, float4 noiseTexelSize )" );
-					IOUtils.AddFunctionLine( ref m_functionBody, "float dither = tex2Dlod( noiseTexture, float4( screenPos.xy * _ScreenParams.xy * noiseTexelSize.xy, 0, 0 ) ).g;" );
+					
+					if( sampleThroughMacros )
+					{
+						IOUtils.AddFunctionHeader( ref m_functionBody, "inline float Dither" + PatternsFuncStr[ m_selectedPatternInt ] + "( float4 screenPos, TEXTURE2D_PARAM( noiseTexture, samplernoiseTexture ), float4 noiseTexelSize )" );
+						IOUtils.AddFunctionLine( ref m_functionBody, "float dither = SAMPLE_TEXTURE2D_LOD( noiseTexture, samplernoiseTexture, float3( screenPos.xy * _ScreenParams.xy * noiseTexelSize.xy, 0 ), 0 ).g;" );
+					}
+					else
+					{
+						IOUtils.AddFunctionHeader( ref m_functionBody, "inline float Dither" + PatternsFuncStr[ m_selectedPatternInt ] + "( float4 screenPos, sampler2D noiseTexture, float4 noiseTexelSize )" );
+						IOUtils.AddFunctionLine( ref m_functionBody, "float dither = tex2Dlod( noiseTexture, float4( screenPos.xy * _ScreenParams.xy * noiseTexelSize.xy, 0, 0 ) ).g;" );
+					}
 					IOUtils.AddFunctionLine( ref m_functionBody, "float ditherRate = noiseTexelSize.x * noiseTexelSize.y;" );
 					IOUtils.AddFunctionLine( ref m_functionBody, "dither = ( 1 - ditherRate ) * dither + ditherRate;" );
 					IOUtils.AddFunctionLine( ref m_functionBody, "return dither;" );
@@ -175,23 +186,23 @@ namespace AmplifyShaderEditor
 			{
 				varName = "ditherCustomScreenPos" + OutputId;
 				string customScreenPosVal = m_inputPorts[ 2 ].GeneratePortInstructions( ref dataCollector );
-				dataCollector.AddLocalVariable( UniqueId, m_currentPrecisionType, WirePortDataType.FLOAT4, varName, customScreenPosVal );
+				dataCollector.AddLocalVariable( UniqueId, CurrentPrecisionType, WirePortDataType.FLOAT4, varName, customScreenPosVal );
 			}
 			else
 			{
 				if( dataCollector.TesselationActive && isFragment )
 				{
-					varName = GeneratorUtils.GenerateClipPositionOnFrag( ref dataCollector, UniqueId, m_currentPrecisionType );
+					varName = GeneratorUtils.GenerateClipPositionOnFrag( ref dataCollector, UniqueId, CurrentPrecisionType );
 				}
 				else
 				{
 					if( dataCollector.IsTemplate )
 					{
-						varName = dataCollector.TemplateDataCollectorInstance.GetScreenPosNormalized();
+						varName = dataCollector.TemplateDataCollectorInstance.GetScreenPosNormalized( CurrentPrecisionType );
 					}
 					else
 					{
-						varName = GeneratorUtils.GenerateScreenPositionNormalized( ref dataCollector, UniqueId, m_currentPrecisionType, !dataCollector.UsingCustomScreenPos );
+						varName = GeneratorUtils.GenerateScreenPositionNormalized( ref dataCollector, UniqueId, CurrentPrecisionType, !dataCollector.UsingCustomScreenPos );
 					}
 				}
 			}
@@ -202,11 +213,11 @@ namespace AmplifyShaderEditor
 			{
 				default:
 				case 0:
-				dataCollector.AddLocalVariable( UniqueId, m_currentPrecisionType, WirePortDataType.FLOAT2, "clipScreen" + OutputId, surfInstruction );
+				dataCollector.AddLocalVariable( UniqueId, CurrentPrecisionType, WirePortDataType.FLOAT2, "clipScreen" + OutputId, surfInstruction );
 				functionResult = dataCollector.AddFunctions( m_functionHeader, m_functionBody, "fmod(" + "clipScreen" + OutputId + ".x, 4)", "fmod(" + "clipScreen" + OutputId + ".y, 4)" );
 				break;
 				case 1:
-				dataCollector.AddLocalVariable( UniqueId, m_currentPrecisionType, WirePortDataType.FLOAT2, "clipScreen" + OutputId, surfInstruction );
+				dataCollector.AddLocalVariable( UniqueId, CurrentPrecisionType, WirePortDataType.FLOAT2, "clipScreen" + OutputId, surfInstruction );
 				functionResult = dataCollector.AddFunctions( m_functionHeader, m_functionBody, "fmod(" + "clipScreen" + OutputId + ".x, 8)", "fmod(" + "clipScreen" + OutputId + ".y, 8)" );
 				break;
 				case 2:
@@ -219,15 +230,25 @@ namespace AmplifyShaderEditor
 						return "0";
 					} else
 					{
+						bool sampleThroughMacros = UIUtils.CurrentWindow.OutsideGraph.SamplingThroughMacros;
+
 						string noiseTex = m_inputPorts[ 1 ].GeneratePortInstructions( ref dataCollector );
 						dataCollector.AddToUniforms( UniqueId, "uniform float4 " + noiseTex + "_TexelSize;" );
-						functionResult = dataCollector.AddFunctions( m_functionHeader, m_functionBody, varName, noiseTex, noiseTex+"_TexelSize" );
+						if( sampleThroughMacros )
+						{
+							dataCollector.AddToUniforms( UniqueId, string.Format( Constants.SamplerDeclarationSRPMacros[ TextureType.Texture2D ], noiseTex ) );
+							functionResult = dataCollector.AddFunctions( m_functionHeader, m_functionBody, varName, noiseTex+", sampler"+noiseTex, noiseTex + "_TexelSize" );
+						}
+						else
+						{
+							functionResult = dataCollector.AddFunctions( m_functionHeader, m_functionBody, varName, noiseTex, noiseTex + "_TexelSize" );
+						}
 					}
 				}
 				break;
 			}
 
-			dataCollector.AddLocalVariable( UniqueId, "float dither" + OutputId + " = "+ functionResult+";" );
+			dataCollector.AddLocalVariable( UniqueId, CurrentPrecisionType, WirePortDataType.FLOAT, "dither" + OutputId, functionResult );
 
 			if( m_inputPorts[ 0 ].IsConnected )
 			{

@@ -321,6 +321,8 @@ namespace AmplifyShaderEditor
 					}
 				}
 			}
+
+			m_allTextures.Sort( ( x, y ) => string.Compare( x.name, y.name ) );
 		}
 		
 		private void CopyToArray( ref Texture2D from, ref Texture2DArray to, int arrayIndex, int mipLevel, bool compressed = true )

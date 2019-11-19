@@ -98,12 +98,28 @@ namespace AmplifyShaderEditor
 			{ TextureType.Texture2DArray,"TEXTURE2D_ARRAY({0}); SAMPLER(sampler{0});"},
 		};
 
+		public readonly static Dictionary<TextureType, string> SamplerDeclarationSRPMacros = new Dictionary<TextureType, string>
+		{
+			{ TextureType.Texture2D,"SAMPLER(sampler{0});"},
+			{ TextureType.Texture3D,"SAMPLER(sampler{0});"},
+			{ TextureType.Cube,"SAMPLER(sampler{0});"},
+			{ TextureType.Texture2DArray,"SAMPLER(sampler{0});"},
+		};
+		
+		public readonly static Dictionary<TextureType, string> TexDeclarationNoSamplerSRPMacros = new Dictionary<TextureType, string>
+		{
+			{ TextureType.Texture2D,"TEXTURE2D({0});"},
+			{ TextureType.Texture3D,"TEXTURE3D({0});"},
+			{ TextureType.Cube,"TEXTURECUBE({0});"},
+			{ TextureType.Texture2DArray,"TEXTURE2D_ARRAY({0});"},
+		};
+
 		public readonly static Dictionary<TextureType, string> TexSampleSRPMacros = new Dictionary<TextureType, string>
 		{
-			{ TextureType.Texture2D,"SAMPLE_TEXTURE2D{0}({1},sampler{1},{2})"},
-			{ TextureType.Texture3D,"SAMPLE_TEXTURE3D{0}({1},sampler{1},{2})"},
-			{ TextureType.Cube,"SAMPLE_TEXTURECUBE{0}({1},sampler{1},{2})"},
-			{ TextureType.Texture2DArray,"SAMPLE_TEXTURE2D_ARRAY{0}({1},sampler{1},{2})"},
+			{ TextureType.Texture2D,"SAMPLE_TEXTURE2D{0}({1},sampler{2},{3})"},
+			{ TextureType.Texture3D,"SAMPLE_TEXTURE3D{0}({1},sampler{2},{3})"},
+			{ TextureType.Cube,"SAMPLE_TEXTURECUBE{0}({1},sampler{2},{3})"},
+			{ TextureType.Texture2DArray,"SAMPLE_TEXTURE2D_ARRAY{0}({1},sampler{2},{3})"},
 		};
 
 		public readonly static Dictionary<TextureType, string> TexParams = new Dictionary<TextureType, string>
@@ -153,6 +169,15 @@ namespace AmplifyShaderEditor
 		};
 
 		public readonly static Dictionary<TextureType, string> TexDeclarationStandardMacros = new Dictionary<TextureType, string>
+		{
+			{ TextureType.Texture2D,"UNITY_DECLARE_TEX2D({0});"},
+			{ TextureType.Texture3D,"UNITY_DECLARE_TEX3D({0});"},
+			{ TextureType.Cube,"UNITY_DECLARE_TEXCUBE({0});"},
+			{ TextureType.Texture2DArray,"UNITY_DECLARE_TEX2DARRAY({0});"}
+		};
+
+
+		public readonly static Dictionary<TextureType, string> TexDeclarationNoSamplerStandardMacros = new Dictionary<TextureType, string>
 		{
 			{ TextureType.Texture2D,"UNITY_DECLARE_TEX2D({0});"},
 			{ TextureType.Texture3D,"UNITY_DECLARE_TEX3D({0});"},
@@ -421,7 +446,7 @@ namespace AmplifyShaderEditor
 		public readonly static string[] OverallInvalidChars = { "\r", "\n", "\\", " ", ".", ">", ",", "<", "\'", "\"", ";", ":", "[", "{", "]", "}", "=", "+", "`", "~", "/", "?", "!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "-" };
 		public readonly static string[] ShaderInvalidChars = { "\r", "\n", "\\", "\'", "\"", };
 		public readonly static string[] EnumInvalidChars = { "\r", "\n", "\\", ".", ">", ",", "<", "\'", "\"", ";", ":", "[", "{", "]", "}", "=", "+", "`", "~", "/", "?", "!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "-" };
-		public readonly static string[] AttrInvalidChars = { "\r", "\n", "\\", ".", ">", "<", "\'", "\"", ";", ":", "[", "{", "]", "}", "=", "+", "`", "~", "/", "?", "!", "@", "#", "$", "%", "^", "&", "*" };
+		public readonly static string[] AttrInvalidChars = { "\r", "\n", "\\", ">", "<", "\'", "\"", ";", ":", "[", "{", "]", "}", "=", "+", "`", "~", "/", "?", "!", "@", "#", "$", "%", "^", "&", "*" };
 
 		public readonly static string[] WikiInvalidChars = { "#", "<", ">", "[", "]", "|", "{", "}", "%", "+", "?", "\\", "/", ",", ";", "." };
 

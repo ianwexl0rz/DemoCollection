@@ -17,7 +17,7 @@ Properties
 
 			float4 frag( v2f_img i ) : SV_Target
 			{
-				return float4(WorldSpaceViewDir(tex2D( _A, i.uv )),0);
+				return float4( float3( 0,0,-5 ) - tex2D( _A, i.uv ).rgb,1);
 			}
 			ENDCG
 		}

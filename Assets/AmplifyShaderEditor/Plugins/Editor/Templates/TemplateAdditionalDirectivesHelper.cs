@@ -18,6 +18,13 @@ namespace AmplifyShaderEditor
 		Custom
 	}
 
+	public enum AdditionalContainerOrigin
+	{
+		Native,
+		ShaderFunction,
+		Custom
+	}
+
 
 	[Serializable]
 	public class AdditionalDirectiveContainerSaveItem
@@ -26,12 +33,14 @@ namespace AmplifyShaderEditor
 		public string LineValue = string.Empty;
 		public bool GUIDToggle = false;
 		public string GUIDValue = string.Empty;
-		public AdditionalDirectiveContainerSaveItem( AdditionalLineType lineType, string lineValue, bool guidToggle, string guidValue )
+		public AdditionalContainerOrigin Origin = AdditionalContainerOrigin.Custom;
+		public AdditionalDirectiveContainerSaveItem( AdditionalLineType lineType, string lineValue, bool guidToggle, string guidValue, AdditionalContainerOrigin origin )
 		{
 			LineType = lineType;
 			LineValue = lineValue;
 			GUIDToggle = guidToggle;
 			GUIDValue = guidValue;
+			Origin = origin;
 		}
 
 		public AdditionalDirectiveContainerSaveItem( AdditionalDirectiveContainer container )
@@ -40,6 +49,7 @@ namespace AmplifyShaderEditor
 			LineValue = container.LineValue;
 			GUIDToggle = container.GUIDToggle;
 			GUIDValue = container.GUIDValue;
+			Origin = container.Origin;
 		}
 	}
 
@@ -50,7 +60,20 @@ namespace AmplifyShaderEditor
 		public string LineValue = string.Empty;
 		public bool GUIDToggle = false;
 		public string GUIDValue = string.Empty;
+		public AdditionalContainerOrigin Origin = AdditionalContainerOrigin.Custom;
 		public TextAsset LibObject = null;
+		public string OwnerId = string.Empty;
+
+		public void Init( string ownerId, AdditionalDirectiveContainer item )
+		{
+			 LineType = item.LineType;
+			 LineValue = item.LineValue;
+			 GUIDToggle = item.GUIDToggle;
+			 GUIDValue = item.GUIDValue;
+			 Origin = item.Origin;
+			 LibObject = item.LibObject;
+			 OwnerId = ownerId;
+		}
 
 		public void Init( AdditionalDirectiveContainerSaveItem item )
 		{
@@ -58,6 +81,7 @@ namespace AmplifyShaderEditor
 			LineValue = item.LineValue;
 			GUIDToggle = item.GUIDToggle;
 			GUIDValue = item.GUIDValue;
+			Origin = item.Origin;
 			if( GUIDToggle )
 			{
 				LibObject = AssetDatabase.LoadAssetAtPath<TextAsset>( AssetDatabase.GUIDToAssetPath( GUIDValue ) );
@@ -132,8 +156,11 @@ namespace AmplifyShaderEditor
 	[Serializable]
 	public sealed class TemplateAdditionalDirectivesHelper : TemplateModuleParent
 	{
+#if UNITY_2019_3_OR_NEWER
+		private string NativeFoldoutStr = "Native ( Locked on Unity 2019.3 and above )";
+#else
 		private string NativeFoldoutStr = "Native";
-
+#endif
 		[SerializeField]
 		private List<AdditionalDirectiveContainer> m_additionalDirectives = new List<AdditionalDirectiveContainer>();
 
@@ -142,6 +169,9 @@ namespace AmplifyShaderEditor
 
 		[SerializeField]
 		private List<string> m_nativeDirectives = new List<string>();
+
+		[SerializeField]
+		private int m_nativeDirectivesIndex = -1;
 
 		[SerializeField]
 		private bool m_nativeDirectivesFoldout = false;
@@ -159,6 +189,7 @@ namespace AmplifyShaderEditor
 		private ReorderableList m_reordableList = null;
 		private GUIStyle m_propertyAdjustment;
 		private UndoParentNode m_currOwner;
+		private Rect m_nativeRect = Rect.zero;
 
 		public TemplateAdditionalDirectivesHelper( string moduleName ) : base( moduleName ) { }
 
@@ -177,18 +208,40 @@ namespace AmplifyShaderEditor
 		//	}
 		//}
 
-		public void AddShaderFunctionItems( List<AdditionalDirectiveContainer> functionList )
+		public void AddShaderFunctionItems( string ownerOutputId, List<AdditionalDirectiveContainer> functionList )
 		{
+			RemoveShaderFunctionItems( ownerOutputId );
 			if( functionList.Count > 0 )
-				m_shaderFunctionDirectives.AddRange( functionList );
+			{
+				for( int i = 0; i < functionList.Count; i++ )
+				{
+					AdditionalDirectiveContainer item = ScriptableObject.CreateInstance<AdditionalDirectiveContainer>();
+					item.Init( ownerOutputId, functionList[ i ] );
+					m_shaderFunctionDirectives.Add( item );
+				}
+			}
+			//if( functionList.Count > 0 )
+			//{
+
+			//	m_shaderFunctionDirectives.AddRange( functionList );
+			//}
 		}
 
-		public void RemoveShaderFunctionItems( List<AdditionalDirectiveContainer> functionList )
+		public void RemoveShaderFunctionItems( string ownerOutputId/*, List<AdditionalDirectiveContainer> functionList */)
 		{
-			for( int i = 0; i < functionList.Count; i++ )
+			List<AdditionalDirectiveContainer>  list = m_shaderFunctionDirectives.FindAll( ( x ) => x.OwnerId.Equals( ownerOutputId ));
+			for( int i = 0; i < list.Count; i++ )
 			{
-				m_shaderFunctionDirectives.Remove( functionList[ i ] );
+				m_shaderFunctionDirectives.Remove( list[ i ] );
+				ScriptableObject.DestroyImmediate( list[ i ] );
 			}
+			list.Clear();
+			list = null;
+
+			//for( int i = 0; i < functionList.Count; i++ )
+			//{
+			//	m_shaderFunctionDirectives.Remove( functionList[ i ] );
+			//}
 		}
 
 		//public void RemoveShaderFunctionItem( AdditionalLineType type, string item )
@@ -207,12 +260,31 @@ namespace AmplifyShaderEditor
 				newItem.hideFlags = HideFlags.HideAndDontSave;
 				m_additionalDirectives.Add( newItem );
 			}
+			UpdateNativeIndex();
+		}
+
+		public void AddNativeContainer()
+		{
+			if( m_nativeDirectives.Count > 0 )
+			{
+				if( m_additionalDirectives.FindIndex( x => x.Origin.Equals( AdditionalContainerOrigin.Native ) ) == -1 )
+				{
+					AdditionalDirectiveContainer newItem = ScriptableObject.CreateInstance<AdditionalDirectiveContainer>();
+					newItem.Origin = AdditionalContainerOrigin.Native;
+					newItem.hideFlags = HideFlags.HideAndDontSave;
+					//m_additionalDirectives.Add( newItem );
+					//m_nativeDirectivesIndex = m_additionalDirectives.Count - 1;
+					m_additionalDirectives.Insert( 0, newItem );
+					m_nativeDirectivesIndex = 0;
+				}
+			}
 		}
 
 		public void FillNativeItems( List<string> nativeItems )
 		{
 			m_nativeDirectives.Clear();
 			m_nativeDirectives.AddRange( nativeItems );
+			AddNativeContainer();
 		}
 
 		void DrawNativeItems()
@@ -228,6 +300,17 @@ namespace AmplifyShaderEditor
 			EditorGUILayout.Separator();
 		}
 
+		void DrawNativeItemsRect()
+		{
+			int count = m_nativeDirectives.Count;
+			m_nativeRect.y += EditorGUIUtility.singleLineHeight;
+			for( int i = 0; i < count; i++ )
+			{
+				EditorGUI.LabelField( m_nativeRect, m_nativeDirectives[ i ] );
+				m_nativeRect.y += EditorGUIUtility.singleLineHeight;
+			}
+		}
+
 		void DrawButtons()
 		{
 			EditorGUILayout.Separator();
@@ -238,6 +321,7 @@ namespace AmplifyShaderEditor
 				AdditionalDirectiveContainer newItem = ScriptableObject.CreateInstance<AdditionalDirectiveContainer>();
 				newItem.hideFlags = HideFlags.HideAndDontSave;
 				m_additionalDirectives.Add( newItem );
+				UpdateNativeIndex();
 				EditorGUI.FocusTextInControl( null );
 				m_isDirty = true;
 			}
@@ -266,8 +350,22 @@ namespace AmplifyShaderEditor
 					headerHeight = 0,
 					footerHeight = 0,
 					showDefaultBackground = false,
+					elementHeightCallback = ( index ) =>
+					{
+						if( m_additionalDirectives[ index ].Origin == AdditionalContainerOrigin.Native && m_nativeDirectivesFoldout )
+						{
+							return ( m_nativeDirectives.Count + 1 ) * ( EditorGUIUtility.singleLineHeight ) + 5;
+						}
+
+						return EditorGUIUtility.singleLineHeight + 5;
+					},
 					drawElementCallback = ( Rect rect, int index, bool isActive, bool isFocused ) =>
 					{
+						if( m_additionalDirectives[ index ].Origin == AdditionalContainerOrigin.Native && m_nativeDirectivesFoldout )
+						{
+							rect.height = ( m_nativeDirectives.Count + 1 ) * ( EditorGUIUtility.singleLineHeight ) + 5;
+						}
+
 						if( m_additionalDirectives[ index ] != null )
 						{
 							float labelWidthStyleAdjust = 0;
@@ -289,6 +387,21 @@ namespace AmplifyShaderEditor
 							Rect buttonMinusPos = new Rect( rect.x + rect.width - Constants.PlusMinusButtonLayoutWidth, rect.y - 2, Constants.PlusMinusButtonLayoutWidth, Constants.PlusMinusButtonLayoutWidth );
 							float labelWidthBuffer = EditorGUIUtility.labelWidth;
 							Rect labelPos = new Rect( rect.x + popupPos.width - labelWidthStyleAdjust, rect.y, labelWidthStyleAdjust + rect.width - popupPos.width - buttonPlusPos.width - buttonMinusPos.width + widthAdjust, EditorGUIUtility.singleLineHeight );
+
+							if( m_additionalDirectives[ index ].Origin == AdditionalContainerOrigin.Native )
+							{
+								m_nativeRect = rect;
+								m_nativeRect.xMin += 2;
+								m_nativeRect.xMax -= 2;
+								m_nativeRect.yMax -= 2;
+#if UNITY_2019_3_OR_NEWER
+								EditorGUI.LabelField(m_nativeRect, NativeFoldoutStr );
+#else
+								NodeUtils.DrawNestedPropertyGroup( ref m_nativeDirectivesFoldout, rect, NativeFoldoutStr, DrawNativeItemsRect, 4 );
+#endif
+								return;
+							}
+
 							m_additionalDirectives[ index ].LineType = (AdditionalLineType)m_currOwner.EditorGUIEnumPopup( popupPos, m_additionalDirectives[ index ].LineType );
 
 							if( m_additionalDirectives[ index ].LineType == AdditionalLineType.Include )
@@ -339,6 +452,10 @@ namespace AmplifyShaderEditor
 								m_actionIndex = index;
 							}
 						}
+					},
+					onReorderCallback = ( ReorderableList list ) =>
+					{
+						UpdateNativeIndex();
 					}
 				};
 			}
@@ -348,9 +465,11 @@ namespace AmplifyShaderEditor
 				switch( m_actionType )
 				{
 					case ReordableAction.Add:
-					AdditionalDirectiveContainer newItem = ScriptableObject.CreateInstance<AdditionalDirectiveContainer>();
-					newItem.hideFlags = HideFlags.HideAndDontSave;
-					m_additionalDirectives.Insert( m_actionIndex + 1, newItem );
+					{
+						AdditionalDirectiveContainer newItem = ScriptableObject.CreateInstance<AdditionalDirectiveContainer>();
+						newItem.hideFlags = HideFlags.HideAndDontSave;
+						m_additionalDirectives.Insert( m_actionIndex + 1, newItem );
+					}
 					break;
 					case ReordableAction.Remove:
 					AdditionalDirectiveContainer itemToDelete = m_additionalDirectives[ m_actionIndex ];
@@ -387,7 +506,7 @@ namespace AmplifyShaderEditor
 				EditorGUILayout.Space();
 				if( m_nativeDirectives.Count > 0 )
 				{
-					NodeUtils.DrawNestedPropertyGroup( ref m_nativeDirectivesFoldout, NativeFoldoutStr, DrawNativeItems, 4 );
+					//NodeUtils.DrawNestedPropertyGroup( ref m_nativeDirectivesFoldout, NativeFoldoutStr, DrawNativeItems, 4 );
 				}
 				if( m_additionalDirectives.Count == 0 )
 				{
@@ -404,6 +523,47 @@ namespace AmplifyShaderEditor
 
 		public void AddAllToDataCollector( ref MasterNodeDataCollector dataCollector, TemplateIncludePragmaContainter nativesContainer )
 		{
+			//List<AdditionalDirectiveContainer> list = m_additionalDirectives;
+			//int count = list.FindIndex( x => x.Origin.Equals( AdditionalContainerOrigin.Native ) );
+			//for( int i = 0; i < count; i++ )
+			//{
+			//	switch( list[ i ].LineType )
+			//	{
+			//		case AdditionalLineType.Include:
+			//		{
+			//			string value = list[ i ].Value;
+			//			if( !string.IsNullOrEmpty( value ) &&
+			//			  !nativesContainer.HasInclude( value ) )
+			//			{
+			//				dataCollector.AddToMisc( list[ i ].FormattedValue );
+			//			}
+			//		}
+			//		break;
+			//		case AdditionalLineType.Define:
+			//		{
+			//			if( !string.IsNullOrEmpty( list[ i ].LineValue ) &&
+			//			  !nativesContainer.HasDefine( list[ i ].LineValue ) )
+			//			{
+			//				dataCollector.AddToMisc( list[ i ].FormattedValue );
+			//			}
+			//		}
+			//		break;
+			//		case AdditionalLineType.Pragma:
+			//		{
+			//			if( !string.IsNullOrEmpty( list[ i ].LineValue ) &&
+			//			  !nativesContainer.HasPragma( list[ i ].LineValue ) )
+			//			{
+			//				dataCollector.AddToMisc( list[ i ].FormattedValue );
+			//			}
+			//		}
+			//		break;
+			//		default:
+			//		case AdditionalLineType.Custom:
+			//		dataCollector.AddToMisc( list[ i ].LineValue );
+			//		break;
+			//	}
+			//}
+
 			AddToDataCollector( ref dataCollector, nativesContainer, false );
 			AddToDataCollector( ref dataCollector, nativesContainer, true );
 		}
@@ -420,6 +580,7 @@ namespace AmplifyShaderEditor
 			int count = list.Count;
 			for( int i = 0; i < count; i++ )
 			{
+				int orderIdx = fromSF ? 1 : ( i > m_nativeDirectivesIndex ? 1 : -1 );
 				switch( list[ i ].LineType )
 				{
 					case AdditionalLineType.Include:
@@ -428,7 +589,7 @@ namespace AmplifyShaderEditor
 						if( !string.IsNullOrEmpty( value ) &&
 						  !nativesContainer.HasInclude( value ) )
 						{
-							dataCollector.AddToMisc( list[ i ].FormattedValue );
+							dataCollector.AddToDirectives( list[ i ].FormattedValue, orderIdx );
 						}
 					}
 					break;
@@ -437,7 +598,7 @@ namespace AmplifyShaderEditor
 						if( !string.IsNullOrEmpty( list[ i ].LineValue ) &&
 						  !nativesContainer.HasDefine( list[ i ].LineValue ) )
 						{
-							dataCollector.AddToMisc( list[ i ].FormattedValue );
+							dataCollector.AddToDirectives( list[ i ].FormattedValue, orderIdx );
 						}
 					}
 					break;
@@ -446,13 +607,13 @@ namespace AmplifyShaderEditor
 						if( !string.IsNullOrEmpty( list[ i ].LineValue ) &&
 						  !nativesContainer.HasPragma( list[ i ].LineValue ) )
 						{
-							dataCollector.AddToMisc( list[ i ].FormattedValue );
+							dataCollector.AddToDirectives( list[ i ].FormattedValue, orderIdx );
 						}
 					}
 					break;
 					default:
 					case AdditionalLineType.Custom:
-					dataCollector.AddToMisc( list[ i ].LineValue );
+					dataCollector.AddToDirectives( list[ i ].LineValue, orderIdx );
 					break;
 				}
 			}
@@ -461,6 +622,7 @@ namespace AmplifyShaderEditor
 		void AddToDataCollector( ref MasterNodeDataCollector dataCollector, bool fromSF )
 		{
 			List<AdditionalDirectiveContainer> list = fromSF ? m_shaderFunctionDirectives : m_additionalDirectives;
+			int orderIdx = 1;
 			int count = list.Count;
 			for( int i = 0; i < count; i++ )
 			{
@@ -471,7 +633,7 @@ namespace AmplifyShaderEditor
 						string value = list[ i ].FormattedValue;
 						if( !string.IsNullOrEmpty( value ) )
 						{
-							dataCollector.AddToMisc( value );
+							dataCollector.AddToDirectives( value, orderIdx );
 						}
 					}
 					break;
@@ -479,7 +641,7 @@ namespace AmplifyShaderEditor
 					{
 						if( !string.IsNullOrEmpty( list[ i ].LineValue ) )
 						{
-							dataCollector.AddToMisc( list[ i ].FormattedValue );
+							dataCollector.AddToDirectives( list[ i ].FormattedValue, orderIdx );
 						}
 					}
 					break;
@@ -487,13 +649,13 @@ namespace AmplifyShaderEditor
 					{
 						if( !string.IsNullOrEmpty( list[ i ].LineValue ) )
 						{
-							dataCollector.AddToMisc( list[ i ].FormattedValue );
+							dataCollector.AddToDirectives( list[ i ].FormattedValue, orderIdx );
 						}
 					}
 					break;
 					default:
 					case AdditionalLineType.Custom:
-					dataCollector.AddToMisc( list[ i ].LineValue );
+					dataCollector.AddToDirectives( list[ i ].LineValue, orderIdx );
 					break;
 				}
 			}
@@ -503,7 +665,9 @@ namespace AmplifyShaderEditor
 		{
 			try
 			{
+				m_nativeDirectivesIndex = -1;
 				int count = Convert.ToInt32( nodeParams[ index++ ] );
+				m_additionalDirectives.Clear();
 				for( int i = 0; i < count; i++ )
 				{
 					AdditionalLineType lineType = (AdditionalLineType)Enum.Parse( typeof( AdditionalLineType ), nodeParams[ index++ ] );
@@ -525,8 +689,21 @@ namespace AmplifyShaderEditor
 							}
 						}
 					}
+					AdditionalContainerOrigin origin = AdditionalContainerOrigin.Custom;
+					if( UIUtils.CurrentShaderVersion() > 16902 )
+					{
+						origin = (AdditionalContainerOrigin)Enum.Parse( typeof( AdditionalContainerOrigin ), nodeParams[ index++ ] );
+						newItem.Origin = origin;
+					}
+
 					m_additionalDirectives.Add( newItem );
+
+					if( origin == AdditionalContainerOrigin.Native )
+					{
+						m_nativeDirectivesIndex = i;
+					}
 				}
+				AddNativeContainer();
 			}
 			catch( Exception e )
 			{
@@ -536,6 +713,12 @@ namespace AmplifyShaderEditor
 
 		public override void WriteToString( ref string nodeInfo )
 		{
+			if( m_additionalDirectives.Count == 1 && m_additionalDirectives[ 0 ].Origin == AdditionalContainerOrigin.Native )
+			{
+				IOUtils.AddFieldValueToString( ref nodeInfo, 0 );
+				return;
+			}
+
 			IOUtils.AddFieldValueToString( ref nodeInfo, m_additionalDirectives.Count );
 			for( int i = 0; i < m_additionalDirectives.Count; i++ )
 			{
@@ -543,6 +726,7 @@ namespace AmplifyShaderEditor
 				IOUtils.AddFieldValueToString( ref nodeInfo, m_additionalDirectives[ i ].LineValue.Replace( ';', Constants.SemiColonSeparator ) );
 				IOUtils.AddFieldValueToString( ref nodeInfo, m_additionalDirectives[ i ].GUIDToggle );
 				IOUtils.AddFieldValueToString( ref nodeInfo, m_additionalDirectives[ i ].GUIDValue );
+				IOUtils.AddFieldValueToString( ref nodeInfo, m_additionalDirectives[ i ].Origin );
 			}
 		}
 
@@ -574,6 +758,14 @@ namespace AmplifyShaderEditor
 			m_additionalDirectives.RemoveAll( item => item == null );
 		}
 
+		public void ResetDirectivesOrigin()
+		{
+			for( int i = 0; i < m_directivesSaveItems.Count; i++ )
+			{
+				m_directivesSaveItems[ i ].Origin = AdditionalContainerOrigin.Custom;
+			}
+		}
+
 		// read comment on m_directivesSaveItems declaration
 		public void UpdateDirectivesFromSaveItems()
 		{
@@ -594,10 +786,24 @@ namespace AmplifyShaderEditor
 					newItem.Init( m_directivesSaveItems[ i ] );
 					m_additionalDirectives.Add( newItem );
 				}
-				m_directivesSaveItems.Clear();
+				UpdateNativeIndex();
+				//m_directivesSaveItems.Clear();
 			}
 		}
 
+		void UpdateNativeIndex()
+		{
+			m_nativeDirectivesIndex = -1;
+			int count = m_additionalDirectives.Count;
+			for( int i = 0; i < count; i++ )
+			{
+				if( m_additionalDirectives[ i ].Origin == AdditionalContainerOrigin.Native )
+				{
+					m_nativeDirectivesIndex = i;
+					break;
+				}
+			}
+		}
 
 		public override void Destroy()
 		{
@@ -613,6 +819,15 @@ namespace AmplifyShaderEditor
 
 			m_additionalDirectives.Clear();
 			m_additionalDirectives = null;
+
+			for( int i = 0; i < m_shaderFunctionDirectives.Count; i++ )
+			{
+				ScriptableObject.DestroyImmediate( m_shaderFunctionDirectives[ i ] );
+			}
+
+			m_shaderFunctionDirectives.Clear();
+			m_shaderFunctionDirectives = null;
+
 
 			m_propertyAdjustment = null;
 			m_reordableList = null;

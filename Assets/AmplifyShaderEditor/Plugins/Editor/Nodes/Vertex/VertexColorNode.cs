@@ -21,7 +21,7 @@ namespace AmplifyShaderEditor
 		{
 			if( dataCollector.MasterNodeCategory == AvailableShaderTypes.Template )
 			{
-				string color = dataCollector.TemplateDataCollectorInstance.GetVertexColor( m_currentPrecisionType );
+				string color = dataCollector.TemplateDataCollectorInstance.GetVertexColor( CurrentPrecisionType );
 				return GetOutputColorItem( 0, outputId, color );
 			}
 

@@ -202,16 +202,16 @@ namespace AmplifyShaderEditor
 		public override string GenerateShaderForOutput( int outputId, ref MasterNodeDataCollector dataCollector, bool ignoreLocalvar )
 		{
 			if( dataCollector.IsTemplate )
-				return "float3(0,0,0)";
+				return m_outputPorts[0].ErrorValue;
 
 			if( dataCollector.IsFragmentCategory )
 			{
-				UIUtils.ShowMessage( ErrorMessage );
-				return "float3(0,0,0)";
+				UIUtils.ShowMessage( UniqueId, ErrorMessage );
+				return m_outputPorts[ 0 ].ErrorValue;
 			}
 
 			if( m_outputPorts[ 0 ].IsLocalValue( dataCollector.PortCategory ) )
-				return "float3(0,0,0)";
+				return m_outputPorts[ 0 ].ErrorValue;
 
 			m_outputPorts[ 0 ].SetLocalValue( "0", dataCollector.PortCategory );
 

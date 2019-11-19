@@ -22,8 +22,8 @@ namespace AmplifyShaderEditor
 		{
 			if ( dataCollector.PortCategory == MasterNodePortCategory.Tessellation )
 			{
-				UIUtils.ShowMessage( m_nodeAttribs.Name + " does not work on Tessellation port" );
-				return "0";
+				UIUtils.ShowMessage( UniqueId, m_nodeAttribs.Name + " does not work on Tessellation port" );
+				return m_outputPorts[0].ErrorValue;
 			}
 
 			if ( dataCollector.IsTemplate )

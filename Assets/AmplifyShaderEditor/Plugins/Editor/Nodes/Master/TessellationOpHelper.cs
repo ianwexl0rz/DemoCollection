@@ -353,13 +353,13 @@ namespace AmplifyShaderEditor
 					{
 
 						//Tess
-						uniforms += "\t\tuniform " + UIUtils.FinalPrecisionWirePortToCgType( PrecisionType.Float, WirePortDataType.FLOAT ) + " " + TessUniformName + ";\n";
+						uniforms += "\t\tuniform " + UIUtils.PrecisionWirePortToCgType( PrecisionType.Float, WirePortDataType.FLOAT ) + " " + TessUniformName + ";\n";
 
 						//Min
-						uniforms += "\t\tuniform " + UIUtils.FinalPrecisionWirePortToCgType( PrecisionType.Float, WirePortDataType.FLOAT ) + " " + TessMinUniformName + ";\n";
+						uniforms += "\t\tuniform " + UIUtils.PrecisionWirePortToCgType( PrecisionType.Float, WirePortDataType.FLOAT ) + " " + TessMinUniformName + ";\n";
 
 						//Max
-						uniforms += "\t\tuniform " + UIUtils.FinalPrecisionWirePortToCgType( PrecisionType.Float, WirePortDataType.FLOAT ) + " " + TessMaxUniformName + ";\n";
+						uniforms += "\t\tuniform " + UIUtils.PrecisionWirePortToCgType( PrecisionType.Float, WirePortDataType.FLOAT ) + " " + TessMaxUniformName + ";\n";
 					}
 				}
 				break;
@@ -367,14 +367,14 @@ namespace AmplifyShaderEditor
 				//Tess
 				if( !m_hasCustomFunction )
 				{
-					uniforms += "\t\tuniform " + UIUtils.FinalPrecisionWirePortToCgType( PrecisionType.Float, WirePortDataType.FLOAT ) + " " + TessUniformName + ";\n";
+					uniforms += "\t\tuniform " + UIUtils.PrecisionWirePortToCgType( PrecisionType.Float, WirePortDataType.FLOAT ) + " " + TessUniformName + ";\n";
 				}
 				break;
 			}
 
 			if( m_phongEnabled )
 			{
-				uniforms += "\t\tuniform " + UIUtils.FinalPrecisionWirePortToCgType( PrecisionType.Float, WirePortDataType.FLOAT ) + " " + PhongStrengthUniformName + ";\n" ;
+				uniforms += "\t\tuniform " + UIUtils.PrecisionWirePortToCgType( PrecisionType.Float, WirePortDataType.FLOAT ) + " " + PhongStrengthUniformName + ";\n" ;
 			}
 
 			return uniforms;
@@ -392,15 +392,15 @@ namespace AmplifyShaderEditor
 					{
 						//Tess
 						dataCollector.AddToProperties( -1, string.Format( TessProperty, m_tessFactor ), orderIndex++ );
-						dataCollector.AddToUniforms( -1, "uniform " + UIUtils.FinalPrecisionWirePortToCgType( PrecisionType.Float, WirePortDataType.FLOAT ) + " " + TessUniformName + ";" );
+						dataCollector.AddToUniforms( -1, "uniform " + UIUtils.PrecisionWirePortToCgType( PrecisionType.Float, WirePortDataType.FLOAT ) + " " + TessUniformName + ";" );
 
 						//Min
 						dataCollector.AddToProperties( -1, string.Format( TessMinProperty, m_tessMinDistance ), orderIndex++ );
-						dataCollector.AddToUniforms( -1, "uniform " + UIUtils.FinalPrecisionWirePortToCgType( PrecisionType.Float, WirePortDataType.FLOAT ) + " " + TessMinUniformName + ";" );
+						dataCollector.AddToUniforms( -1, "uniform " + UIUtils.PrecisionWirePortToCgType( PrecisionType.Float, WirePortDataType.FLOAT ) + " " + TessMinUniformName + ";" );
 
 						//Max
 						dataCollector.AddToProperties( -1, string.Format( TessMaxProperty, m_tessMaxDistance ), orderIndex++ );
-						dataCollector.AddToUniforms( -1, "uniform " + UIUtils.FinalPrecisionWirePortToCgType( PrecisionType.Float, WirePortDataType.FLOAT ) + " " + TessMaxUniformName + ";" );
+						dataCollector.AddToUniforms( -1, "uniform " + UIUtils.PrecisionWirePortToCgType( PrecisionType.Float, WirePortDataType.FLOAT ) + " " + TessMaxUniformName + ";" );
 					}
 				}
 				break;
@@ -410,7 +410,7 @@ namespace AmplifyShaderEditor
 					if ( !m_hasCustomFunction )
 					{
 						dataCollector.AddToProperties( -1, string.Format( TessProperty, m_tessFactor ), orderIndex++ );
-						dataCollector.AddToUniforms( -1, "uniform " + UIUtils.FinalPrecisionWirePortToCgType( PrecisionType.Float, WirePortDataType.FLOAT ) + " " + TessUniformName + ";" );
+						dataCollector.AddToUniforms( -1, "uniform " + UIUtils.PrecisionWirePortToCgType( PrecisionType.Float, WirePortDataType.FLOAT ) + " " + TessUniformName + ";" );
 					}
 				}
 				break;
@@ -422,7 +422,7 @@ namespace AmplifyShaderEditor
 					if ( !m_hasCustomFunction )
 					{
 						dataCollector.AddToProperties( -1, string.Format( EdgeLengthTessProperty, m_tessFactor ), orderIndex++ );
-						dataCollector.AddToUniforms( -1, "uniform " + UIUtils.FinalPrecisionWirePortToCgType( PrecisionType.Float, WirePortDataType.FLOAT ) + " " + EdgeLengthTessUniformName + ";" );
+						dataCollector.AddToUniforms( -1, "uniform " + UIUtils.PrecisionWirePortToCgType( PrecisionType.Float, WirePortDataType.FLOAT ) + " " + EdgeLengthTessUniformName + ";" );
 					}
 				}
 				break;
@@ -434,11 +434,11 @@ namespace AmplifyShaderEditor
 					{
 						//Tess
 						dataCollector.AddToProperties( -1, string.Format( EdgeLengthTessProperty, m_tessFactor ), orderIndex++ );
-						dataCollector.AddToUniforms( -1, "uniform " + UIUtils.FinalPrecisionWirePortToCgType( PrecisionType.Float, WirePortDataType.FLOAT ) + " " + EdgeLengthTessUniformName + ";" );
+						dataCollector.AddToUniforms( -1, "uniform " + UIUtils.PrecisionWirePortToCgType( PrecisionType.Float, WirePortDataType.FLOAT ) + " " + EdgeLengthTessUniformName + ";" );
 
 						//Max Displacement
 						dataCollector.AddToProperties( -1, string.Format( EdgeLengthTessMaxDispProperty, m_tessMaxDistance ), orderIndex++ );
-						dataCollector.AddToUniforms( -1, "uniform " + UIUtils.FinalPrecisionWirePortToCgType( PrecisionType.Float, WirePortDataType.FLOAT ) + " " + EdgeLengthTessMaxDispUniformName + ";" );
+						dataCollector.AddToUniforms( -1, "uniform " + UIUtils.PrecisionWirePortToCgType( PrecisionType.Float, WirePortDataType.FLOAT ) + " " + EdgeLengthTessMaxDispUniformName + ";" );
 					}
 				}
 				break;
@@ -447,7 +447,7 @@ namespace AmplifyShaderEditor
 			if ( m_phongEnabled )
 			{
 				dataCollector.AddToProperties( -1, string.Format( PhongStrengthProperty, m_phongStrength ), orderIndex++ );
-				dataCollector.AddToUniforms( -1, "uniform " + UIUtils.FinalPrecisionWirePortToCgType( PrecisionType.Float, WirePortDataType.FLOAT ) + " " + PhongStrengthUniformName + ";" );
+				dataCollector.AddToUniforms( -1, "uniform " + UIUtils.PrecisionWirePortToCgType( PrecisionType.Float, WirePortDataType.FLOAT ) + " " + PhongStrengthUniformName + ";" );
 			}
 		}
 

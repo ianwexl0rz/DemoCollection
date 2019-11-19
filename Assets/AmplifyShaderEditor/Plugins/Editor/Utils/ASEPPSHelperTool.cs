@@ -243,6 +243,7 @@ namespace AmplifyShaderEditor
 
 			if( GUILayout.Button( "Build" ) )
 			{
+				System.Threading.Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
 				string propertiesDecl = string.Empty;
 				string propertiesSet = string.Empty;
 				GetShaderInfoFromShaderAsset( ref propertiesDecl, ref propertiesSet );
@@ -257,6 +258,7 @@ namespace AmplifyShaderEditor
 				template = template.Replace( PPSShader, m_currentShader.name );
 				string path = m_folderPath + m_settingsClassName + ".cs";
 				IOUtils.SaveTextfileToDisk( template, path, false );
+				System.Threading.Thread.CurrentThread.CurrentCulture = System.Threading.Thread.CurrentThread.CurrentUICulture;
 				AssetDatabase.Refresh();
 			}
 

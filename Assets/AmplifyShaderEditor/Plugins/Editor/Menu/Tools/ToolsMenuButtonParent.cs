@@ -28,7 +28,7 @@ namespace AmplifyShaderEditor
 				Init();
 			}
 
-			GUILayout.Space( m_buttonSpacing );
+			//GUILayout.Space( m_buttonSpacing );
 		}
 
 		public virtual void Draw( Vector2 pos )

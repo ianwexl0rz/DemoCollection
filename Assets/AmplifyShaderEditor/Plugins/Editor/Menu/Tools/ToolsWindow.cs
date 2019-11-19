@@ -26,7 +26,9 @@ namespace AmplifyShaderEditor
 		FocusOnSelection,
 		ShowInfoWindow,
 		ShowTipsWindow,
-		ShowConsole
+		ShowConsole,
+		TakeScreenshot,
+		Share
 	}
 
 	public enum ToolbarType
@@ -80,15 +82,23 @@ namespace AmplifyShaderEditor
 		private GUIStyle m_toggleStyle;
 		private GUIStyle m_borderStyle;
 
+		// left
 		private ToolsMenuButton m_updateButton;
 		private ToolsMenuButton m_liveButton;
 		private ToolsMenuButton m_openSourceCodeButton;
 
-		private ToolsMenuButton m_focusOnSelectionButton;
-		private ToolsMenuButton m_focusOnMasterNodeButton;
-		private ToolsMenuButton m_showInfoWindowButton;
-		private ToolsMenuButton m_showTipsWindowButton;
+		//middle right
 		private ToolsMenuButton m_cleanUnusedNodesButton;
+		private ToolsMenuButton m_focusOnMasterNodeButton;
+		private ToolsMenuButton m_focusOnSelectionButton;
+
+		// right
+		private ToolsMenuButton m_shareButton;
+		private ToolsMenuButton m_takeScreenshotButton;
+		private ToolsMenuButton m_showInfoWindowButton;
+
+		// hidden
+		private ToolsMenuButton m_showTipsWindowButton;
 		private ToolsMenuButton m_showConsoleWindowButton;
 
 		//Used for collision detection to invalidate inputs on graph area
@@ -132,26 +142,40 @@ namespace AmplifyShaderEditor
 			m_openSourceCodeButton.ToolButtonPressedEvt += OnButtonPressedEvent;
 			m_openSourceCodeButton.AddState( IOUtils.OpenSourceCodeONGUID );
 
+
+			// middle right
 			m_cleanUnusedNodesButton = new ToolsMenuButton( m_parentWindow, ToolButtonType.CleanUnusedNodes, 0, 0, -1, -1, IOUtils.CleanupOFFGUID, string.Empty, "Remove all nodes not connected to the master node.", 77 );
 			m_cleanUnusedNodesButton.ToolButtonPressedEvt += OnButtonPressedEvent;
 			m_cleanUnusedNodesButton.AddState( IOUtils.CleanUpOnGUID );
 
-			m_showConsoleWindowButton = new ToolsMenuButton( m_parentWindow, ToolButtonType.ShowConsole, 0, 0, -1, -1, IOUtils.ShowConsoleWindowGUID, string.Empty, "Show internal console", 74 );
-			m_showConsoleWindowButton.ToolButtonPressedEvt += OnButtonPressedEvent;
-			m_showConsoleWindowButton.AddState( IOUtils.ShowConsoleWindowGUID );
-
-		
 			m_focusOnMasterNodeButton = new ToolsMenuButton( m_parentWindow, ToolButtonType.FocusOnMasterNode, 0, 0, -1, -1, IOUtils.FocusNodeGUID, string.Empty, "Focus on active master node.", -1, false );
 			m_focusOnMasterNodeButton.ToolButtonPressedEvt += OnButtonPressedEvent;
 
 			m_focusOnSelectionButton = new ToolsMenuButton( m_parentWindow, ToolButtonType.FocusOnSelection, 0, 0, -1, -1, IOUtils.FitViewGUID, string.Empty, "Focus on selection or fit to screen if none selected." );
 			m_focusOnSelectionButton.ToolButtonPressedEvt += OnButtonPressedEvent;
 
+
+			// right
+			m_shareButton = new ToolsMenuButton( m_parentWindow, ToolButtonType.Share, 0, 0, -1, -1, IOUtils.ShareOFFGUID, string.Empty, "Share selection", 100 );
+			m_shareButton.ToolButtonPressedEvt += OnButtonPressedEvent;
+			m_shareButton.AddState( IOUtils.ShareONGUID );
+
+			m_takeScreenshotButton = new ToolsMenuButton( m_parentWindow, ToolButtonType.TakeScreenshot, 0, 0, -1, -1, IOUtils.TakeScreenshotOFFGUID, string.Empty, "Take ScreenShot (WINDOWS ONLY).", 100 );
+			m_takeScreenshotButton.ToolButtonPressedEvt += OnButtonPressedEvent;
+			m_takeScreenshotButton.AddState( IOUtils.TakeScreenshotONGUID );
+
 			m_showInfoWindowButton = new ToolsMenuButton( m_parentWindow, ToolButtonType.ShowInfoWindow, 0, 0, -1, -1, IOUtils.ShowInfoWindowGUID, string.Empty, "Open Helper Window." );
 			m_showInfoWindowButton.ToolButtonPressedEvt += OnButtonPressedEvent;
 
+
+			// hidden
 			m_showTipsWindowButton = new ToolsMenuButton( m_parentWindow, ToolButtonType.ShowTipsWindow, 0, 0, -1, -1, IOUtils.ShowTipsWindowGUID, string.Empty, "Open Quick Tips!" );
 			m_showTipsWindowButton.ToolButtonPressedEvt += OnButtonPressedEvent;
+
+			m_showConsoleWindowButton = new ToolsMenuButton( m_parentWindow, ToolButtonType.ShowConsole, 0, 0, -1, -1, IOUtils.ShowConsoleWindowGUID, string.Empty, "Show internal console", 74 );
+			m_showConsoleWindowButton.ToolButtonPressedEvt += OnButtonPressedEvent;
+			m_showConsoleWindowButton.AddState( IOUtils.ShowConsoleWindowGUID );
+
 			m_searchBarSize = new Rect( 0, TabY + 4, 110, 60 );
 		}
 
@@ -189,6 +213,12 @@ namespace AmplifyShaderEditor
 
 			m_showInfoWindowButton.Destroy();
 			m_showInfoWindowButton = null;
+
+			m_takeScreenshotButton.Destroy();
+			m_takeScreenshotButton = null;
+
+			m_shareButton.Destroy();
+			m_shareButton = null;
 
 			m_showTipsWindowButton.Destroy();
 			m_showTipsWindowButton = null;
@@ -241,7 +271,7 @@ namespace AmplifyShaderEditor
 
 			if ( m_searchBarVisible )
 			{
-				m_searchBarSize.x = m_transformedArea.x + m_transformedArea.width - 270 - TabX;
+				m_searchBarSize.x = m_transformedArea.x + m_transformedArea.width - 320 - TabX;
 				string currentFocus = GUI.GetNameOfFocusedControl();
 
 				if ( Event.current.type == EventType.KeyDown )
@@ -331,26 +361,35 @@ namespace AmplifyShaderEditor
 				m_selectSearchBarTextfield = true;
 			}
 
+			GUI.color = m_shareButton.IsInside( mousePosition ) ? RightIconsColorOn : RightIconsColorOff;
+			m_shareButton.Draw( m_transformedArea.x + m_transformedArea.width - 195 - TabX, TabY );
+
+			GUI.color = m_takeScreenshotButton.IsInside( mousePosition ) ? RightIconsColorOn : RightIconsColorOff;
+			m_takeScreenshotButton.Draw( m_transformedArea.x + m_transformedArea.width - 165 - TabX, TabY );
+
+
+
 			GUI.color = m_focusOnSelectionButton.IsInside( mousePosition ) ? RightIconsColorOn : RightIconsColorOff;
-			m_focusOnSelectionButton.Draw( m_transformedArea.x + m_transformedArea.width - 30 - TabX, TabY );
+			m_focusOnSelectionButton.Draw( m_transformedArea.x + m_transformedArea.width - 120 - TabX, TabY );
 
 			GUI.color = m_focusOnMasterNodeButton.IsInside( mousePosition ) ? RightIconsColorOn : RightIconsColorOff;
-			m_focusOnMasterNodeButton.Draw( m_transformedArea.x + m_transformedArea.width - 65 - TabX, TabY );
-
-			GUI.color = m_showInfoWindowButton.IsInside( mousePosition ) ? RightIconsColorOn : RightIconsColorOff;
-			m_showInfoWindowButton.Draw( m_transformedArea.x + m_transformedArea.width - 110 - TabX, TabY );
-
-			//GUI.color = m_showTipsWindowButton.IsInside( mousePosition ) ? RightIconsColorOn : RightIconsColorOff;
-			//m_showTipsWindowButton.Draw( m_transformedArea.x + m_transformedArea.width - 140 - TabX, TabY );
+			m_focusOnMasterNodeButton.Draw( m_transformedArea.x + m_transformedArea.width - 85 - TabX, TabY );
 
 			GUI.color = m_cleanUnusedNodesButton.IsInside( mousePosition ) ? RightIconsColorOn : RightIconsColorOff;
-			m_cleanUnusedNodesButton.Draw( m_transformedArea.x + m_transformedArea.width - 140 - TabX, TabY );
-			GUI.color = bufferedColor;
+			m_cleanUnusedNodesButton.Draw( m_transformedArea.x + m_transformedArea.width - 50 - TabX, TabY );
+
+			GUI.color = m_showInfoWindowButton.IsInside( mousePosition ) ? RightIconsColorOn : RightIconsColorOff;
+			m_showInfoWindowButton.Draw( m_transformedArea.x + m_transformedArea.width - 25 - TabX, TabY );
+
+
+			//GUI.color = m_showTipsWindowButton.IsInside( mousePosition ) ? RightIconsColorOn : RightIconsColorOff;
+			//m_showTipsWindowButton.Draw( m_transformedArea.x + m_transformedArea.width - 190 - TabX, TabY );
 
 			//GUI.color = m_showConsoleWindowButton.IsInside( mousePosition ) ? RightIconsColorOn : RightIconsColorOff;
-			//m_showConsoleWindowButton.Draw( m_transformedArea.x + m_transformedArea.width - 170 - TabX, TabY );
-			//GUI.color = bufferedColor;
-			
+			//m_showConsoleWindowButton.Draw( m_transformedArea.x + m_transformedArea.width - 195 - TabX, TabY );
+
+			GUI.color = bufferedColor;
+
 		}
 
 		public void OnNodeRemovedFromGraph( ParentNode node )
@@ -372,7 +411,7 @@ namespace AmplifyShaderEditor
 				m_previousNodeCount = count;
 				for ( int i = 0; i < count; i++ )
 				{
-					if ( nodes[ i ].TitleContent.text.IndexOf( m_searchBarValue, StringComparison.CurrentCultureIgnoreCase ) >= 0 )
+					if ( nodes[ i ].CheckFindText( m_searchBarValue ) )
 					{
 						m_searchResultNodes.Add( nodes[ i ] );
 					}
@@ -435,6 +474,11 @@ namespace AmplifyShaderEditor
 					m_liveButton.SetStateOnButton( state, tooltip );
 				}
 				break;
+				case ToolButtonType.TakeScreenshot:
+				{
+					m_takeScreenshotButton.SetStateOnButton( state, tooltip );
+				}
+				break;
 				case ToolButtonType.CleanUnusedNodes:
 				//case eToolButtonType.SelectShader:
 				{
@@ -451,7 +495,11 @@ namespace AmplifyShaderEditor
 					m_focusOnSelectionButton.SetStateOnButton( state, tooltip );
 				}
 				break;
-
+				case ToolButtonType.Share:
+				{
+					m_shareButton.SetStateOnButton( state, tooltip );
+				}
+				break;
 				case ToolButtonType.ShowInfoWindow:
 				{
 					m_showInfoWindowButton.SetStateOnButton( state, tooltip );
@@ -496,6 +544,11 @@ namespace AmplifyShaderEditor
 					m_liveButton.SetStateOnButton( state );
 				}
 				break;
+				case ToolButtonType.TakeScreenshot:
+				{
+					m_takeScreenshotButton.SetStateOnButton( state );
+				}
+				break;
 				case ToolButtonType.CleanUnusedNodes:
 				//case eToolButtonType.SelectShader:
 				{
@@ -510,6 +563,11 @@ namespace AmplifyShaderEditor
 				case ToolButtonType.FocusOnSelection:
 				{
 					m_focusOnSelectionButton.SetStateOnButton( state );
+				}
+				break;
+				case ToolButtonType.Share:
+				{
+					m_shareButton.SetStateOnButton( state );
 				}
 				break;
 				case ToolButtonType.ShowInfoWindow:
@@ -538,10 +596,15 @@ namespace AmplifyShaderEditor
 			m_boxRect.x += paletteWindow.IsMaximized ? 0 : -paletteWindow.RealWidth;
 			m_boxRect.width += nodeParametersWindow.IsMaximized ? 0 : nodeParametersWindow.RealWidth;
 			m_boxRect.width += paletteWindow.IsMaximized ? 0 : paletteWindow.RealWidth;
-
 			m_borderRect = new Rect( m_boxRect );
 			m_borderRect.height = graphAreaHeight;
 
+			int extra = m_searchBarVisible ? (int)m_searchBarSize.width + 20: 0;
+			//m_boxRect.xMax -= ( paletteWindow.IsMaximized ? 195 : 230 ) + extra;
+			//m_boxRect.xMin += nodeParametersWindow.IsMaximized ? 95 : 145;
+
+			UIUtils.ToolbarMainTitle.padding.right = ( paletteWindow.IsMaximized ? 195 : 230 ) + extra;
+			UIUtils.ToolbarMainTitle.padding.left = nodeParametersWindow.IsMaximized ? 110 : 145;
 
 			if ( m_borderStyle == null )
 			{
@@ -549,7 +612,7 @@ namespace AmplifyShaderEditor
 			}
 
 			GUI.Label( m_borderRect, shaderName, m_borderStyle );
-			GUI.Label( m_boxRect, shaderName, UIUtils.GetCustomStyle( CustomStyle.MainCanvasTitle ) );
+			GUI.Label( m_boxRect, shaderName, UIUtils.ToolbarMainTitle );
 		}
 
 		public override bool IsInside( Vector2 position )

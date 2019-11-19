@@ -151,7 +151,7 @@ Material:
     - _ReceiveShadows: 1
     - _RimOffset: 0.24
     - _RimPower: 0.5
-    - _Smoothness: 0.512
+    - _Smoothness: 0.247
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
@@ -177,7 +177,7 @@ Material:
     - _Color0: {r: 1, g: 0.811, b: 0.66400003, a: 1}
     - _Color1: {r: 1, g: 0, b: 0, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _MainColor: {r: 0.4056604, g: 0.4056604, b: 0.4056604, a: 1}
+    - _MainColor: {r: 0.5660378, g: 0.5660378, b: 0.5660378, a: 1}
     - _PortalColor: {r: 1, g: 1, b: 1, a: 0}
     - _RimColor: {r: 0, g: 1, b: 0.8758622, a: 0}
     - _SecondaryColor: {r: 1, g: 0.15151516, b: 0, a: 1}

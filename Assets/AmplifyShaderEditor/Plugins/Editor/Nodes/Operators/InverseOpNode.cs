@@ -92,7 +92,7 @@ namespace AmplifyShaderEditor
 			if ( m_outputPorts[ 0 ].IsLocalValue( dataCollector.PortCategory ) )
 				return m_outputPorts[ 0 ].LocalValue( dataCollector.PortCategory );
 
-			string precisionString = UIUtils.PrecisionWirePortToCgType( m_currentPrecisionType, WirePortDataType.FLOAT );
+			string precisionString = UIUtils.PrecisionWirePortToCgType( CurrentPrecisionType, WirePortDataType.FLOAT );
 			string value = m_inputPorts[ 0 ].GeneratePortInstructions( ref dataCollector );
 
 			if ( m_outputPorts[ 0 ].DataType == WirePortDataType.FLOAT3x3 )

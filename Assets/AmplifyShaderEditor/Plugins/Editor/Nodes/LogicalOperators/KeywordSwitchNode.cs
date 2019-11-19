@@ -95,7 +95,7 @@ namespace AmplifyShaderEditor
 			string falseCode = m_inputPorts[ 1 ].GeneratePortInstructions( ref dataCollector );
 
 			string localVarName = "simpleKeywordVar"+OutputId;
-			string outType = UIUtils.PrecisionWirePortToCgType( m_currentPrecisionType, m_outputPorts[ 0 ].DataType );
+			string outType = UIUtils.PrecisionWirePortToCgType( CurrentPrecisionType, m_outputPorts[ 0 ].DataType );
 			dataCollector.AddLocalVariable( UniqueId, "#ifdef " + m_currentKeyword, true );
 			dataCollector.AddLocalVariable( UniqueId, outType + " " + localVarName  + " = " + trueCode + ";", true );
 			dataCollector.AddLocalVariable( UniqueId, "#else", true );

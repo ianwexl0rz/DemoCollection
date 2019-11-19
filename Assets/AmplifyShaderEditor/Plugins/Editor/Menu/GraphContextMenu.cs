@@ -133,7 +133,7 @@ namespace AmplifyShaderEditor
 							if( attribute.ShortcutKey != KeyCode.None && type != null )
 								m_shortcutTypes.Add( attribute.ShortcutKey, new ShortcutKeyData( type, attribute.Name ) );
 
-							ContextMenuItem newItem = new ContextMenuItem( attribute, type, attribute.Name, attribute.Category, attribute.Description, null, attribute.ShortcutKey );
+							ContextMenuItem newItem = new ContextMenuItem( attribute, type, attribute.Name, attribute.Tags, attribute.Category, attribute.Description, null, attribute.ShortcutKey );
 							if( UIUtils.GetNodeAvailabilityInBitArray( attribute.NodeAvailabilityFlags, NodeAvailability.SurfaceShader ) )
 								m_items.Add( newItem );
 							else if( UIUtils.GetNodeAvailabilityInBitArray( attribute.NodeAvailabilityFlags, currentGraph.ParentWindow.CurrentNodeAvailability ) )
@@ -178,7 +178,7 @@ namespace AmplifyShaderEditor
 					NodeAttributes attribute = new NodeAttributes( allFunctions[ i ].FunctionName, allFunctions[ i ].CustomNodeCategory, allFunctions[ i ].Description, KeyCode.None, true, 0, int.MaxValue, typeof( AmplifyShaderFunction ) );
 					System.Type type = typeof( FunctionNode );
 
-					ContextMenuItem newItem = new ContextMenuItem( attribute, type, attribute.Name, attribute.Category, attribute.Description, allFunctions[ i ], attribute.ShortcutKey );
+					ContextMenuItem newItem = new ContextMenuItem( attribute, type, attribute.Name, attribute.Tags, attribute.Category, attribute.Description, allFunctions[ i ], attribute.ShortcutKey );
 					m_items.Add( newItem );
 					m_itemFunctions.Add( newItem );
 				}

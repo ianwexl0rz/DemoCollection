@@ -16,6 +16,9 @@ namespace AmplifyShaderEditor
 		[SerializeField]
 		private int m_nodeId = -1;
 
+		[SerializeField]
+		private string m_nodePropertyName = string.Empty;
+
 		public InlineProperty() { }
 
 		public InlineProperty( float val )
@@ -44,6 +47,7 @@ namespace AmplifyShaderEditor
 		public void SetInlineByName( string propertyName )
 		{
 			m_nodeId = UIUtils.GetNodeIdByName( propertyName );
+			m_nodePropertyName = propertyName;
 			m_active = m_nodeId != -1;
 		}
 
@@ -236,7 +240,13 @@ namespace AmplifyShaderEditor
 				return UIUtils.GetNode( m_nodeId ) as PropertyNode;
 
 			if( m_nodeId < -1 )
+			{
+				if(!string.IsNullOrEmpty(m_nodePropertyName))
+					return UIUtils.GetInternalTemplateNode( m_nodePropertyName );
+
+
 				return UIUtils.GetInternalTemplateNode( m_nodeId );
+			}
 
 			return null;
 		}

@@ -78,7 +78,7 @@ namespace AmplifyShaderEditor
 
 		public override string GenerateShaderForOutput( int outputId, ref MasterNodeDataCollector dataCollector, bool ignoreLocalvar )
 		{
-			if( dataCollector.PortCategory == MasterNodePortCategory.Vertex || dataCollector.PortCategory == MasterNodePortCategory.Tessellation )
+			if( dataCollector.PortCategory == MasterNodePortCategory.Tessellation )
 			{
 				UIUtils.ShowNoVertexModeNodeMessage( this );
 				return "0";
@@ -96,7 +96,7 @@ namespace AmplifyShaderEditor
 				{
 					//dataCollector.AddToUniforms( UniqueId, Constants.CameraDepthTextureSRPVar );
 					//dataCollector.AddToUniforms( UniqueId, Constants.CameraDepthTextureSRPSampler );
-					dataCollector.AddToDefines( UniqueId, Constants.CameraDepthTextureLWEnabler );
+					dataCollector.AddToDirectives( Constants.CameraDepthTextureLWEnabler, -1, AdditionalLineType.Define );
 				}
 				else
 				{
@@ -106,25 +106,25 @@ namespace AmplifyShaderEditor
 			}
 
 
-			string screenPos = string.Empty;
+			string screenPosNorm = string.Empty;
 			if( m_inputPorts[ 0 ].IsConnected )
-				screenPos = m_inputPorts[ 0 ].GeneratePortInstructions( ref dataCollector );
+				screenPosNorm = m_inputPorts[ 0 ].GeneratePortInstructions( ref dataCollector );
 			else
 			{
 				if( dataCollector.IsTemplate )
 				{
-					if( !dataCollector.TemplateDataCollectorInstance.GetCustomInterpolatedData( TemplateInfoOnSematics.SCREEN_POSITION_NORMALIZED, WirePortDataType.FLOAT4, PrecisionType.Float, ref screenPos, true,MasterNodePortCategory.Fragment ) )
+					if( !dataCollector.TemplateDataCollectorInstance.GetCustomInterpolatedData( TemplateInfoOnSematics.SCREEN_POSITION_NORMALIZED, WirePortDataType.FLOAT4, PrecisionType.Float, ref screenPosNorm, true,MasterNodePortCategory.Fragment ) )
 					{
-						screenPos = GeneratorUtils.GenerateScreenPosition( ref dataCollector, UniqueId, m_currentPrecisionType, !dataCollector.UsingCustomScreenPos );
+						screenPosNorm = GeneratorUtils.GenerateScreenPositionNormalized( ref dataCollector, UniqueId, CurrentPrecisionType, !dataCollector.UsingCustomScreenPos );
 					}
 				}
 				else
 				{
-					screenPos = GeneratorUtils.GenerateScreenPosition( ref dataCollector, UniqueId, m_currentPrecisionType, !dataCollector.UsingCustomScreenPos );
+					screenPosNorm = GeneratorUtils.GenerateScreenPositionNormalized( ref dataCollector, UniqueId, CurrentPrecisionType, !dataCollector.UsingCustomScreenPos );
 				}
 			}
 
-			string screenDepthInstruction = TemplateHelperFunctions.CreateDepthFetch( dataCollector, screenPos );
+			string screenDepthInstruction = TemplateHelperFunctions.CreateDepthFetch( dataCollector, screenPosNorm );
 			
 			if( m_convertToLinear )
 			{
@@ -144,7 +144,7 @@ namespace AmplifyShaderEditor
 				}
 			}
 
-			dataCollector.AddToLocalVariables( UniqueId, m_currentPrecisionType, WirePortDataType.FLOAT, m_vertexNameStr[ m_viewSpaceInt ] + OutputId, screenDepthInstruction );
+			dataCollector.AddLocalVariable( UniqueId, CurrentPrecisionType, WirePortDataType.FLOAT, m_vertexNameStr[ m_viewSpaceInt ] + OutputId, screenDepthInstruction );
 
 			m_outputPorts[ 0 ].SetLocalValue( m_vertexNameStr[ m_viewSpaceInt ] + OutputId, dataCollector.PortCategory );
 			return GetOutputColorItem( 0, outputId, m_vertexNameStr[ m_viewSpaceInt ] + OutputId );

@@ -14,7 +14,7 @@ namespace AmplifyShaderEditor
 		{
 			if ( dataCollector.PortCategory != MasterNodePortCategory.Tessellation )
 			{
-				UIUtils.ShowMessage( m_nodeAttribs.Name + " can only be used on Master Node Tessellation port" );
+				UIUtils.ShowMessage( UniqueId, m_nodeAttribs.Name + " can only be used on Master Node Tessellation port" );
 				return "(-1)";
 			}
 

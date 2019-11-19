@@ -36,7 +36,7 @@ namespace AmplifyShaderEditor
 
 		public override string GenerateShaderForOutput( int outputId, ref MasterNodeDataCollector dataCollector, bool ignoreLocalvar )
 		{
-			if( dataCollector.PortCategory == MasterNodePortCategory.Vertex || dataCollector.PortCategory == MasterNodePortCategory.Tessellation )
+			if( dataCollector.PortCategory == MasterNodePortCategory.Tessellation )
 			{
 				UIUtils.ShowNoVertexModeNodeMessage( this );
 				return "0";
@@ -54,7 +54,7 @@ namespace AmplifyShaderEditor
 				{
 					//dataCollector.AddToUniforms( UniqueId, Constants.CameraDepthTextureSRPVar );
 					//dataCollector.AddToUniforms( UniqueId, Constants.CameraDepthTextureSRPSampler );
-					dataCollector.AddToDefines( UniqueId, Constants.CameraDepthTextureLWEnabler );
+					dataCollector.AddToDirectives( Constants.CameraDepthTextureLWEnabler, -1, AdditionalLineType.Define );
 				}
 				else
 				{
@@ -64,15 +64,13 @@ namespace AmplifyShaderEditor
 				dataCollector.AddToUniforms( UniqueId, Constants.CameraDepthTextureTexelSize );
 			}
 
-			string screenPos = string.Empty;
 			string screenPosNorm = string.Empty;
 			InputPort vertexPosPort = GetInputPortByUniqueId( 1 );
 			if( vertexPosPort.IsConnected )
 			{
 				string vertexPosVar = "vertexPos" + OutputId;
 				GenerateInputInVertex( ref dataCollector, 1, vertexPosVar, false );
-				screenPos = GeneratorUtils.GenerateScreenPositionForValue( vertexPosVar,OutputId, ref dataCollector, UniqueId, m_currentPrecisionType, !dataCollector.UsingCustomScreenPos );
-				screenPosNorm = GeneratorUtils.GenerateScreenPositionNormalizedForValue( vertexPosVar, OutputId, ref dataCollector, UniqueId, m_currentPrecisionType, !dataCollector.UsingCustomScreenPos );
+				screenPosNorm = GeneratorUtils.GenerateScreenPositionNormalizedForValue( vertexPosVar, OutputId, ref dataCollector, UniqueId, CurrentPrecisionType, !dataCollector.UsingCustomScreenPos );
 			}
 			else
 			{
@@ -81,23 +79,20 @@ namespace AmplifyShaderEditor
 					string ppsScreenPos = string.Empty;
 					if( !dataCollector.TemplateDataCollectorInstance.GetCustomInterpolatedData( TemplateInfoOnSematics.SCREEN_POSITION_NORMALIZED, WirePortDataType.FLOAT4, PrecisionType.Float, ref ppsScreenPos, true, MasterNodePortCategory.Fragment ) )
 					{
-						screenPos = GeneratorUtils.GenerateScreenPosition( ref dataCollector, UniqueId, m_currentPrecisionType, !dataCollector.UsingCustomScreenPos );
-						screenPosNorm = GeneratorUtils.GenerateScreenPositionNormalized( ref dataCollector, UniqueId, m_currentPrecisionType, !dataCollector.UsingCustomScreenPos );
+						screenPosNorm = GeneratorUtils.GenerateScreenPositionNormalized( ref dataCollector, UniqueId, CurrentPrecisionType, !dataCollector.UsingCustomScreenPos );
 					}
 					else
 					{
-						screenPos = ppsScreenPos;
 						screenPosNorm = ppsScreenPos;
 					}
 				}
 				else
 				{
-					screenPos = GeneratorUtils.GenerateScreenPosition( ref dataCollector, UniqueId, m_currentPrecisionType, !dataCollector.UsingCustomScreenPos );
-					screenPosNorm = GeneratorUtils.GenerateScreenPositionNormalized( ref dataCollector, UniqueId, m_currentPrecisionType, !dataCollector.UsingCustomScreenPos );
+					screenPosNorm = GeneratorUtils.GenerateScreenPositionNormalized( ref dataCollector, UniqueId, CurrentPrecisionType, !dataCollector.UsingCustomScreenPos );
 				}
 			}
 
-			string screenDepth = TemplateHelperFunctions.CreateDepthFetch( dataCollector, screenPos );
+			string screenDepth = TemplateHelperFunctions.CreateDepthFetch( dataCollector, screenPosNorm );
 			if( m_convertToLinear )
 			{
 				if( dataCollector.IsTemplate && dataCollector.IsSRP )
@@ -131,7 +126,7 @@ namespace AmplifyShaderEditor
 				finalVarValue = string.Format( "saturate( {0} )", finalVarValue );
 			}
 
-			dataCollector.AddLocalVariable( UniqueId, m_currentPrecisionType, WirePortDataType.FLOAT, finalVarName, finalVarValue );
+			dataCollector.AddLocalVariable( UniqueId, CurrentPrecisionType, WirePortDataType.FLOAT, finalVarName, finalVarValue );
 			m_outputPorts[ 0 ].SetLocalValue( finalVarName, dataCollector.PortCategory );
 			return GetOutputColorItem( 0, outputId, finalVarName );
 		}

@@ -314,7 +314,6 @@ namespace AmplifyShaderEditor
 			m_newProperties = string.Empty;
 			string trash = string.Empty;
 			UIUtils.GetNode( nodeId ).WriteToString( ref m_newProperties, ref trash );
-			Debug.Log( m_originalProperties + '\n' + m_newProperties );
 		}
 
 		public override void ExecuteForward()

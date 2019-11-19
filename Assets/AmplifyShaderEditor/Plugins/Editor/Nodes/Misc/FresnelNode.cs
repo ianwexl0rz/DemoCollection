@@ -206,7 +206,7 @@ namespace AmplifyShaderEditor
 				if( m_viewVecPort.IsConnected )
 					viewdir = m_viewVecPort.GeneratePortInstructions( ref dataCollector );
 				else
-					viewdir = GeneratorUtils.GenerateWorldLightDirection( ref dataCollector, UniqueId, m_currentPrecisionType );
+					viewdir = GeneratorUtils.GenerateWorldLightDirection( ref dataCollector, UniqueId, CurrentPrecisionType );
 			}
 
 			string normal = string.Empty;
@@ -224,12 +224,12 @@ namespace AmplifyShaderEditor
 						{
 							if( dataCollector.IsTemplate )
 							{
-								normal = dataCollector.TemplateDataCollectorInstance.GetWorldNormal( UniqueId, m_currentPrecisionType, normal, OutputId );
+								normal = dataCollector.TemplateDataCollectorInstance.GetWorldNormal( UniqueId, CurrentPrecisionType, normal, OutputId );
 							}
 							else
 							{
-								normal = GeneratorUtils.GenerateWorldNormal( ref dataCollector, UniqueId, m_currentPrecisionType, normal, OutputId );
-								dataCollector.AddToInput( UniqueId, SurfaceInputs.WORLD_NORMAL, m_currentPrecisionType );
+								normal = GeneratorUtils.GenerateWorldNormal( ref dataCollector, UniqueId, CurrentPrecisionType, normal, OutputId );
+								dataCollector.AddToInput( UniqueId, SurfaceInputs.WORLD_NORMAL, CurrentPrecisionType );
 								dataCollector.ForceNormal = true;
 							}
 						}
@@ -243,7 +243,7 @@ namespace AmplifyShaderEditor
 					{
 						if( m_normalType == NormalType.TangentNormal )
 						{
-							string wtMatrix = GeneratorUtils.GenerateWorldToTangentMatrix( ref dataCollector, UniqueId, m_currentPrecisionType );
+							string wtMatrix = GeneratorUtils.GenerateWorldToTangentMatrix( ref dataCollector, UniqueId, CurrentPrecisionType );
 							normal = "mul( " + normal + "," + wtMatrix + " )";
 						}
 					}
@@ -252,13 +252,13 @@ namespace AmplifyShaderEditor
 				{
 					if( dataCollector.IsFragmentCategory )
 					{
-						dataCollector.AddToInput( UniqueId, SurfaceInputs.WORLD_NORMAL, m_currentPrecisionType );
+						dataCollector.AddToInput( UniqueId, SurfaceInputs.WORLD_NORMAL, CurrentPrecisionType );
 						if( dataCollector.DirtyNormal )
 							dataCollector.AddToInput( UniqueId, SurfaceInputs.INTERNALDATA, addSemiColon: false );
 					}
 
 					if( dataCollector.IsTemplate )
-						normal = dataCollector.TemplateDataCollectorInstance.GetWorldNormal( m_currentPrecisionType, normalize: ( dataCollector.DirtyNormal && m_normalizeVectors ) );
+						normal = dataCollector.TemplateDataCollectorInstance.GetWorldNormal( CurrentPrecisionType, normalize: ( dataCollector.DirtyNormal && m_normalizeVectors ) );
 					else
 						normal = GeneratorUtils.GenerateWorldNormal( ref dataCollector, UniqueId, ( dataCollector.DirtyNormal && m_normalizeVectors ) );
 
@@ -274,9 +274,9 @@ namespace AmplifyShaderEditor
 				if( !m_normalVecPort.IsConnected )
 				{
 					string halfView = GeneratorUtils.GenerateViewDirection( ref dataCollector, UniqueId, ViewSpace.World );
-					string halfLight = GeneratorUtils.GenerateWorldLightDirection( ref dataCollector, UniqueId, m_currentPrecisionType );
+					string halfLight = GeneratorUtils.GenerateWorldLightDirection( ref dataCollector, UniqueId, CurrentPrecisionType );
 					normal = "halfVector" + OutputId;
-					dataCollector.AddLocalVariable( UniqueId, m_currentPrecisionType, WirePortDataType.FLOAT3, normal, "normalize( " + halfView + " + " + halfLight + " )" );
+					dataCollector.AddLocalVariable( UniqueId, CurrentPrecisionType, WirePortDataType.FLOAT3, normal, "normalize( " + halfView + " + " + halfLight + " )" );
 				}
 				else
 				{
@@ -292,7 +292,7 @@ namespace AmplifyShaderEditor
 
 			string fresnelNDotVLocalValue = "dot( " + normal + ", " + viewdir + " )";
 			string fresnelNDotVLocalVar = "fresnelNdotV" + OutputId;
-			dataCollector.AddLocalVariable( UniqueId, m_currentPrecisionType, WirePortDataType.FLOAT, fresnelNDotVLocalVar, fresnelNDotVLocalValue );
+			dataCollector.AddLocalVariable( UniqueId, CurrentPrecisionType, WirePortDataType.FLOAT, fresnelNDotVLocalVar, fresnelNDotVLocalValue );
 
 			string fresnelFinalVar = FresnedFinalVar + OutputId;
 
@@ -308,14 +308,14 @@ namespace AmplifyShaderEditor
 				case FresnelType.Schlick:
 				{
 					string f0VarName = "f0" + OutputId;
-					dataCollector.AddLocalVariable( UniqueId, m_currentPrecisionType, WirePortDataType.FLOAT, f0VarName, bias );
+					dataCollector.AddLocalVariable( UniqueId, CurrentPrecisionType, WirePortDataType.FLOAT, f0VarName, bias );
 					result = string.Format( "( {0} + ( 1.0 - {0} ) * pow( 1.0 - {1}, 5 ) )", f0VarName, fresnelNDotVLocalVar );
 				}
 				break;
 				case FresnelType.SchlickIOR:
 				{
 					string iorVarName = "ior" + OutputId;
-					dataCollector.AddLocalVariable( UniqueId, m_currentPrecisionType, WirePortDataType.FLOAT, iorVarName, scale );
+					dataCollector.AddLocalVariable( UniqueId, CurrentPrecisionType, WirePortDataType.FLOAT, iorVarName, scale );
 					dataCollector.AddLocalVariable( UniqueId, iorVarName +" = pow( ( 1-"+ iorVarName +" )/( 1+"+iorVarName+" ), 2 );");
 					result = string.Format( "( {0} + ( 1.0 - {0} ) * pow( 1.0 - {1}, 5 ) )", iorVarName, fresnelNDotVLocalVar );
 				}

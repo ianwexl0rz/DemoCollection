@@ -69,7 +69,7 @@ namespace AmplifyShaderEditor
 						return GetOutputVectorItem( 0, outputId, m_outputPorts[ 0 ].LocalValue( dataCollector.PortCategory ) );
 
 
-					string value = dataCollector.TemplateDataCollectorInstance.GetWorldReflection( m_currentPrecisionType, m_inputPorts[ 0 ].GeneratePortInstructions( ref dataCollector ) );
+					string value = dataCollector.TemplateDataCollectorInstance.GetWorldReflection( CurrentPrecisionType, m_inputPorts[ 0 ].GeneratePortInstructions( ref dataCollector ) );
 					if( m_normalize )
 					{
 						value = string.Format( NormalizeFunc, value );
@@ -80,7 +80,7 @@ namespace AmplifyShaderEditor
 				else
 				{
 					string name;
-					string value = dataCollector.TemplateDataCollectorInstance.GetWorldReflection( m_currentPrecisionType );
+					string value = dataCollector.TemplateDataCollectorInstance.GetWorldReflection( CurrentPrecisionType );
 					if( m_normalize )
 					{
 						name = "normalizedWorldRefl";
@@ -143,7 +143,7 @@ namespace AmplifyShaderEditor
 				if( m_outputPorts[ 0 ].IsLocalValue( dataCollector.PortCategory ) )
 					return GetOutputVectorItem( 0, outputId, m_outputPorts[ 0 ].LocalValue( dataCollector.PortCategory ) );
 				
-				dataCollector.AddToInput( UniqueId, SurfaceInputs.WORLD_REFL, m_currentPrecisionType );
+				dataCollector.AddToInput( UniqueId, SurfaceInputs.WORLD_REFL, CurrentPrecisionType );
 
 				string result = string.Empty;
 				if( m_inputPorts[ 0 ].IsConnected )

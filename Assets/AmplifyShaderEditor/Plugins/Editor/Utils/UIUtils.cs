@@ -92,7 +92,9 @@ namespace AmplifyShaderEditor
 		GraphButton,
 		NodeWindowOffSquare,
 		NodeHeaderSquare,
-		NodeWindowOnSquare
+		NodeWindowOnSquare,
+		ConsoleLogMessage,
+		ConsoleLogCircle
 	}
 
 	public enum MasterNodePortCategory
@@ -235,6 +237,7 @@ namespace AmplifyShaderEditor
 		public static GUIStyle BoldWarningStyle;
 		public static GUIStyle BoldInfoStyle;
 		public static GUIStyle Separator;
+		public static GUIStyle ToolbarMainTitle;
 		public static GUIStyle ToolbarSearchTextfield;
 		public static GUIStyle ToolbarSearchCancelButton;
 		public static GUIStyle MiniButtonTopLeft;
@@ -259,6 +262,10 @@ namespace AmplifyShaderEditor
 		public static GUIStyle GraphDropDown;
 
 		public static GUIStyle EmptyStyle = new GUIStyle();
+
+		public static GUIStyle ConsoleLogLabel;
+		public static GUIStyle ConsoleLogMessage;
+		public static GUIStyle ConsoleLogCircle;
 
 		public static GUIStyle TooltipBox;
 		public static GUIStyle Box;
@@ -561,6 +568,8 @@ namespace AmplifyShaderEditor
 			{ ToolButtonType.Options,          new List<string>() { "Open Options menu." } },
 			{ ToolButtonType.Update,           new List<string>() { "Open or create a new shader first.", "Click to enable to update current shader.", "Shader up-to-date." } },
 			{ ToolButtonType.Live,             new List<string>() { "Open or create a new shader first.", "Click to enable live shader preview", "Click to enable live shader and material preview." , "Live preview active, click to disable." } },
+			{ ToolButtonType.TakeScreenshot,   new List<string>() { "Take screenshot", "Take screenshot" }},
+			{ ToolButtonType.Share,            new List<string>() { "Share selection", "Share selection" }},
 			{ ToolButtonType.CleanUnusedNodes, new List<string>() { "No unconnected nodes to clean.", "Remove all nodes not connected( directly or indirectly) to the master node." }},
 			{ ToolButtonType.Help,             new List<string>() { "Show help window." } },
 			{ ToolButtonType.FocusOnMasterNode,new List<string>() { "Focus on active master node." } },
@@ -635,7 +644,7 @@ namespace AmplifyShaderEditor
 		{
 			{PrecisionType.Float,	"float"},
 			{PrecisionType.Half,	"half"},
-			{PrecisionType.Fixed,	"half"}
+			{PrecisionType.Inherit,	"float"}
 		};
 
 		private static Dictionary<VariableQualifiers, string> m_qualifierToCg = new Dictionary<VariableQualifiers, string>()
@@ -810,10 +819,15 @@ namespace AmplifyShaderEditor
 			BoldWarningStyle = null;
 			BoldInfoStyle = null;
 			Separator = null;
+			ToolbarMainTitle = null;
 
 			GraphButtonIcon = null;
 			GraphButton = null;
 			GraphDropDown = null;
+
+			ConsoleLogLabel = null;
+			ConsoleLogMessage = null;
+			ConsoleLogCircle = null;
 
 			MiniButtonTopLeft = null;
 			MiniButtonTopMid = null;
@@ -954,6 +968,7 @@ namespace AmplifyShaderEditor
 			BoldInfoStyle.normal.textColor = Color.white;
 			BoldInfoStyle.alignment = TextAnchor.MiddleCenter;
 
+			ToolbarMainTitle = new GUIStyle( MainSkin.customStyles[ (int)CustomStyle.MainCanvasTitle ] );
 			Separator = new GUIStyle( MainSkin.customStyles[ (int)CustomStyle.FlatBackground ] );
 			MiniButtonTopLeft = new GUIStyle( MainSkin.customStyles[ (int)CustomStyle.MiniButtonTopLeft ] );
 			MiniButtonTopMid = new GUIStyle( MainSkin.customStyles[ (int)CustomStyle.MiniButtonTopMid ] );
@@ -999,6 +1014,10 @@ namespace AmplifyShaderEditor
 			Textfield = new GUIStyle( GUI.skin.textField );
 			//ShaderIcon = EditorGUIUtility.IconContent( "Shader Icon" ).image;
 			//MaterialIcon = EditorGUIUtility.IconContent( "Material Icon" ).image;
+
+			ConsoleLogLabel = new GUIStyle( GUI.skin.label );
+			ConsoleLogMessage = new GUIStyle( MainSkin.customStyles[ (int)CustomStyle.ConsoleLogMessage ] );
+			ConsoleLogCircle = new GUIStyle( MainSkin.customStyles[ (int)CustomStyle.ConsoleLogCircle ] );
 
 			NodeWindowOffSquare = GetCustomStyle( CustomStyle.NodeWindowOffSquare );
 			NodeHeaderSquare = GetCustomStyle( CustomStyle.NodeHeaderSquare );
@@ -1179,6 +1198,8 @@ namespace AmplifyShaderEditor
 			MiniSamplerButton.fontSize = (int)( 8 * drawInfo.InvertedZoom );
 
 			InternalDataOnPort.fontSize = (int)( 8 * drawInfo.InvertedZoom );
+			ToolbarMainTitle.padding.left = 0;
+			ToolbarMainTitle.padding.right = 0;
 
 			CheckNullMaterials();
 		}
@@ -1230,17 +1251,7 @@ namespace AmplifyShaderEditor
 
 		public static string FinalPrecisionWirePortToCgType( PrecisionType precisionType, WirePortDataType type )
 		{
-			PrecisionType finalPrecision = GetFinalPrecision( precisionType );
-			if( type == WirePortDataType.OBJECT )
-				return string.Empty;
-
-			if( type == WirePortDataType.INT )
-				return m_wirePortToCgType[ type ];
-
-			if( type == WirePortDataType.UINT )
-				return m_wirePortToCgType[ type ];
-
-			return string.Format( m_precisionWirePortToCgType[ type ], m_precisionTypeToCg[ finalPrecision ] );
+			return PrecisionWirePortToCgType( precisionType, type );
 		}
 
 		public static string PrecisionWirePortToCgType( PrecisionType precisionType, WirePortDataType type )
@@ -1314,8 +1325,8 @@ namespace AmplifyShaderEditor
 			{
 				return ( parameterName != null ) ? parameterName : value.ToString();
 			}
-
-			PrecisionType currentPrecision = GetFinalPrecision( nodePrecision );
+			
+			PrecisionType currentPrecision = nodePrecision;
 			string precisionStr = m_precisionTypeToCg[ currentPrecision ];
 			string newTypeStr = m_wirePortToCgType[ newType ];
 			newTypeStr = m_textInfo.ToTitleCase( newTypeStr );
@@ -1879,19 +1890,19 @@ namespace AmplifyShaderEditor
 
 		public static string InvalidParameter( ParentNode node )
 		{
-			ShowMessage( "Invalid entrance type on node" + node, MessageSeverity.Error );
+			ShowMessage( node.UniqueId, "Invalid entrance type on node" + node, MessageSeverity.Error );
 			return "0";
 		}
 
 		public static string NoConnection( ParentNode node )
 		{
-			ShowMessage( "No Input connection on node" + node, MessageSeverity.Error );
+			ShowMessage( node.UniqueId, "No Input connection on node" + node, MessageSeverity.Error );
 			return "0";
 		}
 
 		public static string UnknownError( ParentNode node )
 		{
-			ShowMessage( "Unknown error on node" + node, MessageSeverity.Error );
+			ShowMessage( node.UniqueId, "Unknown error on node" + node, MessageSeverity.Error );
 			return "0";
 		}
 
@@ -2132,38 +2143,37 @@ namespace AmplifyShaderEditor
 
 		public static bool DetectNodeLoopsFrom( ParentNode node, Dictionary<int, int> currentNodes )
 		{
-			if( currentNodes.ContainsKey( node.UniqueId ) )
-			{
-				currentNodes.Clear();
-				currentNodes = null;
-				return true;
-			}
-
-			currentNodes.Add( node.UniqueId, 1 );
-			bool foundLoop = false;
 			for( int i = 0; i < node.InputPorts.Count; i++ )
 			{
 				if( node.InputPorts[ i ].IsConnected )
 				{
 					ParentNode newNode = node.InputPorts[ i ].GetOutputNode();
-					if( newNode.InputPorts.Count > 0 )
-					{
-						Dictionary<int, int> newDict = new Dictionary<int, int>();
-						foreach( KeyValuePair<int, int> entry in currentNodes )
-						{
-							newDict.Add( entry.Key, entry.Value );
-						}
-						foundLoop = foundLoop || DetectNodeLoopsFrom( newNode, newDict );
-						if( foundLoop )
-							break;
-					}
+					if( !currentNodes.ContainsKey( newNode.UniqueId ) )
+						RecursiveNodeFill( newNode, currentNodes );
 				}
 			}
 
+			bool found = currentNodes.ContainsKey( node.UniqueId );
 			currentNodes.Clear();
 			currentNodes = null;
 
-			return foundLoop;
+			return found;
+		}
+
+		private static void RecursiveNodeFill( ParentNode node, Dictionary<int, int> currentNodes )
+		{
+			if( !currentNodes.ContainsKey( node.UniqueId ) )
+				currentNodes.Add( node.UniqueId, 1 );
+
+			for( int i = 0; i < node.InputPorts.Count; i++ )
+			{
+				if( node.InputPorts[ i ].IsConnected )
+				{
+					ParentNode newNode = node.InputPorts[ i ].GetOutputNode();
+					if( !currentNodes.ContainsKey( newNode.UniqueId ) )
+						RecursiveNodeFill( newNode, currentNodes );
+				}
+			}
 		}
 
 		public static ParentNode CreateNode( System.Type type, bool registerUndo, Vector2 pos, int nodeId = -1, bool addLast = true )
@@ -2180,6 +2190,14 @@ namespace AmplifyShaderEditor
 			if( CurrentWindow != null )
 			{
 				CurrentWindow.CurrentGraph.DestroyNode( nodeId );
+			}
+		}
+
+		public static void ShowMessage( int ownerId, string message, MessageSeverity severity = MessageSeverity.Normal, bool registerTimestamp = true )
+		{
+			if( CurrentWindow != null )
+			{
+				CurrentWindow.ShowMessage( ownerId, message, severity, registerTimestamp );
 			}
 		}
 
@@ -2208,6 +2226,16 @@ namespace AmplifyShaderEditor
 			}
 			return null;
 		}
+
+		public static PropertyNode GetInternalTemplateNode( string propertyName )
+		{
+			if( CurrentWindow != null )
+			{
+				return CurrentWindow.CurrentGraph.GetInternalTemplateNode( propertyName );
+			}
+			return null;
+		}
+
 
 		public static void DeleteConnection( bool isInput, int nodeId, int portId, bool registerOnLog, bool propagateCallback )
 		{
@@ -2348,6 +2376,38 @@ namespace AmplifyShaderEditor
 				return CurrentWindow.DuplicatePrevBufferInstance.CheckUniformNameOwner( name );
 			}
 			return -1;
+		}
+
+		public static string GetUniqueUniformName( string name )
+		{
+			int num = 0;
+			Regex reg = new Regex( @"([0-9]+)$" );
+			Match match = reg.Match( name );
+			if( match.Success )
+			{
+				string s = match.Groups[ 1 ].Captures[ 0 ].Value;
+				num = int.Parse( s );
+				name = name.Replace( s, "" );
+			}
+
+			for( int i = num + 1; i < 1000; i++ )
+			{
+				string testName = name + i;
+
+				if( CheckInvalidUniformName( testName ) )
+				{
+					continue;
+				}
+
+				if( CurrentWindow != null )
+				{
+					if( CurrentWindow.DuplicatePrevBufferInstance.IsUniformNameAvailable( testName ) )
+					{
+						return testName;
+					}
+				}
+			}
+			return name;
 		}
 
 		public static bool RegisterLocalVariableName( int nodeId, string name )
@@ -2668,12 +2728,12 @@ namespace AmplifyShaderEditor
 		{
 			string inPortName = inPort.Name.Equals( Constants.EmptyPortValue ) ? inPort.PortId.ToString() : inPort.Name;
 			string outPortName = outPort.Name.Equals( Constants.EmptyPortValue ) ? outPort.PortId.ToString() : outPort.Name;
-			ShowMessage( string.Format( ( fromInput ? IncorrectInputConnectionErrorMsg : IncorrectOutputConnectionErrorMsg ), inPortName, inNode.Attributes.Name, inPort.DataType, outPort.DataType, outPortName, outNode.Attributes.Name ) );
+			ShowMessage( outNode.UniqueId, string.Format( ( fromInput ? IncorrectInputConnectionErrorMsg : IncorrectOutputConnectionErrorMsg ), inPortName, inNode.Attributes.Name, inPort.DataType, outPort.DataType, outPortName, outNode.Attributes.Name ) );
 		}
 
 		public static void ShowNoVertexModeNodeMessage( ParentNode node )
 		{
-			ShowMessage( string.Format( NoVertexModeNodeWarning, node.Attributes.Name ), MessageSeverity.Warning );
+			ShowMessage( node.UniqueId, string.Format( NoVertexModeNodeWarning, node.Attributes.Name ), MessageSeverity.Warning );
 		}
 
 		public static int TotalExampleMaterials { get { return m_exampleMaterialIDs.Count; } }

@@ -2,19 +2,47 @@
 // Copyright (c) Amplify Creations, Lda <info@amplify.pt>
 
 using UnityEditor;
+using UnityEngine;
 
 namespace AmplifyShaderEditor
 {
 	public sealed class TemplatePostProcessor : AssetPostprocessor
 	{
+		public static TemplatesManager DummyManager;
+		public static void Destroy()
+		{
+			if( DummyManager != null )
+			{
+				DummyManager.Destroy();
+				ScriptableObject.DestroyImmediate( DummyManager );
+				DummyManager = null;
+			}
+		}
+
 		static void OnPostprocessAllAssets( string[] importedAssets, string[] deletedAssets, string[] movedAssets, string[] movedFromAssetPaths )
 		{
+			TemplatesManager templatesManager;
+			bool firstTimeDummyFlag = false;
 			if( UIUtils.CurrentWindow == null )
-				return;
+			{
+				if( DummyManager == null )
+				{
+					DummyManager = ScriptableObject.CreateInstance<TemplatesManager>();
+					DummyManager.hideFlags = HideFlags.HideAndDontSave;
+					firstTimeDummyFlag = true;
+				}
+				templatesManager = DummyManager;
+			}
+			else
+			{
+				Destroy();
+				templatesManager = UIUtils.CurrentWindow.TemplatesManagerInstance;
+			}
 
-			TemplatesManager templatesManager = UIUtils.CurrentWindow.TemplatesManagerInstance;
 			if( templatesManager == null )
+			{
 				return;
+			}
 
 			if( !templatesManager.Initialized )
 			{
@@ -30,7 +58,7 @@ namespace AmplifyShaderEditor
 					TemplateDataParent templateData = templatesManager.GetTemplate( guid );
 					if( templateData != null )
 					{
-						refreshMenuItems = templateData.Reload() || refreshMenuItems;
+						refreshMenuItems = templateData.Reload() || refreshMenuItems || firstTimeDummyFlag;
 						int windowCount = IOUtils.AllOpenedWindows.Count;
 						for( int windowIdx = 0; windowIdx < windowCount; windowIdx++ )
 						{

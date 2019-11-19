@@ -52,7 +52,13 @@ namespace AmplifyShaderEditor
 			switch( m_specialTag )
 			{
 				case TemplateSpecialTags.RenderType:
-				m_renderType = TemplateHelperFunctions.StringToRenderType[ value[ 0 ] ];
+				{
+					if( !TemplateHelperFunctions.StringToRenderType.TryGetValue( value[ 0 ], out m_renderType ) )
+					{
+						m_renderType = RenderType.Custom;
+						TagValue = value[ 0 ];
+					}
+				}
 				break;
 				case TemplateSpecialTags.Queue:
 				{
@@ -94,13 +100,15 @@ namespace AmplifyShaderEditor
 			}
 		}
 
-
 		void CheckSpecialTag()
 		{
 			if( TagName.Equals( Constants.RenderTypeHelperStr ) )
 			{
 				m_specialTag = TemplateSpecialTags.RenderType;
-				m_renderType = TemplateHelperFunctions.StringToRenderType[ TagValue ];
+				if( !TemplateHelperFunctions.StringToRenderType.TryGetValue( TagValue, out m_renderType ))
+				{
+					m_renderType = RenderType.Custom;
+				}
 			}
 			else if( TagName.Equals( Constants.RenderQueueHelperStr ) )
 			{
@@ -139,7 +147,10 @@ namespace AmplifyShaderEditor
 				{
 					case TemplateSpecialTags.RenderType:
 					{
-						m_renderType = (RenderType)Enum.Parse( typeof( RenderType ), TagValue );
+						if( !TemplateHelperFunctions.StringToRenderType.TryGetValue( TagValue, out m_renderType ) )
+						{
+							m_renderType = RenderType.Custom;
+						}
 					}
 					break;
 					case TemplateSpecialTags.Queue:
@@ -177,7 +188,7 @@ namespace AmplifyShaderEditor
 			{
 				case TemplateSpecialTags.RenderType:
 				return TagName + IOUtils.VALUE_SEPARATOR +
-						TagValue + IOUtils.VALUE_SEPARATOR +
+						( RenderType != RenderType.Custom? RenderType.ToString(): TagValue ) + IOUtils.VALUE_SEPARATOR +
 						m_specialTag;
 				case TemplateSpecialTags.Queue:
 				return TagName + IOUtils.VALUE_SEPARATOR +
@@ -191,7 +202,15 @@ namespace AmplifyShaderEditor
 
 		public string GenerateTag()
 		{
-			return string.Format( TagFormat, TagName, TagValue );
+			switch( m_specialTag )
+			{
+				case TemplateSpecialTags.RenderType:
+				return string.Format( TagFormat, TagName, ( RenderType != RenderType.Custom ? RenderType.ToString() : TagValue ) );
+				case TemplateSpecialTags.Queue:
+				case TemplateSpecialTags.None:
+				default:
+				return string.Format( TagFormat, TagName, TagValue );
+			}
 		}
 
 		public void BuildQueueTagValue()
@@ -217,7 +236,8 @@ namespace AmplifyShaderEditor
 				{
 					case TemplateSpecialTags.RenderType:
 					{
-						TagValue = m_renderType.ToString();
+						//if( m_renderType != RenderType.Custom )
+						//	TagValue = m_renderType.ToString();
 					}
 					break;
 					case TemplateSpecialTags.Queue:
@@ -235,7 +255,8 @@ namespace AmplifyShaderEditor
 			set
 			{
 				m_renderType = value;
-				TagValue = value.ToString();
+				//if( m_renderType != RenderType.Custom )
+				//	TagValue = value.ToString();
 			}
 		}
 

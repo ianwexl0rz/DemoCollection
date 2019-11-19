@@ -23,7 +23,6 @@ namespace AmplifyShaderEditor
 			//m_defaultValue = new Matrix4x4();
 			//m_materialValue = new Matrix4x4();
 			m_drawPreview = false;
-			m_precisionString = UIUtils.FinalPrecisionWirePortToCgType( m_currentPrecisionType, m_outputPorts[ 0 ].DataType );
 		}
 
 		public override void CopyDefaultsToMaterial()
@@ -166,7 +165,7 @@ namespace AmplifyShaderEditor
 		public override string GenerateShaderForOutput( int outputId, ref MasterNodeDataCollector dataCollector, bool ignoreLocalvar )
 		{
 			base.GenerateShaderForOutput( outputId, ref dataCollector, ignoreLocalvar );
-			m_precisionString = UIUtils.FinalPrecisionWirePortToCgType( m_currentPrecisionType, m_outputPorts[ 0 ].DataType );
+			m_precisionString = UIUtils.PrecisionWirePortToCgType( CurrentPrecisionType, m_outputPorts[ 0 ].DataType );
 			if ( m_currentParameterType != PropertyType.Constant )
 				return PropertyData( dataCollector.PortCategory );
 

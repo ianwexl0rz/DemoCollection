@@ -1,4 +1,404 @@
 Release Notes:
+v1.7.2 rev 00:
+* Improvements:
+    * 'Toggle Switch' node now uses a ternary operator to prevent incorrect results on NaN inputs
+
+v1.7.1 rev 13:
+* Fixes:
+    * Fixed issue duplicating certain nodes
+
+v1.7.1 rev 12:
+* Fixes:
+    * Fixed issue when using more than one Octave on 'Voronoi' node
+    * Fixed issue on Motion Vectors pass over HD templates
+    * Fixed issue on generating incorrect keyword value on 'Static Switch' node using Reference Mode
+
+v1.7.1 rev 11:
+* Fixes:
+    * Fixed issue on registering/unregistering internal template generated nodes over the reorder node event
+    * Fixed multiple issues on 'Custom Expression' node
+    * Fixed issue on using 'Voronoi' node over shader functions
+
+v1.7.1 rev 09/10:
+* New Node:
+    * HD Emission
+
+* Fixes:
+    * Fixed issue when reading shader with missing shader function
+    * Fixed issue when duplicating property nodes on Fetch mode would reset property name
+    * Fixed issue on 'Parallax Occlusion Mapping' node incorrectly generating instanced _ST vars outside the CBuffer
+    * Fixed alpha cutoff issues on HD Lit templates v5.7.2 and v5.16.1
+    * Fixed issue on not declaring both BakedGI and BakedBackGI on Lit template
+    * Fixed issue on not setting some ports with graph data over templates
+
+* Improvements:
+    * Listing on nodes is now alphabetically ordered
+        * Get Local Var
+        * Grab Screen Color
+        * Static Switch
+        * Texture Array
+        * Texture Sample
+    * Node search bar text now takes property name and inspector name into account
+
+v1.7.1 rev 08:
+* Fixes:
+    * Fixed issue on 'Register Local Var' not allowing to reset name to loaded one
+    * Fixed Console Log issues with Personal Skin
+    * Fixed issue on overwriting Render Type custom values over a template(API)
+    * Fixed issue on local variables generation over the 'Unpack Scale Normal' node 
+    * Fixed issue with setting special tags over template options (API)
+
+* Improvements:
+    * Added more flexibility to 'Static Switch' node
+        * Can have empty property names when Material Toggle is toggled off
+        * It no longer modifies keywords ( setting to upper, adding _ON, etc ) if Material Toggle is toggled off
+        * Tweaked visible options when on Fetch mode
+    * Added hot-fix to 2019.2 Lit template in order to generate shaders without errors when used on HDRP v7.x.x
+
+v1.7.1 rev 07:
+* New Shader Functions:
+    * Derive Tangent Basis
+    * Height-based Blending
+
+* Improvements:
+    * Clicking on node specific messages over ASE log now jumps to which node generated it
+    * Changing ports types to matrix now sets the identity matrix into its internal data
+        * Relevant on nodes like 'Custom Expression'
+
+* Fixes:
+    * Fixed issue on incorrectly adding 0 to W channel when creating position vectors
+    * Fixed issue on not auto-importing templates correctly over Unity 2019
+    * Fixed multiple issues regarding shader function previews
+    * Fixed compilation issue when using unreferenced 'Get Local Var' nodes
+    * Fixed issue on changing 'Static Switch' name not being reflected on referenced list
+    * Fixed issues with 'Texture Coordinates' and 'Texture Sampler' nodes with 'Relay' or 'Wire' nodes on Tex port
+
+v1.7.1 rev 06:
+* Fixes:
+    * Fixed new and old shader templates for HDRP 6.9.X so the diffusion profile value is passed around correctly
+    * Fixed issue on 'Texture Coordinates' node not correctly swizzling data on template vertex functions
+    * Prevented Additional Directives reference lost when saving certain shader functions
+
+v1.7.1 rev 05:
+* Fixes:
+    * Fixed issue on getting incorrect inline properties on templates
+
+v1.7.1 rev 04:
+* Fixes:
+    * Fixed 'Diffusion Profile' node issues on SRP v6.9.X
+    * Fixed multiple issues regarding shader functions Additional Directives usage
+
+v1.7.1 rev 02/03:
+* Fixes:
+    * Fixed issue both on creating duplicate texture ST constants and being declared out of the cbuffer
+    * Fixed possible issues on 'Texture Transform' node over SRP
+    * Fixed baked lighmap issues over Lightweight/Universal PBR templates
+    * Fixed SimpleTerrain sample water shader which was broken due to recent 'Screen Depth' node changes
+    * Fixed compilation errors on 'Voronoi' node
+    * Fixed issue on registering duplicate instanced variables which are already on template as non-instanced
+
+v1.7.1 rev 01:
+* Fixes:
+    * Removed unused variable warning
+    * Broadened up Shader Function versions to apply serialized fix on Origin field
+
+v1.7.1 rev 00:
+* Fixes:
+    * Fixed issue with Face related nodes not working in HDRP v6.9.0 due to bad version handling
+    * Fixed retro-compatibility issue with incorrectly reading Shader Function Custom Directives as Native
+
+* Improvements:
+    * Tweaked 'Get Local Var' node message thrown when no Reference is selected
+    * Natives UI listing is now locked on Unity 2019.3 to prevent incorrect behaviors on new UI system
+
+v1.7.0 rev 09:
+* Improvements:
+    * Changing Variable Mode from Fetch to Create no longer rewrites property name on Property Nodes
+    * Improved property renaming when duplicating Property nodes
+    * Added property name to items on Material Properties list 
+        * Can be clicked to focus on specified node
+
+v1.7.0 rev 08:
+* Fixes:
+    * Fixed issue on HD Lit Diffusion Profile port being incorrectly set as type Int
+        * Multi Pass Master Nodes no longer reads/writes input port meta data as this must always be given by template
+
+v1.7.0 rev 07:
+* Fixes:
+    * Fixed issue with the 'Diffusion Profile' node not updating from and to the material inspector
+
+* Improvements:
+    * Added new internal console inside shader canvas to more easily check ASE related messages
+
+v1.7.0 rev 06:
+* New Shader Function:
+    * Non Stereo Screen Pos
+        * Converts a VR screen position into a non-VR one
+
+* Fixes:
+    * Fixed issue with both 'Gradient' and 'Gradient Sample' nodes on Lightweight/Universal 
+    * Fixed 'Voronoi' node issue over templates
+    * 'Reconstruct World Position From Depth' now correctly works on VR
+
+* Improvements
+    * Tweaked Lightweight and Universal templates
+        * Pragma tag now after native includes
+        * Removed unused _MainTex_ST variable from Meta pass
+    * Shader Properties can now be fully rewritten through template options(API)
+    * Added Vulkan to Standard Surface Rendering Platforms
+
+v1.7.0 rev 05:
+* New Templates:
+    * Added templates for Universal Rendering Pipeline
+        * Packed inside AmplifyShaderEditor\Plugins\EditorResources\Templates\USRPTemplates.unitypackage
+
+* Fixes:
+    * Fixed multiple issues with Lit HDRP template
+    * Fixed issue on not taking the 'Int' node as SRP compatible
+    * Fixed both 'Transform Direction' and 'Transform Position' nodes issues regarding Tangent space
+    * Fixed multiple issues regarding template options
+    * Fixed issue on incorrect reading over Depth Offset values from shader
+    * Minor fix on templates post-processor to prevent null pointer exceptions
+
+* Improvements: 
+    * Unity global variables used as inline properties on templates are now registered so they can be correctly maintained over the final shaders
+    * Added LOD Cross Fade into Lightweight RP templates
+    * Added Inherit type into precision popup and made sure most nodes can now compile with the proper precision type
+        * Some nodes have a specific precision on purpose
+    * Improved 'Diffusion Profile' node behavior
+        * Added material property attribute 
+        * Updated source code able to create profile properties in HDRP 7.X
+
+v1.7.0 rev 04:
+* Improvements:
+    * When switching between shader type the connections with the same port name are kept intact
+    * Custom inspector for SRP 7.X is now detected automatically and upgraded from previous versions
+    * Templates master nodes now display the shader name in their title for better consistency
+* Fixes:
+    * Fixed issue in SRP 7.X where certain auto defines were overriding the selected options
+    * Fixed issue in templates system where in certain situations defines would be set forever
+    * Fixed stencil options in HDRP 7.X
+    * Thickness port in HDRP 7.X is now always visible
+    * Some properties in HDRP 7.X are now override-able
+
+v1.7.0 rev 03:
+* Improvements:
+    * Added support for pragma options to the template system
+* Fixes:
+    * Fixed issue where dependent template options would be visible when it's dependency was off in some situations
+    * Fixed issue with wrong connection types on creation of new nodes when dragging from ports
+    * Fixed issue with detecting LOD parameter in templates
+
+v1.7.0 rev 02:
+* Fixes:
+    * Fixed issue when selecting a shader that contains errors in 2019.3 would generate inspector errors
+
+v1.7.0 rev 01:
+* Fixes:
+    * Fixed issue on incorrect initial node setup from previously saved options
+
+v1.7.0 rev 00:
+* New Node:
+    * Voronoi
+
+* Fixes:
+    * Fixed issue on all templates not being available to choose over the Creates > Amplify Shader menu
+    * Fixed issue on Unlit absolute mode
+    * Fixed issue on both Lightweight templates absolute mode
+    * Fixed issue on 'World Space View Dir' node preview
+    * Fixed blinking window when 'Add'or 'Mul' nodes are dynamically changing their input ports
+    * Fixed issue with detection loop function that was causing massive slow downs on node connection on big graphs
+    * Fixed multiple issues with new Lit template
+    * 'Face' and 'Switch By Face' now correctly work on the latest HDRP version
+    * Fixed multiple issue on latest HD Lit template
+    * Fixed issue when selecting shaders on Unity 2019.3
+    * Fixed incorrect local variable generation on multiple nodes over Standard Surface's Vertex ports
+
+* Improvements:
+    * Improved editor performance by only refreshing when needed and only updating previews that are necessary to update
+    * Texture array auto sorting on texture drop over Texture Array tool
+    * Directives can now be written both before or after (via mouse drag ) to native directives detected on template
+    * Added dropdown for custom editor in templates that contain the HD material inspector
+    * 'Depth Fade' and 'Screen Depth' can now be used on vertex shader
+    * Improved and optimized node search on context menu
+        * Node developers can now associate tags to their nodes
+    * Small improvement to shader function properties order when multiple shader functions are inside each other
+    * Improved 'Noise Generator' node
+        * Added new Gradient type
+        * Added new option to auto set noise generator values to a 0-1 range
+        * Added new scale input port to scale its Size input
+    * Extended Port options versatility when declared on SubShader (API)
+    * Shader Properties default values can now be set through the SetShaderProperty action (API)
+    * Refactored templates paths
+
+* Deprecated:
+    * Disabled ASE custom texture array inspector on Unity 2019 and above
+    * Marked old templates as deprecated
+        * These will be eliminated from the package on a future build
+
+v1.6.9 rev 02:
+* New Template:
+    * Re-designed a new HD Lit template for SRP v6 and above
+        * Compatible with Unity's default HD material inspector
+
+* Fixes:
+    * Fixed division by zero issues on 'Blend Operations' node
+    * Fixed VR stereo issue in Standard Surface custom shadow caster
+    * Fixed issue with reorderable properties in shader function being stuck when two or more of the same SF was used inside another one
+    * Fixed incorrect variable naming on certain operations over both 'Transform Position' and 'Transform Direction' nodes
+    * Fixed issue on Input Port internal wrapper creating float3x3 with float4x4 contents
+    * Minor tab fixing on Unlit template
+    * Fixed issue on HD templates Auto-Importer
+    * Fixed issue on not always capturing the template custom inspector correctly
+    * Fixed compatibility issue with 'Diffusion Profile' node on Unity 2019.3
+
+* Improvements:
+    * Added tag system to node search and improved how nodes are searched
+        * Now words don't have to be in the same order of the name to match
+    * Reactivated SRP Batcher compatibility
+        * Each UnityPerMaterial Cbuffer set in pass now contains all declared property variables
+
+v1.6.9 rev 01:
+* Improvements:
+    * Added support for HDRP v6xx over Unity 2019.2
+        * HDRP v5xx now set as legacy and moved into the SRP (Legacy) folder
+        * LWRP templates remain the same between v5 and v6
+    * 'Swizzle' node is now non-destructive when connecting data with less info than selected options
+
+v1.6.9 rev 00:
+* Fixes:
+    * Fixed 'Component Mask' node preview 
+
+v1.6.8 rev 07:
+* New Nodes:
+    * Gradient
+    * Gradient Sample
+
+* Fixes:
+    * Fixed nodes incorrectly moving when interacting with popup fields in recent Unity versions
+    * Fixed issue on incorrect size for vertex normal data on LWRP Unlit template
+
+* Improvements:
+    * Added Built-in Fog option to LWRP Unlit template
+
+v1.6.8 rev 06:
+* Fixes:
+    * Fixed issue on incorrectly selecting Shader Name textfield when opening an ASE shader
+    * Fixed issues on incorrect uv coordinates size over 'Grab Screen Color' node
+    * Fixed GPU instancing and vertex offset issues on all HDRP templates
+    * Fixed parse issues when capturing structs inside templates (API)
+    * Temporarily disabled SRP Batcher as it was not properly working
+
+v1.6.8 rev 05:
+* Fixes:
+    * 'Grab Screen Color' now prevents Unity macro inconsistent behavior between Unity versions
+
+v1.6.8 rev 04:
+* Fixes:
+    * Fixed issues regarding Diffusion Profile usage on HDRP
+
+v1.6.8 rev 03:
+* Fixes:
+    * 'Grab Screen Color' now prevents Unity macro inconsistent declaration ending between VR and non-VR compilation
+    * Preventing compilation errors related to GPU Instancing on SRP
+
+v1.6.8 rev 02:
+* Fixes:
+    * Added missing stereo config on LW Unlit template
+    * Fixed Blend Mode config on HD Lit template when choosing Opaque mode
+
+v1.6.8 rev 01:
+* Fixes:
+    * Fixed compilation issue with 'Grab Screen Color' node on VR
+    * Fixed issue on Shadow Caster pass over HD Lit template v5.16.1
+    * 'Grab Screen Color' node now takes VR into account on LWRP
+
+* Improvements:
+    * Share links now have permanent lifetime
+    * Added new Depth Offset option into HD Lit template v5.16.1
+
+v1.6.8 rev 00:
+* New features:
+    * Added Share button that uploads select data to the cloud for easy sharing
+    * Added Screenshot button that takes a screenshot of the whole graph and saves it to disk
+        * For now this is a Windows only feature
+
+* Fixes:
+    * Fixed issue on 'Toggle Switch' node registering a toggle drawer twice causing inspector warnings
+    * Fixed issue on not always capturing the Fallback library on templates
+    * Fixed both 'HSV to RBG' and 'RGB to HSV' node previews
+    * Fixed issue on sometimes losing directives info on Shader Functions after being moved into a different path
+    * Fixed issue on Shader Function being incorrectly loaded into a separate tab after being moved into a different path
+    * Fixed issue on certain Pass Options only being applied to main pass Master Node
+
+* Improvements:
+    * ASE now auto-imports SRP templates if they are installed via Package Manager
+        * It will also import correct templates in case of user switches between versions
+            * User still need to open the shaders and hit the Update button so they are compiled on the correct version
+    * Improved canvas buttons to better represent their purpose
+    * Improved PPS Template under Single Pass VR
+    * Mosaic Effect PPS sample now fully works across VR
+    * Set Port Name action can now be registered on Port options block(API)
+
+v1.6.7 rev 06:
+* Fixes:
+    * Fixed multiple issues on 'Custom Expression' node
+        * Fixed layout issue when writing input names
+        * Fixed issue on updating InOut/Out ports when reordering inputs
+        * Fixed custom loading issue on void Output or Call mode when no inputs are declared
+        * Fixed issue where user could set main output type as OBJECT type
+        * Fixed incorrect text replacement on Call mode code
+        * Fixed Custom Types not being correctly declared
+    * Fixed compilation issues both on HD Lit and PBR when WRITE_MSAA_DEPTH directive is used
+    * Possible fix on VR issue with Lightweight RP
+    * Possible fix on issue with Unlit template when using Single Pass Stereo VR
+    * Possible fix on issue with 'Grab Screen Color' node when using Single Pass Stereo VR
+
+* Improvements:
+    * Added Variable Mode to 'Grab Screen Color' node
+    * Added new Alpha port on 'Blend Operations' node to enable a more layered like behavior
+    * Added support to SRP 5.16.1
+
+v1.6.7 rev 05:
+* Fixes:
+    * Fixed issue with alpha cutoff on both HD Lit 5.7.2 and 5.13 templates
+
+* Improvements:
+    * Added new template option functionality to copy properties from sub shader module (API)
+
+v1.6.7 rev 04:
+* Fixes:
+    * Fixed issue on not taking variables declared on template into account when registering instanced variables
+
+v1.6.7 rev 03:
+* Fixes:
+    * Fixed issue on 'Static Switch' node when setting default value on Enum type
+    * Fixed issue on 'Triplanar Sampler' node incorrectly activating mid and bottom index ports
+    * Fixed normal map unpacking issues with Lightweight RP over mobile
+
+* Improvements:
+    * Adding INTERNALTESSPOS into template semantics to prevent user issues
+
+v1.6.7 rev 02:
+* Fixes:
+    * Fixed exposure issue on both diffuse and specular components over HDRP templates
+
+* New Templates:
+    * Adding specific templates for legacy HDRP v5.7.2
+
+v1.6.7 rev 01:
+* Fixes:
+    * Changed how depth fetch is done to prevent issues on single pass vr 
+    * Tweaked 'World Position' node preview shader to prevent issues over PS4
+    * Fixed issue on 'World to Object' node when used on templates
+    * Fixed 'Custom Expression' node issue with Auto-Register on shader functions
+
+* Improvements:
+    * Post-Processing Tool now works under a InvariantCulture to be region independent
+    * 'Static Switch' node now supports both shader_feature_local and multi_compile_local
+        * Only available on Unity 2019.1 and above 
+        * Activate the Is Local toggle over the node properties
+
 v1.6.7 rev 00:
 * New Sample:
     * Volumetric Pixelize by Raphael Ernaelsten

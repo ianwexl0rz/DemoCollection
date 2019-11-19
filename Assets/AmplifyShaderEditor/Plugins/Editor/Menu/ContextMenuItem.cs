@@ -12,6 +12,7 @@ namespace AmplifyShaderEditor
 		
 		private string m_paletteName;
 		private string m_name;
+		private string m_tags;
 		private string m_category;
 		private string m_description;
 		private System.Type m_type;
@@ -20,10 +21,12 @@ namespace AmplifyShaderEditor
 		private AmplifyShaderFunction m_function;
 		private NodeAttributes m_nodeAttributes;
 
-		public ContextMenuItem( NodeAttributes nodeAttributes, System.Type type, string name, string category, string description, AmplifyShaderFunction function, KeyCode shortcut )
+		public ContextMenuItem( NodeAttributes nodeAttributes, System.Type type, string name, string tags, string category, string description, AmplifyShaderFunction function, KeyCode shortcut )
 		{
 			m_nodeAttributes = nodeAttributes;
 			m_name = name;
+			m_tags = name + ( string.IsNullOrEmpty( tags ) ? "" : " " + tags );
+			m_tags = m_tags.ToLower();
 			m_nameWithShortcut = shortcut != KeyCode.None ? ( name + " [ " + UIUtils.KeyCodeToString( shortcut ) + " ]" ) : name;
 			m_paletteName = PALETTE_NAME_MOD_STR + m_name;
 			m_type = type;
@@ -55,6 +58,7 @@ namespace AmplifyShaderEditor
 
 		public string PaletteName { get { return m_paletteName; } }
 		public string Name { get { return m_name; } }
+		public string Tags { get { return m_tags; } }
 		public string NameWithShortcut { get { return m_nameWithShortcut; } }
 		public string Category { get { return m_category; } }
 		public string Description { get { return m_description; } }

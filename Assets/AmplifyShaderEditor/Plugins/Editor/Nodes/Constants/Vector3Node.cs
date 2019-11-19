@@ -30,8 +30,8 @@ namespace AmplifyShaderEditor
 			m_insideSize.Set( 50, 30 );
 			m_selectedLocation = PreviewLocation.BottomCenter;
 			AddOutputVectorPorts( WirePortDataType.FLOAT3, "XYZ" );
-			m_precisionString = UIUtils.FinalPrecisionWirePortToCgType( m_currentPrecisionType, m_outputPorts[ 0 ].DataType );
 			m_previewShaderGUID = "8a44d38f06246bf48944b3f314bc7920";
+			m_srpBatcherCompatible = true;
 		}
 
 		public override void CopyDefaultsToMaterial()
@@ -103,6 +103,7 @@ namespace AmplifyShaderEditor
 				}
 				if( EditorGUI.EndChangeCheck() )
 				{
+					PreviewIsDirty = true;
 					m_requireMaterialUpdate = m_materialMode;
 					BeginDelayedDirtyProperty();
 				}
@@ -195,7 +196,7 @@ namespace AmplifyShaderEditor
 		public override string GenerateShaderForOutput( int outputId, ref MasterNodeDataCollector dataCollector, bool ignoreLocalvar )
 		{
 			base.GenerateShaderForOutput( outputId, ref dataCollector, ignoreLocalvar );
-			m_precisionString = UIUtils.FinalPrecisionWirePortToCgType( m_currentPrecisionType, m_outputPorts[ 0 ].DataType );
+			m_precisionString = UIUtils.PrecisionWirePortToCgType( CurrentPrecisionType, m_outputPorts[ 0 ].DataType );
 
 			if( m_currentParameterType != PropertyType.Constant )
 				return GetOutputVectorItem( 0, outputId, PropertyData( dataCollector.PortCategory ) );
@@ -239,7 +240,7 @@ namespace AmplifyShaderEditor
 
 			if( result.Equals( string.Empty ) )
 			{
-				UIUtils.ShowMessage( "Vector3Node generating empty code", MessageSeverity.Warning );
+				UIUtils.ShowMessage( UniqueId, "Vector3Node generating empty code", MessageSeverity.Warning );
 			}
 			return result;
 		}

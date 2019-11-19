@@ -38,7 +38,7 @@ namespace AmplifyShaderEditor
 					default:
 					case WirePortDataType.OBJECT:
 					case WirePortDataType.INT:
-					case WirePortDataType.FLOAT: value = "0"; break;
+					case WirePortDataType.FLOAT: value = "(0)"; break;
 					case WirePortDataType.FLOAT2: value = "half2(0,0)"; break;
 					case WirePortDataType.FLOAT3: value = "half3(0,0,0)"; break;
 					case WirePortDataType.COLOR:

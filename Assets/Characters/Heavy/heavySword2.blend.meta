@@ -295,6 +295,11 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
+      name: Hair__heavy_culled_hair_psd
+    second: {fileID: 2100000, guid: e4701d53f1c6444f9a964b177852369c, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
       name: Material_001__sword_UV_psd
     second: {fileID: 2100000, guid: dba7050ff30c248d4badb6c2a85eff91, type: 2}
   - first:
@@ -366,7 +371,7 @@ ModelImporter:
       has translation animation that will be discarded.\n"
     animationRetargetingWarnings: 
     animationDoRetargetingWarnings: 0
-    importAnimatedCustomProperties: 0
+    importAnimatedCustomProperties: 1
     importConstraints: 1
     animationCompression: 3
     animationRotationError: 0.5

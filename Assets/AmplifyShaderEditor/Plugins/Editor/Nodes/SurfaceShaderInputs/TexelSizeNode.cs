@@ -127,7 +127,7 @@ namespace AmplifyShaderEditor
 			else
 			{
 				texelName = "_TexelSize";
-				UIUtils.ShowMessage( "Please specify a texture sample on the Texel Size node", MessageSeverity.Warning );
+				UIUtils.ShowMessage( UniqueId, "Please specify a texture sample on the Texel Size node", MessageSeverity.Warning );
 			}
 
 			dataCollector.AddToUniforms( UniqueId, "uniform float4 " + texelName + ";" );

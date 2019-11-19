@@ -17,7 +17,7 @@ namespace AmplifyShaderEditor
 
 		public override string GenerateShaderForOutput( int outputId, ref MasterNodeDataCollector dataCollector, bool ignoreLocalVar )
 		{
-			return GeneratorUtils.GenerateVertexTangentSign( ref dataCollector, UniqueId, m_currentPrecisionType ); ;
+			return GeneratorUtils.GenerateVertexTangentSign( ref dataCollector, UniqueId, CurrentPrecisionType ); ;
 		}
 	}
 }

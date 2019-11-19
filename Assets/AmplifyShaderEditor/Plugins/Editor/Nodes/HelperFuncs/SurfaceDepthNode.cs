@@ -81,12 +81,12 @@ namespace AmplifyShaderEditor
 					if( dataCollector.IsSRP )
 						instruction = "-TransformWorldToView(TransformObjectToWorld( " + varName + " )).z" + space;
 					string eyeVarName = "customEye" + OutputId;
-					dataCollector.TemplateDataCollectorInstance.RegisterCustomInterpolatedData( eyeVarName, WirePortDataType.FLOAT, m_currentPrecisionType, instruction );
+					dataCollector.TemplateDataCollectorInstance.RegisterCustomInterpolatedData( eyeVarName, WirePortDataType.FLOAT, CurrentPrecisionType, instruction );
 					return eyeVarName;
 				}
 				else
 				{
-					return dataCollector.TemplateDataCollectorInstance.GetEyeDepth( m_currentPrecisionType, true, MasterNodePortCategory.Fragment, m_viewSpaceInt );
+					return dataCollector.TemplateDataCollectorInstance.GetEyeDepth( CurrentPrecisionType, true, MasterNodePortCategory.Fragment, m_viewSpaceInt );
 				}
 			}
 
@@ -129,10 +129,10 @@ namespace AmplifyShaderEditor
 				}
 				else
 				{
-					string eyeDepth = GeneratorUtils.GenerateScreenDepthOnFrag( ref dataCollector, UniqueId, m_currentPrecisionType );
+					string eyeDepth = GeneratorUtils.GenerateScreenDepthOnFrag( ref dataCollector, UniqueId, CurrentPrecisionType );
 					if( m_viewSpaceInt == 1 )
 					{
-						dataCollector.AddLocalVariable( UniqueId, m_currentPrecisionType, WirePortDataType.FLOAT, m_vertexNameStr[ 1 ], eyeDepth + " * _ProjectionParams.w" );
+						dataCollector.AddLocalVariable( UniqueId, CurrentPrecisionType, WirePortDataType.FLOAT, m_vertexNameStr[ 1 ], eyeDepth + " * _ProjectionParams.w" );
 						return m_vertexNameStr[ 1 ];
 					}
 					else

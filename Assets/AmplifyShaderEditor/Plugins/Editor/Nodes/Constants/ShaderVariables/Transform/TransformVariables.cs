@@ -117,7 +117,7 @@ namespace AmplifyShaderEditor
 					case BuiltInShaderTransformTypes.UNITY_MATRIX_IT_MV:
 					default:
 					{
-						UIUtils.ShowMessage( "Matrix not declared natively on SRP. Must create it manually inside ASE" );
+						UIUtils.ShowMessage( UniqueId, "Matrix not declared natively on SRP. Must create it manually inside ASE" );
 						return "float4x4(" +
 								"1,0,0,0," +
 								"0,1,0,0," +
@@ -146,11 +146,11 @@ namespace AmplifyShaderEditor
 				switch( selectedTypeStr )
 				{
 					default: Debug.LogException( e );break;
-					case "UNITY_MATRIX_TEXTURE0":UIUtils.ShowMessage("Texture 0 matrix is no longer supported",MessageSeverity.Warning);break;
-					case "UNITY_MATRIX_TEXTURE1":UIUtils.ShowMessage("Texture 1 matrix is no longer supported",MessageSeverity.Warning);break;
-					case "UNITY_MATRIX_TEXTURE2":UIUtils.ShowMessage("Texture 2 matrix is no longer supported",MessageSeverity.Warning);break;
-					case "UNITY_MATRIX_TEXTURE3":UIUtils.ShowMessage("Texture 3 matrix is no longer supported",MessageSeverity.Warning); break;
-					case "unity_Scale": UIUtils.ShowMessage( "Scale matrix is no longer supported", MessageSeverity.Warning ); break;
+					case "UNITY_MATRIX_TEXTURE0":UIUtils.ShowMessage( UniqueId, "Texture 0 matrix is no longer supported",MessageSeverity.Warning);break;
+					case "UNITY_MATRIX_TEXTURE1":UIUtils.ShowMessage( UniqueId, "Texture 1 matrix is no longer supported",MessageSeverity.Warning);break;
+					case "UNITY_MATRIX_TEXTURE2":UIUtils.ShowMessage( UniqueId, "Texture 2 matrix is no longer supported",MessageSeverity.Warning);break;
+					case "UNITY_MATRIX_TEXTURE3":UIUtils.ShowMessage( UniqueId, "Texture 3 matrix is no longer supported",MessageSeverity.Warning); break;
+					case "unity_Scale": UIUtils.ShowMessage( UniqueId, "Scale matrix is no longer supported", MessageSeverity.Warning ); break;
 				}
 			}
 

@@ -8,7 +8,7 @@ using UnityEditor;
 namespace AmplifyShaderEditor
 {
 	[Serializable]
-	[NodeAttributes( "Vertex TexCoord", "Vertex Data", "Vertex texture coordinates, can be used in both local vertex offset and fragment outputs" )]
+	[NodeAttributes( "Vertex TexCoord", "Vertex Data", "Vertex texture coordinates, can be used in both local vertex offset and fragment outputs", tags: "uv" )]
 	public sealed class TexCoordVertexDataNode : VertexDataNode
 	{
 		[SerializeField]
@@ -62,7 +62,7 @@ namespace AmplifyShaderEditor
 				if( EditorGUI.EndChangeCheck() )
 				{
 					UpdateOutput();
-					m_dropdownEditing = false;
+					DropdownEditing = false;
 				}
 			}
 		}

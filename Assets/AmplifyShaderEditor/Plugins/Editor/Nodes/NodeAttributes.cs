@@ -34,7 +34,8 @@ namespace AmplifyShaderEditor
 		public int NodeAvailabilityFlags;// used to define where this node can be used 
 		private string m_nodeUrl;
 		public string Community;
-		public NodeAttributes( string name, string category, string description, System.Type castType = null, KeyCode shortcutKey = KeyCode.None, bool available = true, bool deprecated = false, string deprecatedAlternative = null, System.Type deprecatedAlternativeType = null, string community = null, string customCategoryColor = null, int sortOrderPriority = -1, int nodeAvailabilityFlags = int.MaxValue )
+		public string Tags;
+		public NodeAttributes( string name, string category, string description, System.Type castType = null, KeyCode shortcutKey = KeyCode.None, bool available = true, bool deprecated = false, string deprecatedAlternative = null, System.Type deprecatedAlternativeType = null, string community = null, string customCategoryColor = null, int sortOrderPriority = -1, int nodeAvailabilityFlags = int.MaxValue, string tags = null )
 		{
 			Name = name;
 			Description = description;
@@ -58,6 +59,9 @@ namespace AmplifyShaderEditor
 			DeprecatedAlternativeType = deprecatedAlternativeType;
 			SortOrderPriority = sortOrderPriority;
 			NodeAvailabilityFlags = nodeAvailabilityFlags;
+			Tags = tags;
+			if( string.IsNullOrEmpty( tags ) )
+				Tags = string.Empty;
 			//m_nodeUrl = ( FromCommunity ? Constants.CommunityNodeCommonUrl : Constants.NodeCommonUrl ) + UIUtils.UrlReplaceInvalidStrings( Name );
 		}
 

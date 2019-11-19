@@ -30,7 +30,7 @@ namespace AmplifyShaderEditor
 
 	public class Clipboard
 	{
-		private const string ClipboardId = "AMPLIFY_CLIPBOARD_ID";
+		public const string ClipboardId = "AMPLIFY_CLIPBOARD_ID";
 		private readonly string[] ClipboardTagId = { "#CLIP_ITEM#" };
 		private List<ClipboardData> m_clipboardStrData;
 		private Dictionary<int, ClipboardData> m_clipboardAuxData;

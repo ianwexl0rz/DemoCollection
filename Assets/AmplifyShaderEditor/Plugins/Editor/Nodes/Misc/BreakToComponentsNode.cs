@@ -7,7 +7,7 @@ using UnityEngine;
 namespace AmplifyShaderEditor
 {
 	[Serializable]
-	[NodeAttributes( "Break To Components", "Vector Operators", "Breaks the input data into its individual components", null, KeyCode.B )]
+	[NodeAttributes( "Break To Components", "Vector Operators", "Breaks the input data into its individual components", null, KeyCode.B, tags: "split" )]
 	public sealed class BreakToComponentsNode : ParentNode
 	{
 		private WirePortDataType m_currentType = WirePortDataType.FLOAT;
@@ -32,7 +32,15 @@ namespace AmplifyShaderEditor
 
 		public override void RenderNodePreview()
 		{
+			//Runs at least one time
 			if( !m_initialized )
+			{
+				// nodes with no preview don't update at all
+				PreviewIsDirty = false;
+				return;
+			}
+
+			if( !PreviewIsDirty )
 				return;
 
 			SetPreviewInputs();
@@ -45,6 +53,8 @@ namespace AmplifyShaderEditor
 				Graphics.Blit( null, m_outputPorts[ i ].OutputPreviewTexture, PreviewMaterial, Mathf.Min( i, 3 ) );
 				RenderTexture.active = temp;
 			}
+
+			PreviewIsDirty = m_continuousPreviewRefresh;
 		}
 
 		public override RenderTexture PreviewTexture

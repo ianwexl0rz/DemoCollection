@@ -78,7 +78,8 @@ namespace AmplifyShaderEditor
 				break;
 			}
 
-			dataCollector.AddToLocalVariables( UniqueId, m_currentPrecisionType, m_outputPorts[ 0 ].DataType, localVarName, calculation );
+			dataCollector.AddLocalVariable( UniqueId, CurrentPrecisionType, m_outputPorts[ 0 ].DataType, localVarName, calculation );
+			//dataCollector.AddToLocalVariables( UniqueId, m_currentPrecisionType, m_outputPorts[ 0 ].DataType, localVarName, calculation );
 			return GetOutputVectorItem( 0, outputId, localVarName );
 		}
 

@@ -91,7 +91,7 @@ namespace AmplifyShaderEditor
 			if( dataCollector.PortCategory == MasterNodePortCategory.Vertex ||
 				dataCollector.PortCategory == MasterNodePortCategory.Tessellation )
 			{
-				UIUtils.ShowMessage( "Clip can only be used in fragment functions", MessageSeverity.Warning );
+				UIUtils.ShowMessage( UniqueId, "Clip can only be used in fragment functions", MessageSeverity.Warning );
 				return GenerateErrorValue();
 			}
 

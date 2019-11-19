@@ -89,6 +89,8 @@ namespace AmplifyShaderEditor
 			base.CommonInit( uniqueId );
 			AddInputPort( WirePortDataType.COLOR, false, "Source" );
 			AddInputPort( WirePortDataType.COLOR, false, "Destiny" );
+			AddInputPort( WirePortDataType.FLOAT, false,"Alpha" );
+			m_inputPorts[ 2 ].FloatInternalData = 1;
 			AddOutputPort( WirePortDataType.COLOR, Constants.EmptyPortValue );
 			m_inputPorts[ 0 ].AddPortForbiddenTypes(	WirePortDataType.FLOAT3x3,
 														WirePortDataType.FLOAT4x4,
@@ -106,6 +108,7 @@ namespace AmplifyShaderEditor
 			m_autoWrapProperties = true;
 			m_hasLeftDropdown = true;
 			SetAdditonalTitleText( string.Format( Constants.SubTitleTypeFormatStr, m_currentBlendOp ) );
+			m_useInternalPortData = true;
 			m_previewShaderGUID = "6d6b3518705b3ba49acdc6e18e480257";
 		}
 
@@ -115,6 +118,8 @@ namespace AmplifyShaderEditor
 
 			m_previewMaterialPassId = (int)m_currentBlendOp;
 			PreviewMaterial.SetInt( "_Sat", m_saturate ? 1 : 0 );
+			int lerpMode = ( m_inputPorts[ 2 ].IsConnected || m_inputPorts[ 2 ].FloatInternalData < 1 ) ? 1 : 0;
+			PreviewMaterial.SetInt( "_Lerp", lerpMode );
 		}
 
 		public override void AfterCommonInit()
@@ -149,6 +154,9 @@ namespace AmplifyShaderEditor
 
 		void UpdateConnection( int portId )
 		{
+			if( portId == 2 )
+				return;
+
 			m_inputPorts[ portId ].MatchPortToConnection();
 			int otherPortId = ( portId + 1 ) % 2;
 			if( m_inputPorts[ otherPortId ].IsConnected )
@@ -165,6 +173,9 @@ namespace AmplifyShaderEditor
 
 		void UpdateDisconnection( int portId )
 		{
+			if( portId == 2 )
+				return;
+
 			int otherPortId = ( portId + 1 ) % 2;
 			if( m_inputPorts[ otherPortId ].IsConnected )
 			{
@@ -209,11 +220,11 @@ namespace AmplifyShaderEditor
 				{
 					string xChannelName = varName + OutputId + "X";
 					string xChannelValue = string.Format( function, srcLocalVar + ".x", dstLocalVar + ".x" );
-					dataCollector.AddLocalVariable( UniqueId, m_currentPrecisionType, WirePortDataType.FLOAT, xChannelName, xChannelValue );
+					dataCollector.AddLocalVariable( UniqueId, CurrentPrecisionType, WirePortDataType.FLOAT, xChannelName, xChannelValue );
 
 					string yChannelName = varName + OutputId + "Y";
 					string yChannelValue = string.Format( function, srcLocalVar + ".y", dstLocalVar + ".y" );
-					dataCollector.AddLocalVariable( UniqueId, m_currentPrecisionType, WirePortDataType.FLOAT, yChannelName, yChannelValue );
+					dataCollector.AddLocalVariable( UniqueId, CurrentPrecisionType, WirePortDataType.FLOAT, yChannelName, yChannelValue );
 
 					return string.Format( "float2({0},{1})", xChannelName, yChannelName );
 				}
@@ -221,15 +232,15 @@ namespace AmplifyShaderEditor
 				{
 					string xChannelName = varName + OutputId + "X";
 					string xChannelValue = string.Format( function, srcLocalVar + ".x", dstLocalVar + ".x" );
-					dataCollector.AddLocalVariable( UniqueId, m_currentPrecisionType, WirePortDataType.FLOAT, xChannelName, xChannelValue );
+					dataCollector.AddLocalVariable( UniqueId, CurrentPrecisionType, WirePortDataType.FLOAT, xChannelName, xChannelValue );
 
 					string yChannelName = varName + OutputId + "Y";
 					string yChannelValue = string.Format( function, srcLocalVar + ".y", dstLocalVar + ".y" );
-					dataCollector.AddLocalVariable( UniqueId, m_currentPrecisionType, WirePortDataType.FLOAT, yChannelName, yChannelValue );
+					dataCollector.AddLocalVariable( UniqueId, CurrentPrecisionType, WirePortDataType.FLOAT, yChannelName, yChannelValue );
 
 					string zChannelName = varName + OutputId + "Z";
 					string zChannelValue = string.Format( function, srcLocalVar + ".z", dstLocalVar + ".z" );
-					dataCollector.AddLocalVariable( UniqueId, m_currentPrecisionType, WirePortDataType.FLOAT, zChannelName, zChannelValue );
+					dataCollector.AddLocalVariable( UniqueId, CurrentPrecisionType, WirePortDataType.FLOAT, zChannelName, zChannelValue );
 
 					return string.Format( "float3({0},{1},{2})", xChannelName, yChannelName, zChannelName );
 				}
@@ -238,19 +249,19 @@ namespace AmplifyShaderEditor
 				{
 					string xChannelName = varName + OutputId + "X";
 					string xChannelValue = string.Format( function, srcLocalVar + ".x", dstLocalVar + ".x" );
-					dataCollector.AddLocalVariable( UniqueId, m_currentPrecisionType, WirePortDataType.FLOAT, xChannelName, xChannelValue );
+					dataCollector.AddLocalVariable( UniqueId, CurrentPrecisionType, WirePortDataType.FLOAT, xChannelName, xChannelValue );
 
 					string yChannelName = varName + OutputId + "Y";
 					string yChannelValue = string.Format( function, srcLocalVar + ".y", dstLocalVar + ".y" );
-					dataCollector.AddLocalVariable( UniqueId, m_currentPrecisionType, WirePortDataType.FLOAT, yChannelName, yChannelValue );
+					dataCollector.AddLocalVariable( UniqueId, CurrentPrecisionType, WirePortDataType.FLOAT, yChannelName, yChannelValue );
 
 					string zChannelName = varName + OutputId + "Z";
 					string zChannelValue = string.Format( function, srcLocalVar + ".z", dstLocalVar + ".z" );
-					dataCollector.AddLocalVariable( UniqueId, m_currentPrecisionType, WirePortDataType.FLOAT, zChannelName, zChannelValue );
+					dataCollector.AddLocalVariable( UniqueId, CurrentPrecisionType, WirePortDataType.FLOAT, zChannelName, zChannelValue );
 
 					string wChannelName = varName + OutputId + "W";
 					string wChannelValue = string.Format( function, srcLocalVar + ".w", dstLocalVar + ".w" );
-					dataCollector.AddLocalVariable( UniqueId, m_currentPrecisionType, WirePortDataType.FLOAT, wChannelName, wChannelValue );
+					dataCollector.AddLocalVariable( UniqueId, CurrentPrecisionType, WirePortDataType.FLOAT, wChannelName, wChannelValue );
 
 					return string.Format( "float4({0},{1},{2},{3})", xChannelName, yChannelName, zChannelName, wChannelName );
 				}
@@ -267,8 +278,8 @@ namespace AmplifyShaderEditor
 
 			string srcLocalVar = "blendOpSrc" + OutputId;
 			string dstLocalVar = "blendOpDest" + OutputId;
-			dataCollector.AddLocalVariable( UniqueId, UIUtils.FinalPrecisionWirePortToCgType( m_currentPrecisionType, m_mainDataType ) + " " + srcLocalVar, src + ";" );
-			dataCollector.AddLocalVariable( UniqueId, UIUtils.FinalPrecisionWirePortToCgType( m_currentPrecisionType, m_mainDataType ) + " " + dstLocalVar, dst + ";" );
+			dataCollector.AddLocalVariable( UniqueId, UIUtils.PrecisionWirePortToCgType( CurrentPrecisionType, m_mainDataType ) + " " + srcLocalVar, src + ";" );
+			dataCollector.AddLocalVariable( UniqueId, UIUtils.PrecisionWirePortToCgType( CurrentPrecisionType, m_mainDataType ) + " " + dstLocalVar, dst + ";" );
 
 			int currIndent = UIUtils.ShaderIndentLevel;
 			if( dataCollector.MasterNodeCategory == AvailableShaderTypes.Template )
@@ -286,12 +297,12 @@ namespace AmplifyShaderEditor
 			{
 				case BlendOps.ColorBurn:
 				{
-					result = "( 1.0 - ( ( 1.0 - " + dstLocalVar + ") / " + srcLocalVar + ") )";
+					result = string.Format( "( 1.0 - ( ( 1.0 - {0}) / max( {1}, 0.00001) ) )", dstLocalVar, srcLocalVar);
 				}
 				break;
 				case BlendOps.ColorDodge:
 				{
-					result = "( " + dstLocalVar + "/ ( 1.0 - " + srcLocalVar + " ) )";
+					result = string.Format(  "( {0}/ max( 1.0 - {1}, 0.00001 ) )", dstLocalVar, srcLocalVar );
 				}
 				break;
 				case BlendOps.Darken:
@@ -301,7 +312,7 @@ namespace AmplifyShaderEditor
 				break;
 				case BlendOps.Divide:
 				{
-					result = "( " + dstLocalVar + " / " + srcLocalVar + " )";
+					result = string.Format( "( {0} / max({1},0.00001) )", dstLocalVar, srcLocalVar );
 				}
 				break;
 				case BlendOps.Difference:
@@ -360,7 +371,8 @@ namespace AmplifyShaderEditor
 				break;
 				case BlendOps.Overlay:
 				{
-					result = "(( " + dstLocalVar + " > 0.5 ) ? ( 1.0 - ( 1.0 - 2.0 * ( " + dstLocalVar + " - 0.5 ) ) * ( 1.0 - " + srcLocalVar + " ) ) : ( 2.0 * " + dstLocalVar + " * " + srcLocalVar + " ) )";
+					//result = "(( " + dstLocalVar + " > 0.5 ) ? ( 1.0 - ( 1.0 - 2.0 * ( " + dstLocalVar + " - 0.5 ) ) * ( 1.0 - " + srcLocalVar + " ) ) : ( 2.0 * " + dstLocalVar + " * " + srcLocalVar + " ) )";
+					result = "(( " + dstLocalVar + " > 0.5 ) ? ( 1.0 - 2.0 * ( 1.0 - " + dstLocalVar + " ) * ( 1.0 - " + srcLocalVar + " ) ) : ( 2.0 * " + dstLocalVar + " * " + srcLocalVar + " ) )";
 					//dataCollector.AddFunction( ASEOverlayCall, UIUtils.ShaderIndentTabs + ASEOverlayFunc );
 					//result = CreateMultiChannel( ref dataCollector, ASEOverlayCall, srcLocalVar, dstLocalVar, "overlayBlend" );
 				}
@@ -384,7 +396,7 @@ namespace AmplifyShaderEditor
 				break;
 				case BlendOps.VividLight:
 				{
-					result = "(( " + srcLocalVar + " > 0.5 ) ? ( " + dstLocalVar + " / ( ( 1.0 - " + srcLocalVar + " ) * 2.0 ) ) : ( 1.0 - ( ( ( 1.0 - " + dstLocalVar + " ) * 0.5 ) / " + srcLocalVar + " ) ) )";
+					result = string.Format( "(( {0} > 0.5 ) ? ( {1} / max( ( 1.0 - {0} ) * 2.0 ,0.00001) ) : ( 1.0 - ( ( ( 1.0 - {1} ) * 0.5 ) / max( {0},0.00001) ) ) )", srcLocalVar, dstLocalVar);
 					//dataCollector.AddFunction( ASEVividLightCall, UIUtils.ShaderIndentTabs + ASEVividLightFunc );
 					//result = CreateMultiChannel( ref dataCollector, ASEVividLightCall, srcLocalVar, dstLocalVar, "vividLightBlend" );
 				}
@@ -392,6 +404,14 @@ namespace AmplifyShaderEditor
 			}
 
 			UIUtils.ShaderIndentLevel = currIndent;
+			if( m_inputPorts[ 2 ].IsConnected || m_inputPorts[ 2 ].FloatInternalData < 1.0 )
+			{
+				string opacity = m_inputPorts[ 2 ].GeneratePortInstructions( ref dataCollector );
+				string lerpVar = "lerpBlendMode" + OutputId;
+				string lerpResult = string.Format( "lerp({0},{1},{2})", dstLocalVar, result, opacity );
+				dataCollector.AddLocalVariable( UniqueId, CurrentPrecisionType, m_outputPorts[ 0 ].DataType, lerpVar, lerpResult );
+				result = lerpVar;				
+			}
 
 			if( m_saturate )
 				result = "( saturate( " + result + " ))";

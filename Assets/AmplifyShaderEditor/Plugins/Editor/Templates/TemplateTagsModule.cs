@@ -14,6 +14,7 @@ namespace AmplifyShaderEditor
 		private const string QueueIndexStr = "Index";
 		private const string QueueLabelStr = "Queue";
 		private const string RenderTypeLabelStr = "Type";
+		private const string CustomRenderTypeLabelStr = "Custom";
 
 		private const float ShaderKeywordButtonLayoutWidth = 15;
 		private UndoParentNode m_currentOwner;
@@ -167,6 +168,10 @@ namespace AmplifyShaderEditor
 							case TemplateSpecialTags.RenderType:
 							{
 								m_availableTags[ i ].RenderType = (RenderType)m_currentOwner.EditorGUILayoutEnumPopup( RenderTypeLabelStr, m_availableTags[ i ].RenderType );
+								if( m_availableTags[ i ].RenderType == RenderType.Custom )
+								{
+									m_availableTags[ i ].TagValue = m_currentOwner.EditorGUILayoutTextField( CustomRenderTypeLabelStr, m_availableTags[ i ].TagValue );
+								}
 							}
 							break;
 							case TemplateSpecialTags.Queue:
@@ -271,11 +276,15 @@ namespace AmplifyShaderEditor
 			{
 				case TemplateSpecialTags.RenderType:
 				{
+					data.SpecialTag = TemplateSpecialTags.RenderType;
+					data.TagName = "RenderType";
 					data.RenderType = TemplateHelperFunctions.StringToRenderType[ item.ActionData ];
 				}
 				break;
 				case TemplateSpecialTags.Queue:
 				{
+					data.SpecialTag = TemplateSpecialTags.Queue;
+					data.TagName = "Queue";
 					data.RenderQueue = TemplateHelperFunctions.StringToRenderQueue[ item.ActionData ];
 					data.RenderQueueOffset = item.ActionDataIdx;
 					data.BuildQueueTagValue();

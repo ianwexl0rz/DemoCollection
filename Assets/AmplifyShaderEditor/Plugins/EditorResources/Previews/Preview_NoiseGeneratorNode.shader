@@ -3,9 +3,18 @@ Shader "Hidden/NoiseGeneratorNode"
 	Properties
 	{
 		_A ("_RGB", 2D) = "white" {}
+		_B ("_RGB", 2D) = "white" {}
+		_To01Range ("_To01Range", Float) = 0
 	}
+	
 	SubShader
 	{
+		CGINCLUDE
+		sampler2D _A;
+		sampler2D _B;
+		float _To01Range;
+		ENDCG
+
 		Pass //Simplex2D
 		{
 			CGPROGRAM
@@ -13,7 +22,6 @@ Shader "Hidden/NoiseGeneratorNode"
 			#pragma vertex vert_img
 			#pragma fragment frag
 
-			sampler2D _A;
 
 			float3 mod2D289 ( float3 x ) { return x - floor ( x * ( 1.0 / 289.0 ) ) * 289.0; }
 			float2 mod2D289 ( float2 x ) { return x - floor ( x * ( 1.0 / 289.0 ) ) * 289.0; }
@@ -46,7 +54,9 @@ Shader "Hidden/NoiseGeneratorNode"
 			float4 frag(v2f_img i) : SV_Target
 			{
 				float2 size = tex2D( _A, i.uv ).rg;
-				float noiseVal = snoise ( size );
+				float scale = tex2D (_B, i.uv).r;
+				float noiseVal = snoise ( size * scale );
+				noiseVal = (_To01Range > 0) ? noiseVal * 0.5 + 0.5 : noiseVal;
 				return float4( noiseVal.xxx, 1);
 			}
 			ENDCG
@@ -59,7 +69,6 @@ Shader "Hidden/NoiseGeneratorNode"
 			#pragma vertex vert_img
 			#pragma fragment frag
 
-			sampler2D _A;
 			float3 mod3D289 ( float3 x ) { return x - floor ( x / 289.0 ) * 289.0; }
 
 			float4 mod3D289 ( float4 x ) { return x - floor ( x / 289.0 ) * 289.0; }
@@ -114,12 +123,90 @@ Shader "Hidden/NoiseGeneratorNode"
 			float4 frag ( v2f_img i ) : SV_Target
 			{
 				float3 size = tex2D ( _A, i.uv ).rgb;
-				float noiseVal = snoise ( size );
+				float scale = tex2D (_B, i.uv).r;
+				float noiseVal = snoise ( size * scale );
+				noiseVal = (_To01Range > 0) ? noiseVal * 0.5 + 0.5 : noiseVal;
 				return float4( noiseVal.xxx, 1 );
 			}
 			ENDCG
 		}
 
+		Pass // Gradient - Shader Toy
+		{
+			CGPROGRAM
+			#include "UnityCG.cginc"
+			#pragma vertex vert_img
+			#pragma fragment frag
 
+			//https://www.shadertoy.com/view/XdXGW8
+			float2 GradientNoiseDir (float2 x)
+			{
+				const float2 k = float2(0.3183099, 0.3678794);
+				x = x * k + k.yx;
+				return -1.0 + 2.0 * frac (16.0 * k * frac (x.x * x.y * (x.x + x.y)));
+			}
+
+			float GradientNoise (float2 UV, float Scale)
+			{
+				float2 p = UV * Scale;
+				float2 i = floor (p);
+				float2 f = frac (p);
+				float2 u = f * f * (3.0 - 2.0 * f);
+				return lerp (lerp (dot (GradientNoiseDir (i + float2(0.0, 0.0)), f - float2(0.0, 0.0)),
+						dot (GradientNoiseDir (i + float2(1.0, 0.0)), f - float2(1.0, 0.0)), u.x),
+						lerp (dot (GradientNoiseDir (i + float2(0.0, 1.0)), f - float2(0.0, 1.0)),
+						dot (GradientNoiseDir (i + float2(1.0, 1.0)), f - float2(1.0, 1.0)), u.x), u.y);
+			}
+
+			float4 frag (v2f_img i) : SV_Target
+			{
+				float3 size = tex2D (_A, i.uv).rgb;
+				float scale = tex2D (_B, i.uv).r;
+				float noiseVal = GradientNoise (size , scale);
+				noiseVal = (_To01Range > 0) ? noiseVal * 0.5 + 0.5 : noiseVal;
+				return float4(noiseVal.xxx, 1);
+			}
+			ENDCG
+		}
+
+		Pass // Gradient - Unity
+		{
+			CGPROGRAM
+			#include "UnityCG.cginc"
+			#pragma vertex vert_img
+			#pragma fragment frag
+
+			float2 UnityGradientNoiseDir (float2 p)
+			{
+				p = fmod (p , 289);
+				float x = fmod ((34 * p.x + 1) * p.x , 289) + p.y;
+				x = fmod ((34 * x + 1) * x , 289);
+				x = frac (x / 41) * 2 - 1;
+				return normalize (float2(x - floor (x + 0.5), abs (x) - 0.5));
+			}
+
+			float UnityGradientNoise (float2 UV, float Scale)
+			{
+				float2 p = UV * Scale;
+				float2 ip = floor (p);
+				float2 fp = frac (p);
+				float d00 = dot (UnityGradientNoiseDir (ip), fp);
+				float d01 = dot (UnityGradientNoiseDir (ip + float2(0, 1)), fp - float2(0, 1));
+				float d10 = dot (UnityGradientNoiseDir (ip + float2(1, 0)), fp - float2(1, 0));
+				float d11 = dot (UnityGradientNoiseDir (ip + float2(1, 1)), fp - float2(1, 1));
+				fp = fp * fp * fp * (fp * (fp * 6 - 15) + 10);
+				return lerp (lerp (d00, d01, fp.y), lerp (d10, d11, fp.y), fp.x) + 0.5;
+			}
+
+			float4 frag (v2f_img i) : SV_Target
+			{
+				float3 size = tex2D (_A, i.uv).rgb;
+				float scale = tex2D (_B, i.uv).r;
+				float noiseVal = UnityGradientNoise(size , scale);
+				noiseVal = (_To01Range > 0) ? noiseVal * 0.5 + 0.5 : noiseVal;
+				return float4(noiseVal.xxx, 1);
+			}
+			ENDCG
+		}
 	}
 }

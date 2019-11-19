@@ -80,7 +80,7 @@ namespace AmplifyShaderEditor
 		[SerializeField]
 		private InlineProperty m_destFactorRGBInline = new InlineProperty();
 
-		// Alpha
+		//Alpha
 		[SerializeField]
 		private int m_currentAlphaIndex = 0;
 
@@ -718,7 +718,7 @@ namespace AmplifyShaderEditor
 			}
 		}
 
-		public int CurrentAlphaIndex { get { return m_currentAlphaIndex; } }
+		public int CurrentAlphaIndex { get { return m_currentAlphaIndex; } set { m_currentAlphaIndex = value; } }
 
 		public AvailableBlendFactor SourceFactorAlpha
 		{

@@ -526,13 +526,13 @@ namespace AmplifyShaderEditor
 		{
 			if( dataCollector.MasterNodeCategory != AvailableShaderTypes.Template )
 			{
-				UIUtils.ShowMessage( "Template Parameter node is only intended for templates use only" );
+				UIUtils.ShowMessage( UniqueId, "Template Parameter node is only intended for templates use only" );
 				return m_outputPorts[ outputId ].ErrorValue;
 			}
 
 			if( m_shaderProperties == null || m_shaderProperties.Count ==0  )
 			{
-				UIUtils.ShowMessage( "Attempting to fetch inexistant parameter on " + m_nodeAttribs.Name +" node");
+				UIUtils.ShowMessage( UniqueId, "Attempting to fetch inexistant parameter on " + m_nodeAttribs.Name +" node");
 				return m_outputPorts[ outputId ].ErrorValue;
 			}
 
@@ -544,7 +544,7 @@ namespace AmplifyShaderEditor
 					{
 						if( dataCollector.TemplateDataCollectorInstance.MultipassSubshaderIdx != SubShaderIdx )
 						{
-							UIUtils.ShowMessage( string.Format( "{0} is only intended for subshader {1}", m_propertyLabels[ m_currentPropertyIdx ], SubShaderIdx ) );
+							UIUtils.ShowMessage( UniqueId, string.Format( "{0} is only intended for subshader {1}", m_propertyLabels[ m_currentPropertyIdx ], SubShaderIdx ) );
 							return m_outputPorts[ outputId ].ErrorValue;
 						}
 					}
@@ -555,7 +555,7 @@ namespace AmplifyShaderEditor
 							dataCollector.TemplateDataCollectorInstance.MultipassPassIdx != PassIdx
 							)
 						{
-							UIUtils.ShowMessage( string.Format( "{0} is only intended for subshader {1} and pass {2}", m_propertyLabels[ m_currentPropertyIdx ], SubShaderIdx, PassIdx ) );
+							UIUtils.ShowMessage( UniqueId, string.Format( "{0} is only intended for subshader {1} and pass {2}", m_propertyLabels[ m_currentPropertyIdx ], SubShaderIdx, PassIdx ) );
 							return m_outputPorts[ outputId ].ErrorValue;
 						}
 					}

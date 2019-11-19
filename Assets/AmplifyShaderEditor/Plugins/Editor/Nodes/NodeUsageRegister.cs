@@ -25,6 +25,12 @@ namespace AmplifyShaderEditor
 	[Serializable]
 	public class NodeUsageRegister<T> where T : ParentNode
 	{
+		public delegate void ReorderEvent();
+		public event ReorderEvent OnReorderEventComplete;
+
+		[SerializeField]
+		public bool ReorderOnChange = false;
+
 		// Sampler Nodes registry
 		[SerializeField]
 		private List<T> m_nodes;
@@ -71,6 +77,7 @@ namespace AmplifyShaderEditor
 					Undo.RegisterCompleteObjectUndo( m_containerGraph, Constants.UndoRegisterNodeId );
 				}
 				m_nodes.Add( node );
+				ReorderNodes();
 				UpdateNodeArr();
 				return m_nodes.Count - 1;
 			}
@@ -85,14 +92,6 @@ namespace AmplifyShaderEditor
 		public bool HasNode( int uniqueId )
 		{
 			return m_nodes.FindIndex( x => x.UniqueId == uniqueId ) > -1 ? true : false;
-			//int count = m_nodes.Count;
-			//for( int i = 0; i < count; i++ )
-			//{
-			//	if( m_nodes[ i ].UniqueId == uniqueId )
-			//		return true;
-
-			//}
-			//return false;
 		}
 
 		public void RemoveNode( T node )
@@ -109,7 +108,20 @@ namespace AmplifyShaderEditor
 				}
 
 				m_nodes.Remove( node );
+				ReorderNodes();
 				UpdateNodeArr();
+			}
+		}
+
+		public void ReorderNodes()
+		{
+			if( ReorderOnChange )
+			{
+				m_nodes.Sort( ( x, y ) => ( x.DataToArray.CompareTo( y.DataToArray ) ) );
+				if( OnReorderEventComplete != null )
+				{
+					OnReorderEventComplete();
+				}
 			}
 		}
 
@@ -151,35 +163,24 @@ namespace AmplifyShaderEditor
 		public int GetNodeRegisterIdx( int uniqueId )
 		{
 			return m_nodes.FindIndex( x => x.UniqueId == uniqueId );
-
-			//int count = m_nodes.Count;
-			//for( int i = 0; i < count; i++ )
-			//{
-			//	if( m_nodes[ i ].UniqueId == uniqueId )
-			//	{
-			//		return i;
-			//	}
-			//}
-			//return -1;
 		}
 
 		public void UpdateDataOnNode( int uniqueId, string data )
 		{
-			int index = m_nodes.FindIndex( x => x.UniqueId == uniqueId );
-			if( index > -1 )
+			if( ReorderOnChange )
 			{
-				m_nodesArr[ index ] = data;
-				m_nodeIDs[ index ] = uniqueId;
+				ReorderNodes();
+				UpdateNodeArr();
 			}
-			//int count = m_nodes.Count;
-			//for( int i = 0; i < count; i++ )
-			//{
-			//	if( m_nodes[ i ].UniqueId == uniqueId )
-			//	{
-			//		m_nodesArr[ i ] = data;
-			//		m_nodeIDs[ i ] = uniqueId;
-			//	}
-			//}
+			else
+			{
+				int index = m_nodes.FindIndex( x => x.UniqueId == uniqueId );
+				if( index > -1 )
+				{
+					m_nodesArr[ index ] = data;
+					m_nodeIDs[ index ] = uniqueId;
+				}
+			}
 		}
 
 		public void Dump()

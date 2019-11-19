@@ -23,9 +23,6 @@ namespace AmplifyShaderEditor
 
 		public override string GenerateShaderForOutput( int outputId, ref MasterNodeDataCollector dataCollector, bool ignoreLocalVar )
 		{
-			//Forcing world pos into float precision because positions shouldn't use fixed
-			m_currentPrecisionType = PrecisionType.Float;
-
 			if ( dataCollector.IsTemplate )
 			{
 				string varName = dataCollector.TemplateDataCollectorInstance.GetWorldPos();

@@ -48,7 +48,7 @@ namespace AmplifyShaderEditor
 			m_isMainOutputNode = false;
 			m_connStatus = NodeConnectionStatus.Connected;
 			m_activeType = GetType();
-			m_currentPrecisionType = PrecisionType.Float;
+			m_currentPrecisionType = PrecisionType.Inherit;
 			m_textLabelWidth = 100;
 			m_autoWrapProperties = true;
 			AddInputPort( WirePortDataType.FLOAT, false, "  " );

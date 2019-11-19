@@ -34,7 +34,6 @@ namespace AmplifyShaderEditor
 			m_currentInput = SurfaceInputs.WORLD_NORMAL;
 			InitialSetup();
 			//UIUtils.AddNormalDependentCount();
-			m_precisionString = UIUtils.PrecisionWirePortToCgType( m_currentPrecisionType, WirePortDataType.FLOAT3 );
 		}
 
 		//public override void Destroy()
@@ -55,7 +54,7 @@ namespace AmplifyShaderEditor
 			{
 				if ( m_addInstruction )
 				{
-					string precision = UIUtils.FinalPrecisionWirePortToCgType( m_currentPrecisionType, WirePortDataType.FLOAT3 );
+					string precision = UIUtils.PrecisionWirePortToCgType( CurrentPrecisionType, WirePortDataType.FLOAT3 );
 					dataCollector.AddVertexInstruction( precision + " worldNormal = UnityObjectToWorldNormal(" + Constants.VertexShaderInputStr + ".normal)", UniqueId );
 					m_addInstruction = false;
 				}
@@ -64,12 +63,12 @@ namespace AmplifyShaderEditor
 			}
 			else
 			{
-				dataCollector.AddToInput( UniqueId, SurfaceInputs.WORLD_NORMAL, m_currentPrecisionType );
+				dataCollector.AddToInput( UniqueId, SurfaceInputs.WORLD_NORMAL, CurrentPrecisionType );
 				dataCollector.AddToInput( UniqueId, SurfaceInputs.INTERNALDATA, addSemiColon: false );
 				if ( dataCollector.PortCategory != MasterNodePortCategory.Debug && m_perPixel && dataCollector.DirtyNormal )
 				{
 					//string result = "WorldNormalVector( " + Constants.InputVarStr + " , float3( 0,0,1 ))";
-					m_precisionString = UIUtils.PrecisionWirePortToCgType( m_currentPrecisionType, WirePortDataType.FLOAT3 );
+					m_precisionString = UIUtils.PrecisionWirePortToCgType( CurrentPrecisionType, WirePortDataType.FLOAT3 );
 					string result = string.Format( Constants.WorldNormalLocalDecStr, m_precisionString );
 					int count = 0;
 					for ( int i = 0; i < m_outputPorts.Count; i++ )
@@ -89,7 +88,7 @@ namespace AmplifyShaderEditor
 					if ( count > 1 )
 					{
 						string localVarName = "WorldNormal" + OutputId;
-						dataCollector.AddToLocalVariables( UniqueId, m_currentPrecisionType, m_outputPorts[ 0 ].DataType, localVarName, result );
+						dataCollector.AddToLocalVariables( UniqueId, CurrentPrecisionType, m_outputPorts[ 0 ].DataType, localVarName, result );
 						return GetOutputVectorItem( 0, outputId, localVarName );
 					}
 					else

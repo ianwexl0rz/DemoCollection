@@ -96,7 +96,7 @@ namespace AmplifyShaderEditor
 			if( dataCollector.IsTemplate )
 			{
 				string varName = ( m_viewDirSpace == ViewSpace.World ) ? dataCollector.TemplateDataCollectorInstance.GetViewDir(true,MasterNodePortCategory.Fragment, m_safeNormalize?NormalizeType.Safe:NormalizeType.Regular) :
-																		dataCollector.TemplateDataCollectorInstance.GetTangentViewDir( m_currentPrecisionType ,true,MasterNodePortCategory.Fragment, m_safeNormalize ? NormalizeType.Safe : NormalizeType.Regular );
+																		dataCollector.TemplateDataCollectorInstance.GetTangentViewDir( CurrentPrecisionType, true,MasterNodePortCategory.Fragment, m_safeNormalize ? NormalizeType.Safe : NormalizeType.Regular );
 				return GetOutputVectorItem( 0, outputId, varName );
 			}
 
@@ -127,7 +127,7 @@ namespace AmplifyShaderEditor
 				{
 					if( m_safeNormalize )
 					{
-						dataCollector.AddToInput( UniqueId, SurfaceInputs.WORLD_NORMAL, m_currentPrecisionType );
+						dataCollector.AddToInput( UniqueId, SurfaceInputs.WORLD_NORMAL, CurrentPrecisionType );
 						dataCollector.AddToInput( UniqueId, SurfaceInputs.INTERNALDATA, addSemiColon: false );
 						dataCollector.ForceNormal = true;
 						dataCollector.AddToInput( UniqueId, SurfaceInputs.WORLD_POS );

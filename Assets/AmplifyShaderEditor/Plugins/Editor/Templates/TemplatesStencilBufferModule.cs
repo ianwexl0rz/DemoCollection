@@ -524,6 +524,10 @@ namespace AmplifyShaderEditor
 				m_reference.IntValue = value;
 				m_reference.Active = false;
 			}
+			get
+			{
+				return m_reference.IntValue;
+			}
 		}
 
 		public int ReadMaskValue
@@ -532,6 +536,10 @@ namespace AmplifyShaderEditor
 			{
 				m_readMask.IntValue = value;
 				m_reference.Active = false;
+			}
+			get
+			{
+				return m_readMask.IntValue;
 			}
 		}
 
@@ -542,6 +550,10 @@ namespace AmplifyShaderEditor
 				m_writeMask.IntValue = value;
 				m_writeMask.Active = false;
 			}
+			get
+			{
+				return m_writeMask.IntValue;
+			}
 		}
 
 		public int ComparisonFunctionIdxValue
@@ -550,6 +562,10 @@ namespace AmplifyShaderEditor
 			{
 				m_comparisonFunctionFrontIdx.IntValue = value;
 				m_comparisonFunctionFrontIdx.Active = false;
+			}
+			get
+			{
+				return m_comparisonFunctionFrontIdx.IntValue;
 			}
 		}
 
@@ -560,6 +576,10 @@ namespace AmplifyShaderEditor
 				m_comparisonFunctionBackIdx.IntValue = value;
 				m_comparisonFunctionBackIdx.Active = false;
 			}
+			get
+			{
+				return m_comparisonFunctionBackIdx.IntValue;
+			}
 		}
 
 		public int PassStencilOpIdxValue
@@ -568,6 +588,10 @@ namespace AmplifyShaderEditor
 			{
 				m_passStencilOpFrontIdx.IntValue = value;
 				m_passStencilOpFrontIdx.Active = false;
+			}
+			get
+			{
+				return m_passStencilOpFrontIdx.IntValue;
 			}
 		}
 
@@ -578,6 +602,10 @@ namespace AmplifyShaderEditor
 				m_passStencilOpBackIdx.IntValue = value;
 				m_passStencilOpBackIdx.Active = false;
 			}
+			get
+			{
+				return m_passStencilOpBackIdx.IntValue;
+			}
 		}
 
 		public int FailStencilOpIdxValue
@@ -587,6 +615,10 @@ namespace AmplifyShaderEditor
 				m_failStencilOpFrontIdx.IntValue = value;
 				m_failStencilOpFrontIdx.Active = false;
 			}
+			get
+			{
+				return m_failStencilOpFrontIdx.IntValue;
+			}
 		}
 		public int FailStencilOpBackIdxValue
 		{
@@ -594,6 +626,10 @@ namespace AmplifyShaderEditor
 			{
 				m_failStencilOpBackIdx.IntValue = value;
 				m_failStencilOpBackIdx.Active = false;
+			}
+			get
+			{
+				return m_failStencilOpBackIdx.IntValue;
 			}
 		}
 
@@ -604,6 +640,10 @@ namespace AmplifyShaderEditor
 				m_zFailStencilOpFrontIdx.IntValue = value;
 				m_zFailStencilOpFrontIdx.Active = false;
 			}
+			get
+			{
+				return m_zFailStencilOpFrontIdx.IntValue;
+			}
 		}
 
 		public int ZFailStencilOpBackIdxValue
@@ -612,6 +652,10 @@ namespace AmplifyShaderEditor
 			{
 				m_zFailStencilOpBackIdx.IntValue = value;
 				m_zFailStencilOpBackIdx.Active = false;
+			}
+			get
+			{
+				return m_zFailStencilOpBackIdx.IntValue;
 			}
 		}
 	}

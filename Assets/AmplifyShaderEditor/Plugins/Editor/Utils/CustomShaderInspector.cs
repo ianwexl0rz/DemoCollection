@@ -230,7 +230,11 @@ namespace UnityEditor
 			{
 				if ( GUILayout.Button( "Open in Shader Editor" ) )
 				{
+#if UNITY_2018_3_OR_NEWER
+					ASEPackageManagerHelper.SetupLateShader( shader );
+#else
 					AmplifyShaderEditorWindow.ConvertShaderToASE( shader );
+#endif
 				}
 
 				if ( GUILayout.Button( "Open in Text Editor" ) )
@@ -415,7 +419,11 @@ namespace UnityEditor
 			{
 				return;
 			}
+#if UNITY_2019_3_OR_NEWER
+			ShaderInspectorEx.ShaderErrorListUI( s, ShaderUtil.GetShaderMessages( s ), ref this.m_ScrollPosition );
+#else
 			CustomShaderInspector.ShaderErrorListUI( s, ShaderUtilEx.GetShaderErrors( s ), ref this.m_ScrollPosition );
+#endif
 		}
 
 		private void ShowCompiledCodeButton( Shader s )
@@ -563,6 +571,30 @@ namespace UnityEditor
 		}
 	}
 
+	public static class EditorGUILayoutEx
+	{
+		public static System.Type Type = typeof( EditorGUILayout );
+		public static Gradient GradientField( Gradient value, params GUILayoutOption[] options )
+		{
+#if UNITY_2018_3_OR_NEWER
+			return EditorGUILayout.GradientField( value, options );
+#else
+			MethodInfo method = EditorGUILayoutEx.Type.GetMethod( "GradientField", BindingFlags.NonPublic | BindingFlags.Static, null, new Type[] { typeof( Gradient ), typeof( GUILayoutOption[] ) }, null );
+			return (Gradient)method.Invoke( Type, new object[]{ value, options} );
+#endif
+		}
+
+		public static Gradient GradientField( string label, Gradient value, params GUILayoutOption[] options )
+		{
+#if UNITY_2018_3_OR_NEWER
+			return EditorGUILayout.GradientField( label, value, options );
+#else
+			MethodInfo method = EditorGUILayoutEx.Type.GetMethod( "GradientField", BindingFlags.NonPublic | BindingFlags.Static, null, new Type[] { typeof( string ), typeof( Gradient ), typeof( GUILayoutOption[] ) }, null );
+			return (Gradient)method.Invoke( Type, new object[] { label, value, options } );
+#endif
+		}
+	}
+
 	public static class GUILayoutUtilityEx
 	{
 		private static System.Type type = null;
@@ -609,12 +641,20 @@ namespace UnityEditor
 
 		public static void FetchCachedErrors( Shader s )
 		{
+#if UNITY_2019_3_OR_NEWER
+			ShaderUtilEx.Type.InvokeMember( "FetchCachedMessages", BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.InvokeMethod, null, null, new object[] { s } );
+#else
 			ShaderUtilEx.Type.InvokeMember( "FetchCachedErrors", BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.InvokeMethod, null, null, new object[] { s } );
+#endif
 		}
 
 		public static int GetShaderErrorCount( Shader s )
 		{
+#if UNITY_2019_3_OR_NEWER
+			return ShaderUtil.GetShaderMessageCount( s );
+#else
 			return ( int ) ShaderUtilEx.Type.InvokeMember( "GetShaderErrorCount", BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.InvokeMethod, null, null, new object[] { s } );
+#endif
 		}
 
 		public static int GetAvailableShaderCompilerPlatforms()
@@ -715,6 +755,13 @@ namespace UnityEditor
 	{
 		private static System.Type type = null;
 		public static  System.Type Type { get { return ( type == null ) ? type = System.Type.GetType( "UnityEditor.ShaderInspector, UnityEditor" ) : type; } }
+
+#if UNITY_2019_3_OR_NEWER
+		public static void ShaderErrorListUI( UnityEngine.Object shader, ShaderMessage[] messages, ref Vector2 scrollPosition )
+		{
+			Type.InvokeMember( "ShaderErrorListUI", BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.InvokeMethod, null, null, new object[] { shader, messages, scrollPosition } );
+		}
+#endif
 	}
 
 	public static class GUISkinEx
@@ -730,8 +777,16 @@ namespace UnityEditor
 
 	public static class EditorGUIEx
 	{
-		private static System.Type type = null;
-		public static  System.Type Type { get { return ( type == null ) ? type = System.Type.GetType( "UnityEditor.EditorGUI, UnityEditor" ) : type; } }
+		public static System.Type Type = typeof( EditorGUI );
+
+		public static Gradient GradientField( Rect position, Gradient gradient )
+		{
+#if UNITY_2018_3_OR_NEWER
+			return EditorGUI.GradientField( position, gradient );
+#else
+			return (Gradient)EditorGUIEx.Type.InvokeMember( "GradientField", BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.InvokeMethod, null, null, new object[] { position, gradient } );
+#endif
+		}
 
 		public static bool ButtonMouseDown( Rect position, GUIContent content, FocusType focusType, GUIStyle style )
 		{

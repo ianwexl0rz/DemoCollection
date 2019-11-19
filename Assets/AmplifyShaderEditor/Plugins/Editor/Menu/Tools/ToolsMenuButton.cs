@@ -74,7 +74,7 @@ namespace AmplifyShaderEditor
 
 			if ( m_style == null )
 			{
-				m_style = new GUIStyle( UIUtils.Button );
+				m_style = new GUIStyle( /*UIUtils.Button*/ GUIStyle.none );
 				m_style.normal.background = m_buttonTexture[ 0 ];
 
 				m_style.hover.background = m_buttonTexture[ 0 ];

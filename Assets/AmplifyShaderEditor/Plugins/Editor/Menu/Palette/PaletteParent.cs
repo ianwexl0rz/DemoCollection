@@ -5,6 +5,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using UnityEditor;
 using System;
+using System.Text.RegularExpressions;
 
 namespace AmplifyShaderEditor
 {
@@ -187,9 +188,19 @@ namespace AmplifyShaderEditor
 						{
 							for( int i = 0; i < allItems.Count; i++ )
 							{
-								if( allItems[ i ].Name.IndexOf( m_searchFilter, StringComparison.InvariantCultureIgnoreCase ) >= 0 ||
-										allItems[ i ].Category.IndexOf( m_searchFilter, StringComparison.InvariantCultureIgnoreCase ) >= 0
-									)
+								var searchList = m_searchFilter.Trim( ' ' ).ToLower().Split(' ');
+
+								int matchesFound = 0;
+								for( int k = 0; k < searchList.Length; k++ )
+								{
+									MatchCollection wordmatch = Regex.Matches( allItems[ i ].Tags, "\\b"+searchList[ k ] );
+									if( wordmatch.Count > 0 )
+										matchesFound++;
+									else
+										break;
+								}
+
+								if( searchList.Length == matchesFound )
 								{
 									//m_currentItems.Add( allItems[ i ] );
 									if( !m_currentCategories.ContainsKey( allItems[ i ].Category ) )

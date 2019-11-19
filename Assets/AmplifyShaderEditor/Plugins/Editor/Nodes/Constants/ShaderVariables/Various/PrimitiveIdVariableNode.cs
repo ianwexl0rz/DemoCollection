@@ -20,14 +20,14 @@ namespace AmplifyShaderEditor
 		{
 			if( !dataCollector.IsTemplate )
 			{
-				UIUtils.ShowMessage( m_nodeAttribs.Name + " is not supported on surface shaders." );
-				return "0";
+				UIUtils.ShowMessage( UniqueId, m_nodeAttribs.Name + " is not supported on surface shaders." );
+				return m_outputPorts[0].ErrorValue;
 			}
 
 			if ( dataCollector.PortCategory == MasterNodePortCategory.Vertex )
 			{
-				UIUtils.ShowMessage( m_nodeAttribs.Name + " is not supported on Vertex ports" );
-				return "0";
+				UIUtils.ShowMessage( UniqueId, m_nodeAttribs.Name + " is not supported on Vertex ports" );
+				return m_outputPorts[0].ErrorValue;
 			}
 			
 			return dataCollector.TemplateDataCollectorInstance.GetPrimitiveId();

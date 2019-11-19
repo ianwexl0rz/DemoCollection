@@ -107,9 +107,9 @@ namespace AmplifyShaderEditor
 
 		private readonly string[] m_spaceOptions =
 		{
-			"Object Space",
-			"World Space",
-			"View Space",
+			"Object",
+			"World",
+			"View",
 			"Clip",
 			"Tangent"
 		};
@@ -147,6 +147,13 @@ namespace AmplifyShaderEditor
 			{
 				UpdateSubtitle();
 			}
+		}
+
+		public override void PropagateNodeData( NodeData nodeData, ref MasterNodeDataCollector dataCollector )
+		{
+			base.PropagateNodeData( nodeData, ref dataCollector );
+			if( m_from != m_to && ( m_from == TransformSpace.Tangent || m_to == TransformSpace.Tangent ) )
+				dataCollector.DirtyNormal = true;
 		}
 
 		void CalculateTransform( TransformSpace from, TransformSpace to, ref MasterNodeDataCollector dataCollector, ref string varName, ref string result )
@@ -325,6 +332,11 @@ namespace AmplifyShaderEditor
 			string result = m_inputPorts[ 0 ].GeneratePortInstructions( ref dataCollector );
 			string varName = string.Empty;
 
+			if( m_from == m_to )
+			{
+				RegisterLocalVariable( 0, result, ref dataCollector );
+				return GetOutputVectorItem( 0, outputId, m_outputPorts[ 0 ].LocalValue( dataCollector.PortCategory ) );
+			}
 
 			switch( m_from )
 			{
@@ -350,10 +362,10 @@ namespace AmplifyShaderEditor
 						break;
 						case TransformSpace.Tangent:
 						{
-							GeneratorUtils.GenerateWorldToTangentMatrix(ref dataCollector, UniqueId,m_currentPrecisionType );
+							GeneratorUtils.GenerateWorldToTangentMatrix(ref dataCollector, UniqueId, CurrentPrecisionType );
 							CalculateTransform( m_from, TransformSpace.World, ref dataCollector, ref varName, ref result );
 							result = string.Format( ASEWorldToTangentFormat, result );
-							varName = AseObjectToTangentDirVarName;
+							varName = AseObjectToTangentDirVarName + OutputId;
 						}
 						break;
 					}
@@ -381,9 +393,9 @@ namespace AmplifyShaderEditor
 						break;
 						case TransformSpace.Tangent:
 						{
-							GeneratorUtils.GenerateWorldToTangentMatrix( ref dataCollector, UniqueId, m_currentPrecisionType );
+							GeneratorUtils.GenerateWorldToTangentMatrix( ref dataCollector, UniqueId, CurrentPrecisionType );
 							result = string.Format( ASEWorldToTangentFormat, result );
-							varName = AseWorldToTangentDirVarName;
+							varName = AseWorldToTangentDirVarName + OutputId;
 						}
 						break;
 					}
@@ -410,10 +422,10 @@ namespace AmplifyShaderEditor
 						break;
 						case TransformSpace.Tangent:
 						{
-							GeneratorUtils.GenerateWorldToTangentMatrix( ref dataCollector, UniqueId, m_currentPrecisionType );
+							GeneratorUtils.GenerateWorldToTangentMatrix( ref dataCollector, UniqueId, CurrentPrecisionType );
 							CalculateTransform( m_from, TransformSpace.World, ref dataCollector, ref varName, ref result );
 							result = string.Format( ASEWorldToTangentFormat, result );
-							varName = AseViewToTangentDirVarName;
+							varName = AseViewToTangentDirVarName + OutputId;
 						}
 						break;
 					}
@@ -440,10 +452,10 @@ namespace AmplifyShaderEditor
 						case TransformSpace.Clip: break;
 						case TransformSpace.Tangent:
 						{
-							GeneratorUtils.GenerateWorldToTangentMatrix( ref dataCollector, UniqueId, m_currentPrecisionType );
+							GeneratorUtils.GenerateWorldToTangentMatrix( ref dataCollector, UniqueId, CurrentPrecisionType );
 							CalculateTransform( m_from, TransformSpace.World, ref dataCollector, ref varName, ref result );
 							result = string.Format( ASEWorldToTangentFormat, result );
-							varName = AseClipToTangentDirVarName;
+							varName = AseClipToTangentDirVarName + OutputId;
 						}
 						break;
 						default:
@@ -454,9 +466,9 @@ namespace AmplifyShaderEditor
 				{
 					string matrixVal = string.Empty;
 					if( m_inverseTangentType == InverseTangentType.Fast )
-						matrixVal = GeneratorUtils.GenerateTangentToWorldMatrixFast( ref dataCollector, UniqueId, m_currentPrecisionType );
+						matrixVal = GeneratorUtils.GenerateTangentToWorldMatrixFast( ref dataCollector, UniqueId, CurrentPrecisionType );
 					else
-						matrixVal = GeneratorUtils.GenerateTangentToWorldMatrixPrecise( ref dataCollector, UniqueId, m_currentPrecisionType );
+						matrixVal = GeneratorUtils.GenerateTangentToWorldMatrixPrecise( ref dataCollector, UniqueId, CurrentPrecisionType );
 
 					switch( m_to )
 					{
@@ -464,27 +476,27 @@ namespace AmplifyShaderEditor
 						{
 							result = string.Format( ASEMulOpFormat, matrixVal, result );
 							CalculateTransform( TransformSpace.World, m_to, ref dataCollector, ref varName, ref result );
-							varName = AseTangentToObjectDirVarName;
+							varName = AseTangentToObjectDirVarName + OutputId;
 						}
 						break;
 						case TransformSpace.World:
 						{
 							result = string.Format( ASEMulOpFormat, matrixVal, result );
-							varName = AseTangentToWorldDirVarName;
+							varName = AseTangentToWorldDirVarName + OutputId;
 						}
 						break;
 						case TransformSpace.View:
 						{
 							result = string.Format( ASEMulOpFormat, matrixVal, result );
 							CalculateTransform( TransformSpace.World, m_to, ref dataCollector, ref varName, ref result );
-							varName = AseTangentToViewDirVarName;
+							varName = AseTangentToViewDirVarName + OutputId;
 						}
 						break;
 						case TransformSpace.Clip:
 						{
 							result = string.Format( ASEMulOpFormat, matrixVal, result );
 							CalculateTransform( TransformSpace.World, m_to, ref dataCollector, ref varName, ref result );
-							varName = AseTangentToClipDirVarName;
+							varName = AseTangentToClipDirVarName + OutputId;
 						}
 						break;
 						case TransformSpace.Tangent:

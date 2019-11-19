@@ -64,7 +64,7 @@ namespace AmplifyShaderEditor
 		//[SerializeField]
 		//private bool m_useCurvature = false;
 
-		[ SerializeField]
+		[SerializeField]
 		private Vector2 m_CurvatureVector = new Vector2( 0, 0 );
 		
 		private string m_functionHeader = "POM( {0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}, {11}, {12}, {13} )";
@@ -81,6 +81,8 @@ namespace AmplifyShaderEditor
 		private InputPort m_arrayIndexPort;
 
 		private OutputPort m_pomUVPort;
+
+		private Vector4Node m_texCoordsHelper;
 
 		protected override void CommonInit( int uniqueId )
 		{
@@ -220,7 +222,7 @@ namespace AmplifyShaderEditor
 		{
 			if( !m_texPort.IsConnected )
 			{
-				UIUtils.ShowMessage( "Parallax Occlusion Mapping node only works if a Texture Object is connected to its Tex (R) port" );
+				UIUtils.ShowMessage( UniqueId, "Parallax Occlusion Mapping node only works if a Texture Object is connected to its Tex (R) port" );
 				return "0";
 			}
 			base.GenerateShaderForOutput( outputId, ref dataCollector, ignoreLocalvar );
@@ -232,7 +234,7 @@ namespace AmplifyShaderEditor
 			if( m_pomTexType == POMTexTypes.Texture3D )
 			{
 				string texName = "pomTexCoord" + OutputId;
-				dataCollector.AddToLocalVariables( UniqueId, m_currentPrecisionType, WirePortDataType.FLOAT3, texName, string.Format( "float3({0},{1})", textcoords, arrayIndex ) );
+				dataCollector.AddLocalVariable( UniqueId, CurrentPrecisionType, WirePortDataType.FLOAT3, texName, string.Format( "float3({0},{1})", textcoords, arrayIndex ) );
 				textcoords = texName;
 			}
 
@@ -250,7 +252,7 @@ namespace AmplifyShaderEditor
 				
 				if ( dataCollector.IsTemplate )
 				{
-					viewDirTan = dataCollector.TemplateDataCollectorInstance.GetTangentViewDir( m_currentPrecisionType );
+					viewDirTan = dataCollector.TemplateDataCollectorInstance.GetTangentViewDir( CurrentPrecisionType );
 				}
 				else
 				{
@@ -268,11 +270,11 @@ namespace AmplifyShaderEditor
 			string normalWorld = string.Empty;
 			if ( dataCollector.IsTemplate )
 			{
-				normalWorld = dataCollector.TemplateDataCollectorInstance.GetWorldNormal( m_currentPrecisionType );
+				normalWorld = dataCollector.TemplateDataCollectorInstance.GetWorldNormal( CurrentPrecisionType );
 			}
 			else
 			{
-				dataCollector.AddToInput( UniqueId, SurfaceInputs.WORLD_NORMAL, m_currentPrecisionType );
+				dataCollector.AddToInput( UniqueId, SurfaceInputs.WORLD_NORMAL, CurrentPrecisionType );
 				dataCollector.AddToInput( UniqueId, SurfaceInputs.INTERNALDATA, addSemiColon: false );
 				normalWorld = GeneratorUtils.GenerateWorldNormal( ref dataCollector, UniqueId );
 			}
@@ -318,10 +320,30 @@ namespace AmplifyShaderEditor
 
 
 			string localVarName = "OffsetPOM" + UniqueId;
-			string textureSTType = dataCollector.IsSRP ? "float4 " : "uniform float4 ";
-			dataCollector.AddToUniforms(UniqueId, textureSTType + texture +"_ST;");
+			string textCoordsST = string.Empty;
+			//string textureSTType = dataCollector.IsSRP ? "float4 " : "uniform float4 ";
+			//dataCollector.AddToUniforms( UniqueId, textureSTType + texture +"_ST;");
+			if( m_texCoordsHelper == null )
+			{
+				m_texCoordsHelper = CreateInstance<Vector4Node>();
+				m_texCoordsHelper.ContainerGraph = ContainerGraph;
+				m_texCoordsHelper.SetBaseUniqueId( UniqueId, true );
+				m_texCoordsHelper.RegisterPropertyOnInstancing = false;
+				m_texCoordsHelper.AddGlobalToSRPBatcher = true;
+			}
 
-			
+			if( UIUtils.CurrentWindow.OutsideGraph.IsInstancedShader )
+			{
+				m_texCoordsHelper.CurrentParameterType = PropertyType.InstancedProperty;
+			}
+			else
+			{
+				m_texCoordsHelper.CurrentParameterType = PropertyType.Global;
+			}
+			m_texCoordsHelper.ResetOutputLocals();
+			m_texCoordsHelper.SetRawPropertyName( texture + "_ST" );
+			textCoordsST = m_texCoordsHelper.GenerateShaderForOutput( 0, ref dataCollector, false );
+			//////
 
 			if( m_pomTexType == POMTexTypes.TextureArray )
 				dataCollector.UsingArrayDerivatives = true;
@@ -339,27 +361,43 @@ namespace AmplifyShaderEditor
 			}
 			else
 			{
-				textureArgs = texture;
+				bool sampleThroughMacros = UIUtils.CurrentWindow.OutsideGraph.SamplingThroughMacros;
+				if( sampleThroughMacros )
+				{
+					dataCollector.AddToUniforms( UniqueId, string.Format( Constants.SamplerDeclarationSRPMacros[ TextureType.Texture2D ], texture ) );
+					textureArgs = string.Format( "{0},sampler{0}", texture );
+				}
+				else
+				{
+					textureArgs = texture;
+				}
 			}
 			//string functionResult = dataCollector.AddFunctions( m_functionHeader, m_functionBody, ( (m_pomTexType == POMTexTypes.TextureArray) ? "UNITY_PASS_TEX2DARRAY(" + texture + ")": texture), textcoords, dx, dy, normalWorld, worldViewDir, viewDirTan, m_minSamples, m_maxSamples, scale, refPlane, texture+"_ST.xy", curvature, arrayIndex );
-			string functionResult = dataCollector.AddFunctions( m_functionHeader, m_functionBody, textureArgs, textcoords, dx, dy, normalWorld, worldViewDir, viewDirTan, m_inlineMinSamples.GetValueOrProperty(false), m_inlineMinSamples.GetValueOrProperty(false), scale, refPlane, texture + "_ST.xy", curvature, arrayIndex );
+			string functionResult = dataCollector.AddFunctions( m_functionHeader, m_functionBody, textureArgs, textcoords, dx, dy, normalWorld, worldViewDir, viewDirTan, m_inlineMinSamples.GetValueOrProperty(false), m_inlineMinSamples.GetValueOrProperty(false), scale, refPlane, textCoordsST + ".xy", curvature, arrayIndex );
 
-			dataCollector.AddToLocalVariables( UniqueId, m_currentPrecisionType, m_pomUVPort.DataType, localVarName, functionResult );
+			dataCollector.AddLocalVariable( UniqueId, CurrentPrecisionType, m_pomUVPort.DataType, localVarName, functionResult );
 
 			return GetOutputVectorItem( 0, outputId, localVarName );
 		}
 
 		private void GeneratePOMfunction()
 		{
+			bool sampleThroughMacros = UIUtils.CurrentWindow.OutsideGraph.SamplingThroughMacros;
 			m_functionBody = string.Empty;
 			switch( m_pomTexType )
 			{
 				default:
 				case POMTexTypes.Texture2D:
-				IOUtils.AddFunctionHeader( ref m_functionBody, "inline float2 POM( sampler2D heightMap, float2 uvs, float2 dx, float2 dy, float3 normalWorld, float3 viewWorld, float3 viewDirTan, int minSamples, int maxSamples, float parallax, float refPlane, float2 tilling, float2 curv, int index )" );
+				{
+					string sampleParam = sampleThroughMacros ? "TEXTURE2D_PARAM(heightMap,samplerheightMap)" : "sampler2D heightMap";
+					IOUtils.AddFunctionHeader( ref m_functionBody, string.Format("inline float2 POM( {0}, float2 uvs, float2 dx, float2 dy, float3 normalWorld, float3 viewWorld, float3 viewDirTan, int minSamples, int maxSamples, float parallax, float refPlane, float2 tilling, float2 curv, int index )", sampleParam ));
+				}
 				break;
 				case POMTexTypes.Texture3D:
-				IOUtils.AddFunctionHeader( ref m_functionBody, "inline float2 POM( sampler3D heightMap, float3 uvs, float3 dx, float3 dy, float3 normalWorld, float3 viewWorld, float3 viewDirTan, int minSamples, int maxSamples, float parallax, float refPlane, float2 tilling, float2 curv, int index )" );
+				{
+					string sampleParam = sampleThroughMacros ? "TEXTURE3D_PARAM( heightMap,samplerheightMap) " : "sampler3D heightMap";
+					IOUtils.AddFunctionHeader( ref m_functionBody, string.Format("inline float2 POM( {0}, float3 uvs, float3 dx, float3 dy, float3 normalWorld, float3 viewWorld, float3 viewDirTan, int minSamples, int maxSamples, float parallax, float refPlane, float2 tilling, float2 curv, int index )", sampleParam ) );
+				}
 				break;
 				case POMTexTypes.TextureArray:
 				if( UIUtils.CurrentWindow.OutsideGraph.IsSRP )
@@ -411,10 +449,28 @@ namespace AmplifyShaderEditor
 				{
 					default:
 					case POMTexTypes.Texture2D:
-					IOUtils.AddFunctionLine( ref m_functionBody, "	currHeight = tex2Dgrad( heightMap, uvs + currTexOffset, dx, dy )." + m_channelTypeVal[ m_selectedChannelInt ] + " * ( 1 - result.z );" );
+					{
+						if( sampleThroughMacros )
+						{
+							IOUtils.AddFunctionLine( ref m_functionBody, "	currHeight = SAMPLE_TEXTURE2D_GRAD( heightMap, samplerheightMap, uvs + currTexOffset, dx, dy )." + m_channelTypeVal[ m_selectedChannelInt ] + " * ( 1 - result.z );" );
+						}
+						else
+						{
+							IOUtils.AddFunctionLine( ref m_functionBody, "	currHeight = tex2Dgrad( heightMap, uvs + currTexOffset, dx, dy )." + m_channelTypeVal[ m_selectedChannelInt ] + " * ( 1 - result.z );" );
+						}
+					}
 					break;
 					case POMTexTypes.Texture3D:
-					IOUtils.AddFunctionLine( ref m_functionBody, "	currHeight = tex3Dgrad( heightMap, uvs + float3(currTexOffset,0), dx, dy )." + m_channelTypeVal[ m_selectedChannelInt ] + " * ( 1 - result.z );" );
+					{
+						if( sampleThroughMacros )
+						{
+							IOUtils.AddFunctionLine( ref m_functionBody, "	currHeight = SAMPLE_TEXTURE2D_GRAD( heightMap, samplerheightMap, uvs + float3(currTexOffset,0), dx, dy )." + m_channelTypeVal[ m_selectedChannelInt ] + " * ( 1 - result.z );" );
+						}
+						else
+						{
+							IOUtils.AddFunctionLine( ref m_functionBody, "	currHeight = tex3Dgrad( heightMap, uvs + float3(currTexOffset,0), dx, dy )." + m_channelTypeVal[ m_selectedChannelInt ] + " * ( 1 - result.z );" );
+						}
+					}
 					break;
 					case POMTexTypes.TextureArray:
 					if( UIUtils.CurrentWindow.OutsideGraph.IsSRP )
@@ -431,10 +487,28 @@ namespace AmplifyShaderEditor
 				{
 					default:
 					case POMTexTypes.Texture2D:
-					IOUtils.AddFunctionLine( ref m_functionBody, "	currHeight = tex2Dgrad( heightMap, uvs + currTexOffset, dx, dy )." + m_channelTypeVal[ m_selectedChannelInt ] + ";" );
+					{
+						if( sampleThroughMacros )
+						{
+							IOUtils.AddFunctionLine( ref m_functionBody, "	currHeight = SAMPLE_TEXTURE2D_GRAD( heightMap,samplerheightMap, uvs + currTexOffset, dx, dy )." + m_channelTypeVal[ m_selectedChannelInt ] + ";" );
+						}
+						else
+						{
+							IOUtils.AddFunctionLine( ref m_functionBody, "	currHeight = tex2Dgrad( heightMap, uvs + currTexOffset, dx, dy )." + m_channelTypeVal[ m_selectedChannelInt ] + ";" );
+						}
+					}
 					break;
 					case POMTexTypes.Texture3D:
-					IOUtils.AddFunctionLine( ref m_functionBody, "	currHeight = tex3Dgrad( heightMap, uvs + float3(currTexOffset,0), dx, dy )." + m_channelTypeVal[ m_selectedChannelInt ] + ";" );
+					{
+						if( sampleThroughMacros )
+						{
+							IOUtils.AddFunctionLine( ref m_functionBody, "	currHeight = SAMPLE_TEXTURE2D_GRAD( heightMap, samplerheightMap, uvs + float3(currTexOffset,0), dx, dy )." + m_channelTypeVal[ m_selectedChannelInt ] + ";" );
+						}
+						else
+						{
+							IOUtils.AddFunctionLine( ref m_functionBody, "	currHeight = tex3Dgrad( heightMap, uvs + float3(currTexOffset,0), dx, dy )." + m_channelTypeVal[ m_selectedChannelInt ] + ";" );
+						}
+					}
 					break;
 					case POMTexTypes.TextureArray:
 					if( UIUtils.CurrentWindow.OutsideGraph.IsSRP )
@@ -478,10 +552,28 @@ namespace AmplifyShaderEditor
 				{
 					default:
 					case POMTexTypes.Texture2D:
-					IOUtils.AddFunctionLine( ref m_functionBody, "	newHeight = tex2Dgrad( heightMap, uvs + finalTexOffset, dx, dy )." + m_channelTypeVal[ m_selectedChannelInt ] + ";" );
+					{
+						if( sampleThroughMacros )
+						{
+							IOUtils.AddFunctionLine( ref m_functionBody, "	newHeight = SAMPLE_TEXTURE2D_GRAD( heightMap, samplerheightMap, uvs + finalTexOffset, dx, dy )." + m_channelTypeVal[ m_selectedChannelInt ] + ";" );
+						}
+						else
+						{
+							IOUtils.AddFunctionLine( ref m_functionBody, "	newHeight = tex2Dgrad( heightMap, uvs + finalTexOffset, dx, dy )." + m_channelTypeVal[ m_selectedChannelInt ] + ";" );
+						}
+					}
 					break;
 					case POMTexTypes.Texture3D:
-					IOUtils.AddFunctionLine( ref m_functionBody, "	newHeight = tex3Dgrad( heightMap, uvs + float3(finalTexOffset,0), dx, dy )." + m_channelTypeVal[ m_selectedChannelInt ] + ";" );
+					{
+						if( sampleThroughMacros )
+						{
+							IOUtils.AddFunctionLine( ref m_functionBody, "	newHeight = SAMPLE_TEXTURE2D_GRAD( heightMap, samplerheightMap, uvs + float3(finalTexOffset,0), dx, dy )." + m_channelTypeVal[ m_selectedChannelInt ] + ";" );
+						}
+						else
+						{
+							IOUtils.AddFunctionLine( ref m_functionBody, "	newHeight = tex3Dgrad( heightMap, uvs + float3(finalTexOffset,0), dx, dy )." + m_channelTypeVal[ m_selectedChannelInt ] + ";" );
+						}
+					}
 					break;
 					case POMTexTypes.TextureArray:
 					if( UIUtils.CurrentWindow.OutsideGraph.IsSRP )
@@ -634,6 +726,14 @@ namespace AmplifyShaderEditor
 		public override void Destroy()
 		{
 			base.Destroy();
+			//Not calling m_texCoordsHelper.Destroy() on purpose so UIUtils does not incorrectly unregister stuff
+			if( m_texCoordsHelper != null )
+			{
+				DestroyImmediate( m_texCoordsHelper );
+				m_texCoordsHelper = null;
+			}
+
+
 			m_uvPort = null;
 			m_texPort = null;
 			m_scalePort = null;

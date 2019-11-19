@@ -30,14 +30,14 @@ namespace AmplifyShaderEditor
 			if( dataCollector.IsTemplate )
 			{
 				//Template must have its Light Mode correctly configured on tags to work as intended
-				return GetOutputVectorItem( 0, outputId, dataCollector.TemplateDataCollectorInstance.GetObjectSpaceLightDir( m_currentPrecisionType ) );
+				return GetOutputVectorItem( 0, outputId, dataCollector.TemplateDataCollectorInstance.GetObjectSpaceLightDir( CurrentPrecisionType ) );
 			}
 
 			dataCollector.AddToIncludes( UniqueId, Constants.UnityCgLibFuncs );
 			dataCollector.AddToInput( UniqueId, SurfaceInputs.WORLD_POS );
 
 			string vertexPos = GeneratorUtils.GenerateVertexPosition( ref dataCollector, UniqueId, WirePortDataType.FLOAT4 );
-			return GetOutputVectorItem( 0, outputId, GeneratorUtils.GenerateObjectLightDirection( ref dataCollector, UniqueId, m_currentPrecisionType, vertexPos ) );
+			return GetOutputVectorItem( 0, outputId, GeneratorUtils.GenerateObjectLightDirection( ref dataCollector, UniqueId, CurrentPrecisionType, vertexPos ) );
 		}
 	}
 }

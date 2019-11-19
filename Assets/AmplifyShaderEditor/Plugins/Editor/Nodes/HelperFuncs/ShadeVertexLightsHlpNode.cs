@@ -10,7 +10,7 @@ namespace AmplifyShaderEditor
 	[NodeAttributes( "Shade Vertex Lights", "Light", "Computes illumination from four per-vertex lights and ambient, given object space position & normal" )]
 	public sealed class ShadeVertexLightsHlpNode : ParentNode
 	{
-		private const string HelperMessage = "This node only outputs correct results on Template Vertex/Frag shaders with their LightMode set to Vertex.";
+		private const string HelperMessage = "Shade Vertex Lights node only outputs correct results on\nTemplate Vertex/Frag shaders with their LightMode set to Vertex.";
 		private const string ShadeVertexLightFunc = "ShadeVertexLightsFull({0},{1},{2},{3})";
 		private const string LightCount = "Light Count";
 		private const string IsSpotlight = "Is Spotlight";
@@ -49,7 +49,7 @@ namespace AmplifyShaderEditor
 		public override string GenerateShaderForOutput( int outputId, ref MasterNodeDataCollector dataCollector, bool ignoreLocalvar )
 		{
 			if( dataCollector.MasterNodeCategory == AvailableShaderTypes.SurfaceShader )
-				UIUtils.ShowMessage( HelperMessage, MessageSeverity.Warning );
+				UIUtils.ShowMessage( UniqueId, HelperMessage, MessageSeverity.Warning );
 
 			if( m_outputPorts[ 0 ].IsLocalValue( dataCollector.PortCategory ) )
 				return m_outputPorts[ 0 ].LocalValue( dataCollector.PortCategory );

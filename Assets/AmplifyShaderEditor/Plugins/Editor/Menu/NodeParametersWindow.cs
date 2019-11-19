@@ -36,7 +36,7 @@ namespace AmplifyShaderEditor
 		// width and height are between [0,1] and represent a percentage of the total screen area
 		public NodeParametersWindow( AmplifyShaderEditorWindow parentWindow ) : base( parentWindow, 0, 0, 265, 0, string.Empty, MenuAnchor.TOP_LEFT, MenuAutoSize.MATCH_VERTICAL )
 		{
-			SetMinimizedArea( -225, 0, 275, 0 );
+			SetMinimizedArea( -225, 0, 260, 0 );
 		}
 
 		public void OnShaderFunctionLoad()
@@ -388,45 +388,65 @@ namespace AmplifyShaderEditor
 			}
 		}
 
+		private void RefreshVisibleList( ref List<PropertyNode> allNodes )
+		{
+			// temp reference for lambda expression
+			List<PropertyNode> nodes = allNodes;
+			m_propertyReordableNodes.Clear();
+
+			for( int i = 0; i < nodes.Count; i++ )
+			{
+				ReordenatorNode rnode = nodes[ i ] as ReordenatorNode;
+				if( ( rnode == null || !rnode.IsInside ) && ( !m_propertyReordableNodes.Exists( x => x.PropertyName.Equals( nodes[ i ].PropertyName ) ) ) )
+					m_propertyReordableNodes.Add( nodes[ i ] );
+			}
+
+			m_propertyReordableNodes.Sort( ( x, y ) => { return x.OrderIndex.CompareTo( y.OrderIndex ); } );
+		}
+
 		public void DrawFunctionProperties()
 		{
 			List<PropertyNode> nodes = UIUtils.PropertyNodesList();
-			if ( m_propertyReordableList == null || nodes.Count != m_lastCount )
+
+			if( nodes.Count != m_lastCount )
 			{
-				m_propertyReordableNodes.Clear();
-
-				for ( int i = 0; i < nodes.Count; i++ )
-				{
-					ReordenatorNode rnode = nodes[ i ] as ReordenatorNode;
-					if ( ( rnode == null || !rnode.IsInside ) && ( !m_propertyReordableNodes.Exists( x => x.PropertyName.Equals( nodes[ i ].PropertyName ) ) ) )
-						m_propertyReordableNodes.Add( nodes[ i ] );
-				}
-
-				m_propertyReordableNodes.Sort( ( x, y ) => { return x.OrderIndex.CompareTo( y.OrderIndex ); } );
-
-				m_propertyReordableList = new ReorderableList( m_propertyReordableNodes, typeof( PropertyNode ), true, false, false, false );
-				m_propertyReordableList.headerHeight = 0;
-				m_propertyReordableList.footerHeight = 0;
-				m_propertyReordableList.showDefaultBackground = false;
-
-				m_propertyReordableList.drawElementCallback = ( Rect rect, int index, bool isActive, bool isFocused ) =>
-				{
-					EditorGUI.LabelField( rect, /*m_propertyReordableNodes[ index ].OrderIndex + " " + */m_propertyReordableNodes[ index ].PropertyInspectorName );
-				};
-
-				m_propertyReordableList.onChangedCallback = ( list ) =>
-				{
-					ReorderList( ref nodes );
-				};
-
-				ReorderList( ref nodes );
-
-				m_lastCount = m_propertyReordableList.count;
+				RefreshVisibleList( ref nodes );
+				m_lastCount = nodes.Count;
 			}
 
-			if ( m_propertyReordableList != null )
+			if( m_propertyReordableList == null )
 			{
-				if ( m_propertyAdjustment == null )
+				m_propertyReordableList = new ReorderableList( m_propertyReordableNodes, typeof( PropertyNode ), true, false, false, false )
+				{
+					headerHeight = 0,
+					footerHeight = 0,
+					showDefaultBackground = false,
+
+					drawElementCallback = ( Rect rect, int index, bool isActive, bool isFocused ) =>
+					{
+						var first = rect;
+						first.width *= 0.60f;
+						EditorGUI.LabelField( first, m_propertyReordableNodes[ index ].PropertyInspectorName );
+						var second = rect;
+						second.width *= 0.4f;
+						second.x += first.width;
+						if( GUI.Button( second, m_propertyReordableNodes[ index ].PropertyName, new GUIStyle( "AssetLabel Partial" ) ) )
+						{
+							UIUtils.FocusOnNode( m_propertyReordableNodes[ index ], 1, false );
+						}
+					},
+
+					onReorderCallback = ( list ) =>
+					{
+						ReorderList( ref nodes );
+					}
+				};
+				ReorderList( ref nodes );
+			}
+
+			if( m_propertyReordableList != null )
+			{
+				if( m_propertyAdjustment == null )
 				{
 					m_propertyAdjustment = new GUIStyle();
 					m_propertyAdjustment.padding.left = 17;

@@ -54,7 +54,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4489367233018182}
-  - component: {fileID: 4440800443623058664}
+  - component: {fileID: 1517792753589180702}
   - component: {fileID: 54013669590684724}
   - component: {fileID: 136221232741552080}
   - component: {fileID: 1306851918}
@@ -85,7 +85,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!95 &4440800443623058664
+--- !u!95 &1517792753589180702
 Animator:
   serializedVersion: 3
   m_ObjectHideFlags: 0
@@ -93,7 +93,7 @@ Animator:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1947941858301876}
-  m_Enabled: 1
+  m_Enabled: 0
   m_Avatar: {fileID: 9000000, guid: 8c96fbc477da0405b9c477725bb7a7fe, type: 3}
   m_Controller: {fileID: 9100000, guid: c97417f297d644503b5f4a021c6fd4dc, type: 2}
   m_CullingMode: 1
@@ -143,13 +143,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 1947941858301876}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_GeneratorAsset: {fileID: 0}
   m_Script: {fileID: 11500000, guid: 642a57e0cf005a6428466df6f124aa2c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   controller: {fileID: 0}
   isAwake: 0
-  lockOnTarget: {fileID: 0}
   abilities: []
 --- !u!114 &114975490345739816
 MonoBehaviour:
@@ -160,7 +158,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 1947941858301876}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_GeneratorAsset: {fileID: 0}
   m_Script: {fileID: 11500000, guid: 9a67f68fcd6514dd2b7733d06827c987, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
@@ -193,7 +190,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 1947941858301876}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_GeneratorAsset: {fileID: 0}
   m_Script: {fileID: 11500000, guid: 905d8f9e5d6de914a91d8c1492351769, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
@@ -370,7 +366,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 1600557156720074942}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_GeneratorAsset: {fileID: 0}
   m_Script: {fileID: 11500000, guid: e6485575d1f69e344b756cc6709bc9eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
@@ -391,7 +386,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 1600557156720074942}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_GeneratorAsset: {fileID: 0}
   m_Script: {fileID: 11500000, guid: 9fa782213740dac45822d87e30826a82, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
@@ -564,7 +558,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 8168000052666290430}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_GeneratorAsset: {fileID: 0}
   m_Script: {fileID: 11500000, guid: e6485575d1f69e344b756cc6709bc9eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
@@ -585,7 +578,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 8168000052666290430}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_GeneratorAsset: {fileID: 0}
   m_Script: {fileID: 11500000, guid: 9fa782213740dac45822d87e30826a82, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
@@ -856,7 +848,24 @@ PrefabInstance:
       propertyPath: m_RootBone
       value: 
       objectReference: {fileID: 8063956143157200008}
-    m_RemovedComponents: []
+    - target: {fileID: 400042, guid: 8c96fbc477da0405b9c477725bb7a7fe, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.01341328
+      objectReference: {fileID: 0}
+    - target: {fileID: 400042, guid: 8c96fbc477da0405b9c477725bb7a7fe, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: -0.19577153
+      objectReference: {fileID: 0}
+    - target: {fileID: 400040, guid: 8c96fbc477da0405b9c477725bb7a7fe, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.0047182557
+      objectReference: {fileID: 0}
+    - target: {fileID: 400040, guid: 8c96fbc477da0405b9c477725bb7a7fe, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.17902535
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 9500000, guid: 8c96fbc477da0405b9c477725bb7a7fe, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 8c96fbc477da0405b9c477725bb7a7fe, type: 3}
 --- !u!4 &8063956143157200054 stripped
 Transform:

@@ -50,11 +50,11 @@ namespace AmplifyShaderEditor
 			m_insideSize.Set( 50, 0 );
 			m_showPreview = false;
 			m_selectedLocation = PreviewLocation.BottomCenter;
-			m_precisionString = UIUtils.FinalPrecisionWirePortToCgType( m_currentPrecisionType, m_outputPorts[ 0 ].DataType );
 			m_availableAttribs.Add( new PropertyAttributes( "Toggle", "[Toggle]" ) );
 			m_availableAttribs.Add( new PropertyAttributes( "Int Range", "[IntRange]" ) );
 			m_availableAttribs.Add( new PropertyAttributes( "Enum", "[Enum]" ) );
 			m_previewShaderGUID = "d9ca47581ac157145bff6f72ac5dd73e";
+			m_srpBatcherCompatible = true;
 		}
 
 		protected override void OnUniqueIDAssigned()
@@ -261,6 +261,7 @@ namespace AmplifyShaderEditor
 					}
 					if ( EditorGUI.EndChangeCheck() )
 					{
+						PreviewIsDirty = true;
 						m_requireMaterialUpdate = true;
 						if ( m_currentParameterType != PropertyType.Constant )
 						{
@@ -282,6 +283,7 @@ namespace AmplifyShaderEditor
 					}
 					if ( EditorGUI.EndChangeCheck() )
 					{
+						PreviewIsDirty = true;
 						BeginDelayedDirtyProperty();
 					}
 
@@ -420,7 +422,7 @@ namespace AmplifyShaderEditor
 		public override string GenerateShaderForOutput( int outputId, ref MasterNodeDataCollector dataCollector, bool ignoreLocalvar )
 		{
 			base.GenerateShaderForOutput( outputId, ref dataCollector, ignoreLocalvar );
-			m_precisionString = UIUtils.FinalPrecisionWirePortToCgType( m_currentPrecisionType, m_outputPorts[ 0 ].DataType );
+			m_precisionString = UIUtils.PrecisionWirePortToCgType( CurrentPrecisionType, m_outputPorts[ 0 ].DataType );
 
 			if ( m_currentParameterType != PropertyType.Constant )
 				return PropertyData( dataCollector.PortCategory );

@@ -37,6 +37,10 @@ namespace AmplifyShaderEditor
 				{
 					matrixName = m_matrixLWName;
 				}
+				else
+				{
+					matrixName = m_matrixName;
+				}
 			}
 			else
 			{
