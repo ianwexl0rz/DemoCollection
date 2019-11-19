@@ -7,9 +7,9 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Grass (Amplify)
+  m_Name: RockStochastic
   m_Shader: {fileID: 4800000, guid: a34580792e34f6740b7ddcb10fa8c83e, type: 3}
-  m_ShaderKeywords: _GLOSSYREFLECTIONS_OFF _NORMALMAP _STOCHASTIC_ALBEDO _STOCHASTIC_NORMAL
+  m_ShaderKeywords: _GLOSSYREFLECTIONS_OFF _NORMALMAP
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -20,19 +20,19 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _BaseMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
+        m_Texture: {fileID: 2800000, guid: b297077dae62c1944ba14cad801cddf5, type: 3}
+        m_Scale: {x: 10, y: 10}
         m_Offset: {x: 0, y: 0}
     - _BumpMap:
-        m_Texture: {fileID: 2800000, guid: 7ddcba51d9fc0894d98b4ba77fbdfbd7, type: 3}
+        m_Texture: {fileID: 2800000, guid: 0bebe40e9ebbecc48b8e9cfea982da7e, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BumpMapInvT:
-        m_Texture: {fileID: 2800000, guid: 877e255f7f911d042bf2a944b6336d52, type: 3}
+        m_Texture: {fileID: 2800000, guid: 6014803c90a68674f80fc653947d2a22, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BumpMapT:
-        m_Texture: {fileID: 2800000, guid: 24fc3483329347042b50e2c668f3fb0b, type: 3}
+        m_Texture: {fileID: 2800000, guid: 6f896b0d60816cd4db8e0bf4aaee724a, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailAlbedoMap:
@@ -83,25 +83,21 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _InvT:
-        m_Texture: {fileID: 2800000, guid: 10082244b49df384e9240507fcf2400d, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 00d034bb5072d8043a98b8a4aae5a40d, type: 3}
-        m_Scale: {x: 1, y: 1}
+        m_Texture: {fileID: 2800000, guid: b297077dae62c1944ba14cad801cddf5, type: 3}
+        m_Scale: {x: 10, y: 10}
         m_Offset: {x: 0, y: 0}
     - _MainTexInvT:
-        m_Texture: {fileID: 2800000, guid: 10082244b49df384e9240507fcf2400d, type: 3}
+        m_Texture: {fileID: 2800000, guid: d643e34e7aa1dad429f83a91bc491099, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTexT:
-        m_Texture: {fileID: 2800000, guid: 22d11f0dd8b20084bb77a147b9c2f0d3, type: 3}
-        m_Scale: {x: 1, y: 1}
+        m_Texture: {fileID: 2800000, guid: 0ae576ddc902d1446960eb4e730591ea, type: 3}
+        m_Scale: {x: 10, y: 10}
         m_Offset: {x: 0, y: 0}
     - _MainTexTinput:
-        m_Texture: {fileID: 2800000, guid: 22d11f0dd8b20084bb77a147b9c2f0d3, type: 3}
-        m_Scale: {x: 10, y: 10}
+        m_Texture: {fileID: 2800000, guid: 0ae576ddc902d1446960eb4e730591ea, type: 3}
+        m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
         m_Texture: {fileID: 0}
@@ -115,17 +111,13 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _Normal:
-        m_Texture: {fileID: 2800000, guid: 877e255f7f911d042bf2a944b6336d52, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
     - _NormalInvT:
-        m_Texture: {fileID: 2800000, guid: 877e255f7f911d042bf2a944b6336d52, type: 3}
+        m_Texture: {fileID: 2800000, guid: 6014803c90a68674f80fc653947d2a22, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _NormalTinput:
-        m_Texture: {fileID: 2800000, guid: 24fc3483329347042b50e2c668f3fb0b, type: 3}
-        m_Scale: {x: 10, y: 10}
+        m_Texture: {fileID: 2800000, guid: 6f896b0d60816cd4db8e0bf4aaee724a, type: 3}
+        m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _OcclusionMap:
         m_Texture: {fileID: 0}
@@ -155,18 +147,6 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _TextureSample6:
-        m_Texture: {fileID: 2800000, guid: 384416fbadb084083a0e5b9e823af1e1, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _Tinput:
-        m_Texture: {fileID: 2800000, guid: 22d11f0dd8b20084bb77a147b9c2f0d3, type: 3}
-        m_Scale: {x: 5, y: 5}
-        m_Offset: {x: 0, y: 0}
-    - _texcoord:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
     m_Floats:
     - _AlphaClip: 0
     - _Blend: 0
@@ -175,20 +155,18 @@ Material:
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
-    - _EdgeLight: 0
     - _EnvironmentReflections: 1
-    - _Falloff: 0.1
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
     - _Metallic: 0
     - _Mode: 0
-    - _NormalScale: 1.34
+    - _NormalScale: 1.19
     - _OcclusionStrength: 1
     - _Parallax: 0.02
     - _QueueOffset: 0
     - _ReceiveShadows: 1
-    - _Smoothness: 0.139
+    - _Smoothness: 0.341
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
@@ -197,20 +175,16 @@ Material:
     - _UVSec: 0
     - _WorkflowMode: 1
     - _ZWrite: 1
-    - __dirty: 0
     m_Colors:
     - _BaseColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
-    - _BumpMapColorSpaceOrigin: {r: 0.4390354, g: -0.36669827, b: 0.54811364, a: 0}
-    - _BumpMapColorSpaceVector1: {r: 0.95868933, g: 0.8899831, b: 0.08104445, a: 0}
-    - _BumpMapColorSpaceVector2: {r: -0.7723546, g: 0.82990384, b: 0.022798773, a: 0}
-    - _BumpMapColorSpaceVector3: {r: -0.013433847, g: -0.02415477, b: 0.424165, a: 0}
-    - _BumpMapDXTScalers: {r: 0.762998, g: 0.88189054, b: 2.352584, a: 0}
-    - _Color: {r: 0.50202996, g: 0.66, b: 0.40722004, a: 0}
-    - _ColorSpaceOrigin: {r: 0.2401372, g: -0.08902974, b: -0.3312318, a: 0}
-    - _ColorSpaceVector1: {r: 1.213327, g: 0.9427675, b: 0.599833, a: 0}
-    - _ColorSpaceVector2: {r: -0.3470023, g: 0.3909135, b: 0.08750208, a: 0}
-    - _ColorSpaceVector3: {r: -0.117331, g: -0.24264, b: 0.6186954, a: 0}
-    - _DXTCompressionScalars: {r: 0.6062531, g: 1.886858, b: 1.481807, a: 0}
+    - _BumpMapColorSpaceOrigin: {r: -0.104712166, g: 0.16203779, b: 0.640746, a: 0}
+    - _BumpMapColorSpaceVector1: {r: 0.928543, g: -0.28276572, b: -0.045393005, a: 0}
+    - _BumpMapColorSpaceVector2: {r: 0.28982806, g: 0.9520338, b: -0.0018665327, a: 0}
+    - _BumpMapColorSpaceVector3: {r: 0.018037597, g: -0.0047102724, b: 0.39831218,
+        a: 0}
+    - _BumpMapDXTScalars: {r: 1, g: 1, b: 1, a: 0}
+    - _BumpMapDXTScalers: {r: 1.0291197, g: 1.004849, b: 2.5078483, a: 0}
+    - _Color: {r: 0.621048, g: 0.66481656, b: 0.67800003, a: 1}
     - _DetailAlbedoColorSpaceOrigin: {r: 0, g: 0, b: 0, a: 0}
     - _DetailAlbedoColorSpaceVector1: {r: 0, g: 0, b: 0, a: 0}
     - _DetailAlbedoColorSpaceVector2: {r: 0, g: 0, b: 0, a: 0}
@@ -227,20 +201,20 @@ Material:
     - _EmissionColorSpaceVector2: {r: 0, g: 0, b: 0, a: 0}
     - _EmissionColorSpaceVector3: {r: 0, g: 0, b: 0, a: 0}
     - _EmissionMapDXTScalers: {r: 0, g: 0, b: 0, a: 0}
-    - _MainTexColorSpaceOrigin: {r: 0.24056166, g: -0.08580611, b: -0.33551654, a: 0}
-    - _MainTexColorSpaceVector1: {r: 1.2194332, g: 0.9361381, b: 0.60756904, a: 0}
-    - _MainTexColorSpaceVector2: {r: -0.33774152, g: 0.3876228, b: 0.080624156, a: 0}
-    - _MainTexColorSpaceVector3: {r: -0.1275201, g: -0.2418545, b: 0.62858933, a: 0}
-    - _MainTexDXTCompressionScalars: {r: 0.6062531, g: 1.886858, b: 1.481807, a: 0}
-    - _MainTexDXTScalars: {r: 0.6062531, g: 1.886858, b: 1.481807, a: 0}
-    - _MainTexDXTScalers: {r: 0.6049493, g: 1.9215814, b: 1.4588368, a: 0}
-    - _NormalColorSpaceOrigin: {r: 0.4390354, g: -0.3666983, b: 0.5481136, a: 0}
-    - _NormalColorSpaceVector1: {r: 0.9586893, g: 0.8899831, b: 0.08104445, a: 0}
-    - _NormalColorSpaceVector2: {r: -0.7723546, g: 0.8299038, b: 0.02279877, a: 0}
-    - _NormalColorSpaceVector3: {r: -0.01343385, g: -0.02415477, b: 0.424165, a: 0}
-    - _NormalDXTScalars: {r: 0.762998, g: 0.8818905, b: 2.352584, a: 0}
+    - _MainTexColorSpaceOrigin: {r: 0.16216557, g: -0.07559905, b: -0.12506445, a: 0}
+    - _MainTexColorSpaceVector1: {r: 1.1149459, g: 1.0090196, b: 0.8357686, a: 0}
+    - _MainTexColorSpaceVector2: {r: -0.058090772, g: 0.12509221, b: -0.07352802,
+        a: 0}
+    - _MainTexColorSpaceVector3: {r: -0.28134283, g: 0.052619092, b: 0.31179488, a: 0}
+    - _MainTexDXTScalars: {r: 1, g: 1, b: 1, a: 0}
+    - _MainTexDXTScalers: {r: 0.5812643, g: 6.398047, b: 2.3626826, a: 0}
+    - _NormalColorSpaceOrigin: {r: 0, g: 0, b: 0, a: 0}
+    - _NormalColorSpaceVector1: {r: 0, g: 0, b: 0, a: 0}
+    - _NormalColorSpaceVector2: {r: 0, g: 0, b: 0, a: 0}
+    - _NormalColorSpaceVector3: {r: 0, g: 0, b: 0, a: 0}
+    - _NormalDXTScalars: {r: 1, g: 1, b: 1, a: 0}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
---- !u!114 &3990921583842062521
+--- !u!114 &7063063305194925210
 MonoBehaviour:
   m_ObjectHideFlags: 11
   m_CorrespondingSourceObject: {fileID: 0}
