@@ -1,0 +1,1109 @@
+fileFormatVersion: 2
+guid: e3f0f868439cb482e92f1d15a0b15233
+ModelImporter:
+  serializedVersion: 22
+  fileIDToRecycleName:
+    100000: chest
+    100002: foot_L
+    100004: foot_R
+    100006: foreArm_L
+    100008: foreArm_R
+    100010: //RootNode
+    100012: GirlArmature
+    100014: GirlBody
+    100016: GirlClothes
+    100018: GirlHair
+    100020: GirlHead
+    100022: Hammer
+    100024: hand_L
+    100026: hand_R
+    100028: head
+    100030: rootBone
+    100032: shin_L
+    100034: shin_R
+    100036: shoulder_L
+    100038: shoulder_R
+    100040: thigh_L
+    100042: thigh_R
+    100044: toes_L
+    100046: toes_R
+    100048: uppderArm_L
+    100050: uppderArm_R
+    100052: waist
+    100054: weapon
+    400000: chest
+    400002: foot_L
+    400004: foot_R
+    400006: foreArm_L
+    400008: foreArm_R
+    400010: //RootNode
+    400012: GirlArmature
+    400014: GirlBody
+    400016: GirlClothes
+    400018: GirlHair
+    400020: GirlHead
+    400022: Hammer
+    400024: hand_L
+    400026: hand_R
+    400028: head
+    400030: rootBone
+    400032: shin_L
+    400034: shin_R
+    400036: shoulder_L
+    400038: shoulder_R
+    400040: thigh_L
+    400042: thigh_R
+    400044: toes_L
+    400046: toes_R
+    400048: uppderArm_L
+    400050: uppderArm_R
+    400052: waist
+    400054: weapon
+    4300000: Hammer
+    4300002: GirlBody
+    4300004: GirlHair
+    4300006: GirlHead
+    4300008: GirlClothes
+    7400000: Default Take
+    7400002: hammer2
+    7400004: hammer2b
+    7400006: hammer2c
+    7400008: hit
+    7400010: hitb
+    7400012: idle
+    7400014: nothing
+    7400016: quick_run
+    7400018: run
+    7400020: run2
+    7400022: runb
+    7400024: WalkBlocking
+    7400026: WalkHammer
+    7400028: WalkHammer2
+    7400030: WalkTweened
+    9500000: //RootNode
+    13700000: GirlBody
+    13700002: GirlClothes
+    13700004: GirlHair
+    13700006: GirlHead
+    13700008: Hammer
+    2186277476908879412: ImportLogs
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Material__Hammer_TXTR_v02_png
+    second: {fileID: 2100000, guid: ee3489a164cdc431e87630db62c109c5, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Material__face_practice_body_png_001
+    second: {fileID: 2100000, guid: 98c0ba1b4980a4711bfab7d41c77d3c7, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Material__face_practice_clothes_png_001
+    second: {fileID: 2100000, guid: d1a1d88e66c8244cb9e4b3efcf3a49f0, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Material__face_practice_face_png_001
+    second: {fileID: 2100000, guid: 253975965551b45709d31d104f0e54bc, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Material__face_practice_hair_png_001
+    second: {fileID: 2100000, guid: 283221d4b1b3c4c23ace3dd831e7580e, type: 2}
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 0
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: "\nClip 'hammer2' has import animation warnings that
+      might lower retargeting quality:\nNote: Activate translation DOF on avatar to
+      improve retargeting quality.\n\t'shin_L' has scale animation that will be discarded.\n\t'foot_L'
+      has scale animation that will be discarded.\n\t'shin_R' has scale animation
+      that will be discarded.\n\t'foot_R' has scale animation that will be discarded.\n\nClip
+      'hammer2b' has import animation warnings that might lower retargeting quality:\nNote:
+      Activate translation DOF on avatar to improve retargeting quality.\n\t'shin_L'
+      has scale animation that will be discarded.\n\t'foot_L' has scale animation
+      that will be discarded.\n\t'shin_R' has scale animation that will be discarded.\n\t'foot_R'
+      has scale animation that will be discarded.\n\nClip 'hammer2c' has import animation
+      warnings that might lower retargeting quality:\nNote: Activate translation DOF
+      on avatar to improve retargeting quality.\n\t'shin_L' has scale animation that
+      will be discarded.\n\t'foot_L' has scale animation that will be discarded.\n\t'shin_R'
+      has scale animation that will be discarded.\n\t'foot_R' has scale animation
+      that will be discarded.\n\nClip 'hit' has import animation warnings that might
+      lower retargeting quality:\nNote: Activate translation DOF on avatar to improve
+      retargeting quality.\n\t'shin_L' has scale animation that will be discarded.\n\t'foot_L'
+      has scale animation that will be discarded.\n\t'thigh_R' has scale animation
+      that will be discarded.\n\t'shin_R' has scale animation that will be discarded.\n\t'foot_R'
+      has scale animation that will be discarded.\n\nClip 'hitb' has import animation
+      warnings that might lower retargeting quality:\nNote: Activate translation DOF
+      on avatar to improve retargeting quality.\n\t'shin_L' has scale animation that
+      will be discarded.\n\t'foot_L' has scale animation that will be discarded.\n\t'thigh_R'
+      has scale animation that will be discarded.\n\t'shin_R' has scale animation
+      that will be discarded.\n\t'foot_R' has scale animation that will be discarded.\n\nClip
+      'quick_run' has import animation warnings that might lower retargeting quality:\nNote:
+      Activate translation DOF on avatar to improve retargeting quality.\n\t'shin_L'
+      has scale animation that will be discarded.\n\t'foot_L' has scale animation
+      that will be discarded.\n\t'shin_R' has scale animation that will be discarded.\n\t'foot_R'
+      has scale animation that will be discarded.\n\nClip 'run' has import animation
+      warnings that might lower retargeting quality:\nNote: Activate translation DOF
+      on avatar to improve retargeting quality.\n\t'shin_L' has scale animation that
+      will be discarded.\n\t'foot_L' has scale animation that will be discarded.\n\t'shin_R'
+      has scale animation that will be discarded.\n\t'foot_R' has scale animation
+      that will be discarded.\n\nClip 'run2' has import animation warnings that might
+      lower retargeting quality:\nNote: Activate translation DOF on avatar to improve
+      retargeting quality.\n\t'shin_L' has scale animation that will be discarded.\n\t'foot_L'
+      has scale animation that will be discarded.\n\t'shin_R' has scale animation
+      that will be discarded.\n\t'foot_R' has scale animation that will be discarded.\n\nClip
+      'runb' has import animation warnings that might lower retargeting quality:\nNote:
+      Activate translation DOF on avatar to improve retargeting quality.\n\t'shin_L'
+      has scale animation that will be discarded.\n\t'foot_L' has scale animation
+      that will be discarded.\n\t'shin_R' has scale animation that will be discarded.\n\t'foot_R'
+      has scale animation that will be discarded.\n\nClip 'WalkBlocking' has import
+      animation warnings that might lower retargeting quality:\nNote: Activate translation
+      DOF on avatar to improve retargeting quality.\n\t'shin_L' has scale animation
+      that will be discarded.\n\t'foot_L' has scale animation that will be discarded.\n\t'shin_R'
+      has scale animation that will be discarded.\n\t'foot_R' has scale animation
+      that will be discarded.\n\nClip 'WalkHammer' has import animation warnings that
+      might lower retargeting quality:\nNote: Activate translation DOF on avatar to
+      improve retargeting quality.\n\t'shin_L' has scale animation that will be discarded.\n\t'foot_L'
+      has scale animation that will be discarded.\n\t'shin_R' has scale animation
+      that will be discarded.\n\t'foot_R' has scale animation that will be discarded.\n\nClip
+      'WalkHammer2' has import animation warnings that might lower retargeting quality:\nNote:
+      Activate translation DOF on avatar to improve retargeting quality.\n\t'shin_L'
+      has scale animation that will be discarded.\n\t'foot_L' has scale animation
+      that will be discarded.\n\t'shin_R' has scale animation that will be discarded.\n\t'foot_R'
+      has scale animation that will be discarded.\n\nClip 'WalkTweened' has import
+      animation warnings that might lower retargeting quality:\nNote: Activate translation
+      DOF on avatar to improve retargeting quality.\n\t'shin_L' has scale animation
+      that will be discarded.\n\t'foot_L' has scale animation that will be discarded.\n\t'shin_R'
+      has scale animation that will be discarded.\n\t'foot_R' has scale animation
+      that will be discarded.\n"
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 3
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: Default Take
+      takeName: Default Take
+      firstFrame: 0
+      lastFrame: 49
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: GirlArmature
+        weight: 1
+      - path: GirlArmature/rootBone
+        weight: 1
+      - path: GirlArmature/rootBone/waist
+        weight: 1
+      - path: GirlArmature/rootBone/waist/chest
+        weight: 1
+      - path: GirlArmature/rootBone/waist/chest/head
+        weight: 1
+      - path: GirlArmature/rootBone/waist/chest/shoulder_L
+        weight: 1
+      - path: GirlArmature/rootBone/waist/chest/shoulder_L/uppderArm_L
+        weight: 1
+      - path: GirlArmature/rootBone/waist/chest/shoulder_L/uppderArm_L/foreArm_L
+        weight: 1
+      - path: GirlArmature/rootBone/waist/chest/shoulder_L/uppderArm_L/foreArm_L/hand_L
+        weight: 1
+      - path: GirlArmature/rootBone/waist/chest/shoulder_L/uppderArm_L/foreArm_L/hand_L/weapon
+        weight: 1
+      - path: GirlArmature/rootBone/waist/chest/shoulder_R
+        weight: 1
+      - path: GirlArmature/rootBone/waist/chest/shoulder_R/uppderArm_R
+        weight: 1
+      - path: GirlArmature/rootBone/waist/chest/shoulder_R/uppderArm_R/foreArm_R
+        weight: 1
+      - path: GirlArmature/rootBone/waist/chest/shoulder_R/uppderArm_R/foreArm_R/hand_R
+        weight: 1
+      - path: GirlArmature/rootBone/waist/thigh_L
+        weight: 1
+      - path: GirlArmature/rootBone/waist/thigh_L/shin_L
+        weight: 1
+      - path: GirlArmature/rootBone/waist/thigh_L/shin_L/foot_L
+        weight: 1
+      - path: GirlArmature/rootBone/waist/thigh_L/shin_L/foot_L/toes_L
+        weight: 1
+      - path: GirlArmature/rootBone/waist/thigh_R
+        weight: 1
+      - path: GirlArmature/rootBone/waist/thigh_R/shin_R
+        weight: 1
+      - path: GirlArmature/rootBone/waist/thigh_R/shin_R/foot_R
+        weight: 1
+      - path: GirlArmature/rootBone/waist/thigh_R/shin_R/foot_R/toes_R
+        weight: 1
+      - path: GirlBody
+        weight: 0
+      - path: GirlClothes
+        weight: 0
+      - path: GirlHair
+        weight: 0
+      - path: GirlHead
+        weight: 0
+      - path: Hammer
+        weight: 0
+      maskType: 0
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: hammer2
+      takeName: hammer2
+      firstFrame: 0
+      lastFrame: 2
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: hammer2b
+      takeName: hammer2b
+      firstFrame: -1
+      lastFrame: 19
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: hammer2c
+      takeName: hammer2c
+      firstFrame: -1
+      lastFrame: 19
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: hit
+      takeName: hit
+      firstFrame: -1
+      lastFrame: 21
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: hitb
+      takeName: hitb
+      firstFrame: 0
+      lastFrame: 25
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: GirlArmature
+        weight: 1
+      - path: GirlArmature/rootBone
+        weight: 1
+      - path: GirlArmature/rootBone/waist
+        weight: 1
+      - path: GirlArmature/rootBone/waist/chest
+        weight: 1
+      - path: GirlArmature/rootBone/waist/chest/head
+        weight: 1
+      - path: GirlArmature/rootBone/waist/chest/shoulder_L
+        weight: 1
+      - path: GirlArmature/rootBone/waist/chest/shoulder_L/uppderArm_L
+        weight: 1
+      - path: GirlArmature/rootBone/waist/chest/shoulder_L/uppderArm_L/foreArm_L
+        weight: 1
+      - path: GirlArmature/rootBone/waist/chest/shoulder_L/uppderArm_L/foreArm_L/hand_L
+        weight: 1
+      - path: GirlArmature/rootBone/waist/chest/shoulder_L/uppderArm_L/foreArm_L/hand_L/weapon
+        weight: 1
+      - path: GirlArmature/rootBone/waist/chest/shoulder_R
+        weight: 1
+      - path: GirlArmature/rootBone/waist/chest/shoulder_R/uppderArm_R
+        weight: 1
+      - path: GirlArmature/rootBone/waist/chest/shoulder_R/uppderArm_R/foreArm_R
+        weight: 1
+      - path: GirlArmature/rootBone/waist/chest/shoulder_R/uppderArm_R/foreArm_R/hand_R
+        weight: 1
+      - path: GirlArmature/rootBone/waist/thigh_L
+        weight: 1
+      - path: GirlArmature/rootBone/waist/thigh_L/shin_L
+        weight: 1
+      - path: GirlArmature/rootBone/waist/thigh_L/shin_L/foot_L
+        weight: 1
+      - path: GirlArmature/rootBone/waist/thigh_L/shin_L/foot_L/toes_L
+        weight: 1
+      - path: GirlArmature/rootBone/waist/thigh_R
+        weight: 1
+      - path: GirlArmature/rootBone/waist/thigh_R/shin_R
+        weight: 1
+      - path: GirlArmature/rootBone/waist/thigh_R/shin_R/foot_R
+        weight: 1
+      - path: GirlArmature/rootBone/waist/thigh_R/shin_R/foot_R/toes_R
+        weight: 1
+      - path: GirlBody
+        weight: 0
+      - path: GirlClothes
+        weight: 0
+      - path: GirlHair
+        weight: 0
+      - path: GirlHead
+        weight: 0
+      - path: Hammer
+        weight: 0
+      maskType: 0
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: idle
+      takeName: idle
+      firstFrame: 0
+      lastFrame: 44
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: nothing
+      takeName: nothing
+      firstFrame: 0
+      lastFrame: 1
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: quick_run
+      takeName: quick_run
+      firstFrame: 0
+      lastFrame: 14
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: run
+      takeName: run
+      firstFrame: 0
+      lastFrame: 20
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: run2
+      takeName: run2
+      firstFrame: 0
+      lastFrame: 20
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: runb
+      takeName: runb
+      firstFrame: 0
+      lastFrame: 20
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: WalkBlocking
+      takeName: WalkBlocking
+      firstFrame: 0
+      lastFrame: 24
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: WalkHammer
+      takeName: WalkHammer
+      firstFrame: 0
+      lastFrame: 24
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: WalkHammer2
+      takeName: WalkHammer2
+      firstFrame: 0
+      lastFrame: 24
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: WalkTweened
+      takeName: WalkTweened
+      firstFrame: 0
+      lastFrame: 24
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    preserveHierarchy: 0
+    indexFormat: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human:
+    - boneName: waist
+      humanName: Hips
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: thigh_L
+      humanName: LeftUpperLeg
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: thigh_R
+      humanName: RightUpperLeg
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: shin_L
+      humanName: LeftLowerLeg
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: shin_R
+      humanName: RightLowerLeg
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: foot_L
+      humanName: LeftFoot
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: foot_R
+      humanName: RightFoot
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: chest
+      humanName: Spine
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: head
+      humanName: Head
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: shoulder_L
+      humanName: LeftShoulder
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: shoulder_R
+      humanName: RightShoulder
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: uppderArm_L
+      humanName: LeftUpperArm
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: uppderArm_R
+      humanName: RightUpperArm
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: foreArm_L
+      humanName: LeftLowerArm
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: foreArm_R
+      humanName: RightLowerArm
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: hand_L
+      humanName: LeftHand
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: hand_R
+      humanName: RightHand
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: toes_L
+      humanName: LeftToes
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: toes_R
+      humanName: RightToes
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    skeleton:
+    - name: GIRL_ready01(Clone)
+      parentName: 
+      position: {x: 0, y: 0, z: 0}
+      rotation: {x: 0, y: 0, z: 0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: GirlArmature
+      parentName: GIRL_ready01(Clone)
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071068}
+      scale: {x: 1, y: 1, z: 1}
+    - name: rootBone
+      parentName: GirlArmature
+      position: {x: -0.010577962, y: 0.03241664, z: 0.22787714}
+      rotation: {x: 0.5000001, y: 0.4999999, z: -0.50000006, w: 0.49999997}
+      scale: {x: 1, y: 1, z: 1}
+    - name: waist
+      parentName: rootBone
+      position: {x: -4.68102, y: 0.010578275, z: -0.1709809}
+      rotation: {x: 0.0000000030539293, y: 0.040418793, z: -0.000000009577511, w: 0.9991828}
+      scale: {x: 1, y: 1, z: 1}
+    - name: thigh_L
+      parentName: waist
+      position: {x: -0.15194026, y: -0.24505022, z: -0.04890828}
+      rotation: {x: -0.066582195, y: 0.006237075, z: 0.9977377, w: 0.0068828412}
+      scale: {x: 1.0000001, y: 1.0000001, z: 1.0000081}
+    - name: shin_L
+      parentName: thigh_L
+      position: {x: -2.506835, y: 0.00000015180558, z: -0.000000001164153}
+      rotation: {x: 0.998013, y: 0.0031724388, z: 0.062310614, w: 0.008799199}
+      scale: {x: 1.0000001, y: 0.9999998, z: 1.0000007}
+    - name: foot_L
+      parentName: shin_L
+      position: {x: -2.190057, y: 0.0000002180459, z: 0.000000038999133}
+      rotation: {x: 0.82523346, y: -0.019580819, z: 0.5643519, w: -0.010642282}
+      scale: {x: 1.0000046, y: 1.0000001, z: 1.0000032}
+    - name: toes_L
+      parentName: foot_L
+      position: {x: -0.39187345, y: 0.00000003958121, z: -0.000000007082114}
+      rotation: {x: 0.002316469, y: 0.12637056, z: -0.018182548, w: 0.9918138}
+      scale: {x: 0.99999994, y: 1, z: 0.99999994}
+    - name: chest
+      parentName: waist
+      position: {x: -0.8758899, y: 0.00000006612783, z: -0.000000014901161}
+      rotation: {x: 0.000000115142406, y: -0.053445075, z: 0.00000001892392, w: 0.9985708}
+      scale: {x: 0.99999994, y: 1, z: 1}
+    - name: head
+      parentName: chest
+      position: {x: -1.4920241, y: 0.000000088056716, z: -0.05067329}
+      rotation: {x: -0.00000011820226, y: 0.014970083, z: -0.0000000052178772, w: 0.99988794}
+      scale: {x: 1, y: 1, z: 0.9999999}
+    - name: shoulder_L
+      parentName: chest
+      position: {x: -0.9707846, y: -0.16610692, z: 0.059087988}
+      rotation: {x: 0.008731688, y: 0.009685288, z: 0.6695496, w: 0.74265295}
+      scale: {x: 0.99999994, y: 0.9999998, z: 1}
+    - name: uppderArm_L
+      parentName: shoulder_L
+      position: {x: -0.59948105, y: -0.21967553, z: -0.10563077}
+      rotation: {x: 0.004022489, y: -0.00037412476, z: 0.08383517, w: 0.99647146}
+      scale: {x: 0.99999994, y: 0.99999994, z: 1}
+    - name: foreArm_L
+      parentName: uppderArm_L
+      position: {x: -1.8024603, y: 0.00000074203126, z: -0.00000000372529}
+      rotation: {x: -0.70737886, y: 0.021349471, z: 0.00785885, w: 0.7064684}
+      scale: {x: 1.0000001, y: 1.0000001, z: 1.0000001}
+    - name: hand_L
+      parentName: foreArm_L
+      position: {x: -1.3759396, y: 0.00000010058284, z: -0.0000007452327}
+      rotation: {x: -0.0021030598, y: 0.05813749, z: -0.01635146, w: 0.99817246}
+      scale: {x: 1, y: 0.9999998, z: 0.99999976}
+    - name: weapon
+      parentName: hand_L
+      position: {x: -0.3194649, y: -0.55579704, z: -0.09230366}
+      rotation: {x: -0.2128723, y: 0.17369798, z: -0.67055917, w: 0.6891044}
+      scale: {x: 0.99999976, y: 0.99999994, z: 0.99999994}
+    - name: shoulder_R
+      parentName: chest
+      position: {x: -0.9707846, y: 0.16610713, z: 0.059087835}
+      rotation: {x: -0.008731125, y: 0.009684148, z: -0.66954935, w: 0.7426532}
+      scale: {x: 1, y: 1, z: 1}
+    - name: uppderArm_R
+      parentName: shoulder_R
+      position: {x: -0.5994806, y: 0.21967657, z: -0.105631284}
+      rotation: {x: -0.0005370936, y: -0.00066223025, z: -0.08383066, w: 0.9964797}
+      scale: {x: 1.0000001, y: 1, z: 1}
+    - name: foreArm_R
+      parentName: uppderArm_R
+      position: {x: -1.8024592, y: -0.0000003821333, z: -0.000000037252903}
+      rotation: {x: 0.70737886, y: 0.02133997, z: -0.007855243, w: 0.7064687}
+      scale: {x: 0.9999996, y: 0.99999994, z: 0.9999998}
+    - name: hand_R
+      parentName: foreArm_R
+      position: {x: -1.3759392, y: 0.00000009685755, z: -0.0000009601354}
+      rotation: {x: 0.9983724, y: 0.015882522, z: 0.05477536, w: -0.000282359}
+      scale: {x: 0.99999994, y: 0.9999999, z: 0.9999999}
+    - name: thigh_R
+      parentName: waist
+      position: {x: -0.15194021, y: 0.24505022, z: -0.048908398}
+      rotation: {x: -0.06659462, y: -0.0027402993, z: 0.99775285, w: -0.006853126}
+      scale: {x: 1.0000001, y: 1.0000001, z: 1.000008}
+    - name: shin_R
+      parentName: thigh_R
+      position: {x: -2.506834, y: 0.00000024051405, z: 8.14907e-10}
+      rotation: {x: 0.998013, y: -0.0031725555, z: 0.062309857, w: -0.008799194}
+      scale: {x: 0.99999976, y: 0.9999998, z: 1.0000008}
+    - name: foot_R
+      parentName: shin_R
+      position: {x: -2.1900568, y: 0.00000015553087, z: 0.000000023981556}
+      rotation: {x: 0.82520163, y: 0.021358358, z: 0.5642693, w: 0.0136517985}
+      scale: {x: 1.0000043, y: 1.0000005, z: 1.0000037}
+    - name: toes_R
+      parentName: foot_R
+      position: {x: -0.3918736, y: 0.000000033993274, z: -0.000000019981911}
+      rotation: {x: -0.0023169045, y: 0.12637049, z: 0.018182425, w: 0.9918138}
+      scale: {x: 1.0000001, y: 1, z: 1.0000001}
+    - name: GirlBody
+      parentName: GIRL_ready01(Clone)
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: GirlClothes
+      parentName: GIRL_ready01(Clone)
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: GirlHair
+      parentName: GIRL_ready01(Clone)
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: GirlHead
+      parentName: GIRL_ready01(Clone)
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Hammer
+      parentName: GIRL_ready01(Clone)
+      position: {x: -3.874268, y: -0.8615892, z: 5.0007544}
+      rotation: {x: 0.49258164, y: -0.47702307, z: 0.5111298, w: 0.5182264}
+      scale: {x: 0.99999994, y: 1, z: 1}
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
+    hasTranslationDoF: 0
+    hasExtraRoot: 1
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 3
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

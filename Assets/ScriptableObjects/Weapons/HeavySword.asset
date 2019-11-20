@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d9e3e1a5ece28214085e4aa828e96b8c, type: 3}
+  m_Name: HeavySword
+  m_EditorClassIdentifier: 
+  prefab: {fileID: 3450633854991776217, guid: acd0e63cf4d020643b4f2548c6717ad5, type: 3}
+  forwardAxis: {x: 0, y: -1, z: 0}
+  length: 1.2
+  trailMaterial: {fileID: 2100000, guid: 681571f3fdc7f094694615d03a1adc5f, type: 2}
+  showTrail: 1
+  attackDataSet: {fileID: 11400000, guid: 7b599c3afc5abd14e97032bd4e49c044, type: 2}

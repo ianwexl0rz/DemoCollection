@@ -49,35 +49,49 @@ namespace MenuSystem
 
 				for(var i = 0; i < menuGroup.configs.Length; i++)
 				{
-					GameObject prefab = null;
+					GameObject go = null;
 					switch(menuGroup.configs[i].menuItem)
 					{
-						case SelectorMenuItem s:
-							prefab = menuSkin.multipleChoice;
+						case SelectorMenuItem selector:
+#if UNITY_EDITOR
+							go = ((SelectorMenuItemDisplay)PrefabUtility.InstantiatePrefab(menuSkin.selectorPrefab, transform)).gameObject;
+#else
+							go = Instantiate(menuSkin.selectorPrefab, transform).gameObject;
+#endif
 							break;
-						case ButtonMenuItem b:
-							prefab = menuSkin.button;
+						case ButtonMenuItem button:
+#if UNITY_EDITOR
+							go = ((ButtonMenuItemDisplay)PrefabUtility.InstantiatePrefab(menuSkin.buttonPrefab, transform)).gameObject;
+#else
+							go = Instantiate(menuSkin.buttonPrefab, transform).gameObject;
+#endif
 							break;
-						case null:
-							Debug.LogError("Element at index " + i + " in " + menuGroup.name + " is not a valid MenuItem!");
+						case ToggleMenuItem toggle:
+#if UNITY_EDITOR
+							go = ((ToggleMenuItemDisplay)PrefabUtility.InstantiatePrefab(menuSkin.togglePrefab, transform)).gameObject;
+#else
+							go = Instantiate(menuSkin.togglePrefab, transform).gameObject;
+#endif
+							break;
+						default:
+							Debug.LogWarning($"Element at index {i} in {menuGroup.name} is invalid. Skipped!");
 							continue;
 					}
 
-					var go = Instantiate(prefab, transform);
 					var item = go.GetComponent<MenuItemDisplay>();
 					item.Initialize(menuGroup.configs[i], menuSkin.itemColors);
 					items[i] = item;
 
-					#if UNITY_EDITOR
+#if UNITY_EDITOR
 					Undo.RegisterCreatedObjectUndo(go, "");
-					#endif
+#endif
 				}
 			}
 
-			#if UNITY_EDITOR
+#if UNITY_EDITOR
 			EditorUtility.SetDirty(this);
 			Undo.CollapseUndoOperations(Undo.GetCurrentGroup());
-			#endif
+#endif
 		}
 
 		public MenuItemDisplay GetMenuItem(int index)

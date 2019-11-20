@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b1894f02d642f5469ef84f5d0702d98, type: 3}
+  m_Name: Alt Skin
+  m_EditorClassIdentifier: 
+  itemColors:
+    normal: {r: 1, g: 1, b: 1, a: 1}
+    selected: {r: 1, g: 0.7400188, b: 0, a: 1}
+  buttonPrefab: {fileID: 6681856510753169937, guid: 024820d258d97644d880b3b3fdcdbcae,
+    type: 3}
+  togglePrefab: {fileID: 4368543948443108534, guid: 3ab6c249076b761439d4cc884b4175e7,
+    type: 3}
+  selectorPrefab: {fileID: 1610972378234882840, guid: 47b8bb8b7e509424aaa3028f015a5c79,
+    type: 3}

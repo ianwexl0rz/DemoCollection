@@ -32,6 +32,11 @@ namespace MenuSystem
 		{
 			menuGroups = GetComponentsInChildren<MenuGroupDisplay>(true);
 
+			foreach(var group in menuGroups)
+			{
+				group.RegisterMenuItems();
+			}
+
 			if(InputManager.ActiveDevice.LeftStick.Vector.sqrMagnitude > Mathf.Epsilon)
 			{
 				inputStale = true;

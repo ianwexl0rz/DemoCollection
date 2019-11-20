@@ -174,6 +174,11 @@ public class GameManager : MonoBehaviour
 
 	#region PUBLIC_METHODS
 
+	public void PrintString(string text)
+	{
+		Debug.Log(text);
+	}
+
 	public void TogglePaused()
 	{
 		togglePaused = true;
