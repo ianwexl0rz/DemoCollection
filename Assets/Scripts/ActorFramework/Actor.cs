@@ -11,13 +11,11 @@ public class Actor : Entity, ILockOnTarget, IDestructable
 
 	public bool isAwake = false;
 	public bool InputEnabled { get; set; }
-
 	public Vector3 move { get; set; }
 	public float look { get; set; }
 	public bool lockOn { get; set; }
 	public bool IsVisible { get; set; }
 	public bool Recenter { get; set; }
-
 
 	public ILockOnTarget lockOnTarget = null;
 
@@ -40,8 +38,20 @@ public class Actor : Entity, ILockOnTarget, IDestructable
 
 	private Renderer[] renderers = null;
 
-	// Use this for initialization
-	protected override void Awake()
+	private void Start()
+	{
+		if (controller != null)
+		{
+			controller.Engage(this);
+		}
+	}
+
+	protected virtual void OnDestroy()
+	{
+		OnDestroyCallback();
+	}
+
+	public override void Awake()
 	{
 		base.Awake();
 		animator = GetComponentInChildren<Animator>();
@@ -70,16 +80,10 @@ public class Actor : Entity, ILockOnTarget, IDestructable
 		//Debug.Log("Ended Hit Reaction.");
 	}
 
-	private void Start()
+	public override void OnUpdate()
 	{
-		if(controller != null)
-		{
-			controller.Engage(this);
-		}
-	}
+		base.OnUpdate();
 
-	 protected virtual void Update()
-	{
 		if(GameManager.I.GamePaused) { return; }
 
 		UpdateController(this);
@@ -100,31 +104,10 @@ public class Actor : Entity, ILockOnTarget, IDestructable
 		IsVisible = visibility;
 	}
 
-	protected override void FixedUpdate()
-	{
-		base.FixedUpdate();
-
-		if(!GameManager.I.PhysicsPaused)
-			ProcessPhysics();
-	}
-
-	protected virtual void OnDestroy()
-	{
-		OnDestroyCallback();
-	}
-
 	protected override void OnPauseEntity(bool value)
 	{
 		if(animator != null)
 			animator.SetPaused(value);
-	}
-
-	protected virtual void ProcessAnimation()
-	{
-	}
-
-	protected virtual void ProcessPhysics()
-	{
 	}
 
 	public ActorController GetController()

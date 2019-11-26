@@ -254,7 +254,9 @@ public class MeleeCombat : MonoBehaviour
 			{
 				Vector3 hitDirection = (go.transform.position - transform.position).WithY(0f).normalized;
 				entity.GetHit(hit.point, hitDirection, attackData);
-				GameManager.HitPauseTimer = Time.fixedDeltaTime * attackData.hitPause;
+				//GameManager.HitPauseTimer = Time.fixedDeltaTime * attackData.hitPause;
+
+				GameManager.I.InitHitPause(Time.fixedDeltaTime * attackData.hitPause);
 
 				//success = true;
 			}

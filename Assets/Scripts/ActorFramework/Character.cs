@@ -16,7 +16,7 @@ public class Character : Actor
 
 	private Matrix4x4 lastTRS;
 
-	protected override void Awake()
+	public override void Awake()
 	{
 		base.Awake();
 		motor = GetComponent<CharacterMotor>();
@@ -28,22 +28,22 @@ public class Character : Actor
 		lastTRS = Matrix4x4.TRS(transform.position, transform.rotation, transform.localScale);
 	}
 
-	protected virtual void LateUpdate()
-	{
-		if(!GameManager.I.PhysicsPaused)
-			ProcessAnimation();
+	//protected virtual void LateUpdate()
+	//{
+	//	if(!GameManager.I.PhysicsPaused)
+	//		ProcessAnimation();
 
-		// TODO: Planes should be cached.
-		//Plane[] planes = GeometryUtility.CalculateFrustumPlanes(Camera.main);
-		//IsVisible = GeometryUtility.TestPlanesAABB(planes, capsuleCollider.bounds);
-	}
+	//	// TODO: Planes should be cached.
+	//	//Plane[] planes = GeometryUtility.CalculateFrustumPlanes(Camera.main);
+	//	//IsVisible = GeometryUtility.TestPlanesAABB(planes, capsuleCollider.bounds);
+	//}
 
-	protected override void ProcessPhysics()
+	protected override void UpdatePhysics()
 	{
 		motor.UpdateMotor();
 	}
 
-	protected override void ProcessAnimation()
+	protected override void UpdateAnimation()
 	{
 		UpdateAnimationParameters();
 
@@ -51,7 +51,7 @@ public class Character : Actor
 		var loops = Mathf.CeilToInt(interval / MAX_ANIMATION_STEP);
 		var dt = interval / loops;
 
-		for(var i = 0;  i < loops; i++)
+		for (var i = 0; i < loops; i++)
 		{
 			animator.Update(dt);
 
@@ -60,7 +60,7 @@ public class Character : Actor
 			var lastWeaponPos = lastTRS.MultiplyPoint3x4(transform.InverseTransformPoint(meleeCombat.WeaponRoot.position));
 			var lastWeaponRot = lastTRS.rotation * Quaternion.Inverse(transform.rotation) * meleeCombat.WeaponRoot.rotation;
 
-			if(meleeCombat.ActiveHit)
+			if (meleeCombat.ActiveHit)
 				meleeCombat.CheckHits((i + 1f) / loops, lastWeaponPos, lastWeaponRot);
 		}
 

@@ -74,8 +74,8 @@ MonoBehaviour:
   components:
   - {fileID: 1843527443897317581}
   - {fileID: 7057285180952744834}
-  - {fileID: -7537045649400002774}
   - {fileID: -4849616863441151459}
+  - {fileID: -7537045649400002774}
   - {fileID: 1890356990986590323}
 --- !u!114 &1843527443897317581
 MonoBehaviour:
@@ -101,7 +101,7 @@ MonoBehaviour:
     min: 0
   scatter:
     m_OverrideState: 1
-    m_Value: 0.45
+    m_Value: 0.75
     min: 0
     max: 1
   clamp:

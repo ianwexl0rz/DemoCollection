@@ -24,20 +24,14 @@ public struct RigidbodyState
 
 public class Entity : MonoBehaviour
 {
-	private RigidbodyState savedState;
-
 	protected bool paused;
-
 	protected List<HitData> hits = new List<HitData>();
 
 	public Rigidbody rb { get; private set; }
 	public bool IsPaused => paused;
 
-	// Use this for initialization
-	protected virtual void Awake()
-	{
-		rb = GetComponent<Rigidbody>();
-	}
+	private RigidbodyState savedState;
+	private List<Entity> subEntities = new List<Entity>();
 
 	protected virtual void OnEnable()
 	{
@@ -55,19 +49,61 @@ public class Entity : MonoBehaviour
 		if(paused) { PauseEntity(false); }
 	}
 
-	protected virtual void FixedUpdate()
+	public virtual void Awake()
 	{
-		if(GameManager.I.PhysicsPaused) { return; }
+		rb = GetComponent<Rigidbody>();
+	}
 
-		for(var i = hits.Count; i-- > 0;)
+	public virtual void OnUpdate()
+	{
+	}
+
+	public virtual void OnLateUpdate()
+	{
+		if (GameManager.I.PhysicsPaused) { return; }
+
+		UpdateAnimation();
+
+		foreach (var entity in subEntities)
+			entity.OnLateUpdate();
+	}
+
+	public virtual void OnFixedUpdate()
+	{
+		if (GameManager.I.PhysicsPaused) { return; }
+
+		for (var i = hits.Count; i-- > 0;)
 		{
 			ApplyHit(hits[i]);
 			hits.Remove(hits[i]);
 		}
+
+		UpdatePhysics();
+
+		foreach (var entity in subEntities)
+			entity.OnFixedUpdate();
+	}
+
+	protected virtual void UpdateAnimation()
+	{
+	}
+
+	protected virtual void UpdatePhysics()
+	{
 	}
 
 	protected virtual void OnPauseEntity(bool value)
 	{
+	}
+
+	public void AddSubEntity(Entity entity)
+	{
+		subEntities.Add(entity);
+	}
+
+	public void RemoveSubEntity(Entity entity)
+	{
+		subEntities.Remove(entity);
 	}
 
 	public void PauseEntity(bool value)
@@ -96,6 +132,9 @@ public class Entity : MonoBehaviour
 		}
 
 		OnPauseEntity(value);
+
+		foreach (var entity in subEntities)
+			entity.PauseEntity(value);
 	}
 
 	protected virtual void ApplyHit(HitData hit)

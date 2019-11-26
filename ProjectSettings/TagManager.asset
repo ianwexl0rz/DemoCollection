@@ -19,7 +19,7 @@ TagManager:
   - PostProcessing
   - ProxyObject
   - Hitbox
-  - 
+  - ProxyCollider
   - 
   - 
   - 

@@ -31,8 +31,7 @@ public class GameManager : MonoBehaviour
 	public Action<bool> PauseAllPhysics = delegate { };
 	public Action<bool> OnPauseGame = delegate { };
 	private bool gamePaused, physicsPaused, togglePaused;
-	
-	private float hitPauseTimer;
+	private Coroutine hitPauseCoroutine;
 
 	private static GameManager _instance;
 	public static GameManager I
@@ -40,19 +39,26 @@ public class GameManager : MonoBehaviour
 		get { if(!_instance) { _instance = FindObjectOfType<GameManager>(); } return _instance; }
 	}
 
-	public bool PhysicsPaused => physicsPaused;
-	public bool GamePaused => gamePaused;
-
-	public static LockOnIndicator LockOnIndicator => I.lockOnIndicator;
-	public static float HitPauseTimer
+	public bool PhysicsPaused
 	{
-		get => I.hitPauseTimer;
-		set => I.hitPauseTimer = value;
+		get => physicsPaused;
+		set
+		{
+			if (physicsPaused != value)
+			{
+				physicsPaused = value;
+				PauseAllPhysics(value);
+			}
+		}
 	}
+
+	public bool GamePaused => gamePaused;
 
 	#region UNITY_METHODS
 	private void Awake()
 	{
+		_instance = this;
+
 		//QualitySettings.maxQueuedFrames = 1;
 		Application.targetFrameRate = 60;
 
@@ -72,8 +78,6 @@ public class GameManager : MonoBehaviour
 		{
 			playerIndex = playerCharacters.IndexOf(activePlayer);
 		}
-
-		StartCoroutine(LateFixedUpdate());
 	}
 
 	private void Start()
@@ -96,27 +100,6 @@ public class GameManager : MonoBehaviour
 		*/
 	}
 
-	private IEnumerator LateFixedUpdate()
-	{
-		while(true)
-		{
-			yield return new WaitForFixedUpdate();
-
-			if(gamePaused) { continue; }
-
-			mainCamera.UpdatePositionAndRotation(); // Update camera after physics
-
-			// Update the potential lock on target
-			if(!activePlayer.lockOn)
-			{
-				activePlayer.lockOnTarget = lockOnCollider.GetTargetClosestToCenter(activePlayer);
-
-				//potentialTargets.Sort(SortByProximityToScreenCenter);
-				//activePlayer.lockOnTarget = potentialTargets[0];
-			}
-		}
-	}
-
 	private void Update()
 	{
 		// Swap characters
@@ -125,48 +108,50 @@ public class GameManager : MonoBehaviour
 		// Hold the right bumper for slow-mo!
 		Time.timeScale = InputManager.ActiveDevice.RightBumper.IsPressed || Input.GetKey(KeyCode.LeftAlt) ? 0.25f : 1f;
 
+		for (var i = 0; i < entities.Count; i++)
+		{
+			entities[i].OnUpdate();
+		}
+
 		// TODO: Should be entirely event driven.
 		hud.OnUpdate();
 	}
 
+	public void FixedUpdate()
+	{
+		for (var i = 0; i < entities.Count; i++)
+		{
+			entities[i].OnFixedUpdate();
+		}
+	}
+
 	public void LateUpdate()
 	{
-		if(!physicsPaused)
-			lockOnIndicator.UpdatePosition(activePlayer.lockOn, activePlayer.lockOnTarget);
+		for (var i = 0; i < entities.Count; i++)
+		{
+			entities[i].OnLateUpdate();
+		}
 
+		if (!gamePaused)
+			mainCamera.UpdatePositionAndRotation();
+
+		if (!physicsPaused)
+		{
+			if (!activePlayer.lockOn)
+				activePlayer.lockOnTarget = lockOnCollider.GetTargetClosestToCenter(activePlayer);
+
+			// Update lock-on indicator position.
+			lockOnIndicator.UpdatePosition(activePlayer.lockOn, activePlayer.lockOnTarget);
+		}
+
+		// Pause game if requested.
 		if(InputManager.ActiveDevice.MenuWasPressed || Input.GetKeyDown(KeyCode.P) || togglePaused)
 		{
 			togglePaused = false;
 			gamePaused = !gamePaused;
 			hud.SetPaused(gamePaused);
 			OnPauseGame(gamePaused);
-		}
-
-		if(!gamePaused && hitPauseTimer > 0)
-		{
-			InputManager.ActiveDevice.Vibrate(0.5f);
-		}
-		else
-		{
-			InputManager.ActiveDevice.Vibrate(0f);
-		}
-
-		if((gamePaused || hitPauseTimer > 0) && !physicsPaused)
-		{
-			physicsPaused = true;
-			PauseAllPhysics(true);
-		}
-
-		if((!gamePaused && hitPauseTimer == 0f) && physicsPaused)
-		{
-			physicsPaused = false;
-			PauseAllPhysics(false);
-		}
-
-		if(!gamePaused && hitPauseTimer > 0)
-		{
-			hitPauseTimer -= Time.deltaTime;
-			hitPauseTimer = Mathf.Max(0f, hitPauseTimer);
+			PhysicsPaused = gamePaused;
 		}
 	}
 
@@ -174,9 +159,9 @@ public class GameManager : MonoBehaviour
 
 	#region PUBLIC_METHODS
 
-	public void PrintString(string text)
+	public void InitHitPause(float duration)
 	{
-		Debug.Log(text);
+		this.OverrideCoroutine(ref hitPauseCoroutine, HitPause(duration));
 	}
 
 	public void TogglePaused()
@@ -244,6 +229,29 @@ public class GameManager : MonoBehaviour
 		if(oldPlayer) oldPlayer.SetController(followerBrain); // Set the old active player to use Follower Brain
 		activePlayer.SetController(playerBrain); // Set the active player to use Player Brain
 		mainCamera.SetTarget(activePlayer, immediate); // Set the camera to follow the active player
+	}
+
+	private IEnumerator HitPause(float duration)
+	{
+		PhysicsPaused = true;
+
+		while (duration > 0)
+		{
+			if (!gamePaused)
+			{
+				duration -= Time.deltaTime;
+				InputManager.ActiveDevice.Vibrate(0.5f);
+			}
+			else
+			{
+				InputManager.ActiveDevice.Vibrate(0);
+			}
+
+			yield return null;
+		}
+
+		InputManager.ActiveDevice.Vibrate(0);
+		PhysicsPaused = false;
 	}
 	#endregion
 }

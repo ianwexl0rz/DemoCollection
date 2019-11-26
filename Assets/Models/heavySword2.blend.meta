@@ -1,7 +1,7 @@
 fileFormatVersion: 2
 guid: 8c96fbc477da0405b9c477725bb7a7fe
 ModelImporter:
-  serializedVersion: 25
+  serializedVersion: 28
   internalIDToNameTable:
   - first:
       1: 100000
@@ -296,24 +296,24 @@ ModelImporter:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: Hair__heavy_culled_hair_psd
-    second: {fileID: 2100000, guid: e4701d53f1c6444f9a964b177852369c, type: 2}
+    second: {fileID: 2100000, guid: 6654b4555cc33134eafe300d85915997, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: Material_001__sword_UV_psd
-    second: {fileID: 2100000, guid: dba7050ff30c248d4badb6c2a85eff91, type: 2}
+    second: {fileID: 2100000, guid: cb9e2f85393d3b044bc8c08511cda765, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: Material__heavy_culled_clothes_psd
-    second: {fileID: 2100000, guid: 62ae6823c63ab45a88261ba7dc98a61f, type: 2}
+    second: {fileID: 2100000, guid: 04613101d2c81b64c8e86928c5cabd6d, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: Material__heavy_culled_hair_psd
     second: {fileID: 2100000, guid: e4701d53f1c6444f9a964b177852369c, type: 2}
   materials:
-    importMaterials: 1
+    materialImportMode: 0
     materialName: 0
     materialSearch: 1
     materialLocation: 0
@@ -335,40 +335,41 @@ ModelImporter:
       animation warnings that might lower retargeting quality:\nNote: Activate translation
       DOF on avatar to improve retargeting quality.\n\t'foot_R' has scale animation
       that will be discarded.\n\nClip 'runfaster' has import animation warnings that
-      might lower retargeting quality:\nNote: Activate translation DOF on avatar to
-      improve retargeting quality.\n\t'bangs1' is inbetween humanoid transforms and
-      has rotation animation that will be discarded.\n\nClip 'swing' has import animation
-      warnings that might lower retargeting quality:\nNote: Activate translation DOF
-      on avatar to improve retargeting quality.\n\t'bangs1' is inbetween humanoid
+      might lower retargeting quality:\nNote: Activate translation DOF on avatar
+      to improve retargeting quality.\n\t'bangs1' is inbetween humanoid transforms
+      and has rotation animation that will be discarded.\n\nClip 'swing' has import
+      animation warnings that might lower retargeting quality:\nNote: Activate translation
+      DOF on avatar to improve retargeting quality.\n\t'bangs1' is inbetween humanoid
       transforms and has rotation animation that will be discarded.\n\nClip 'swing_forward'
-      has import animation warnings that might lower retargeting quality:\nNote: Activate
-      translation DOF on avatar to improve retargeting quality.\n\t'bangs1' is inbetween
-      humanoid transforms and has rotation animation that will be discarded.\n\nClip
+      has import animation warnings that might lower retargeting quality:\nNote:
+      Activate translation DOF on avatar to improve retargeting quality.\n\t'bangs1'
+      is inbetween humanoid transforms and has rotation animation that will be discarded.\n\nClip
       'swing_forward_holds' has import animation warnings that might lower retargeting
       quality:\nNote: Activate translation DOF on avatar to improve retargeting quality.\n\t'bangs1'
       is inbetween humanoid transforms and has rotation animation that will be discarded.\n\nClip
       'swordSwing2' has import animation warnings that might lower retargeting quality:\nNote:
       Activate translation DOF on avatar to improve retargeting quality.\n\t'sideBangs1_L'
-      has translation animation that will be discarded.\n\t'bangs1' is inbetween humanoid
-      transforms and has rotation animation that will be discarded.\n\t'sideBangs1_R'
-      has translation animation that will be discarded.\n\nClip 'walk_sidewaysL' has
-      import animation warnings that might lower retargeting quality:\nNote: Activate
-      translation DOF on avatar to improve retargeting quality.\n\t'sideBangs1_L'
+      has translation animation that will be discarded.\n\t'bangs1' is inbetween
+      humanoid transforms and has rotation animation that will be discarded.\n\t'sideBangs1_R'
+      has translation animation that will be discarded.\n\nClip 'walk_sidewaysL'
+      has import animation warnings that might lower retargeting quality:\nNote:
+      Activate translation DOF on avatar to improve retargeting quality.\n\t'sideBangs1_L'
       has translation animation that will be discarded.\n\t'sideBangs1_R' has translation
       animation that will be discarded.\n\nClip 'walk_sidewaysR' has import animation
-      warnings that might lower retargeting quality:\nNote: Activate translation DOF
-      on avatar to improve retargeting quality.\n\t'sideBangs1_L' has translation
+      warnings that might lower retargeting quality:\nNote: Activate translation
+      DOF on avatar to improve retargeting quality.\n\t'sideBangs1_L' has translation
       animation that will be discarded.\n\t'sideBangs1_R' has translation animation
-      that will be discarded.\n\nClip 'walk2' has import animation warnings that might
-      lower retargeting quality:\nNote: Activate translation DOF on avatar to improve
-      retargeting quality.\n\t'sideBangs1_L' has translation animation that will be
-      discarded.\n\t'bangs1' is inbetween humanoid transforms and has rotation animation
-      that will be discarded.\n\t'sideBangs1_R' has translation animation that will
-      be discarded.\n\nClip 'walk3' has import animation warnings that might lower
-      retargeting quality:\nNote: Activate translation DOF on avatar to improve retargeting
-      quality.\n\t'sideBangs1_L' has translation animation that will be discarded.\n\t'bangs1'
-      is inbetween humanoid transforms and has rotation animation that will be discarded.\n\t'sideBangs1_R'
-      has translation animation that will be discarded.\n"
+      that will be discarded.\n\nClip 'walk2' has import animation warnings that
+      might lower retargeting quality:\nNote: Activate translation DOF on avatar
+      to improve retargeting quality.\n\t'sideBangs1_L' has translation animation
+      that will be discarded.\n\t'bangs1' is inbetween humanoid transforms and has
+      rotation animation that will be discarded.\n\t'sideBangs1_R' has translation
+      animation that will be discarded.\n\nClip 'walk3' has import animation warnings
+      that might lower retargeting quality:\nNote: Activate translation DOF on avatar
+      to improve retargeting quality.\n\t'sideBangs1_L' has translation animation
+      that will be discarded.\n\t'bangs1' is inbetween humanoid transforms and has
+      rotation animation that will be discarded.\n\t'sideBangs1_R' has translation
+      animation that will be discarded.\n"
     animationRetargetingWarnings: 
     animationDoRetargetingWarnings: 0
     importAnimatedCustomProperties: 1
@@ -380,6 +381,12 @@ ModelImporter:
     animationWrapMode: 0
     extraExposedTransformPaths:
     - Armature/rootBone/armControl_L/weaponBone_L
+    - Armature/rootBone/Body/Body_001/head/sideBangs1_L
+    - Armature/rootBone/Body/Body_001/head/sideBangs1_L/sideBangs2_L
+    - Armature/rootBone/Body/Body_001/head/sideBangs1_R
+    - Armature/rootBone/Body/Body_001/head/sideBangs1_R/sideBangs2_R
+    - Cube
+    - speedSword
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
@@ -2248,6 +2255,7 @@ ModelImporter:
     meshCompression: 0
     addColliders: 0
     useSRGBMaterialColor: 1
+    sortHierarchyByName: 1
     importVisibility: 1
     importBlendShapes: 1
     importCameras: 1
@@ -2278,7 +2286,6 @@ ModelImporter:
     normalSmoothingSource: 0
   referencedClips: []
   importAnimation: 1
-  copyAvatar: 0
   humanDescription:
     serializedVersion: 3
     human:
@@ -2590,8 +2597,10 @@ ModelImporter:
     hasExtraRoot: 1
     skeletonHasParents: 1
   lastHumanDescriptionAvatarSource: {instanceID: 0}
+  autoGenerateAvatarMappingIfUnspecified: 1
   animationType: 3
   humanoidOversampling: 1
+  avatarSetup: 1
   additionalBone: 0
   userData: 
   assetBundleName: 
