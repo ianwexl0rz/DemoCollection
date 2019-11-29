@@ -12,7 +12,6 @@ public class CharacterMotor : MonoBehaviour
 	public float walkSpeed = 2f;
 	public float runSpeed = 4f;
 	public float acceleration;
-	public float lockOnSpeedScale = 1f;
 	public Vector2 directionalSpeedScale = Vector2.one;
 	public float jumpHeight = 4f;
 	public int jumpCount = 1;
@@ -21,15 +20,20 @@ public class CharacterMotor : MonoBehaviour
 	public float speedSmoothTime = 0.1f;
 	public float leanFactor;
 	public float friction;
+	[SerializeField] private float maxTurnGround = 45f;
+	[SerializeField] private float maxTurnAir = 20f;
+	[SerializeField] private CapsuleCollider hitBoxCollider = null;
 
 	public bool Run { get; set; }
 	public bool ShouldRoll { get; set; }
 	public bool Recenter { get; set; }
 	public bool AimingMode { get; set; }
 
-	public Vector3 FeetPos => feetPos;
-	public bool IsGrounded => grounded;
+	//public Vector3 FeetPos => feetPos;
 	public Vector3 GroundVelocity => groundVelocity;
+	public bool isGrounded;
+
+	public bool IsLockedOn => character.lockOn && character.lockOnTarget != null;
 
 	public PIDConfig angleControllerConfig = null;
 	public PIDConfig angularVelocityControllerConfig = null;
@@ -37,32 +41,22 @@ public class CharacterMotor : MonoBehaviour
 	private PID3 angleController;
 	private PID3 angularVelocityController;
 	private Vector3 groundVelocity = Vector3.zero;
-	private Vector3 desiredDirection;
-	private Vector3 feetPos;
+	private Quaternion inputOrientation;
+	private Quaternion lockOnOrientation;
 	private Vector3 groundNormal;
 	private Vector3 groundPoint;
+	private Vector3 groundCheckPoint;
 	private float maxAngularVelocity = 50f;
 	private float rollAngle;
-	private bool grounded;
 	private bool queueJump;
 	private bool jumping;
 	private int remainingJumps;
-	private CharacterState state;
-
 	private Character character = null;
-
-
-	private enum CharacterState
-	{
-		Grounded,
-		InAir,
-		Jump
-	}
 
 	public void Init(Character character)
 	{
 		this.character = character;
-		desiredDirection = character.transform.forward;
+		inputOrientation = Quaternion.LookRotation(character.transform.forward);
 		angleController = new PID3(angleControllerConfig);
 		angularVelocityController = new PID3(angularVelocityControllerConfig);
 		remainingJumps = jumpCount;
@@ -84,12 +78,153 @@ public class CharacterMotor : MonoBehaviour
 		if(!character || !character.rb) { return; }
 
 		Gizmos.color = Color.blue;
-		Gizmos.DrawSphere(feetPos, 0.1f);
+		Gizmos.DrawSphere(character.rb.worldCenterOfMass, 0.1f);
+	}
+
+	public void UpdateMotor()
+	{
+		var dt = Time.fixedDeltaTime;
+		Vector3 desiredVelocity;
+
+		if (character.animator.applyRootMotion)
+		{
+			character.rb.angularVelocity = Vector3.zero;
+			return;
+		}
+
+		if (isGrounded)
+		{
+			// Invert ground normal rotation to get unbiased ground velocity
+			var groundRotation = Quaternion.LookRotation(Vector3.forward, groundNormal);
+			desiredVelocity = Quaternion.Inverse(groundRotation) * character.rb.velocity;
+		}
+		else
+		{
+			desiredVelocity = character.rb.velocity.WithY(0f);
+		}
+
+		if (IsLockedOn)
+		{
+			var toLockOnTarget = (character.lockOnTarget.GetLookPosition() - character.GetLookPosition()).WithY(0f).normalized;
+			lockOnOrientation = Quaternion.LookRotation(toLockOnTarget);
+		}
+
+		// Update desired velocity if there is input.
+		if (character.move.normalized != Vector3.zero && character.InputEnabled && !character.hitReaction.InProgress)
+		{
+			var input = character.move;
+			
+			// Rotate the player toward the input direction based on max turn speed.
+			var useGroundTurnRate = isGrounded && rollAngle < Mathf.Epsilon;
+			var to = Quaternion.LookRotation(character.move.normalized);
+			inputOrientation = Quaternion.RotateTowards(inputOrientation, to, useGroundTurnRate ? maxTurnGround : maxTurnAir);
+
+			// If rolling on the ground, use the player direction instead of direct input.
+			var rollingOnGround = isGrounded && rollAngle > Mathf.Epsilon;
+			if (rollingOnGround) input = inputOrientation * Vector3.forward * character.move.magnitude;
+
+			desiredVelocity += input * (isGrounded ? acceleration : acceleration * 0.25f) * dt;
+		}
+
+		var speed = desiredVelocity.magnitude;
+
+		// Apply friction
+		if (isGrounded && rollAngle < Mathf.Epsilon)
+		{
+			speed = Mathf.Max(desiredVelocity.magnitude - friction * dt, 0f);
+		}
+
+		// Speed is only variable when NOT sprinting.
+		var normalSpeed = Mathf.Max(minSpeed, walkSpeed * character.move.sqrMagnitude);
+		speed = Mathf.Min(speed, Run || ShouldRoll ? runSpeed : normalSpeed);
+		groundVelocity = (desiredVelocity.normalized * speed).WithY(0f); 
+
+		if (queueJump && remainingJumps > 0)
+		{
+			Jump();
+		}
+
+		// Set the center of mass to the point on the collider directly below the center, using it's current rotation.
+		var length = hitBoxCollider.height * 0.5f + groundCheckHeight;
+		var ray = new Ray(transform.TransformPoint(hitBoxCollider.center) + Vector3.down * length, Vector3.up);
+		hitBoxCollider.Raycast(ray, out var hitInfo, length);
+		character.rb.centerOfMass = transform.InverseTransformPoint(hitInfo.point);
+
+		var wasGrounded = isGrounded;
+		isGrounded = !jumping && CheckForGround();
+
+		if (isGrounded)
+		{
+			// Reset remaining jumps if we just landed.
+			if (!wasGrounded) remainingJumps = jumpCount;
+
+			var finalVelocity = Quaternion.LookRotation(Vector3.forward, groundNormal) * groundVelocity;
+
+			// Apply force slightly above the center of mass to make the actor lean with acceleration.
+			var offset = character.rb.worldCenterOfMass + Vector3.up * leanFactor * groundVelocity.magnitude / runSpeed;
+			var deltaVelocity = finalVelocity - character.rb.velocity;
+			character.rb.AddForceAtPosition(deltaVelocity, offset, ForceMode.VelocityChange);
+
+			var end = character.rb.worldCenterOfMass + groundNormal * (groundCheckHeight + character.capsuleCollider.height);
+			Debug.DrawLine(character.rb.worldCenterOfMass, end, Color.blue);
+		}
+		else
+		{
+			// Reset jump allowance if we ran off a ledge
+			//if(grounded && !jumping) jumpAllowance.Reset(Time.fixedDeltaTime * 4);
+
+			// Reset jump allowance if we ran off a ledge OR jumped
+			if (wasGrounded) character.jumpAllowance.Reset(Time.fixedDeltaTime * 4);
+
+			if (!character.jumpAllowance.InProgress)
+			{
+				// Ran out of coyote time and didn't jump
+				if (remainingJumps == jumpCount) remainingJumps = 0;
+
+				// HACK: We jumped and it's OK to check for the ground again
+				if (jumping) jumping = false;
+			}
+
+			// We passed the peak of the jump
+			if (jumping && character.rb.velocity.y <= 0f) jumping = false;
+
+			character.rb.velocity = groundVelocity.WithY(character.rb.velocity.y);
+			character.rb.velocity += Physics.gravity * gravityScale * Time.fixedDeltaTime;
+		}
+
+		if (ShouldRoll || (rollAngle > 0f && rollAngle < 360f))
+		{
+			ShouldRoll = false;
+			rollAngle += rollSpeed * Time.fixedDeltaTime;
+
+			if (rollAngle >= 360f) rollAngle = 0f;
+		}
+
+		// TODO: Smooth transition between orientations.
+		var rotation = IsLockedOn ? lockOnOrientation : inputOrientation;
+
+		if (rollAngle > 0)
+		{
+			var rollAxis = IsLockedOn && groundVelocity.magnitude >= minSpeed
+				? Vector3.Cross(Quaternion.Inverse(rotation) * inputOrientation * Vector3.forward, Vector3.down)
+				: Vector3.right;
+
+			var rollRot = Quaternion.AngleAxis(rollAngle, rollAxis);
+			rotation *= rollRot;
+		}
+
+		character.rb.RotateTo(angleController, angularVelocityController, rotation, Time.fixedDeltaTime);
+
+		if (isGrounded)
+		{
+			var groundOffset = character.rb.position - character.rb.worldCenterOfMass;
+			character.rb.MovePosition(character.rb.position.WithY(groundPoint.y + groundOffset.y));
+		}
 	}
 
 	private bool CheckForGround()
 	{
-		var raycastOrigin = feetPos + Vector3.up * groundCheckHeight;
+		var raycastOrigin = character.rb.worldCenterOfMass + Vector3.up * groundCheckHeight;
 		var forward = Vector3.Cross(transform.right, Vector3.up);
 
 		var groundHitCount = 0;
@@ -98,7 +233,7 @@ public class CharacterMotor : MonoBehaviour
 		var averageNormal = Vector3.zero;
 		var averagePoint = Vector3.zero;
 
-		for(var i = 0; i < extraGroundRays; i++)
+		for (var i = 0; i < extraGroundRays; i++)
 		{
 			var dir = i > 0 ? Quaternion.Euler(0f, 360f * i / extraGroundRays, 0f) * forward : forward;
 			var origin = raycastOrigin + dir * rayOffsetDistance;
@@ -107,9 +242,9 @@ public class CharacterMotor : MonoBehaviour
 			Color[] color = { Color.red, Color.yellow, Color.green };
 			var status = 0;
 
-			if(Physics.Raycast(origin, Vector3.down, out RaycastHit hit, groundCheckHeight + 0.2f, ~LayerMask.GetMask("Actor", "ProxyObject")))
+			if (Physics.Raycast(origin, Vector3.down, out RaycastHit hit, groundCheckHeight + 0.2f, ~LayerMask.GetMask("Actor", "ProxyObject")))
 			{
-				
+
 				// This would prevent walking up ramps that are too steep
 				//if(Vector3.Angle(hit.normal, Vector3.up) > 45f)
 				//{
@@ -128,229 +263,35 @@ public class CharacterMotor : MonoBehaviour
 		}
 
 		// Did we hit the ground?
-		if(groundHitCount == 0) { return false; }
+		if (groundHitCount == 0) { return false; }
 
 		averageNormal /= groundHitCount;
 		averagePoint /= groundHitCount;
 		averageDistance /= groundHitCount;
 
 		// Is the ground too steep?
-		if(Vector3.Angle(averageNormal, Vector3.up) > 45f) { return false; }
+		if (Vector3.Angle(averageNormal, Vector3.up) > 45f) { return false; }
 
-		// If we were already grounded, stay grounded
-		if(grounded) { goto Success; }
+		if (!isGrounded)
+		{
+			// Become grounded ONLY if the distance to ground is less than projected fall distance
+			var projectedFallDistance = (-character.rb.velocity.y - Physics.gravity.y * gravityScale) * Time.fixedDeltaTime;
+			if (averageDistance > projectedFallDistance) { return false; }
+		}
 
-		// Become grounded ONLY if the distance to ground is less than projected fall distance
-		var projectedFallDistance = (-character.rb.velocity.y - Physics.gravity.y * gravityScale) * Time.fixedDeltaTime;
-		if(averageDistance > projectedFallDistance) { return false; }
-
-		Success:
 		groundNormal = averageNormal;
 		groundPoint = averagePoint;
 		return true;
 	}
 
-	public void UpdateMotor()
+	private void Jump()
 	{
-		var dt = Time.fixedDeltaTime;
+		queueJump = false;
+		jumping = true;
+		remainingJumps--;
 
-		if(character.animator.applyRootMotion)
-		{
-			groundVelocity = Vector3.zero;
-			character.rb.angularVelocity = Vector3.zero;
-			return;
-		}
-
-		if(grounded)
-		{
-			// Invert ground normal rotation to get unbiased ground velocity
-			var groundRotation = Quaternion.LookRotation(Vector3.forward, groundNormal);
-			groundVelocity = Quaternion.Inverse(groundRotation) * character.rb.velocity;
-		}
-		else
-		{
-			groundVelocity = character.rb.velocity.WithY(0f);
-		}
-
-		var desiredVel = groundVelocity;
-
-		if(character.InputEnabled && !character.hitReaction.InProgress)
-		{
-			//TODO: Limit acceleration based on the amount of space in front of you
-			desiredVel += character.move.normalized * (grounded ? acceleration : acceleration * 0.25f) * dt;
-		}
-
-		var speed = desiredVel.magnitude;
-		if(grounded && !ShouldRoll) speed = Mathf.Max(desiredVel.magnitude - friction * dt, 0f);
-
-		// Speed is only variable when NOT sprinting.
-		var normalSpeed = Mathf.Max(minSpeed, walkSpeed * character.move.sqrMagnitude);
-		var speedLimit = Run || ShouldRoll ? runSpeed : normalSpeed;
-		speed = Mathf.Min(speed, speedLimit);
-		groundVelocity = (desiredVel.normalized * speed).WithY(0f);
-
-		UpdateFeetPos();
-
-		CharacterState current = CharacterState.InAir;
-
-		if(queueJump && remainingJumps > 0)
-		{
-			current = CharacterState.Jump;
-		}
-		else if(!jumping && CheckForGround())
-		{
-			current = CharacterState.Grounded;
-		}
-
-		SetState(current);
-		UpdateRotation();
-	}
-
-	private void UpdateGroundVelocity()
-	{
-		var feetOffset = character.rb.position - feetPos;
-		character.rb.MovePosition(character.rb.position.WithY(groundPoint.y + feetOffset.y));
-
-		//var cross = Vector3.Cross(groundVelocity.normalized, Vector3.up);
-		//var finalVelocity = Vector3.Cross(groundNormal, cross) * groundVelocity.magnitude;
-
-		var finalVelocity = Quaternion.LookRotation(Vector3.forward, groundNormal) * groundVelocity;
-
-		var point = feetPos + Vector3.up * leanFactor * groundVelocity.magnitude / runSpeed;
-		character.rb.AddForceAtPosition(finalVelocity - character.rb.velocity, point, ForceMode.VelocityChange);
-
-		Debug.DrawLine(feetPos, feetPos + groundNormal * (groundCheckHeight + character.capsuleCollider.height), Color.blue);
-	}
-
-	void SetState(CharacterState current)
-	{
-		state = current;
-
-		switch(current)
-		{
-			case CharacterState.Grounded:
-
-				if(!grounded)
-				{
-					//Debug.Log("Just landed!");
-					grounded = true;
-					remainingJumps = jumpCount;
-				}
-
-				UpdateGroundVelocity();
-				break;
-
-			case CharacterState.InAir:
-
-				// Reset jump allowance if we ran off a ledge
-				//if(grounded && !jumping) jumpAllowance.Reset(Time.fixedDeltaTime * 4);
-
-				// Reset jump allowance if we ran off a ledge OR jumped
-				if(grounded) character.jumpAllowance.Reset(Time.fixedDeltaTime * 4);
-
-				grounded = false;
-
-				// Ran out of coyote time and didn't jump
-				//if(!jumpAllowance.InProgress && remainingJumps == jumpCount) remainingJumps = 0;
-
-				if(!character.jumpAllowance.InProgress)
-				{
-					// Ran out of coyote time and didn't jump
-					if(remainingJumps == jumpCount)
-						remainingJumps = 0;
-
-					// HACK: We jumped and it's OK to check for the ground again
-					if(jumping)
-						jumping = false;
-				}
-
-				// We passed the peak of the jump
-				if(jumping && character.rb.velocity.y <= 0f) jumping = false;
-
-				character.rb.velocity = groundVelocity.WithY(character.rb.velocity.y);
-				character.rb.velocity += Physics.gravity * gravityScale * Time.fixedDeltaTime;
-				break;
-
-			case CharacterState.Jump:
-
-				queueJump = false;
-				grounded = false;
-				jumping = true;
-				remainingJumps--;
-
-				var jumpVelocity = Mathf.Sqrt(2 * -Physics.gravity.y * gravityScale * jumpHeight);
-				character.rb.velocity = groundVelocity.WithY(jumpVelocity);
-				break;
-		}
-	}
-
-	private void UpdateFeetPos()
-	{
-		var halfHeight = (character.capsuleCollider.height + groundCheckHeight) * 0.5f;
-		var radius = character.capsuleCollider.radius;
-
-		var angle = Vector3.Angle(transform.up, Vector3.up);
-		if(angle > 90f) angle -= 180f;
-
-		feetPos = transform.position + transform.up * halfHeight + character.rb.velocity * Time.fixedDeltaTime;
-		feetPos += Vector3.down * (Mathf.Cos(angle * Mathf.Deg2Rad) * (halfHeight - radius) + radius);
-
-		character.rb.centerOfMass = transform.InverseTransformPoint(feetPos);
-	}
-
-	protected void UpdateRotation()
-	{
-		// TODO: Lock direction of a roll when roll is initiated
-
-		if(character.InputEnabled)
-		{
-
-			if(character.lockOn && character.lockOnTarget != null)
-			{
-				desiredDirection = (character.lockOnTarget.GetLookPosition() - character.GetLookPosition()).WithY(0f).normalized;
-			}
-			else
-			{
-				if(grounded && ShouldRoll && groundVelocity.sqrMagnitude > 0f)
-				{
-					desiredDirection = groundVelocity.normalized;
-				}
-				else if(character.move != Vector3.zero)
-				{
-					desiredDirection = character.move;
-				}
-			}
-		}
-
-		//rollAngle = ShouldRoll ? (rollAngle + rollSpeed) % 360f : 0f;
-		//var rotation = ShouldRoll ? GetRotationWithRoll() : Quaternion.LookRotation(desiredDirection);
-
-		if(ShouldRoll || (rollAngle > 0f && rollAngle < 360f))
-		{
-			ShouldRoll = false;
-			rollAngle += rollSpeed;
-
-			if(rollAngle >= 360f)
-			{
-				rollAngle = 0f;
-			}
-		}
-
-		var rotation = rollAngle > 0f ? GetRotationWithRoll() : Quaternion.LookRotation(desiredDirection);
-
-		character.rb.RotateTo(angleController, angularVelocityController, rotation, Time.fixedDeltaTime);
-
-		Quaternion GetRotationWithRoll()
-		{
-			var rollDir = character.lockOn && character.lockOnTarget != null && groundVelocity.magnitude >= minSpeed
-				? Quaternion.Inverse(Quaternion.LookRotation(desiredDirection)) * groundVelocity.normalized
-				: Vector3.forward;
-
-			var rollRotation = Quaternion.AngleAxis(rollAngle, Vector3.Cross(rollDir, Vector3.down));
-
-			//TODO: look rotation might be zero - fix that!
-			return Quaternion.LookRotation(desiredDirection) * rollRotation;
-		}
+		var jumpVelocity = Mathf.Sqrt(2 * -Physics.gravity.y * gravityScale * jumpHeight);
+		character.rb.velocity = groundVelocity.WithY(jumpVelocity);
 	}
 
 	public bool TryJump()

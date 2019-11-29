@@ -126,7 +126,6 @@ public class DynamicBone : Entity
 		rb.centerOfMass = capsule.center - axis * capsule.height * (centerOfMass - 0.5f);
 
 		rb.AddForce(windDirection * windInfluence, ForceMode.Acceleration);
-		rb.AddTorque(parentEntity.rb.angularVelocity * dt, ForceMode.Acceleration);
 		rb.RotateTo(rotationPid, anglePid, targetRotation, dt, stiffnessPerAxis);
 	}
 

@@ -76,7 +76,7 @@ public class PlayerController : ActorController
 		move = move.normalized * (Mathf.Clamp01(move.magnitude) - deadZone) / (1f - deadZone);
 
 		// Orient the input relative to the camera.
-		return Quaternion.AngleAxis(GameManager.I.mainCamera.transform.eulerAngles.y, Vector3.up) * move;
+		return GameManager.I.mainCamera.referenceRotation * move;
 
 		/*//
 		if(actor is Player player && player.lockOn && player.lockOnTarget != null)

@@ -34,6 +34,7 @@ public class GameManager : MonoBehaviour
 	private Coroutine hitPauseCoroutine;
 
 	private static GameManager _instance;
+
 	public static GameManager I
 	{
 		get { if(!_instance) { _instance = FindObjectOfType<GameManager>(); } return _instance; }
@@ -78,6 +79,8 @@ public class GameManager : MonoBehaviour
 		{
 			playerIndex = playerCharacters.IndexOf(activePlayer);
 		}
+
+		//StartCoroutine(LateFixedUpdate());
 	}
 
 	private void Start()
@@ -99,6 +102,29 @@ public class GameManager : MonoBehaviour
 		}
 		*/
 	}
+
+	//private IEnumerator LateFixedUpdate()
+	//{
+	//	while(true)
+	//	{
+	//		yield return new WaitForFixedUpdate();
+
+	//		if(gamePaused) { continue; }
+
+	//		mainCamera.UpdateReferenceRotation();
+
+	//		//mainCamera.UpdatePositionAndRotation(); // Update camera after physics
+
+	//		//// Update the potential lock on target
+	//		//if(!activePlayer.lockOn)
+	//		//{
+	//		//	activePlayer.lockOnTarget = lockOnCollider.GetTargetClosestToCenter(activePlayer);
+
+	//		//	//potentialTargets.Sort(SortByProximityToScreenCenter);
+	//		//	//activePlayer.lockOnTarget = potentialTargets[0];
+	//		//}
+	//	}
+	//}
 
 	private void Update()
 	{

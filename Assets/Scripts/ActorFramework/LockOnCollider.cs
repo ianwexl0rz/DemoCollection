@@ -11,6 +11,7 @@ public class LockOnCollider : MonoBehaviour
 		potentialTargets = new List<ILockOnTarget>();
 		gameObject.SetActive(false);
 		transform.SetParent(parent);
+		transform.localPosition = Vector3.zero;
 		gameObject.SetActive(true);
 	}
 
@@ -48,8 +49,7 @@ public class LockOnCollider : MonoBehaviour
 
 	private void OnTriggerEnter(Collider other)
 	{
-		var target = other.GetComponent<ILockOnTarget>();
-		if (target == null) return;
+		if (!other.TryGetComponent<ILockOnTarget>(out var target)) return;
 
 		potentialTargets.Add(target);
 
@@ -59,7 +59,7 @@ public class LockOnCollider : MonoBehaviour
 
 	private void OnTriggerExit(Collider other)
 	{
-		var target = other.GetComponent<ILockOnTarget>();
+		if (!other.TryGetComponent<ILockOnTarget>(out var target)) return;
 		if (!potentialTargets.Contains(target)) return;
 
 		potentialTargets.Remove(target);

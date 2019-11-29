@@ -117,33 +117,26 @@ public static class MonoBehaviourExtensions
 	public static void RotateTo(this Rigidbody rb, PID3 rotationPid, PID3 angularVelocityPid, Quaternion target, float dt)
 	{
 		Quaternion toTarget = target * Quaternion.Inverse(rb.rotation);
+		if (toTarget.w < 0) toTarget = toTarget.Negate();
+		toTarget.ToAngleAxis(out float angle, out Vector3 axis);
 
-		Vector3 rotationCorrection = rotationPid.GetOutput(toTarget.GetXYZ() * Mathf.Sign(toTarget.w), dt);
+		Vector3 rotationCorrection = rotationPid.GetOutput(axis * angle * Mathf.Deg2Rad / Time.fixedDeltaTime, dt);
 		Vector3 angularVelocityCorrection = angularVelocityPid.GetOutput(-rb.angularVelocity, dt);
 
-		Vector3 torque = rotationCorrection * Mathf.Rad2Deg + angularVelocityCorrection;
+		Vector3 torque = rotationCorrection + angularVelocityCorrection;
 		rb.AddTorque(torque, ForceMode.Acceleration);
-	}
-
-	public static void RotateTo(this Rigidbody rb, Quaternion target)
-	{
-		Quaternion toTarget = target * Quaternion.Inverse(rb.rotation);
-
-		Vector3 rotationCorrection = toTarget.GetXYZ() * Mathf.Sign(toTarget.w) / Time.fixedDeltaTime;
-		Vector3 angularVelocityCorrection = -rb.angularVelocity;
-
-		Vector3 torque = rotationCorrection * Mathf.Rad2Deg;// + angularVelocityCorrection;
-		rb.AddTorque(torque, ForceMode.VelocityChange);
 	}
 
 	public static void RotateTo(this Rigidbody rb, PID3 rotationPid, PID3 angularVelocityPid, Quaternion target, float dt, Vector3 stiffness)
 	{
 		Quaternion toTarget = target * Quaternion.Inverse(rb.rotation);
+		if (toTarget.w < 0) toTarget = toTarget.Negate();
+		toTarget.ToAngleAxis(out float angle, out Vector3 axis);
 
-		Vector3 rotationCorrection = rotationPid.GetOutput(toTarget.GetXYZ() * Mathf.Sign(toTarget.w), dt);
+		Vector3 rotationCorrection = rotationPid.GetOutput(axis * angle * Mathf.Deg2Rad / Time.fixedDeltaTime, dt);
 		Vector3 angularVelocityCorrection = angularVelocityPid.GetOutput(-rb.angularVelocity, dt);
 
-		Vector3 torque = rotationCorrection * Mathf.Rad2Deg + angularVelocityCorrection;
+		Vector3 torque = rotationCorrection + angularVelocityCorrection;
 		rb.AddTorque(Vector3.Scale(torque, stiffness), ForceMode.Acceleration);
 	}
 

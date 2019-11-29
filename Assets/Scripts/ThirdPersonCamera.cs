@@ -42,6 +42,8 @@ public class ThirdPersonCamera : MonoBehaviour
 	private float lockBlend;
 	private bool autoTurn;
 
+	public Quaternion referenceRotation { get; set; }
+
 	private float pitch
 	{
 		get => _pitch;
@@ -214,6 +216,8 @@ public class ThirdPersonCamera : MonoBehaviour
 		transform.position += transform.TransformDirection(offset) * dist;
 		transform.position += transform.forward * focalHeight * transform.forward.y;
 		transform.position -= transform.forward * dist;
+
+		referenceRotation = Quaternion.AngleAxis(transform.rotation.eulerAngles.y, Vector3.up);
 	}
 
 	public Vector3 GetLinearDrag()

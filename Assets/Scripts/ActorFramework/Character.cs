@@ -116,7 +116,7 @@ public class Character : Actor
 			switch(parameter.name)
 			{
 				case "inAir":
-					animator.SetBool("inAir", !motor.IsGrounded);
+					animator.SetBool("inAir", !motor.isGrounded);
 					break;
 				case "directionY":
 					var directionY = Mathf.Clamp01(Mathf.InverseLerp(1f, -1f, rb.velocity.y));
