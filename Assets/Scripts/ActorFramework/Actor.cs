@@ -80,9 +80,9 @@ public class Actor : Entity, ILockOnTarget, IDestructable
 		//Debug.Log("Ended Hit Reaction.");
 	}
 
-	public override void OnUpdate()
+	public override void OnUpdate(float deltaTime)
 	{
-		base.OnUpdate();
+		base.OnUpdate(deltaTime);
 
 		if(GameManager.I.GamePaused) { return; }
 

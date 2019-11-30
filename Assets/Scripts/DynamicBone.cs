@@ -114,11 +114,10 @@ public class DynamicBone : Entity
 			Vector3.forward;
 	}
 
-	protected override void UpdatePhysics()
+	protected override void UpdatePhysics(float deltaTime)
 	{
-		base.UpdatePhysics();
+		base.UpdatePhysics(deltaTime);
 
-		var dt = Time.fixedDeltaTime;
 		var targetRotation = isRoot ? cacheRotation : parentEntity.rb.rotation * cacheRotation;
 		var axis = GetDirectionFromInt(capsule.direction);
 
@@ -126,7 +125,7 @@ public class DynamicBone : Entity
 		rb.centerOfMass = capsule.center - axis * capsule.height * (centerOfMass - 0.5f);
 
 		rb.AddForce(windDirection * windInfluence, ForceMode.Acceleration);
-		rb.RotateTo(rotationPid, anglePid, targetRotation, dt, stiffnessPerAxis);
+		rb.RotateTo(rotationPid, anglePid, targetRotation, deltaTime, stiffnessPerAxis);
 	}
 
 	private void OnDrawGizmosSelected()
@@ -143,7 +142,7 @@ public class DynamicBone : Entity
 		Gizmos.DrawSphere(transform.TransformPoint(rb.centerOfMass), 0.05f);
 	}
 
-	protected override void UpdateAnimation()
+	protected override void UpdateAnimation(float deltaTime)
 	{
 		cacheRotation = isRoot ? referenceBone.rotation : referenceBone.localRotation;
 		if (syncReferenceBone) referenceBone.rotation = transform.rotation;

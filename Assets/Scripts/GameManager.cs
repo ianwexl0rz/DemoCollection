@@ -136,7 +136,7 @@ public class GameManager : MonoBehaviour
 
 		for (var i = 0; i < entities.Count; i++)
 		{
-			entities[i].OnUpdate();
+			entities[i].OnUpdate(Time.deltaTime);
 		}
 
 		// TODO: Should be entirely event driven.
@@ -147,7 +147,7 @@ public class GameManager : MonoBehaviour
 	{
 		for (var i = 0; i < entities.Count; i++)
 		{
-			entities[i].OnFixedUpdate();
+			entities[i].OnFixedUpdate(Time.fixedDeltaTime);
 		}
 	}
 
@@ -155,7 +155,7 @@ public class GameManager : MonoBehaviour
 	{
 		for (var i = 0; i < entities.Count; i++)
 		{
-			entities[i].OnLateUpdate();
+			entities[i].OnLateUpdate(Time.deltaTime);
 		}
 
 		if (!gamePaused)
@@ -259,6 +259,8 @@ public class GameManager : MonoBehaviour
 
 	private IEnumerator HitPause(float duration)
 	{
+		yield return new WaitForEndOfFrame();
+
 		PhysicsPaused = true;
 
 		while (duration > 0)

@@ -9,10 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4416901508690764}
-  - component: {fileID: 1317255603911895430}
+  - component: {fileID: 2269044525485535488}
   - component: {fileID: 54147962096831054}
   - component: {fileID: 136499514121446498}
-  - component: {fileID: 114853101477975604}
   - component: {fileID: 707289323}
   - component: {fileID: 707289324}
   m_Layer: 8
@@ -38,7 +37,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!95 &1317255603911895430
+--- !u!95 &2269044525485535488
 Animator:
   serializedVersion: 3
   m_ObjectHideFlags: 0
@@ -46,7 +45,7 @@ Animator:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1093183912855910}
-  m_Enabled: 1
+  m_Enabled: 0
   m_Avatar: {fileID: 9000000, guid: 7c5006bb81fdb476199973b6966f1d25, type: 3}
   m_Controller: {fileID: 9100000, guid: 577eeeda8465542d99ad38a77ae2cd60, type: 2}
   m_CullingMode: 1
@@ -87,38 +86,6 @@ CapsuleCollider:
   m_Height: 1.4
   m_Direction: 1
   m_Center: {x: 0, y: 0.9, z: 0}
---- !u!114 &114853101477975604
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1093183912855910}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9a67f68fcd6514dd2b7733d06827c987, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  groundCheckHeight: 0.2
-  rayOffsetDistance: 0.15
-  extraGroundRays: 8
-  minSpeed: 0.25
-  walkSpeed: 2
-  runSpeed: 3
-  acceleration: 40
-  lockOnSpeedScale: 1
-  directionalSpeedScale: {x: 1, y: 1}
-  jumpHeight: 3
-  jumpCount: 3
-  gravityScale: 1
-  rollSpeed: 5
-  speedSmoothTime: 0.05
-  leanFactor: 0.75
-  friction: 16
-  angleControllerConfig: {fileID: 11400000, guid: 9d23314fd1492584da56ef25598ab232,
-    type: 2}
-  angularVelocityControllerConfig: {fileID: 11400000, guid: c29f48e699ec26445a33657059edbdf3,
-    type: 2}
 --- !u!114 &707289323
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -131,10 +98,31 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 642a57e0cf005a6428466df6f124aa2c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  controller: {fileID: 11400000, guid: 74f1afebb7d9527499848e5d4038a7ec, type: 2}
+  controller: {fileID: 11400000, guid: 3bd6e43a756db3642bc08e8a5ba40b8e, type: 2}
   isAwake: 0
-  lockOnTarget: {fileID: 0}
   abilities: []
+  groundCheckHeight: 0.2
+  rayOffsetDistance: 0.15
+  extraGroundRays: 8
+  minSpeed: 0.25
+  walkSpeed: 2
+  runSpeed: 4
+  acceleration: 40
+  directionalSpeedScale: {x: 0.8, y: 0.75}
+  jumpHeight: 1
+  jumpCount: 1
+  gravityScale: 1
+  rollSpeed: 540
+  speedSmoothTime: 0.05
+  leanFactor: 1.5
+  friction: 16
+  maxTurnGround: 10
+  maxTurnAir: 4
+  hitBoxCollider: {fileID: 3621298156594705738}
+  angleControllerConfig: {fileID: 11400000, guid: 9d23314fd1492584da56ef25598ab232,
+    type: 2}
+  angularVelocityControllerConfig: {fileID: 11400000, guid: c29f48e699ec26445a33657059edbdf3,
+    type: 2}
 --- !u!114 &707289324
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -192,10 +180,75 @@ CapsuleCollider:
   m_Material: {fileID: 13400000, guid: 2797b4925bfa04d4a8a2d446c2a60cbc, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.25
+  m_Radius: 0.6
   m_Height: 1.6
   m_Direction: 1
   m_Center: {x: 0, y: 0.8, z: 0}
+--- !u!1001 &685402007
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 2579297820314255046}
+    m_Modifications:
+    - target: {fileID: 400000, guid: fc225afbbf8f8497da0bbf0a3394c4a2, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 400000, guid: fc225afbbf8f8497da0bbf0a3394c4a2, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 400000, guid: fc225afbbf8f8497da0bbf0a3394c4a2, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 400000, guid: fc225afbbf8f8497da0bbf0a3394c4a2, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 400000, guid: fc225afbbf8f8497da0bbf0a3394c4a2, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 400000, guid: fc225afbbf8f8497da0bbf0a3394c4a2, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 400000, guid: fc225afbbf8f8497da0bbf0a3394c4a2, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 400000, guid: fc225afbbf8f8497da0bbf0a3394c4a2, type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 400000, guid: fc225afbbf8f8497da0bbf0a3394c4a2, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 400000, guid: fc225afbbf8f8497da0bbf0a3394c4a2, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 400000, guid: fc225afbbf8f8497da0bbf0a3394c4a2, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 100000, guid: fc225afbbf8f8497da0bbf0a3394c4a2, type: 3}
+      propertyPath: m_Name
+      value: HAMMER_01
+      objectReference: {fileID: 0}
+    - target: {fileID: 100000, guid: fc225afbbf8f8497da0bbf0a3394c4a2, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2300000, guid: fc225afbbf8f8497da0bbf0a3394c4a2, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: ee3489a164cdc431e87630db62c109c5, type: 2}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: fc225afbbf8f8497da0bbf0a3394c4a2, type: 3}
 --- !u!1001 &2579297820314117234
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -203,10 +256,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 4416901508690764}
     m_Modifications:
-    - target: {fileID: 100010, guid: 7c5006bb81fdb476199973b6966f1d25, type: 3}
-      propertyPath: m_Name
-      value: GirlMesh
-      objectReference: {fileID: 0}
     - target: {fileID: 400010, guid: 7c5006bb81fdb476199973b6966f1d25, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -251,17 +300,9 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 9500000, guid: 7c5006bb81fdb476199973b6966f1d25, type: 3}
-      propertyPath: m_Controller
-      value: 
-      objectReference: {fileID: 9100000, guid: 577eeeda8465542d99ad38a77ae2cd60, type: 2}
-    - target: {fileID: 9500000, guid: 7c5006bb81fdb476199973b6966f1d25, type: 3}
-      propertyPath: m_ApplyRootMotion
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9500000, guid: 7c5006bb81fdb476199973b6966f1d25, type: 3}
-      propertyPath: m_Enabled
-      value: 1
+    - target: {fileID: 100010, guid: 7c5006bb81fdb476199973b6966f1d25, type: 3}
+      propertyPath: m_Name
+      value: GirlMesh
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 9500000, guid: 7c5006bb81fdb476199973b6966f1d25, type: 3}

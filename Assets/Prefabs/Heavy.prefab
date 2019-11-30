@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 839335705}
   - component: {fileID: 839335706}
-  - component: {fileID: 2142863084}
   m_Layer: 12
   m_Name: Hitbox
   m_TagString: Untagged
@@ -46,22 +45,6 @@ CapsuleCollider:
   m_Height: 0.8
   m_Direction: 1
   m_Center: {x: 0, y: 0.4, z: 0}
---- !u!54 &2142863084
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 839335704}
-  serializedVersion: 2
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_UseGravity: 1
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
 --- !u!1 &1253701820
 GameObject:
   m_ObjectHideFlags: 0
@@ -225,7 +208,6 @@ GameObject:
   - component: {fileID: 54013669590684724}
   - component: {fileID: 136221232741552080}
   - component: {fileID: 1306851918}
-  - component: {fileID: 114975490345739816}
   - component: {fileID: 1306851917}
   m_Layer: 8
   m_Name: Heavy
@@ -316,18 +298,6 @@ MonoBehaviour:
   controller: {fileID: 0}
   isAwake: 0
   abilities: []
---- !u!114 &114975490345739816
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1947941858301876}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9a67f68fcd6514dd2b7733d06827c987, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
   groundCheckHeight: 0.2
   rayOffsetDistance: 0.15
   extraGroundRays: 8
@@ -335,15 +305,17 @@ MonoBehaviour:
   walkSpeed: 2
   runSpeed: 4
   acceleration: 40
-  lockOnSpeedScale: 1
   directionalSpeedScale: {x: 0.8, y: 0.75}
   jumpHeight: 1
   jumpCount: 1
   gravityScale: 1
-  rollSpeed: 7.5
+  rollSpeed: 540
   speedSmoothTime: 0.05
-  leanFactor: 0.75
+  leanFactor: 1.5
   friction: 16
+  maxTurnGround: 10
+  maxTurnAir: 4
+  hitBoxCollider: {fileID: 839335706}
   angleControllerConfig: {fileID: 11400000, guid: 9d23314fd1492584da56ef25598ab232,
     type: 2}
   angularVelocityControllerConfig: {fileID: 11400000, guid: c29f48e699ec26445a33657059edbdf3,
@@ -575,14 +547,6 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 13700000, guid: 8c96fbc477da0405b9c477725bb7a7fe, type: 3}
-      propertyPath: m_Materials.Array.data[0]
-      value: 
-      objectReference: {fileID: 2100000, guid: e4701d53f1c6444f9a964b177852369c, type: 2}
-    - target: {fileID: 13700000, guid: 8c96fbc477da0405b9c477725bb7a7fe, type: 3}
-      propertyPath: m_Materials.Array.data[1]
-      value: 
-      objectReference: {fileID: 2100000, guid: 62ae6823c63ab45a88261ba7dc98a61f, type: 2}
     - target: {fileID: 400042, guid: 8c96fbc477da0405b9c477725bb7a7fe, type: 3}
       propertyPath: m_LocalRotation.y
       value: 0.013413281
@@ -599,6 +563,14 @@ PrefabInstance:
       propertyPath: m_LocalRotation.w
       value: 0.17902537
       objectReference: {fileID: 0}
+    - target: {fileID: 13700000, guid: 8c96fbc477da0405b9c477725bb7a7fe, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: e4701d53f1c6444f9a964b177852369c, type: 2}
+    - target: {fileID: 13700000, guid: 8c96fbc477da0405b9c477725bb7a7fe, type: 3}
+      propertyPath: m_Materials.Array.data[1]
+      value: 
+      objectReference: {fileID: 2100000, guid: 62ae6823c63ab45a88261ba7dc98a61f, type: 2}
     - target: {fileID: 100042, guid: 8c96fbc477da0405b9c477725bb7a7fe, type: 3}
       propertyPath: m_Layer
       value: 11
@@ -617,6 +589,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8c96fbc477da0405b9c477725bb7a7fe, type: 3}
+--- !u!4 &8063956143157200002 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 400040, guid: 8c96fbc477da0405b9c477725bb7a7fe,
+    type: 3}
+  m_PrefabInstance: {fileID: 8063956143156813354}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &8063956143157200016 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400058, guid: 8c96fbc477da0405b9c477725bb7a7fe,
@@ -644,12 +622,6 @@ Transform:
 --- !u!4 &8063956143157200006 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400044, guid: 8c96fbc477da0405b9c477725bb7a7fe,
-    type: 3}
-  m_PrefabInstance: {fileID: 8063956143156813354}
-  m_PrefabAsset: {fileID: 0}
---- !u!4 &8063956143157200002 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 400040, guid: 8c96fbc477da0405b9c477725bb7a7fe,
     type: 3}
   m_PrefabInstance: {fileID: 8063956143156813354}
   m_PrefabAsset: {fileID: 0}

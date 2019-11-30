@@ -31,16 +31,16 @@ public class PlayerController : ActorController
 		//player.Recenter = playerInput.RightStickButton.WasPressed;
 
 		// Run
-		player.motor.Run = inputDevice.RightTrigger.IsPressed || Input.GetKey(KeyCode.LeftShift);
+		player.Run = inputDevice.RightTrigger.IsPressed || Input.GetKey(KeyCode.LeftShift);
 
 		// Roll
 		//player.ShouldRoll = inputDevice.Action2.IsPressed || Input.GetKey(KeyCode.LeftControl);
 		if(inputDevice.Action2.WasPressed || Input.GetKeyDown(KeyCode.LeftControl))
-			inputBuffer.Add(player.Roll, 0.1f);
+			inputBuffer.Add(player.TryRoll, 0.1f);
 
 		// Jump
 		if(inputDevice.Action1.WasPressed || inputDevice.LeftBumper.WasPressed || Input.GetKeyDown(KeyCode.Space))
-			inputBuffer.Add(player.Jump, 0.1f);
+			inputBuffer.Add(player.TryJump, 0.1f);
 
 		// Attack
 		if(inputDevice.Action3.WasPressed || Input.GetMouseButtonDown(0))

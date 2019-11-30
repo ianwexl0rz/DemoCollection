@@ -54,21 +54,21 @@ public class Entity : MonoBehaviour
 		rb = GetComponent<Rigidbody>();
 	}
 
-	public virtual void OnUpdate()
+	public virtual void OnUpdate(float deltaTime)
 	{
 	}
 
-	public virtual void OnLateUpdate()
+	public virtual void OnLateUpdate(float deltaTime)
 	{
 		if (GameManager.I.PhysicsPaused) { return; }
 
-		UpdateAnimation();
+		UpdateAnimation(deltaTime);
 
 		foreach (var entity in subEntities)
-			entity.OnLateUpdate();
+			entity.OnLateUpdate(deltaTime);
 	}
 
-	public virtual void OnFixedUpdate()
+	public virtual void OnFixedUpdate(float deltaTime)
 	{
 		if (GameManager.I.PhysicsPaused) { return; }
 
@@ -78,17 +78,17 @@ public class Entity : MonoBehaviour
 			hits.Remove(hits[i]);
 		}
 
-		UpdatePhysics();
+		UpdatePhysics(deltaTime);
 
 		foreach (var entity in subEntities)
-			entity.OnFixedUpdate();
+			entity.OnFixedUpdate(deltaTime);
 	}
 
-	protected virtual void UpdateAnimation()
+	protected virtual void UpdateAnimation(float deltaTime)
 	{
 	}
 
-	protected virtual void UpdatePhysics()
+	protected virtual void UpdatePhysics(float deltaTime)
 	{
 	}
 

@@ -29,15 +29,15 @@ public class FollowAIBehavior : AIBehavior
 			{
 				Character player = actor as Character;
 
-				if(!player.motor.Run && vector.magnitude > startRunDistance)
+				if(!player.Run && vector.magnitude > startRunDistance)
 				{
 					// Start running
-					player.motor.Run = true;
+					player.Run = true;
 				}
-				else if(player.motor.Run && vector.magnitude < stopRunDistance)
+				else if(player.Run && vector.magnitude < stopRunDistance)
 				{
 					// Stop running
-					player.motor.Run = false;
+					player.Run = false;
 				}
 			}
 

@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System;
 
 [RequireComponent(typeof(Actor))]
 public class MeleeCombat : MonoBehaviour
@@ -116,11 +117,11 @@ public class MeleeCombat : MonoBehaviour
 		//cancelOK = true;
 	}
 
-	public bool CheckHits(float completion, Vector3 lastWeaponPosition, Quaternion lastWeaponRotation)
+	public bool CheckHits(float completion, Vector3 lastWeaponPosition, Quaternion lastWeaponRotation, out float progress)
 	{
 		//if(!owner.IsPaused) { return; }
 
-        float debugTime = Time.fixedDeltaTime * 8;
+		float debugTime = Time.fixedDeltaTime * 8;
 
 		var pos = Vector3.Lerp(lastWeaponPosition, weaponRoot.position, completion);
 		var rot = Quaternion.Slerp(lastWeaponRotation, weaponRoot.rotation, completion);
@@ -140,26 +141,28 @@ public class MeleeCombat : MonoBehaviour
 		Color[] addColors = new Color[steps * 2];
 
 		var success = false;
+		int currentStep;
+		progress = 0;
 
-		for(var i = 0; i < steps; i++)
+		for (currentStep = 0; currentStep < steps; currentStep++)
         {
-			var progress = (i + 1f) / steps;
+			progress = (currentStep + 1f) / steps;
 
 			Vector3 blendedOrigin = Vector3.Lerp(lastOrigin, origin, progress);
             Vector3 blendedEnd = blendedOrigin + Vector3.Slerp(lastVector, currentVector, progress);
 
 			Debug.DrawLine(blendedOrigin, blendedEnd, color, debugTime);
-	        Debug.DrawLine(i == 0 ? lastEnd : addPoints[i * 2 - 1], blendedEnd, color, debugTime);
-	        Debug.DrawLine(i == 0 ? lastOrigin : addPoints[i * 2 - 2], blendedOrigin, color, debugTime);
+	        Debug.DrawLine(currentStep == 0 ? lastEnd : addPoints[currentStep * 2 - 1], blendedEnd, color, debugTime);
+	        Debug.DrawLine(currentStep == 0 ? lastOrigin : addPoints[currentStep * 2 - 2], blendedOrigin, color, debugTime);
 
-			addPoints[i * 2] = finalOrigin = blendedOrigin;
-			addPoints[i * 2 + 1] = finalEnd = blendedEnd;
-			addColors[i * 2] = addColors[i * 2 + 1] = Color.white;
+			addPoints[currentStep * 2] = finalOrigin = blendedOrigin;
+			addPoints[currentStep * 2 + 1] = finalEnd = blendedEnd;
+			addColors[currentStep * 2] = addColors[currentStep * 2 + 1] = Color.white;
 
 			success = CheckHit(blendedOrigin, blendedEnd);
 			success |= CheckHit(blendedEnd, blendedOrigin);
 
-			if(success) break;
+			//if (success) break;
 		}
 
 		if(pointBuffer.Count == 0)
@@ -180,24 +183,24 @@ public class MeleeCombat : MonoBehaviour
 
 		// Only necessary if the hit check loop can be broken out of early...
 		// Requires "i" to be declared in the function scope 
-		//if(i < steps - 1)
-		//{
-		//	var newLength = (i + 1) * 2;
+		if (currentStep < steps - 1)
+		{
+			var newLength = (currentStep + 1) * 2;
 
-		//	Vector3[] validPoints = new Vector3[newLength];
-		//	Color[] validColors = new Color[newLength];
+			Vector3[] validPoints = new Vector3[newLength];
+			Color[] validColors = new Color[newLength];
 
-		//	Array.Copy(addPoints, validPoints, newLength);
-		//	Array.Copy(addColors, validColors, newLength);
+			Array.Copy(addPoints, validPoints, newLength);
+			Array.Copy(addColors, validColors, newLength);
 
-		//	pointBuffer.AddRange(validPoints);
-		//	colors.AddRange(validColors);
-		//}
-		//else
-		//{
-		//	pointBuffer.AddRange(addPoints);
-		//	colors.AddRange(addColors);
-		//}
+			pointBuffer.AddRange(validPoints);
+			colors.AddRange(validColors);
+		}
+		else
+		{
+			pointBuffer.AddRange(addPoints);
+			colors.AddRange(addColors);
+		}
 
 		// Fade colors over time (probably don't want to fade whole chunks like this)
 		//for(var i = 0; i < colors.Count; i++)
@@ -206,13 +209,13 @@ public class MeleeCombat : MonoBehaviour
 		//	colors[i] *= 0.5f;
 		//}
 
-		pointBuffer.AddRange(addPoints);
-		colors.AddRange(addColors);
+		//pointBuffer.AddRange(addPoints);
+		//colors.AddRange(addColors);
 
 		var localPoints = new List<Vector3>(pointBuffer);
-		for(var i = localPoints.Count; i-- > 0;)
+		for(var j = localPoints.Count; j-- > 0;)
 		{
-			localPoints[i] = transform.InverseTransformPoint(localPoints[i]);
+			localPoints[j] = transform.InverseTransformPoint(localPoints[j]);
 		}
 		
 		lastOrigin = finalOrigin;
@@ -254,11 +257,10 @@ public class MeleeCombat : MonoBehaviour
 			{
 				Vector3 hitDirection = (go.transform.position - transform.position).WithY(0f).normalized;
 				entity.GetHit(hit.point, hitDirection, attackData);
-				//GameManager.HitPauseTimer = Time.fixedDeltaTime * attackData.hitPause;
 
 				GameManager.I.InitHitPause(Time.fixedDeltaTime * attackData.hitPause);
 
-				//success = true;
+				success = true;
 			}
 
 			if(GameManager.GetHitSpark(entity, out GameObject hitspark))

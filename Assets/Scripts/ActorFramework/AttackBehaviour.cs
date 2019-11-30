@@ -15,10 +15,13 @@ public class AttackBehaviour : StateMachineBehaviour
 		combat = animator.GetComponent<MeleeCombat>();
 		//combat.isAttacking = true;
 
+		//animator.SetFloat("attackLength", stateInfo.length);
+		//animator.SetFloat("attackTime", 0);
+
 		if(animator.parameters.Any(p => p.name == "isAttacking"))
 		{
 			animator.SetBool("isAttacking", true);
-			Debug.Log("is this getting called?");
+			//Debug.Log("is this getting called?");
 		}
 		fullyTransitioned = false;
 	}
