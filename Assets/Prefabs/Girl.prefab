@@ -119,10 +119,7 @@ MonoBehaviour:
   maxTurnGround: 10
   maxTurnAir: 4
   hitBoxCollider: {fileID: 3621298156594705738}
-  angleControllerConfig: {fileID: 11400000, guid: 9d23314fd1492584da56ef25598ab232,
-    type: 2}
-  angularVelocityControllerConfig: {fileID: 11400000, guid: c29f48e699ec26445a33657059edbdf3,
-    type: 2}
+  torquePIDConfig: {fileID: 11400000, guid: c29f48e699ec26445a33657059edbdf3, type: 2}
 --- !u!114 &707289324
 MonoBehaviour:
   m_ObjectHideFlags: 0

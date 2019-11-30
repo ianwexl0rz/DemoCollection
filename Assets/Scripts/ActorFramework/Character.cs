@@ -26,12 +26,10 @@ public class Character : Actor
 	[SerializeField] private float maxTurnGround = 10f;
 	[SerializeField] private float maxTurnAir = 4f;
 	[SerializeField] private CapsuleCollider hitBoxCollider = null;
-	[SerializeField] private PIDConfig angleControllerConfig = null;
-	[SerializeField] private PIDConfig angularVelocityControllerConfig = null;
+	[SerializeField] private PIDConfig torquePIDConfig = null;
 
 	private bool isGrounded;
-	private PID3 angleController;
-	private PID3 angularVelocityController;
+	private PID3 torquePID;
 	private Vector3 groundVelocity = Vector3.zero;
 	private Quaternion inputOrientation;
 	private Quaternion lockOnOrientation;
@@ -59,8 +57,7 @@ public class Character : Actor
 		capsuleCollider = GetComponent<CapsuleCollider>();
 
 		inputOrientation = Quaternion.LookRotation(transform.forward);
-		angleController = new PID3(angleControllerConfig);
-		angularVelocityController = new PID3(angularVelocityControllerConfig);
+		torquePID = new PID3(torquePIDConfig);
 		remainingJumps = jumpCount;
 		rb.maxAngularVelocity = maxAngularVelocity;
 
@@ -219,7 +216,7 @@ public class Character : Actor
 			rotation *= rollRot;
 		}
 
-		rb.RotateTo(angleController, angularVelocityController, rotation, Time.fixedDeltaTime);
+		rb.RotateTo(torquePID, rotation, Time.fixedDeltaTime);
 
 		if (isGrounded)
 		{

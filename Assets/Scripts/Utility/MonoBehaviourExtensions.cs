@@ -114,29 +114,25 @@ public static class MonoBehaviourExtensions
 		return new Quaternion(-q.x, -q.y, -q.z, -q.w);
 	}
 
-	public static void RotateTo(this Rigidbody rb, PID3 rotationPid, PID3 angularVelocityPid, Quaternion target, float dt)
+	public static void RotateTo(this Rigidbody rb, PID3 torquePID, Quaternion target, float dt)
 	{
 		Quaternion toTarget = target * Quaternion.Inverse(rb.rotation);
 		if (toTarget.w < 0) toTarget = toTarget.Negate();
 		toTarget.ToAngleAxis(out float angle, out Vector3 axis);
 
-		Vector3 rotationCorrection = rotationPid.GetOutput(axis * angle * Mathf.Deg2Rad / Time.fixedDeltaTime, dt);
-		Vector3 angularVelocityCorrection = angularVelocityPid.GetOutput(-rb.angularVelocity, dt);
-
-		Vector3 torque = rotationCorrection + angularVelocityCorrection;
+		Vector3 targetTorque = axis * angle * Mathf.Deg2Rad / dt;
+		Vector3 torque = torquePID.GetOutput(targetTorque - rb.angularVelocity, dt);
 		rb.AddTorque(torque, ForceMode.Acceleration);
 	}
 
-	public static void RotateTo(this Rigidbody rb, PID3 rotationPid, PID3 angularVelocityPid, Quaternion target, float dt, Vector3 stiffness)
+	public static void RotateTo(this Rigidbody rb, PID3 torquePID, Quaternion target, float dt, Vector3 stiffness)
 	{
 		Quaternion toTarget = target * Quaternion.Inverse(rb.rotation);
 		if (toTarget.w < 0) toTarget = toTarget.Negate();
 		toTarget.ToAngleAxis(out float angle, out Vector3 axis);
 
-		Vector3 rotationCorrection = rotationPid.GetOutput(axis * angle * Mathf.Deg2Rad / Time.fixedDeltaTime, dt);
-		Vector3 angularVelocityCorrection = angularVelocityPid.GetOutput(-rb.angularVelocity, dt);
-
-		Vector3 torque = rotationCorrection + angularVelocityCorrection;
+		Vector3 targetTorque = axis * angle * Mathf.Deg2Rad / dt;
+		Vector3 torque = torquePID.GetOutput(targetTorque - rb.angularVelocity, dt);
 		rb.AddTorque(Vector3.Scale(torque, stiffness), ForceMode.Acceleration);
 	}
 

@@ -118,8 +118,7 @@ MonoBehaviour:
   windInfluence: 1
   centerOfMass: 0.25
   stiffnessPerAxis: {x: 0.1, y: 0.5, z: 0.1}
-  rotationPidConfig: {fileID: 11400000, guid: 9d23314fd1492584da56ef25598ab232, type: 2}
-  anglePidConfig: {fileID: 11400000, guid: c29f48e699ec26445a33657059edbdf3, type: 2}
+  torquePIDConfig: {fileID: 11400000, guid: c29f48e699ec26445a33657059edbdf3, type: 2}
 --- !u!1 &1999456049
 GameObject:
   m_ObjectHideFlags: 0
@@ -193,8 +192,7 @@ MonoBehaviour:
   windInfluence: 1
   centerOfMass: 0.25
   stiffnessPerAxis: {x: 0.1, y: 0.5, z: 0.1}
-  rotationPidConfig: {fileID: 11400000, guid: 9d23314fd1492584da56ef25598ab232, type: 2}
-  anglePidConfig: {fileID: 11400000, guid: c29f48e699ec26445a33657059edbdf3, type: 2}
+  torquePIDConfig: {fileID: 11400000, guid: c29f48e699ec26445a33657059edbdf3, type: 2}
 --- !u!1 &1947941858301876
 GameObject:
   m_ObjectHideFlags: 0
@@ -316,10 +314,7 @@ MonoBehaviour:
   maxTurnGround: 10
   maxTurnAir: 4
   hitBoxCollider: {fileID: 839335706}
-  angleControllerConfig: {fileID: 11400000, guid: 9d23314fd1492584da56ef25598ab232,
-    type: 2}
-  angularVelocityControllerConfig: {fileID: 11400000, guid: c29f48e699ec26445a33657059edbdf3,
-    type: 2}
+  torquePIDConfig: {fileID: 11400000, guid: c29f48e699ec26445a33657059edbdf3, type: 2}
 --- !u!114 &1306851917
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -410,8 +405,7 @@ MonoBehaviour:
   windInfluence: 1
   centerOfMass: 0.25
   stiffnessPerAxis: {x: 1, y: 1, z: 1}
-  rotationPidConfig: {fileID: 11400000, guid: 9d23314fd1492584da56ef25598ab232, type: 2}
-  anglePidConfig: {fileID: 11400000, guid: c29f48e699ec26445a33657059edbdf3, type: 2}
+  torquePIDConfig: {fileID: 11400000, guid: c29f48e699ec26445a33657059edbdf3, type: 2}
 --- !u!1 &8168000052666290430
 GameObject:
   m_ObjectHideFlags: 0
@@ -486,8 +480,7 @@ MonoBehaviour:
   windInfluence: 1
   centerOfMass: 0.25
   stiffnessPerAxis: {x: 1, y: 1, z: 1}
-  rotationPidConfig: {fileID: 11400000, guid: 9d23314fd1492584da56ef25598ab232, type: 2}
-  anglePidConfig: {fileID: 11400000, guid: c29f48e699ec26445a33657059edbdf3, type: 2}
+  torquePIDConfig: {fileID: 11400000, guid: c29f48e699ec26445a33657059edbdf3, type: 2}
 --- !u!1001 &8063956143156813354
 PrefabInstance:
   m_ObjectHideFlags: 0
