@@ -118,7 +118,7 @@ MonoBehaviour:
   windInfluence: 1
   centerOfMass: 0.25
   stiffnessPerAxis: {x: 0.1, y: 0.5, z: 0.1}
-  torquePIDConfig: {fileID: 11400000, guid: c29f48e699ec26445a33657059edbdf3, type: 2}
+  torquePID: {fileID: 11400000, guid: 00ed0bd437019a34dbf27b4bd064959e, type: 2}
 --- !u!1 &1999456049
 GameObject:
   m_ObjectHideFlags: 0
@@ -192,7 +192,7 @@ MonoBehaviour:
   windInfluence: 1
   centerOfMass: 0.25
   stiffnessPerAxis: {x: 0.1, y: 0.5, z: 0.1}
-  torquePIDConfig: {fileID: 11400000, guid: c29f48e699ec26445a33657059edbdf3, type: 2}
+  torquePID: {fileID: 11400000, guid: 00ed0bd437019a34dbf27b4bd064959e, type: 2}
 --- !u!1 &1947941858301876
 GameObject:
   m_ObjectHideFlags: 0
@@ -311,10 +311,10 @@ MonoBehaviour:
   speedSmoothTime: 0.05
   leanFactor: 1.5
   friction: 16
-  maxTurnGround: 10
+  maxTurnGround: 20
   maxTurnAir: 4
   hitBoxCollider: {fileID: 839335706}
-  torquePIDConfig: {fileID: 11400000, guid: c29f48e699ec26445a33657059edbdf3, type: 2}
+  torquePID: {fileID: 11400000, guid: 00ed0bd437019a34dbf27b4bd064959e, type: 2}
 --- !u!114 &1306851917
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -405,7 +405,7 @@ MonoBehaviour:
   windInfluence: 1
   centerOfMass: 0.25
   stiffnessPerAxis: {x: 1, y: 1, z: 1}
-  torquePIDConfig: {fileID: 11400000, guid: c29f48e699ec26445a33657059edbdf3, type: 2}
+  torquePID: {fileID: 11400000, guid: 00ed0bd437019a34dbf27b4bd064959e, type: 2}
 --- !u!1 &8168000052666290430
 GameObject:
   m_ObjectHideFlags: 0
@@ -480,7 +480,7 @@ MonoBehaviour:
   windInfluence: 1
   centerOfMass: 0.25
   stiffnessPerAxis: {x: 1, y: 1, z: 1}
-  torquePIDConfig: {fileID: 11400000, guid: c29f48e699ec26445a33657059edbdf3, type: 2}
+  torquePID: {fileID: 11400000, guid: 00ed0bd437019a34dbf27b4bd064959e, type: 2}
 --- !u!1001 &8063956143156813354
 PrefabInstance:
   m_ObjectHideFlags: 0

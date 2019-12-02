@@ -14,22 +14,23 @@ public class Character : Actor
 	[SerializeField] private float minSpeed = 1f;
 	[SerializeField] private float walkSpeed = 2f;
 	[SerializeField] private float runSpeed = 4f;
-	[SerializeField] private float acceleration;
+	[SerializeField] private float acceleration = 40;
 	[SerializeField] private Vector2 directionalSpeedScale = Vector2.one;
 	[SerializeField] private float jumpHeight = 4f;
 	[SerializeField] private int jumpCount = 1;
 	[SerializeField] private float gravityScale = 1f;
 	[SerializeField] private float rollSpeed = 540f;
 	[SerializeField] private float speedSmoothTime = 0.1f;
-	[SerializeField] private float leanFactor;
-	[SerializeField] private float friction;
+	[SerializeField] private float leanFactor = 1.5f;
+	[SerializeField] private float friction = 16;
 	[SerializeField] private float maxTurnGround = 10f;
 	[SerializeField] private float maxTurnAir = 4f;
 	[SerializeField] private CapsuleCollider hitBoxCollider = null;
-	[SerializeField] private PIDConfig torquePIDConfig = null;
+	[SerializeField] private PID3 torquePID = null;
 
 	private bool isGrounded;
-	private PID3 torquePID;
+	private Vector3 torqueIntegral;
+	private Vector3 torqueError;
 	private Vector3 groundVelocity = Vector3.zero;
 	private Quaternion inputOrientation;
 	private Quaternion lockOnOrientation;
@@ -47,6 +48,7 @@ public class Character : Actor
 	public bool ShouldRoll { get; set; }
 	public Vector3 GroundVelocity => groundVelocity;
 	public bool IsLockedOn => lockOn && lockOnTarget != null;
+
 	public CapsuleCollider capsuleCollider { get; private set; }
 	public MeleeCombat meleeCombat { get; private set; }
 
@@ -57,7 +59,6 @@ public class Character : Actor
 		capsuleCollider = GetComponent<CapsuleCollider>();
 
 		inputOrientation = Quaternion.LookRotation(transform.forward);
-		torquePID = new PID3(torquePIDConfig);
 		remainingJumps = jumpCount;
 		rb.maxAngularVelocity = maxAngularVelocity;
 
@@ -216,7 +217,9 @@ public class Character : Actor
 			rotation *= rollRot;
 		}
 
-		rb.RotateTo(torquePID, rotation, Time.fixedDeltaTime);
+		var targetTorque = rb.rotation.TorqueTo(rotation, deltaTime);
+		var torque = torquePID.Output(rb.angularVelocity, targetTorque, ref torqueIntegral, ref torqueError, deltaTime);
+		rb.AddTorque(torque, ForceMode.Acceleration);
 
 		if (isGrounded)
 		{

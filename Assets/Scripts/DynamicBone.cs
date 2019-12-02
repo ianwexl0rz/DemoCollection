@@ -20,18 +20,18 @@ public class DynamicBone : Entity
 	[SerializeField, Range(0, 1)] private float windInfluence = 0f;
 	[SerializeField, Range(0, 1)] private float centerOfMass = 0.5f;
 	[SerializeField] private Vector3 stiffnessPerAxis = Vector3.one;
-	[SerializeField] private PIDConfig torquePIDConfig = null;
+	[SerializeField] private PID3 torquePID = null;
 
-	private PID3 torquePID;
 	private ConfigurableJoint joint;
 	private CapsuleCollider capsule;
 	private Quaternion cacheRotation;
+	private Vector3 torqueIntegral;
+	private Vector3 torqueError;
 
-    public void Start()
+	public void Start()
     {
 		CreateJoint();
 	    CreateCollider();
-	    torquePID = new PID3(torquePIDConfig);
 	    rb.maxAngularVelocity = 20f;
 	    cacheRotation = referenceBone.rotation;
     }
@@ -122,7 +122,9 @@ public class DynamicBone : Entity
 		rb.centerOfMass = capsule.center - axis * capsule.height * (centerOfMass - 0.5f);
 
 		rb.AddForce(windDirection * windInfluence, ForceMode.Acceleration);
-		rb.RotateTo(torquePID, targetRotation, deltaTime, stiffnessPerAxis);
+		var targetTorque = rb.rotation.TorqueTo(targetRotation, deltaTime);
+		var torque = torquePID.Output(rb.angularVelocity, targetTorque, ref torqueIntegral, ref torqueError, deltaTime);
+		rb.AddTorque(Vector3.Scale(torque, stiffnessPerAxis), ForceMode.Acceleration);
 	}
 
 	private void OnDrawGizmosSelected()
