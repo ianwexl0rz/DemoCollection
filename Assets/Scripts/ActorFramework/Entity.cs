@@ -24,11 +24,10 @@ public struct RigidbodyState
 
 public class Entity : MonoBehaviour
 {
-	protected bool paused;
-	protected List<HitData> hits = new List<HitData>();
+	private List<HitData> hits = new List<HitData>();
 
 	public Rigidbody rb { get; private set; }
-	public bool IsPaused => paused;
+	protected bool IsPaused { get; private set; }
 
 	private RigidbodyState savedState;
 	private List<Entity> subEntities = new List<Entity>();
@@ -46,7 +45,7 @@ public class Entity : MonoBehaviour
 		GameManager.I.RemoveEntity(this);
 		GameManager.I.PauseAllPhysics -= PauseEntity;
 
-		if(paused) { PauseEntity(false); }
+		if(IsPaused) { PauseEntity(false); }
 	}
 
 	public virtual void Awake()
@@ -106,9 +105,10 @@ public class Entity : MonoBehaviour
 		subEntities.Remove(entity);
 	}
 
-	public void PauseEntity(bool value)
+	private void PauseEntity(bool value)
 	{
-		if(value == paused) { return; } else { paused = value; }
+		if(IsPaused == value) { return; }
+		IsPaused = value;
 		
 		if(value)
 		{
@@ -121,8 +121,9 @@ public class Entity : MonoBehaviour
 			// Account for interpolation
 			// TODO: Set rigidbody position between current transform position and previous transform position
 			// depending on sub-frame collision. Also set animator.Simulate() to that time.
-			rb.position = transform.position;
-			rb.rotation = transform.rotation;
+			var t = transform;
+			rb.position = t.position;
+			rb.rotation = t.rotation;
 			rb.Sleep();
 		}
 		else
@@ -139,7 +140,7 @@ public class Entity : MonoBehaviour
 
 	protected virtual void ApplyHit(HitData hit)
 	{
-		var velocity = hit.direction * hit.attackData.knockback / Time.fixedDeltaTime;
+		var velocity = hit.direction * (hit.attackData.knockback / Time.fixedDeltaTime);
 		//rb.AddForceAtPosition(velocity, hit.point, ForceMode.Acceleration);
 		rb.AddForce(velocity, ForceMode.Acceleration);
 	}

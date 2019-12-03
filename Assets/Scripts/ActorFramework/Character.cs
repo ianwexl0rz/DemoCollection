@@ -3,7 +3,8 @@
 [RequireComponent(typeof(Rigidbody), typeof(MeleeCombat))]
 public class Character : Actor
 {
-	private const float MAX_ANIMATION_STEP = 1f / 30f;
+	private const float MaxAnimationStep = 1f / 30f;
+	private const float MaxAngularVelocity = 50f;
 
 	[Header("Ground Detection")]
 	[SerializeField] private float groundCheckHeight = 0.4f;
@@ -37,39 +38,46 @@ public class Character : Actor
 	private Vector3 groundNormal;
 	private Vector3 groundPoint;
 	private Vector3 groundCheckPoint;
-	private float maxAngularVelocity = 50f;
 	private float rollAngle;
+	private bool queueRoll;
 	private bool queueJump;
 	private bool jumping;
 	private int remainingJumps;
 	private Matrix4x4 lastTRS;
+	
+	private static readonly int Attack = Animator.StringToHash("lightAttack");
+	private static readonly int SpeedPercent = Animator.StringToHash("speedPercent");
+	private static readonly int InAir = Animator.StringToHash("inAir");
+	private static readonly int DirectionY = Animator.StringToHash("directionY");
+	private static readonly int VelocityX = Animator.StringToHash("velocityX");
+	private static readonly int VelocityZ = Animator.StringToHash("velocityZ");
+	private static readonly int InHitStun = Animator.StringToHash("InHitStun");
 
 	public bool Run { get; set; }
-	public bool ShouldRoll { get; set; }
-	public Vector3 GroundVelocity => groundVelocity;
-	public bool IsLockedOn => lockOn && lockOnTarget != null;
+	private bool IsLockedOn => lockOn && lockOnTarget != null;
 
-	public CapsuleCollider capsuleCollider { get; private set; }
-	public MeleeCombat meleeCombat { get; private set; }
+	public CapsuleCollider CapsuleCollider { get; private set; }
+	public MeleeCombat MeleeCombat { get; private set; }
 
 	public override void Awake()
 	{
 		base.Awake();
-		meleeCombat = GetComponent<MeleeCombat>();
-		capsuleCollider = GetComponent<CapsuleCollider>();
+		MeleeCombat = GetComponent<MeleeCombat>();
+		CapsuleCollider = GetComponent<CapsuleCollider>();
 
 		inputOrientation = Quaternion.LookRotation(transform.forward);
 		remainingJumps = jumpCount;
-		rb.maxAngularVelocity = maxAngularVelocity;
+		rb.maxAngularVelocity = MaxAngularVelocity;
 
-		lastTRS = Matrix4x4.TRS(transform.position, transform.rotation, transform.localScale);
+		var t = transform;
+		lastTRS = Matrix4x4.TRS(t.position, t.rotation, t.localScale);
 	}
 
 #if UNITY_EDITOR
 	private void OnValidate()
 	{
 		if (rb != null)
-			rb.maxAngularVelocity = maxAngularVelocity;
+			rb.maxAngularVelocity = MaxAngularVelocity;
 	}
 
 	private void OnDrawGizmos()
@@ -122,7 +130,7 @@ public class Character : Actor
 			var rollingOnGround = isGrounded && rollAngle > Mathf.Epsilon;
 			if (rollingOnGround) input = inputOrientation * Vector3.forward * move.magnitude;
 
-			desiredVelocity += input * (isGrounded ? acceleration : acceleration * 0.25f) * deltaTime;
+			desiredVelocity += deltaTime * (isGrounded ? acceleration : acceleration * 0.25f) * input;
 		}
 
 		var speed = desiredVelocity.magnitude;
@@ -135,7 +143,7 @@ public class Character : Actor
 
 		// Speed is only variable when NOT sprinting.
 		var normalSpeed = Mathf.Max(minSpeed, walkSpeed * move.sqrMagnitude);
-		speed = Mathf.Min(speed, Run || ShouldRoll ? runSpeed : normalSpeed);
+		speed = Mathf.Min(speed, Run || queueRoll ? runSpeed : normalSpeed);
 		groundVelocity = (desiredVelocity.normalized * speed).WithY(0f);
 
 		if (queueJump && remainingJumps > 0)
@@ -160,13 +168,13 @@ public class Character : Actor
 			var finalVelocity = Quaternion.LookRotation(Vector3.forward, groundNormal) * groundVelocity;
 
 			// Apply force slightly above the center of mass to make the actor lean with acceleration.
-			var offset = rb.worldCenterOfMass + Vector3.up * leanFactor * groundVelocity.magnitude / runSpeed;
+			var offset = rb.worldCenterOfMass + Vector3.up * (leanFactor * groundVelocity.magnitude / runSpeed);
 			var deltaVelocity = finalVelocity - rb.velocity;
 			rb.AddForceAtPosition(deltaVelocity, offset, ForceMode.VelocityChange);
 
 			rb.centerOfMass = transform.InverseTransformPoint(groundCheckPoint);
 
-			var end = groundCheckPoint + groundNormal * (groundCheckHeight + capsuleCollider.height);
+			var end = groundCheckPoint + groundNormal * (groundCheckHeight + CapsuleCollider.height);
 			Debug.DrawLine(groundCheckPoint, end, Color.blue);
 		}
 		else
@@ -189,16 +197,15 @@ public class Character : Actor
 			// We passed the peak of the jump
 			if (jumping && rb.velocity.y <= 0f) jumping = false;
 
-			rb.velocity = groundVelocity.WithY(rb.velocity.y);
-			rb.velocity += Physics.gravity * gravityScale * Time.fixedDeltaTime;
+			rb.velocity = groundVelocity.WithY(rb.velocity.y) + Physics.gravity * (gravityScale * Time.fixedDeltaTime);
 
-			rb.centerOfMass = capsuleCollider.center;
+			rb.centerOfMass = CapsuleCollider.center;
 
 		}
 
-		if (ShouldRoll || (rollAngle > 0f && rollAngle < 360f))
+		if (queueRoll || (rollAngle > 0f && rollAngle < 360f))
 		{
-			ShouldRoll = false;
+			queueRoll = false;
 			rollAngle += rollSpeed * Time.fixedDeltaTime;
 
 			if (rollAngle >= 360f) rollAngle = 0f;
@@ -232,7 +239,7 @@ public class Character : Actor
 	{
 		UpdateAnimationParameters();
 
-		var loops = Mathf.CeilToInt(deltaTime / MAX_ANIMATION_STEP);
+		var loops = Mathf.CeilToInt(deltaTime / MaxAnimationStep);
 		var dt = deltaTime / loops;
 
 		for (var i = 0; i < loops; i++)
@@ -241,19 +248,20 @@ public class Character : Actor
 
 			// Calculate the position and rotation the weapon WOULD have if the character did not move/rotate this frame.
 			// This allows us to blend to the ACTUAL position/rotation over multiple steps.
-			var lastWeaponPos = lastTRS.MultiplyPoint3x4(transform.InverseTransformPoint(meleeCombat.WeaponRoot.position));
-			var lastWeaponRot = lastTRS.rotation * Quaternion.Inverse(transform.rotation) * meleeCombat.WeaponRoot.rotation;
+			var lastWeaponPos = lastTRS.MultiplyPoint3x4(transform.InverseTransformPoint(MeleeCombat.WeaponRoot.position));
+			var lastWeaponRot = lastTRS.rotation * Quaternion.Inverse(transform.rotation) * MeleeCombat.WeaponRoot.rotation;
 
-			if (meleeCombat.ActiveHit)
+			if (MeleeCombat.ActiveHit)
 			{
-				if (meleeCombat.CheckHits((i + 1f) / loops, lastWeaponPos, lastWeaponRot, out var progress))
+				if (MeleeCombat.CheckHits((i + 1f) / loops, lastWeaponPos, lastWeaponRot, out var progress))
 				{
 					//TODO: If we hit more than one thing, trigger hits over sequential frames?
 				}
 			}
 		}
 
-		lastTRS = Matrix4x4.TRS(transform.position, transform.rotation, transform.localScale);
+		var transform1 = transform;
+		lastTRS = Matrix4x4.TRS(transform1.position, transform1.rotation, transform1.localScale);
 	}
 
 	private bool CheckForGround()
@@ -320,7 +328,7 @@ public class Character : Actor
 
 	public override Vector3 GetLookPosition()
 	{
-		return transform.TransformPoint(capsuleCollider.center);
+		return transform.TransformPoint(CapsuleCollider.center);
 		//return motor.FeetPos;
 	}
 
@@ -341,71 +349,66 @@ public class Character : Actor
 
 	public bool TryJump()
 	{
-		if (remainingJumps > 0)
-		{
-			queueJump = true;
-			return true;
-		}
-
-		return false;
+		if(remainingJumps <= 0) return false;
+		queueJump = true;
+		return true;
 	}
 
 	public bool TryRoll()
 	{
-		if (!ShouldRoll)
-		{
-			ShouldRoll = true;
-			return true;
-		}
-
-		return false;
+		if(queueRoll) return false;
+		queueRoll = true;
+		return true;
 	}
 
 	public bool LightAttack()
 	{
-		if(meleeCombat.isAttacking || !InputEnabled) { return false; }
+		if(MeleeCombat.isAttacking || !InputEnabled) { return false; }
 
-		meleeCombat.isAttacking = true;
+		MeleeCombat.isAttacking = true;
 		InputEnabled = false;
 		//meleeCombat.cancelOK = false;
 
 		// TODO: Should maybe set attack ID and generic attack trigger?
-		if(animator != null) { animator.SetTrigger("lightAttack"); }
+		if(animator != null) { animator.SetTrigger(Attack); }
 		return true;
 	}
 
-	public void UpdateAnimationParameters()
+	private void UpdateAnimationParameters()
 	{
 		if(animator == null || animator.runtimeAnimatorController == null) { return; }
 
 		//control speed percent in animator so that character walks or runs depending on speed
-		var animationSpeedPercent = IsPaused ? 0f : GroundVelocity.magnitude / runSpeed;
+		var animationSpeedPercent = IsPaused ? 0f : groundVelocity.magnitude / runSpeed;
 
 		//reference for animator
-		animator.SetFloat("speedPercent", animationSpeedPercent, speedSmoothTime, Time.deltaTime);
+		animator.SetFloat(SpeedPercent, animationSpeedPercent, speedSmoothTime, Time.deltaTime);
 
 		foreach(var parameter in animator.parameters)
 		{
-			switch(parameter.name)
+			var nameHash = parameter.nameHash;
+			if(nameHash == InAir)
 			{
-				case "inAir":
-					animator.SetBool("inAir", !isGrounded);
-					break;
-				case "directionY":
-					var directionY = Mathf.Clamp01(Mathf.InverseLerp(1f, -1f, rb.velocity.y));
-					animator.SetFloat("directionY", directionY, speedSmoothTime, Time.deltaTime);
-					break;
-				case "velocityX":
-					var velocityX = Vector3.Dot(GroundVelocity, transform.right) / runSpeed;
-					animator.SetFloat("velocityX", velocityX, speedSmoothTime, Time.deltaTime);
-					break;
-				case "velocityZ":
-					var velocityZ = Vector3.Dot(GroundVelocity, transform.forward) / runSpeed;
-					animator.SetFloat("velocityZ", velocityZ, speedSmoothTime, Time.deltaTime);
-					break;
-				case "InHitStun":
-					animator.SetBool("InHitStun", hitReaction.InProgress);
-					break;
+				animator.SetBool(InAir, !isGrounded);
+			}
+			else if(nameHash == DirectionY)
+			{
+				var directionY = Mathf.Clamp01(Mathf.InverseLerp(1f, -1f, rb.velocity.y));
+				animator.SetFloat(DirectionY, directionY, speedSmoothTime, Time.deltaTime);
+			}
+			else if(nameHash == VelocityX)
+			{
+				var velocityX = Vector3.Dot(groundVelocity, transform.right) / runSpeed;
+				animator.SetFloat(VelocityX, velocityX, speedSmoothTime, Time.deltaTime);
+			}
+			else if(nameHash == VelocityZ)
+			{
+				var velocityZ = Vector3.Dot(groundVelocity, transform.forward) / runSpeed;
+				animator.SetFloat(VelocityZ, velocityZ, speedSmoothTime, Time.deltaTime);
+			}
+			else if(nameHash == InHitStun)
+			{
+				animator.SetBool(InHitStun, hitReaction.InProgress);
 			}
 		}
 	}

@@ -4,6 +4,7 @@ using InControl;
 using System;
 using UnityStandardAssets.ImageEffects;
 using System.Collections;
+using System.Linq;
 
 public class GameManager : MonoBehaviour
 {
@@ -33,23 +34,21 @@ public class GameManager : MonoBehaviour
 	private bool gamePaused, physicsPaused, togglePaused;
 	private Coroutine hitPauseCoroutine;
 
-	private static GameManager _instance;
+	private static GameManager instance;
 
 	public static GameManager I
 	{
-		get { if(!_instance) { _instance = FindObjectOfType<GameManager>(); } return _instance; }
+		get { if(!instance) { instance = FindObjectOfType<GameManager>(); } return instance; }
 	}
 
 	public bool PhysicsPaused
 	{
 		get => physicsPaused;
-		set
+		private set
 		{
-			if (physicsPaused != value)
-			{
-				physicsPaused = value;
-				PauseAllPhysics(value);
-			}
+			if(physicsPaused == value) return;
+			physicsPaused = value;
+			PauseAllPhysics(value);
 		}
 	}
 
@@ -58,12 +57,13 @@ public class GameManager : MonoBehaviour
 	#region UNITY_METHODS
 	private void Awake()
 	{
-		_instance = this;
+		instance = this;
 
 		//QualitySettings.maxQueuedFrames = 1;
 		Application.targetFrameRate = 60;
 
 		lockOnCollider = Instantiate(lockOnColliderPrefab);
+		lockOnCollider.SetMainCamera(mainCamera.GetComponent<Camera>());
 
 		lockOnIndicator = Instantiate(lockOnIndicatorPrefab);
 		lockOnIndicator.gameObject.SetActive(false);
@@ -134,28 +134,28 @@ public class GameManager : MonoBehaviour
 		// Hold the right bumper for slow-mo!
 		Time.timeScale = InputManager.ActiveDevice.RightBumper.IsPressed || Input.GetKey(KeyCode.LeftAlt) ? 0.25f : 1f;
 
-		for (var i = 0; i < entities.Count; i++)
+		foreach(var entity in entities)
 		{
-			entities[i].OnUpdate(Time.deltaTime);
+			entity.OnUpdate(Time.deltaTime);
 		}
-
-		// TODO: Should be entirely event driven.
-		hud.OnUpdate();
+		
+		if(Input.GetKeyDown(KeyCode.RightBracket)) activePlayer.Health += 5f;
+		if(Input.GetKeyDown(KeyCode.LeftBracket)) activePlayer.Health -= 5f;
 	}
 
 	public void FixedUpdate()
 	{
-		for (var i = 0; i < entities.Count; i++)
+		foreach(var entity in entities)
 		{
-			entities[i].OnFixedUpdate(Time.fixedDeltaTime);
+			entity.OnFixedUpdate(Time.fixedDeltaTime);
 		}
 	}
 
 	public void LateUpdate()
 	{
-		for (var i = 0; i < entities.Count; i++)
+		foreach(var entity in entities)
 		{
-			entities[i].OnLateUpdate(Time.deltaTime);
+			entity.OnLateUpdate(Time.deltaTime);
 		}
 
 		if (!gamePaused)
@@ -198,43 +198,25 @@ public class GameManager : MonoBehaviour
 	public void ClickOnPlayer(Character newTarget)
 	{
 		// Only switch targets if the mouse is unlocked.
-		if(Cursor.lockState != CursorLockMode.Locked)
-		{
-			SetActivePlayer(newTarget);
-			Cursor.lockState = CursorLockMode.Locked;
-		}
+		if(Cursor.lockState == CursorLockMode.Locked) return;
+		
+		SetActivePlayer(newTarget);
+		Cursor.lockState = CursorLockMode.Locked;
 	}
 
 	public static bool GetHitSpark(Entity entity, out GameObject hitSpark)
 	{
 		return hitSpark =
-		(
 			entity is Actor ? I.hitSpark :
-			entity is Entity ? I.hitSpark2 : null
-		);
+			!(entity is null) ? I.hitSpark2 : null;
 	}
 
-	public Character GetFirstInactivePlayer()
-	{
-		for(int i = 0; i < playerCharacters.Count; i++)
-		{
-			if(playerCharacters[i] != activePlayer)
-			{
-				return playerCharacters[i];
-			}
-		}
-		return null;
-	}
+	public Character GetFirstInactivePlayer() => playerCharacters.FirstOrDefault(t => t != activePlayer);
 
-	public void AddEntity(Entity entity)
-	{
-		entities.Add(entity);
-	}
+	public void AddEntity(Entity entity) => entities.Add(entity);
 
-	public void RemoveEntity(Entity entity)
-	{
-		entities.Remove(entity);
-	}
+	public void RemoveEntity(Entity entity) => entities.Remove(entity);
+
 	#endregion
 
 	#region PRIVATE_METHODS
@@ -246,15 +228,17 @@ public class GameManager : MonoBehaviour
 
 	private void SetActivePlayer(Character newTarget, bool immediate = false)
 	{
-		//if(activePlayer == newTarget) { return; }
+		if(activePlayer != newTarget && activePlayer)
+		{
+			activePlayer.SetController(followerBrain); // Set the old active player to use Follower Brain
+			hud.UnregisterPlayer(activePlayer);
+		}
 
-		Character oldPlayer = activePlayer;
 		activePlayer = newTarget;
 		lockOnCollider.Init(activePlayer.transform);
-
-		if(oldPlayer) oldPlayer.SetController(followerBrain); // Set the old active player to use Follower Brain
 		activePlayer.SetController(playerBrain); // Set the active player to use Player Brain
 		mainCamera.SetTarget(activePlayer, immediate); // Set the camera to follow the active player
+		hud.RegisterPlayer(activePlayer);
 	}
 
 	private IEnumerator HitPause(float duration)

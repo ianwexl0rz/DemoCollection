@@ -5,28 +5,16 @@ public class HUD : MonoBehaviour
 	public RectTransform healthBarFill;
 	public GameObject pauseOverlay;
 
-	public void OnUpdate()
+	public void RegisterPlayer(Actor actor)
 	{
-		Character player = GameManager.I.activePlayer;
-
-		if(player == null) return;
-
-		if(Input.GetKeyDown(KeyCode.RightBracket))
-		{
-			player.health = Mathf.Min(player.health + 5f, player.maxHealth);
-		}
-
-		if(Input.GetKeyDown(KeyCode.LeftBracket))
-		{
-			player.health = Mathf.Max(player.health - 5f, 0f);
-		}
-
-		// TODO: Only update this when it changes
-		healthBarFill.anchorMax = new Vector2(player.health / player.maxHealth, healthBarFill.anchorMax.y);
+		actor.OnHealthChanged += UpdateHealthBar;
+		UpdateHealthBar(actor.Health / actor.maxHealth);
 	}
+	
+	public void UnregisterPlayer(Actor actor) => actor.OnHealthChanged -= UpdateHealthBar;
 
-	public void SetPaused(bool value)
-	{
-		pauseOverlay.SetActive(value);
-	}
+	private void UpdateHealthBar(float normalizedHealth) => healthBarFill.anchorMax = new Vector2(normalizedHealth, healthBarFill.anchorMax.y);
+
+	// TODO: Pause overlay and health bar should not be bundled into one general HUD script.
+	public void SetPaused(bool value) => pauseOverlay.SetActive(value);
 }

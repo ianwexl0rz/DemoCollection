@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections;
+using System.Linq;
 
 public class Actor : Entity, ILockOnTarget, IDestructable
 {
@@ -21,13 +22,24 @@ public class Actor : Entity, ILockOnTarget, IDestructable
 
 	public Action<Actor> UpdateController = delegate { };
 	public Action OnResetAbilities = null;
+	public Action<float> OnHealthChanged = delegate {  };
 	public Action UpdateAbilities = null;
 	public Action FixedUpdateAbilities = null;
 
 	[HideInInspector]
 	public List<ActorAbility> abilities = new List<ActorAbility>();
 
-	public float health { get; set; }
+	public float Health
+	{
+		get => health;
+		set
+		{
+			if (health.Equals(value)) return;
+			health = Mathf.Clamp(value, 0f, maxHealth);
+			OnHealthChanged(health / maxHealth);
+		}
+	}
+
 	public float maxHealth { get; protected set; }
 
 	protected readonly TimerGroup actorTimerGroup = new TimerGroup();
@@ -37,6 +49,7 @@ public class Actor : Entity, ILockOnTarget, IDestructable
 	public Action OnDestroyCallback { get; set; }
 
 	private Renderer[] renderers = null;
+	private float health;
 
 	private void Start()
 	{
@@ -55,7 +68,7 @@ public class Actor : Entity, ILockOnTarget, IDestructable
 	{
 		base.Awake();
 		animator = GetComponentInChildren<Animator>();
-		health = maxHealth = 100f;
+		Health = maxHealth = 100f;
 
 		InputEnabled = true;
 
@@ -68,7 +81,7 @@ public class Actor : Entity, ILockOnTarget, IDestructable
 	private void StartHitReaction()
 	{
 		if(this is Character character)
-			character.meleeCombat.isAttacking = false;
+			character.MeleeCombat.isAttacking = false;
 
 		InputEnabled = false;
 		//Debug.LogFormat("Started Hit Reaction with duration of {0}.", hitReaction.Duration);
@@ -87,21 +100,8 @@ public class Actor : Entity, ILockOnTarget, IDestructable
 		if(GameManager.I.GamePaused) { return; }
 
 		UpdateController(this);
-		//ProcessAnimation();
 		actorTimerGroup.Tick(Time.deltaTime);
-
-		var visibility = false;
-		for (var i = 0; i < renderers.Length; i++)
-		{
-			var renderer = renderers[i];
-			if (renderer != null && renderer.isVisible)
-			{
-				visibility = true;
-				break;
-			}
-		}
-
-		IsVisible = visibility;
+		IsVisible = renderers.Any(r => r != null && r.isVisible);
 	}
 
 	protected override void OnPauseEntity(bool value)
@@ -110,10 +110,7 @@ public class Actor : Entity, ILockOnTarget, IDestructable
 			animator.SetPaused(value);
 	}
 
-	public ActorController GetController()
-	{
-		return controller;
-	}
+	public ActorController GetController() => controller;
 
 	public void SetController(ActorController newController)
 	{
@@ -141,7 +138,7 @@ public class Actor : Entity, ILockOnTarget, IDestructable
 		// Applies knockback.
 		base.ApplyHit(hit);
 
-		health = Mathf.Max(health - hit.attackData.damage, 0f);
+		Health = Mathf.Max(Health - hit.attackData.damage, 0f);
 		//Debug.Log("Hit " + name + " - HP: " + health + "/" + maxHealth);
 
 		// TODO: Get reaction type from AttackData 
@@ -150,8 +147,8 @@ public class Actor : Entity, ILockOnTarget, IDestructable
 
 		if(this is Character character)
 		{
-			character.meleeCombat.isAttacking = false;
-			character.meleeCombat.cancelOK = true;
+			character.MeleeCombat.isAttacking = false;
+			character.MeleeCombat.cancelOK = true;
 		}
 	}
 }

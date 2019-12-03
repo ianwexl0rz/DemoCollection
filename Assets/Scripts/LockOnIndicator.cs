@@ -11,11 +11,13 @@ public class LockOnIndicator : MonoBehaviour
 	[SerializeField]
 	private float heightOffset = 0.15f;
 
+	private Transform mainCameraTransform;
 	private new Renderer renderer;
 	private bool isActive;
 
 	public void OnEnable()
 	{
+		mainCameraTransform = GameManager.I.mainCamera.transform;
 		renderer = GetComponentInChildren<Renderer>();
 		renderer.sharedMaterial = inactiveMaterial;
 	}
@@ -35,7 +37,7 @@ public class LockOnIndicator : MonoBehaviour
 	    var indicatorPos = target.GetLookPosition();
 		if(target is Character character)
 	    {
-			indicatorPos += (character.capsuleCollider.height * 0.5f + heightOffset) * Vector3.up;
+			indicatorPos += (character.CapsuleCollider.height * 0.5f + heightOffset) * Vector3.up;
 	    }
 
 		if(lockedOn != isActive)
@@ -44,8 +46,8 @@ public class LockOnIndicator : MonoBehaviour
 			isActive = lockedOn;
 		}
 
-	    transform.position = indicatorPos;
-		var camera = GameManager.I.mainCamera;
-	    transform.LookAt(camera.transform.position.WithY(transform.position.y), Vector3.up);
+		var t = transform;
+		t.position = indicatorPos;
+	    transform.LookAt(mainCameraTransform.position.WithY(t.position.y), Vector3.up);
 	}
 }

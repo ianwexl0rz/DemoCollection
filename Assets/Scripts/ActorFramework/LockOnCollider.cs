@@ -1,23 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 public class LockOnCollider : MonoBehaviour
 {
 	private List<ILockOnTarget> potentialTargets = new List<ILockOnTarget>();
+	private Camera mainCamera = null;
+
+	public void SetMainCamera(Camera c) => mainCamera = c;
 
 	public void Init(Transform parent)
 	{
 		potentialTargets = new List<ILockOnTarget>();
 		gameObject.SetActive(false);
-		transform.SetParent(parent);
-		transform.localPosition = Vector3.zero;
+		var t = transform;
+		t.SetParent(parent);
+		t.localPosition = Vector3.zero;
 		gameObject.SetActive(true);
 	}
 
 	public ILockOnTarget GetTargetClosestToCenter(Actor actor) => GetBestTarget(actor);
 
-	private ILockOnTarget GetBestTarget(Actor actor)
+	private ILockOnTarget GetBestTarget(Object self)
 	{
 		if (potentialTargets.Count == 0)
 			return null;
@@ -25,23 +30,18 @@ public class LockOnCollider : MonoBehaviour
 		ILockOnTarget bestTarget = null;
 		var bestDistance = Mathf.Infinity;
 
-		var cam = Camera.main;
-
-		for (var i = 0; i < potentialTargets.Count; i++)
+		foreach(var target in potentialTargets)
 		{
-			var target = potentialTargets[i];
+			if ((Object)target == self || !target.IsVisible) continue;
 
-			if ((object)target == actor || !target.IsVisible)
-				continue;
-
-			var screenPos = (Vector2)cam.WorldToScreenPoint(target.GetLookPosition()) - new Vector2(cam.pixelWidth, cam.pixelHeight) * 0.5f;
+			// Screen position relative to center.
+			var screenPos = (Vector2)mainCamera.WorldToScreenPoint(target.GetLookPosition()) - new Vector2(mainCamera.pixelWidth, mainCamera.pixelHeight) * 0.5f;
 			var distanceFromCenter = screenPos.magnitude;
 
-			if (distanceFromCenter < bestDistance)
-			{
-				bestTarget = target;
-				bestDistance = distanceFromCenter;
-			}
+			if(distanceFromCenter >= bestDistance) continue;
+			
+			bestTarget = target;
+			bestDistance = distanceFromCenter;
 		}
 
 		return bestTarget;

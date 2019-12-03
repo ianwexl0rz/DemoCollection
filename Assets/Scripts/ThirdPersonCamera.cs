@@ -62,7 +62,7 @@ public class ThirdPersonCamera : MonoBehaviour
 
 		if(immediate)
 		{
-			focalHeight = player.capsuleCollider.height * 0.5f;
+			focalHeight = player.CapsuleCollider.height * 0.5f;
 			lastTargetPos = trackPos = player.GetLookPosition();
 		}
 		else
@@ -94,7 +94,7 @@ public class ThirdPersonCamera : MonoBehaviour
 			blendToPlayer = Mathf.Max(blendToPlayer, 0f);
 			float smoothBlend = Mathf.SmoothStep(1f, 0f, blendToPlayer);
 			trackPos = Vector3.Lerp(previousPlayerPosition, player.GetLookPosition(), smoothBlend);
-			focalHeight = Mathf.Lerp(previousFocalHeight, player.capsuleCollider.height * 0.5f, smoothBlend);
+			focalHeight = Mathf.Lerp(previousFocalHeight, player.CapsuleCollider.height * 0.5f, smoothBlend);
 			dragVector *= blendToPlayer;
 			autoTurn = false;
 		}
@@ -129,7 +129,7 @@ public class ThirdPersonCamera : MonoBehaviour
 			var drag = Quaternion.Euler(0, dragAngle, 0) * dragVector;
 			transform.position = trackPos + drag;
 
-			var camToTarget = player.lockOnTarget.GetGroundPosition() - transform.position + Vector3.up * player.capsuleCollider.height * 0.5f;
+			var camToTarget = player.lockOnTarget.GetGroundPosition() - transform.position + Vector3.up * player.CapsuleCollider.height * 0.5f;
 			var look = Quaternion.LookRotation(camToTarget);
 
 			// Clamp pitch
