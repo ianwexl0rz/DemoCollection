@@ -16,4 +16,4 @@ MonoBehaviour:
   - menuItem: {fileID: 11400000, guid: f9f02fbb12ce761428877d670b783ceb, type: 2}
     value: 0
   - menuItem: {fileID: 11400000, guid: f06aac22edb570646a7d5dac7cad1547, type: 2}
-    value: 1
+    value: 0

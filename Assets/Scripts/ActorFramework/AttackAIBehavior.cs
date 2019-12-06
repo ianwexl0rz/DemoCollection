@@ -11,7 +11,7 @@ class AttackAIBehavior : AIBehavior
 
 		if(actor is Character character)
 		{
-			character.LightAttack();
+			character.TryAttack();
 		}
 	}
 }

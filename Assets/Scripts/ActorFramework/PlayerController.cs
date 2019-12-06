@@ -1,16 +1,15 @@
 ﻿using UnityEngine;
-using InControl;
-using System.Collections.Generic;
+using Rewired;
 
 [CreateAssetMenu(fileName = "Player Controller", menuName = "Actor/Controllers/Player Controller")]
 public class PlayerController : ActorController
 {
 	private readonly InputBuffer inputBuffer = new InputBuffer();
+	private Player player;
 
 	protected override void Init(Actor actor)
 	{
-		var inactivePlayer = GameManager.I.GetFirstInactivePlayer();
-		actor.lockOnTarget = inactivePlayer ? inactivePlayer : null;
+		player = GameManager.I.player;
 		inputBuffer.Clear();
 	}
 
@@ -19,44 +18,30 @@ public class PlayerController : ActorController
 		if(!GameManager.I.PhysicsPaused)
 			inputBuffer.Update(Time.deltaTime);
 
-		var inputDevice = InputManager.ActiveDevice;
+		//var inputDevice = InputManager.ActiveDevice;
+		
+		actor.move = CalculateMove(actor);
 
-		actor.move = CalculateMove(actor, inputDevice);
-		actor.lockOn = inputDevice.LeftTrigger.IsPressed || Input.GetMouseButton(1);
-		actor.Recenter = inputDevice.LeftTrigger.WasPressed || Input.GetMouseButtonDown(1);
-
-		if (!(actor is Character player)) return;
-
-		//player.aimingMode = gamePad.RightTrigger.IsPressed;
-		//player.Recenter = playerInput.RightStickButton.WasPressed;
+		if(!(actor is Character character)) return;
+		
+		// Lock On
+		if(player.GetButtonDown(PlayerAction.LockOn))
+			character.TryLockOn();
 
 		// Run
-		player.Run = inputDevice.RightTrigger.IsPressed || Input.GetKey(KeyCode.LeftShift);
+		character.Run = player.GetButton(PlayerAction.Sprint);
 
 		// Roll
-		//player.ShouldRoll = inputDevice.Action2.IsPressed || Input.GetKey(KeyCode.LeftControl);
-		if(inputDevice.Action2.WasPressed || Input.GetKeyDown(KeyCode.LeftControl))
-			inputBuffer.Add(player.TryRoll, 0.1f);
+		if(player.GetButtonDown(PlayerAction.Roll))
+			inputBuffer.Add(character.TryRoll, 0.1f);
 
 		// Jump
-		if(inputDevice.Action1.WasPressed || inputDevice.LeftBumper.WasPressed || Input.GetKeyDown(KeyCode.Space))
-			inputBuffer.Add(player.TryJump, 0.1f);
+		if(player.GetButtonDown(PlayerAction.Jump))
+			inputBuffer.Add(character.TryJump, 0.1f);
 
 		// Attack
-		if(inputDevice.Action3.WasPressed || Input.GetMouseButtonDown(0))
-			inputBuffer.Add(player.LightAttack, 0.5f); 
-
-		/*
-		// Update ability input
-		for(int i = 0; i < actor.abilities.Count; i++)
-		{
-			if(actor.abilities[i] is WalkAbility)
-			{
-				((WalkAbility)actor.abilities[i]).run = Input.GetKey(KeyCode.LeftShift) || Input.GetButton("Fire1");
-				((WalkAbility)actor.abilities[i]).jump = Input.GetKeyDown(KeyCode.Space) || Input.GetButtonDown("Fire2");
-			}
-		}
-		*/
+		if(player.GetButtonDown(PlayerAction.Attack))
+			inputBuffer.Add(character.TryAttack, 0.5f);
 	}
 
 	protected override void Clean(Actor actor)
@@ -64,31 +49,26 @@ public class PlayerController : ActorController
 		actor.move = Vector3.zero;
 	}
 
-	public Vector3 CalculateMove(Actor actor, InputDevice playerInput)
+	private Vector3 CalculateMove(Actor actor)
 	{
-		var move = new Vector3(playerInput.LeftStickX, 0, playerInput.LeftStickY);
+		var move = new Vector3
+		{
+			x = player.GetAxis(PlayerAction.MoveHorizontal),
+			z = player.GetAxis(PlayerAction.MoveVertical)
+		};
+		
 		var deadZone = GameSettings.I.deadZone;
 
 		// Early out if move input is less than the dead zone.
 		if(move.magnitude < deadZone) return Vector3.zero;
 
 		// Remap the input so the range is [0-1] accounting for the dead zone.
-		move = move.normalized * (Mathf.Clamp01(move.magnitude) - deadZone) / (1f - deadZone);
-
+		move = move.normalized * Mathf.InverseLerp(deadZone, 1, move.magnitude);
+		
+		if(actor is Character character && character.IsLockedOn)
+			return Quaternion.Slerp(GameManager.I.mainCamera.referenceRotation, character.lockOnOrientation, 0.5f) * move;
+		
 		// Orient the input relative to the camera.
 		return GameManager.I.mainCamera.referenceRotation * move;
-
-		/*//
-		if(actor is Player player && player.lockOn && player.lockOnTarget != null)
-		{
-			var forward = (player.lockOnTarget.transform.position - player.transform.position).WithY(0);
-			forward += Camera.main.transform.forward;
-			return Quaternion.LookRotation(forward) * move;
-		}
-		else
-		{
-			return Quaternion.AngleAxis(GameManager.I.mainCamera.transform.eulerAngles.y, Vector3.up) * move;
-		}
-		//*/
 	}
 }

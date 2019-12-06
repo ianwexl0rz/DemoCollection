@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
-using InControl;
-using UnityEditor;
 using System;
+using Rewired;
 
 namespace MenuSystem
 {
@@ -27,9 +26,11 @@ namespace MenuSystem
 		private MenuGroupDisplay selectedGroup;
 		private MenuItemDisplay selectedItem;
 		private bool inputStale;
+		private Player player;
 
 		private void OnEnable()
 		{
+			player = GameManager.I.player;
 			menuGroups = GetComponentsInChildren<MenuGroupDisplay>(true);
 
 			foreach(var group in menuGroups)
@@ -37,7 +38,7 @@ namespace MenuSystem
 				group.RegisterMenuItems();
 			}
 
-			if(InputManager.ActiveDevice.LeftStick.Vector.sqrMagnitude > Mathf.Epsilon)
+			if(player.GetAxis2D(PlayerAction.MenuHorizontal,PlayerAction.MenuVertical).sqrMagnitude > 0)
 			{
 				inputStale = true;
 			}
@@ -53,31 +54,25 @@ namespace MenuSystem
 
 		private void Update()
 		{
-			var inputDevice = InputManager.ActiveDevice;
-			var submit = inputDevice.Action1.WasPressed;
-
-			if(submit)
+			if(player.GetButtonDown(PlayerAction.Confirm))
 			{
 				selectedGroup.ProcessInput(MenuInput.Submit);
 				return;
 			}
 
-			var dirInput = inputDevice.LeftStick.Vector;
-			if(dirInput.sqrMagnitude < Mathf.Epsilon)
+			var dirInput = player.GetAxis2D(PlayerAction.MenuHorizontal, PlayerAction.MenuVertical);
+			if(dirInput.Equals(Vector2.zero))
 			{
 				inputStale = false;
 				return;
 			}
-			else if(inputStale)
-			{
-				return;
-			}
+			
+			if(inputStale) return;
 
 			inputStale = true;
 
-			float angle = Mathf.Atan2(dirInput.y, dirInput.x);
-			int quadrant = (int)Mathf.Round(4 * angle / (2 * Mathf.PI) + 4) % 4;
-
+			var angle = Mathf.Atan2(dirInput.y, dirInput.x);
+			var quadrant = (int)Mathf.Round(4 * angle / (2 * Mathf.PI) + 4) % 4;
 			var previouslySelectedItem = selectedItem;
 			selectedItem = selectedGroup.ProcessInput((MenuInput)quadrant);
 

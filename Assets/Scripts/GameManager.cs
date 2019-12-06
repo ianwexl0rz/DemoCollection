@@ -1,10 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
-using InControl;
 using System;
-using UnityStandardAssets.ImageEffects;
 using System.Collections;
 using System.Linq;
+using Rewired;
 
 public class GameManager : MonoBehaviour
 {
@@ -35,6 +34,7 @@ public class GameManager : MonoBehaviour
 	private Coroutine hitPauseCoroutine;
 
 	private static GameManager instance;
+	public Player player { get; private set; }
 
 	public static GameManager I
 	{
@@ -68,6 +68,9 @@ public class GameManager : MonoBehaviour
 		lockOnIndicator = Instantiate(lockOnIndicatorPrefab);
 		lockOnIndicator.gameObject.SetActive(false);
 
+		// Cache reference to player.
+		player = ReInput.players.GetPlayer(0);
+
 		DontDestroyOnLoad(this);
 
 		// Lock cursor by default.
@@ -92,52 +95,17 @@ public class GameManager : MonoBehaviour
 		SetActivePlayer(activePlayer, true);
 
 		Cursor.lockState = CursorLockMode.Locked;
-
-		/*
-		SetActivePlayer(playerCharacters[targetIndex], true);
-
-		foreach(Character p in playerCharacters)
-		{
-			if(p != activePlayer) p.SetController(followerBrain);
-		}
-		*/
 	}
-
-	//private IEnumerator LateFixedUpdate()
-	//{
-	//	while(true)
-	//	{
-	//		yield return new WaitForFixedUpdate();
-
-	//		if(gamePaused) { continue; }
-
-	//		mainCamera.UpdateReferenceRotation();
-
-	//		//mainCamera.UpdatePositionAndRotation(); // Update camera after physics
-
-	//		//// Update the potential lock on target
-	//		//if(!activePlayer.lockOn)
-	//		//{
-	//		//	activePlayer.lockOnTarget = lockOnCollider.GetTargetClosestToCenter(activePlayer);
-
-	//		//	//potentialTargets.Sort(SortByProximityToScreenCenter);
-	//		//	//activePlayer.lockOnTarget = potentialTargets[0];
-	//		//}
-	//	}
-	//}
 
 	private void Update()
 	{
 		// Swap characters
-		if(InputManager.ActiveDevice.Action4.WasPressed || Input.GetKeyDown(KeyCode.Tab)) { CyclePlayer(); }
+		if(player.GetButtonDown(PlayerAction.SwitchPlayer)) { CyclePlayer(); }
 
 		// Hold the right bumper for slow-mo!
-		Time.timeScale = InputManager.ActiveDevice.RightBumper.IsPressed || Input.GetKey(KeyCode.LeftAlt) ? 0.25f : 1f;
+		Time.timeScale = player.GetButton(PlayerAction.SlowMo) ? 0.25f : 1f;
 
-		foreach(var entity in entities)
-		{
-			entity.OnUpdate(Time.deltaTime);
-		}
+		foreach(var entity in entities) entity.OnUpdate(Time.deltaTime);
 		
 		if(Input.GetKeyDown(KeyCode.RightBracket)) activePlayer.Health += 5f;
 		if(Input.GetKeyDown(KeyCode.LeftBracket)) activePlayer.Health -= 5f;
@@ -145,21 +113,14 @@ public class GameManager : MonoBehaviour
 
 	public void FixedUpdate()
 	{
-		foreach(var entity in entities)
-		{
-			entity.OnFixedUpdate(Time.fixedDeltaTime);
-		}
+		foreach(var entity in entities) entity.OnFixedUpdate(Time.fixedDeltaTime);
 	}
 
 	public void LateUpdate()
 	{
-		foreach(var entity in entities)
-		{
-			entity.OnLateUpdate(Time.deltaTime);
-		}
+		foreach(var entity in entities) entity.OnLateUpdate(Time.deltaTime);
 
-		if (!gamePaused)
-			mainCamera.UpdatePositionAndRotation();
+		if (!gamePaused) mainCamera.UpdatePositionAndRotation();
 
 		if (!physicsPaused)
 		{
@@ -171,14 +132,7 @@ public class GameManager : MonoBehaviour
 		}
 
 		// Pause game if requested.
-		if(InputManager.ActiveDevice.MenuWasPressed || Input.GetKeyDown(KeyCode.P) || togglePaused)
-		{
-			togglePaused = false;
-			gamePaused = !gamePaused;
-			hud.SetPaused(gamePaused);
-			OnPauseGame(gamePaused);
-			PhysicsPaused = gamePaused;
-		}
+		if(player.GetButtonDown(PlayerAction.Pause)) TogglePaused();
 	}
 
 	#endregion
@@ -192,7 +146,10 @@ public class GameManager : MonoBehaviour
 
 	public void TogglePaused()
 	{
-		togglePaused = true;
+		gamePaused = !gamePaused;
+		hud.SetPaused(gamePaused);
+		OnPauseGame(gamePaused);
+		PhysicsPaused = gamePaused;
 	}
 
 	public void ClickOnPlayer(Character newTarget)
@@ -252,17 +209,18 @@ public class GameManager : MonoBehaviour
 			if (!gamePaused)
 			{
 				duration -= Time.deltaTime;
-				InputManager.ActiveDevice.Vibrate(0.5f);
+				player.SetVibration(0, 0.5f);
+				player.SetVibration(1, 0.5f);
 			}
 			else
 			{
-				InputManager.ActiveDevice.Vibrate(0);
+				player.StopVibration();
 			}
 
 			yield return null;
 		}
 
-		InputManager.ActiveDevice.Vibrate(0);
+		player.StopVibration();
 		PhysicsPaused = false;
 	}
 	#endregion

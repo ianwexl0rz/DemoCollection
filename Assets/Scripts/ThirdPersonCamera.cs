@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using InControl;
+using Rewired;
 
 public class ThirdPersonCamera : MonoBehaviour
 {
@@ -42,6 +42,8 @@ public class ThirdPersonCamera : MonoBehaviour
 	private float lockBlend;
 	private bool autoTurn;
 
+	private Player rePlayer;
+
 	public Quaternion referenceRotation { get; set; }
 
 	private float pitch
@@ -58,6 +60,8 @@ public class ThirdPersonCamera : MonoBehaviour
 
 	public void SetTarget(Character newPlayer, bool immediate)
 	{
+		rePlayer = GameManager.I.player;
+		
 		player = newPlayer;
 
 		if(immediate)
@@ -84,7 +88,7 @@ public class ThirdPersonCamera : MonoBehaviour
 		float lookSensitivityX = GameSettings.I.lookSensitivityX;
 		float lookSensitivityY = GameSettings.I.lookSensitivityY;
 
-		InputDevice playerInput = InputManager.ActiveDevice;
+		//InputDevice playerInput = InputManager.ActiveDevice;
 
 		lastTargetPos = trackPos;
 
@@ -178,8 +182,8 @@ public class ThirdPersonCamera : MonoBehaviour
 				yaw = player.transform.eulerAngles.y;
 			}
 
-			yaw += playerInput.RightStickX * lookSensitivityX * dt;
-			pitch += playerInput.RightStickY * lookSensitivityY * dt;
+			yaw += rePlayer.GetAxis(PlayerAction.LookHorizontal) * lookSensitivityX * dt;
+			pitch += rePlayer.GetAxis(PlayerAction.LookVertical) * lookSensitivityY * dt;
 
 			if(autoTurn)
 			{

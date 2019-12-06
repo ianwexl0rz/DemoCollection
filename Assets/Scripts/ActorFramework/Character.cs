@@ -34,13 +34,16 @@ public class Character : Actor
 	private Vector3 torqueError;
 	private Vector3 groundVelocity = Vector3.zero;
 	private Quaternion inputOrientation;
-	private Quaternion lockOnOrientation;
+	public Quaternion lockOnOrientation;
 	private Vector3 groundNormal;
 	private Vector3 groundPoint;
 	private Vector3 groundCheckPoint;
 	private float rollAngle;
+
+	private bool queueLockOn;
 	private bool queueRoll;
 	private bool queueJump;
+	
 	private bool jumping;
 	private int remainingJumps;
 	private Matrix4x4 lastTRS;
@@ -54,7 +57,7 @@ public class Character : Actor
 	private static readonly int InHitStun = Animator.StringToHash("InHitStun");
 
 	public bool Run { get; set; }
-	private bool IsLockedOn => lockOn && lockOnTarget != null;
+	public bool IsLockedOn => lockOn && lockOnTarget != null;
 
 	public CapsuleCollider CapsuleCollider { get; private set; }
 	public MeleeCombat MeleeCombat { get; private set; }
@@ -110,10 +113,24 @@ public class Character : Actor
 			desiredVelocity = rb.velocity.WithY(0f);
 		}
 
-		if (IsLockedOn)
+		if (queueLockOn)
 		{
-			var toLockOnTarget = (lockOnTarget.GetLookPosition() - GetLookPosition()).WithY(0f).normalized;
-			lockOnOrientation = Quaternion.LookRotation(toLockOnTarget);
+			queueLockOn = false;
+			lockOn = !lockOn;
+		}
+		
+		if(lockOn)
+		{
+			if (lockOnTarget != null)
+			{
+				var toLockOnTarget = (lockOnTarget.GetLookPosition() - GetLookPosition()).WithY(0f).normalized;
+				lockOnOrientation = Quaternion.LookRotation(toLockOnTarget);
+			}
+			else
+			{
+				lockOn = false;
+				//TODO: Fix camera recentering.
+			}
 		}
 
 		// Update desired velocity if there is input.
@@ -347,6 +364,12 @@ public class Character : Actor
 		rb.velocity = groundVelocity.WithY(jumpVelocity);
 	}
 
+	public bool TryLockOn()
+	{
+		queueLockOn = true;
+		return true;
+	}
+	
 	public bool TryJump()
 	{
 		if(remainingJumps <= 0) return false;
@@ -361,7 +384,7 @@ public class Character : Actor
 		return true;
 	}
 
-	public bool LightAttack()
+	public bool TryAttack()
 	{
 		if(MeleeCombat.isAttacking || !InputEnabled) { return false; }
 
