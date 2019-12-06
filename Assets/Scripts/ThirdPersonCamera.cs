@@ -38,6 +38,7 @@ public class ThirdPersonCamera : MonoBehaviour
 	private float previousFocalHeight = 0f;
 	private Vector3 previousLookPos = Vector3.zero;
 	private Vector3 trackPos = Vector3.zero;
+	private ILockOnTarget lastLockOnTarget = null;
 
 	private float lockBlend;
 	private bool autoTurn;
@@ -91,7 +92,7 @@ public class ThirdPersonCamera : MonoBehaviour
 		//InputDevice playerInput = InputManager.ActiveDevice;
 
 		lastTargetPos = trackPos;
-
+		
 		if(blendToPlayer > 0f)
 		{
 			blendToPlayer -= dt / unlockTime;
@@ -222,6 +223,7 @@ public class ThirdPersonCamera : MonoBehaviour
 		transform.position -= transform.forward * dist;
 
 		referenceRotation = Quaternion.AngleAxis(transform.rotation.eulerAngles.y, Vector3.up);
+		lastLockOnTarget = player.lockOnTarget;
 	}
 
 	public Vector3 GetLinearDrag()

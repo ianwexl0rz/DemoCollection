@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 7805183954628781469}
   - component: {fileID: 3674961934879777718}
   m_Layer: 8
-  m_Name: LockOnCollider
+  m_Name: LockOnSysteam
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -74,3 +74,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 41c2defa027b0454685cc8fe6735264f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  indicatorPrefab: {fileID: 4632046337822859634, guid: d5b38022add3beb45b6c94117cefc6bd,
+    type: 3}
+  activeMaterial: {fileID: 2100000, guid: f6cf10183eb5b45fab51f52306a3d775, type: 2}
+  inactiveMaterial: {fileID: 2100000, guid: c3717873792774522a346fa866653e9b, type: 2}
+  indicatorHeightOffset: 0.15

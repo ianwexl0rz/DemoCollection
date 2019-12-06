@@ -4,6 +4,7 @@ using System;
 using System.Collections;
 using System.Linq;
 using Rewired;
+using UnityEngine.Serialization;
 
 public class GameManager : MonoBehaviour
 {
@@ -16,14 +17,14 @@ public class GameManager : MonoBehaviour
 	public PlayerController playerBrain;
 	public ActorController followerBrain;
 
+	[FormerlySerializedAs("lockOnColliderPrefab")]
 	[Header("Gameplay")]
-	[SerializeField] private LockOnCollider lockOnColliderPrefab = null;
-	[SerializeField] private LockOnIndicator lockOnIndicatorPrefab = null;
+	[SerializeField] private LockOnSystem lockOnSystemPrefab = null;
 	[SerializeField] private GameObject hitSpark = null;
 	[SerializeField] private GameObject hitSpark2 = null;
 
-	private LockOnCollider lockOnCollider = null;
-	private LockOnIndicator lockOnIndicator = null;
+	private LockOnSystem lockOnSystem = null;
+	//private LockOnIndicator lockOnIndicator = null;
 	private int playerIndex;
 	private List<Character> playerCharacters;
 	private readonly List<Entity> entities = new List<Entity>();
@@ -32,6 +33,7 @@ public class GameManager : MonoBehaviour
 	public Action<bool> OnPauseGame = delegate { };
 	private bool gamePaused, physicsPaused, togglePaused;
 	private Coroutine hitPauseCoroutine;
+	private bool lookInputStale;
 
 	private static GameManager instance;
 	public Player player { get; private set; }
@@ -62,11 +64,8 @@ public class GameManager : MonoBehaviour
 		//QualitySettings.maxQueuedFrames = 1;
 		Application.targetFrameRate = 60;
 
-		lockOnCollider = Instantiate(lockOnColliderPrefab);
-		lockOnCollider.SetMainCamera(mainCamera.GetComponent<Camera>());
-
-		lockOnIndicator = Instantiate(lockOnIndicatorPrefab);
-		lockOnIndicator.gameObject.SetActive(false);
+		lockOnSystem = Instantiate(lockOnSystemPrefab);
+		lockOnSystem.SetMainCamera(mainCamera.GetComponent<Camera>());
 
 		// Cache reference to player.
 		player = ReInput.players.GetPlayer(0);
@@ -124,11 +123,32 @@ public class GameManager : MonoBehaviour
 
 		if (!physicsPaused)
 		{
-			if (!activePlayer.lockOn)
-				activePlayer.lockOnTarget = lockOnCollider.GetTargetClosestToCenter(activePlayer);
+			var closestToCenter = lockOnSystem.GetTargetClosestToCenter(activePlayer);
+			
+			if(!activePlayer.lockOn)
+			{
+				activePlayer.lockOnTarget = closestToCenter;
+				lookInputStale = true;
+			}
+
+			if(activePlayer.IsLockedOn)
+			{
+				var lookVector = player.GetAxis2D(PlayerAction.LookHorizontal, PlayerAction.LookVertical);
+				if(lookInputStale && lookVector.Equals(Vector2.zero)) lookInputStale = false;
+				if(!lookInputStale && lookVector.sqrMagnitude > 0)
+				{
+					var current = activePlayer.lockOnTarget;
+					var newTarget = lockOnSystem.GetTargetClosestToVector(activePlayer, current, lookVector);
+					if(!ReferenceEquals(newTarget, null))
+					{
+						activePlayer.lockOnTarget = newTarget;
+						lookInputStale = true;
+					}
+				}
+			}
 
 			// Update lock-on indicator position.
-			lockOnIndicator.UpdatePosition(activePlayer.lockOn, activePlayer.lockOnTarget);
+			lockOnSystem.UpdateIndicator(activePlayer.lockOn, activePlayer.lockOnTarget);
 		}
 
 		// Pause game if requested.
@@ -192,7 +212,7 @@ public class GameManager : MonoBehaviour
 		}
 
 		activePlayer = newTarget;
-		lockOnCollider.Init(activePlayer.transform);
+		lockOnSystem.Init(activePlayer.transform);
 		activePlayer.SetController(playerBrain); // Set the active player to use Player Brain
 		mainCamera.SetTarget(activePlayer, immediate); // Set the camera to follow the active player
 		hud.RegisterPlayer(activePlayer);
