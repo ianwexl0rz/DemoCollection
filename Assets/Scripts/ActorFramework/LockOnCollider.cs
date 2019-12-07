@@ -4,56 +4,10 @@ using System.Linq;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-public class LockOnSystem : MonoBehaviour
+public class LockOnCollider : MonoBehaviour
 {
 	private Dictionary<ILockOnTarget, Vector2> potentialTargets = new Dictionary<ILockOnTarget, Vector2>();
-	private Camera mainCamera = null;
-
-	[SerializeField] private GameObject indicatorPrefab = null;
-	[SerializeField] private Material activeMaterial = null;
-	[SerializeField] private Material inactiveMaterial = null;
-	[SerializeField] private float indicatorHeightOffset = 0.15f;
 	[SerializeField] private float angleThreshold = 45f;
-
-	private Transform indicatorTransform;
-	private Renderer indicatorRenderer;
-	private bool lockedOn;
-
-	public void Awake()
-	{
-		indicatorTransform = Instantiate(indicatorPrefab).transform;
-		indicatorRenderer = indicatorTransform.GetComponentInChildren<Renderer>();
-		indicatorRenderer.sharedMaterial = inactiveMaterial;
-	}
-
-	public void UpdateIndicator(bool lockedOn, ILockOnTarget target)
-	{
-		var go = indicatorTransform.gameObject;
-		if(target == null)
-		{
-			go.SetActive(false);
-			return;
-		}
-		
-		if(!go.activeSelf) go.SetActive(true);
-
-		var indicatorPos = target.GetLookPosition();
-		if(target is Character character)
-		{
-			indicatorPos += (character.CapsuleCollider.height * 0.5f + indicatorHeightOffset) * Vector3.up;
-		}
-
-		if(lockedOn != this.lockedOn)
-		{
-			indicatorRenderer.sharedMaterial = lockedOn ? activeMaterial : inactiveMaterial;
-			this.lockedOn = lockedOn;
-		}
-		
-		indicatorTransform.position = indicatorPos;
-		indicatorTransform.LookAt(mainCamera.transform.position.WithY(indicatorTransform.position.y), Vector3.up);
-	}
-
-	public void SetMainCamera(Camera c) => mainCamera = c;
 
 	public void Init(Transform parent)
 	{
@@ -65,7 +19,7 @@ public class LockOnSystem : MonoBehaviour
 		gameObject.SetActive(true);
 	}
 	
-	public ILockOnTarget GetTargetClosestToCenter(Actor self)
+	public ILockOnTarget GetTargetClosestToCenter(Camera cam, Actor self)
 	{
 		if (potentialTargets.Count == 0)
 			return null;
@@ -78,7 +32,7 @@ public class LockOnSystem : MonoBehaviour
 			if ((Actor)target == self || !target.IsVisible) continue;
 
 			// Screen position relative to center.
-			var screenPos = (Vector2)mainCamera.WorldToScreenPoint(target.GetLookPosition()) - new Vector2(mainCamera.pixelWidth, mainCamera.pixelHeight) * 0.5f;
+			var screenPos = (Vector2)cam.WorldToScreenPoint(target.GetLookPosition()) - new Vector2(cam.pixelWidth, cam.pixelHeight) * 0.5f;
 			potentialTargets[target] = screenPos;
 			
 			var distanceFromCenter = screenPos.magnitude;

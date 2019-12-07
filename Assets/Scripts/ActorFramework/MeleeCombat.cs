@@ -84,14 +84,11 @@ public class MeleeCombat : MonoBehaviour
 
 	public void NewHit(AnimationEvent animEvent)
 	{
-		//AttackData data = attackDataSet.attacks.Find(d => d.name == animEvent.stringParameter);
+		// TODO: This should be a dictionary lookup instead of a find...
 		AttackData data = weapon.attackDataSet.attacks.Find(d => d.name == animEvent.stringParameter);
-
-		if(data != null)
-		{
-			attackData = data;
-			hitObjects = new List<GameObject>();
-		}
+		
+		attackData = data;
+		hitObjects = new List<GameObject>();
 
 		ClearWeaponTrail();
 
@@ -256,17 +253,17 @@ public class MeleeCombat : MonoBehaviour
 			if(entity != null)
 			{
 				Vector3 hitDirection = (go.transform.position - transform.position).WithY(0f).normalized;
-				entity.GetHit(hit.point, hitDirection, attackData);
-
-				GameManager.I.InitHitPause(Time.fixedDeltaTime * attackData.hitPause);
+				var combatEvent = new CombatEvent(actor, entity, hit.point, hitDirection, attackData);
+				
+				GameManager.I.AddCombatEvent(combatEvent);
 
 				success = true;
 			}
 
-			if(GameManager.GetHitSpark(entity, out GameObject hitspark))
-			{
-				Instantiate(hitspark, hit.point, Quaternion.identity);
-			}
+//			if(GameManager.GetHitSpark(entity, out GameObject hitspark))
+//			{
+//				Instantiate(hitspark, hit.point, Quaternion.identity);
+//			}
 
 			hitObjects.Add(go);
 		}

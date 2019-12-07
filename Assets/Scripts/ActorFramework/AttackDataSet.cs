@@ -3,28 +3,41 @@ using System.Collections.Generic;
 using System;
 
 [Serializable]
-public class HitData
+public struct CombatEvent
 {
+	public Entity instigator;
+	public Entity target;
 	public Vector3 point;
 	public Vector3 direction;
 	public AttackData attackData;
 
-	public HitData(Vector3 point, Vector3 direction, AttackData attackData)
+	public CombatEvent(Entity instigator, Entity target, Vector3 point, Vector3 direction, AttackData attackData)
 	{
+		this.instigator = instigator;
+		this.target = target;
 		this.point = point;
 		this.direction = direction;
 		this.attackData = attackData;
 	}
+	
+	public void Deconstruct(out Entity instigator, out Entity target, out Vector3 point, out Vector3 direction, out AttackData attackData)
+	{
+		instigator = this.instigator;
+		target = this.target;
+		point = this.point;
+		direction = this.direction;
+		attackData = this.attackData;
+	}
 }
 
 [Serializable]
-public class AttackData
+public struct AttackData
 {
-	public string name = "New Attack";
-	public float damage = 0f;
-	public int hitPause = 8;
-	public float knockback = 0f;
-	public float stun = 0f;
+	public string name;
+	public float damage;
+	public int hitPause;
+	public float knockback;
+	public float stun;
 }
 
 public enum AttackType

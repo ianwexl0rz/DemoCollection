@@ -133,16 +133,16 @@ public class Actor : Entity, ILockOnTarget, IDestructable
 		return transform.position;
 	}
 
-	protected override void ApplyHit(HitData hit)
+	public override void ApplyHit(Entity instigator, Vector3 point, Vector3 direction, AttackData attackData)
 	{
 		// Applies knockback.
-		base.ApplyHit(hit);
+		base.ApplyHit(instigator, point, direction, attackData);
 
-		Health = Mathf.Max(Health - hit.attackData.damage, 0f);
+		Health = Mathf.Max(Health - attackData.damage, 0f);
 		//Debug.Log("Hit " + name + " - HP: " + health + "/" + maxHealth);
 
 		// TODO: Get reaction type from AttackData 
-		var duration = Mathf.Max(hitReaction.Duration - hitReaction.Current, hit.attackData.stun);
+		var duration = Mathf.Max(hitReaction.Duration - hitReaction.Current, attackData.stun);
 		hitReaction.Reset(duration);
 
 		if(this is Character character)

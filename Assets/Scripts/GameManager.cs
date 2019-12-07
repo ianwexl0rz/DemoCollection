@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System;
 using System.Collections;
-using System.Linq;
 using Rewired;
-using UnityEngine.Serialization;
 
 public class GameManager : MonoBehaviour
 {
@@ -16,26 +14,23 @@ public class GameManager : MonoBehaviour
 	[Header("Actor Controllers")]
 	public PlayerController playerBrain;
 	public ActorController followerBrain;
-
-	[FormerlySerializedAs("lockOnColliderPrefab")]
+	
+	public Action<bool> PauseAllPhysics = delegate { };
+	public Action<bool> OnPauseGame = delegate { };
+	
 	[Header("Gameplay")]
-	[SerializeField] private LockOnSystem lockOnSystemPrefab = null;
-	[SerializeField] private GameObject hitSpark = null;
-	[SerializeField] private GameObject hitSpark2 = null;
+	[SerializeField] private CombatManager combatManager = null;
 
-	private LockOnSystem lockOnSystem = null;
-	//private LockOnIndicator lockOnIndicator = null;
 	private int playerIndex;
 	private List<Character> playerCharacters;
 	private readonly List<Entity> entities = new List<Entity>();
-
-	public Action<bool> PauseAllPhysics = delegate { };
-	public Action<bool> OnPauseGame = delegate { };
-	private bool gamePaused, physicsPaused, togglePaused;
+	private List<CombatEvent> combatEvents = new List<CombatEvent>();
 	private Coroutine hitPauseCoroutine;
-	private bool lookInputStale;
-
-	private static GameManager instance;
+	private bool gamePaused, physicsPaused, togglePaused;
+    private bool lookInputStale;
+    
+    private static GameManager instance;
+    
 	public Player player { get; private set; }
 
 	public static GameManager I
@@ -60,29 +55,17 @@ public class GameManager : MonoBehaviour
 	private void Awake()
 	{
 		instance = this;
-
-		//QualitySettings.maxQueuedFrames = 1;
+		
 		Application.targetFrameRate = 60;
-
-		lockOnSystem = Instantiate(lockOnSystemPrefab);
-		lockOnSystem.SetMainCamera(mainCamera.GetComponent<Camera>());
+		combatManager.Init(mainCamera.GetComponent<Camera>());
 
 		// Cache reference to player.
 		player = ReInput.players.GetPlayer(0);
 
 		DontDestroyOnLoad(this);
 
-		// Lock cursor by default.
-		//Cursor.lockState = CursorLockMode.Locked;
-
 		playerCharacters = new List<Character>(FindObjectsOfType<Character>());
-
-		if(activePlayer != null)
-		{
-			playerIndex = playerCharacters.IndexOf(activePlayer);
-		}
-
-		//StartCoroutine(LateFixedUpdate());
+		if(activePlayer != null) playerIndex = playerCharacters.IndexOf(activePlayer);
 	}
 
 	private void Start()
@@ -112,6 +95,7 @@ public class GameManager : MonoBehaviour
 
 	public void FixedUpdate()
 	{
+		combatManager.ResolveCombatEvents(ref combatEvents);
 		foreach(var entity in entities) entity.OnFixedUpdate(Time.fixedDeltaTime);
 	}
 
@@ -121,35 +105,7 @@ public class GameManager : MonoBehaviour
 
 		if (!gamePaused) mainCamera.UpdatePositionAndRotation();
 
-		if (!physicsPaused)
-		{
-			var closestToCenter = lockOnSystem.GetTargetClosestToCenter(activePlayer);
-			
-			if(!activePlayer.lockOn)
-			{
-				activePlayer.lockOnTarget = closestToCenter;
-				lookInputStale = true;
-			}
-
-			if(activePlayer.IsLockedOn)
-			{
-				var lookVector = player.GetAxis2D(PlayerAction.LookHorizontal, PlayerAction.LookVertical);
-				if(lookInputStale && lookVector.Equals(Vector2.zero)) lookInputStale = false;
-				if(!lookInputStale && lookVector.sqrMagnitude > 0)
-				{
-					var current = activePlayer.lockOnTarget;
-					var newTarget = lockOnSystem.GetTargetClosestToVector(activePlayer, current, lookVector);
-					if(!ReferenceEquals(newTarget, null))
-					{
-						activePlayer.lockOnTarget = newTarget;
-						lookInputStale = true;
-					}
-				}
-			}
-
-			// Update lock-on indicator position.
-			lockOnSystem.UpdateIndicator(activePlayer.lockOn, activePlayer.lockOnTarget);
-		}
+		if (!physicsPaused) combatManager.UpdateLockOn(player);
 
 		// Pause game if requested.
 		if(player.GetButtonDown(PlayerAction.Pause)) TogglePaused();
@@ -172,31 +128,16 @@ public class GameManager : MonoBehaviour
 		PhysicsPaused = gamePaused;
 	}
 
-	public void ClickOnPlayer(Character newTarget)
-	{
-		// Only switch targets if the mouse is unlocked.
-		if(Cursor.lockState == CursorLockMode.Locked) return;
-		
-		SetActivePlayer(newTarget);
-		Cursor.lockState = CursorLockMode.Locked;
-	}
-
-	public static bool GetHitSpark(Entity entity, out GameObject hitSpark)
-	{
-		return hitSpark =
-			entity is Actor ? I.hitSpark :
-			!(entity is null) ? I.hitSpark2 : null;
-	}
-
-	public Character GetFirstInactivePlayer() => playerCharacters.FirstOrDefault(t => t != activePlayer);
-
 	public void AddEntity(Entity entity) => entities.Add(entity);
 
 	public void RemoveEntity(Entity entity) => entities.Remove(entity);
 
+	public void AddCombatEvent(CombatEvent combatEvent) => combatEvents.Add(combatEvent);
+
 	#endregion
 
 	#region PRIVATE_METHODS
+	
 	private void CyclePlayer()
 	{
 		playerIndex = (playerIndex + 1) % playerCharacters.Count;
@@ -212,7 +153,7 @@ public class GameManager : MonoBehaviour
 		}
 
 		activePlayer = newTarget;
-		lockOnSystem.Init(activePlayer.transform);
+		combatManager.SetOwner(activePlayer);
 		activePlayer.SetController(playerBrain); // Set the active player to use Player Brain
 		mainCamera.SetTarget(activePlayer, immediate); // Set the camera to follow the active player
 		hud.RegisterPlayer(activePlayer);

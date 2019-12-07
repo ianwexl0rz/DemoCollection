@@ -23,8 +23,6 @@ public struct RigidbodyState
 
 public class Entity : MonoBehaviour
 {
-	private List<HitData> hits = new List<HitData>();
-
 	public Rigidbody rb { get; private set; }
 	protected bool IsPaused { get; private set; }
 
@@ -69,12 +67,6 @@ public class Entity : MonoBehaviour
 	public virtual void OnFixedUpdate(float deltaTime)
 	{
 		if (GameManager.I.PhysicsPaused) { return; }
-
-		for (var i = hits.Count; i-- > 0;)
-		{
-			ApplyHit(hits[i]);
-			hits.Remove(hits[i]);
-		}
 
 		UpdatePhysics(deltaTime);
 
@@ -137,16 +129,10 @@ public class Entity : MonoBehaviour
 			entity.PauseEntity(value);
 	}
 
-	protected virtual void ApplyHit(HitData hit)
+	public virtual void ApplyHit(Entity instigator, Vector3 point, Vector3 direction, AttackData attackData)
 	{
-		var velocity = hit.direction * (hit.attackData.knockback / Time.fixedDeltaTime);
+		var velocity = direction * (attackData.knockback / Time.fixedDeltaTime);
 		//rb.AddForceAtPosition(velocity, hit.point, ForceMode.Acceleration);
 		rb.AddForce(velocity, ForceMode.Acceleration);
-	}
-
-	public void GetHit(Vector3 point, Vector3 direction, AttackData data)
-	{
-		var newHit = new HitData(point, direction, data);
-		hits.Add(newHit);
 	}
 }
