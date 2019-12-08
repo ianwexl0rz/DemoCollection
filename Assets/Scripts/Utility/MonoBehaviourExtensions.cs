@@ -16,6 +16,17 @@ public static class MonoBehaviourExtensions
 		action();
 	}
 
+	public static Coroutine WaitForEndOfFrameThen(this MonoBehaviour mono, Action action)
+	{
+		return mono.StartCoroutine(WaitForEndOfFrameThen(action));
+	}
+
+	private static IEnumerator WaitForEndOfFrameThen(Action action)
+	{
+		yield return new WaitForEndOfFrame();
+		action();
+	}
+
 	// Start a coroutine and stop an existing coroutine if necessary
 	public static Coroutine OverrideCoroutine(this MonoBehaviour mono, ref Coroutine coroutine, IEnumerator ienumerator)
 	{

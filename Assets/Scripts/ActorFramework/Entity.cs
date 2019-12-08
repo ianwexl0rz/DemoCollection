@@ -31,18 +31,13 @@ public class Entity : MonoBehaviour
 
 	protected virtual void OnEnable()
 	{
-		GameManager.I.AddEntity(this);
-		GameManager.I.PauseAllPhysics += PauseEntity;
+		GameManager.MainMode.AddEntity(this);
 	}
 
 	protected virtual void OnDisable()
 	{
-		if(!GameManager.I) { return; }
-
-		GameManager.I.RemoveEntity(this);
-		GameManager.I.PauseAllPhysics -= PauseEntity;
-
-		if(IsPaused) { PauseEntity(false); }
+		GameManager.MainMode.RemoveEntity(this);
+		if(IsPaused) { SetPaused(false); }
 	}
 
 	public virtual void Awake()
@@ -50,28 +45,28 @@ public class Entity : MonoBehaviour
 		rb = GetComponent<Rigidbody>();
 	}
 
-	public virtual void OnUpdate(float deltaTime)
+	public virtual void Tick(float deltaTime)
 	{
 	}
 
-	public virtual void OnLateUpdate(float deltaTime)
+	public virtual void LateTick(float deltaTime)
 	{
-		if (GameManager.I.PhysicsPaused) { return; }
+		if (IsPaused) { return; }
 
 		UpdateAnimation(deltaTime);
 
 		foreach (var entity in subEntities)
-			entity.OnLateUpdate(deltaTime);
+			entity.LateTick(deltaTime);
 	}
 
-	public virtual void OnFixedUpdate(float deltaTime)
+	public virtual void FixedTick(float deltaTime)
 	{
-		if (GameManager.I.PhysicsPaused) { return; }
+		if (IsPaused) { return; }
 
 		UpdatePhysics(deltaTime);
 
 		foreach (var entity in subEntities)
-			entity.OnFixedUpdate(deltaTime);
+			entity.FixedTick(deltaTime);
 	}
 
 	protected virtual void UpdateAnimation(float deltaTime)
@@ -86,17 +81,11 @@ public class Entity : MonoBehaviour
 	{
 	}
 
-	public void AddSubEntity(Entity entity)
-	{
-		subEntities.Add(entity);
-	}
+	public void AddSubEntity(Entity entity) => subEntities.Add(entity);
 
-	public void RemoveSubEntity(Entity entity)
-	{
-		subEntities.Remove(entity);
-	}
+	public void RemoveSubEntity(Entity entity) => subEntities.Remove(entity);
 
-	private void PauseEntity(bool value)
+	public void SetPaused(bool value)
 	{
 		if(IsPaused == value) { return; }
 		IsPaused = value;
@@ -123,10 +112,7 @@ public class Entity : MonoBehaviour
 			rb.RestoreState(savedState);
 		}
 
-		OnPauseEntity(value);
-
-		foreach (var entity in subEntities)
-			entity.PauseEntity(value);
+		foreach (var entity in subEntities) entity.SetPaused(value);
 	}
 
 	public virtual void ApplyHit(Entity instigator, Vector3 point, Vector3 direction, AttackData attackData)

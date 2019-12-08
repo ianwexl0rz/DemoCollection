@@ -43,7 +43,7 @@ public class ThirdPersonCamera : MonoBehaviour
 	private float lockBlend;
 	private bool autoTurn;
 
-	private Player rePlayer;
+	//private Player rePlayer;
 
 	public Quaternion referenceRotation { get; set; }
 
@@ -61,7 +61,7 @@ public class ThirdPersonCamera : MonoBehaviour
 
 	public void SetTarget(Character newPlayer, bool immediate)
 	{
-		rePlayer = GameManager.I.player;
+		//rePlayer = GameManager.I.player;
 		
 		player = newPlayer;
 
@@ -86,8 +86,8 @@ public class ThirdPersonCamera : MonoBehaviour
 		var dt = Time.fixedDeltaTime;
 
 		// Cache look sensitivity from GameSettings
-		float lookSensitivityX = GameSettings.I.lookSensitivityX;
-		float lookSensitivityY = GameSettings.I.lookSensitivityY;
+		float lookSensitivityX = GameManager.Settings.lookSensitivityX;
+		float lookSensitivityY = GameManager.Settings.lookSensitivityY;
 
 		//InputDevice playerInput = InputManager.ActiveDevice;
 
@@ -183,8 +183,8 @@ public class ThirdPersonCamera : MonoBehaviour
 				yaw = player.transform.eulerAngles.y;
 			}
 
-			yaw += rePlayer.GetAxis(PlayerAction.LookHorizontal) * lookSensitivityX * dt;
-			pitch += rePlayer.GetAxis(PlayerAction.LookVertical) * lookSensitivityY * dt;
+			yaw += GameManager.player.GetAxis(PlayerAction.LookHorizontal) * lookSensitivityX * dt;
+			pitch += GameManager.player.GetAxis(PlayerAction.LookVertical) * lookSensitivityY * dt;
 
 			if(autoTurn)
 			{

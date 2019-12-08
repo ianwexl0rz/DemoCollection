@@ -93,11 +93,9 @@ public class Actor : Entity, ILockOnTarget, IDestructable
 		//Debug.Log("Ended Hit Reaction.");
 	}
 
-	public override void OnUpdate(float deltaTime)
+	public override void Tick(float deltaTime)
 	{
-		base.OnUpdate(deltaTime);
-
-		if(GameManager.I.GamePaused) { return; }
+		base.Tick(deltaTime);
 
 		UpdateController(this);
 		actorTimerGroup.Tick(Time.deltaTime);
@@ -112,9 +110,9 @@ public class Actor : Entity, ILockOnTarget, IDestructable
 
 	public ActorController GetController() => controller;
 
-	public void SetController(ActorController newController)
+	public void SetController(ActorController newController, object context = null)
 	{
-		newController.Engage(this);
+		newController.Engage(this, context);
 		controller = newController;
 	}
 

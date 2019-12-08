@@ -7,7 +7,7 @@ public class ActorController : ScriptableObject
 	{
 	}
 	
-	protected virtual void Init(Actor actor)
+	protected virtual void Init(Actor actor, object context = null)
 	{
 	}
 
@@ -19,7 +19,7 @@ public class ActorController : ScriptableObject
 	{
 	}
 
-	public virtual void Engage(Actor actor)
+	public virtual void Engage(Actor actor, object context = null)
 	{
 		var oldController = actor.GetController();
 		
@@ -28,7 +28,7 @@ public class ActorController : ScriptableObject
 			oldController.Disengage(actor);
 		}
 
-		Init(actor);
+		Init(actor, context);
 		actor.UpdateController += Tick;
 	}
 

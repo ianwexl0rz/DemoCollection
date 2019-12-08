@@ -27,23 +27,31 @@ public class GameSettings : ScriptableObject
 	[SerializeField] private bool invertX = true;
 	[SerializeField] private bool invertY = true;
 
-	private static GameSettings _instance;
-	public static GameSettings I
-	{
-		get
-		{
-			if(!_instance)
-			{
-				_instance = GameManager.I.gameSettings;
-			}
-			return _instance;
-		}
-	}
+//	private static GameSettings _instance;
+//	public static GameSettings I
+//	{
+//		get
+//		{
+//			if(!_instance)
+//			{
+//				_instance = GameManager.I.gameSettings;
+//			}
+//			return _instance;
+//		}
+//	}
 
-	public void TogglePaused()
-	{
-		GameManager.I.TogglePaused();
-	}
+//	public void TogglePaused()
+//	{
+//		switch (GameMode.current)
+//		{
+//			case MainGame mainMode:
+//				mainMode.TogglePaused();
+//				break;
+//			default:
+//				Debug.Log("TogglePaused is not implemented in this game mode!");
+//				break;
+//		}
+//	}
 
 	public void SetInvertX(bool value)
 	{

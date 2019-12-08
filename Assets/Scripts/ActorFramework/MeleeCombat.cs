@@ -116,10 +116,7 @@ public class MeleeCombat : MonoBehaviour
 
 	public bool CheckHits(float completion, Vector3 lastWeaponPosition, Quaternion lastWeaponRotation, out float progress)
 	{
-		//if(!owner.IsPaused) { return; }
-
-		float debugTime = Time.fixedDeltaTime * 8;
-
+		var debugTime = Time.fixedDeltaTime * 8;
 		var pos = Vector3.Lerp(lastWeaponPosition, weaponRoot.position, completion);
 		var rot = Quaternion.Slerp(lastWeaponRotation, weaponRoot.rotation, completion);
 
@@ -226,9 +223,9 @@ public class MeleeCombat : MonoBehaviour
 		return success;
 	}
 
-	public bool CheckHit(Vector3 origin, Vector3 end)
+	private bool CheckHit(Vector3 origin, Vector3 end)
 	{
-		RaycastHit[] hits = Physics.RaycastAll(
+		var hits = Physics.RaycastAll(
 			origin,
 			(end - origin).normalized,
 			(end - origin).magnitude,
@@ -236,14 +233,14 @@ public class MeleeCombat : MonoBehaviour
 
 		var success = false;
 
-		foreach(RaycastHit hit in hits)
+		foreach(var hit in hits)
 		{
-			GameObject go = hit.collider.gameObject;
+			var go = hit.collider.gameObject;
 
 			// Hit self
 			if(go.transform.root == transform) { continue; }
 
-			Entity entity = go.GetComponentInChildren<Entity>() ?? go.GetComponentInParent<Entity>();
+			var entity = go.GetComponentInChildren<Entity>() ?? go.GetComponentInParent<Entity>();
 
 			// Get GO of the entity because we may have hit a child GO collider
 			if(entity != null) go = entity.gameObject;
@@ -252,18 +249,13 @@ public class MeleeCombat : MonoBehaviour
 
 			if(entity != null)
 			{
-				Vector3 hitDirection = (go.transform.position - transform.position).WithY(0f).normalized;
+				var hitDirection = (go.transform.position - transform.position).WithY(0f).normalized;
 				var combatEvent = new CombatEvent(actor, entity, hit.point, hitDirection, attackData);
 				
-				GameManager.I.AddCombatEvent(combatEvent);
+				GameManager.MainMode.AddCombatEvent(combatEvent);
 
 				success = true;
 			}
-
-//			if(GameManager.GetHitSpark(entity, out GameObject hitspark))
-//			{
-//				Instantiate(hitspark, hit.point, Quaternion.identity);
-//			}
 
 			hitObjects.Add(go);
 		}
@@ -271,7 +263,7 @@ public class MeleeCombat : MonoBehaviour
 		return success;
 	}
 
-	public void ClearWeaponTrail()
+	private void ClearWeaponTrail()
 	{
 		lastOrigin = weaponRoot.position;
 		lastEnd = lastOrigin + weaponRoot.rotation * forwardAxis * weapon.length;

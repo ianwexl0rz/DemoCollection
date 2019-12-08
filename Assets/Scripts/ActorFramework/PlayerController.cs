@@ -7,18 +7,15 @@ public class PlayerController : ActorController
 	private readonly InputBuffer inputBuffer = new InputBuffer();
 	private Player player;
 
-	protected override void Init(Actor actor)
+	protected override void Init(Actor actor, object context = null)
 	{
-		player = GameManager.I.player;
+		player = GameManager.player;
 		inputBuffer.Clear();
 	}
 
 	protected override void Tick(Actor actor)
 	{
-		if(!GameManager.I.PhysicsPaused)
-			inputBuffer.Update(Time.deltaTime);
-
-		//var inputDevice = InputManager.ActiveDevice;
+		inputBuffer.Update(Time.deltaTime);
 		
 		actor.move = CalculateMove(actor);
 
@@ -57,7 +54,7 @@ public class PlayerController : ActorController
 			z = player.GetAxis(PlayerAction.MoveVertical)
 		};
 		
-		var deadZone = GameSettings.I.deadZone;
+		var deadZone = GameManager.Settings.deadZone;
 
 		// Early out if move input is less than the dead zone.
 		if(move.magnitude < deadZone) return Vector3.zero;
@@ -66,9 +63,9 @@ public class PlayerController : ActorController
 		move = move.normalized * Mathf.InverseLerp(deadZone, 1, move.magnitude);
 		
 		if(actor is Character character && character.IsLockedOn)
-			return Quaternion.Slerp(GameManager.I.mainCamera.referenceRotation, character.lockOnOrientation, 0.5f) * move;
+			return Quaternion.Slerp(GameManager.Camera.referenceRotation, character.lockOnOrientation, 0.5f) * move;
 		
 		// Orient the input relative to the camera.
-		return GameManager.I.mainCamera.referenceRotation * move;
+		return GameManager.Camera.referenceRotation * move;
 	}
 }

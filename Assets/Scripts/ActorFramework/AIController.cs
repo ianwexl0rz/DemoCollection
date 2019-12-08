@@ -22,12 +22,10 @@ public class AIController : ActorController
 {
 	public List<AIConditionalBehaviorGroup> behaviorGroups = new List<AIConditionalBehaviorGroup>();
 
-	protected override void Init(Actor actor)
+	protected override void Init(Actor actor, object context = null)
 	{
-		if(GameManager.I.activePlayer != null)
-		{
-			actor.lockOnTarget = GameManager.I.activePlayer;
-		}
+		if(context is ILockOnTarget lockOnTarget)
+			actor.lockOnTarget = lockOnTarget;
 	}
 
 	protected override void Tick(Actor actor)
