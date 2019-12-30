@@ -83,7 +83,7 @@ public class Character : Actor
 			rb.maxAngularVelocity = MaxAngularVelocity;
 	}
 
-	private void OnDrawGizmos()
+	private void OnDrawGizmosSelected()
 	{
 		if (rb == null) { return; }
 
@@ -191,8 +191,8 @@ public class Character : Actor
 
 			rb.centerOfMass = transform.InverseTransformPoint(groundCheckPoint);
 
-			var end = groundCheckPoint + groundNormal * (groundCheckHeight + CapsuleCollider.height);
-			Debug.DrawLine(groundCheckPoint, end, Color.blue);
+			//var end = groundCheckPoint + groundNormal * (groundCheckHeight + CapsuleCollider.height);
+			//Debug.DrawLine(groundCheckPoint, end, Color.blue);
 		}
 		else
 		{
@@ -244,7 +244,7 @@ public class Character : Actor
 		var targetTorque = rb.rotation.TorqueTo(rotation, deltaTime);
 		var torque = torquePID.Output(rb.angularVelocity, targetTorque, ref torqueIntegral, ref torqueError, deltaTime);
 		rb.AddTorque(torque, ForceMode.Acceleration);
-
+		
 		if (isGrounded)
 		{
 			var groundOffset = rb.position - groundCheckPoint;
@@ -284,7 +284,7 @@ public class Character : Actor
 	private bool CheckForGround()
 	{
 		var raycastOrigin = groundCheckPoint + Vector3.up * groundCheckHeight;
-		var forward = Vector3.Cross(transform.right, Vector3.up);
+		var forward = Vector3.Cross(transform.right, Vector3.up).normalized;
 
 		var groundHitCount = 0;
 		var averageDistance = 0f;
@@ -298,8 +298,8 @@ public class Character : Actor
 			var origin = raycastOrigin + dir * rayOffsetDistance;
 
 			// Red = No Hit, Yellow = Hit, Green = Ground
-			Color[] color = { Color.red, Color.yellow, Color.green };
-			var status = 0;
+			//Color[] color = { Color.red, Color.yellow, Color.green };
+			//var status = 0;
 
 			if (Physics.Raycast(origin, Vector3.down, out RaycastHit hit, groundCheckHeight + 0.2f, ~LayerMask.GetMask("Actor", "ProxyObject")))
 			{
@@ -315,10 +315,10 @@ public class Character : Actor
 				averagePoint += hit.point;
 				averageDistance += hit.distance;
 				groundHitCount++;
-				status = 2;
+				//status = 2;
 			}
 
-			Debug.DrawLine(origin, origin + Vector3.down * groundCheckHeight, color[status]);
+			//Debug.DrawLine(origin, origin + Vector3.down * groundCheckHeight, color[status]);
 		}
 
 		// Did we hit the ground?

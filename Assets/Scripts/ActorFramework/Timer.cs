@@ -10,14 +10,16 @@ public class Timer
 	public float Duration { get; private set; }
 	public bool Persistent { get; }
 	public bool InProgress => Current < Duration;
-	private readonly bool normalizedTime;
+	public float NormalizedTime => Current / Duration;
+	
+	private readonly bool useNormalizedTime;
 
 	public Timer(bool persistent = true)
 	{
 		Persistent = persistent;
 	}
 
-	public Timer(float duration, Action onStart, Action onEnd, bool persistent = false, Action<float> overTime = null, bool normalizedTime = true)
+	public Timer(float duration, Action onStart, Action onEnd, bool persistent = false, Action<float> overTime = null, bool useNormalizedTime = true)
 	{
 		Current = 0f;
 
@@ -26,7 +28,7 @@ public class Timer
 		this.onStart = onStart;
 		this.onEnd = onEnd;
 		this.overTime = overTime;
-		this.normalizedTime = normalizedTime;
+		this.useNormalizedTime = useNormalizedTime;
 	}
 
 	public void SetDuration(float time)
@@ -50,7 +52,7 @@ public class Timer
 			if(overTime == null) return true;
 
 			var t = Current;
-			if(normalizedTime) t /= Duration;
+			if(useNormalizedTime) t /= Duration;
 			overTime(t);
 			
 			return true;

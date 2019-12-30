@@ -126,7 +126,8 @@ public class DynamicBone : Entity
 		var torque = torquePID.Output(rb.angularVelocity, targetTorque, ref torqueIntegral, ref torqueError, deltaTime);
 		rb.AddTorque(Vector3.Scale(torque, stiffnessPerAxis), ForceMode.Acceleration);
 	}
-
+	
+#if UNITY_EDITOR
 	private void OnDrawGizmosSelected()
 	{
 		var pos = transform.TransformPoint(center);
@@ -140,6 +141,7 @@ public class DynamicBone : Entity
 		Gizmos.color = Color.gray;
 		Gizmos.DrawSphere(transform.TransformPoint(rb.centerOfMass), 0.05f);
 	}
+#endif
 
 	protected override void UpdateAnimation(float deltaTime)
 	{

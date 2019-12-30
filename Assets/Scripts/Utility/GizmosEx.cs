@@ -3,6 +3,7 @@ using UnityEngine;
 
 public static class GizmosEx
 {
+#if UNITY_EDITOR
 	public static void DrawWireCapsule(Vector3 center, Quaternion rotation, float radius, float height)
 	{
 		Handles.color = Gizmos.color;
@@ -24,7 +25,7 @@ public static class GizmosEx
 			//draw center
 			Handles.DrawWireDisc(Vector3.up * pointOffset, Vector3.up, radius);
 			Handles.DrawWireDisc(Vector3.down * pointOffset, Vector3.up, radius);
-
 		}
 	}
+#endif
 }

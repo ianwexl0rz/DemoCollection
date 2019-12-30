@@ -30,6 +30,8 @@ public partial class GameManager : MonoBehaviour
 	private void Awake()
 	{
 		instance = this;
+
+		Application.targetFrameRate = 60;
 		
 		// Cache reference to player.
 		player = ReInput.players.GetPlayer(0);
@@ -51,7 +53,7 @@ public partial class GameManager : MonoBehaviour
 
 	public void FixedUpdate() => currentMode.FixedTick(Time.fixedDeltaTime);
 
-	public void LateUpdate() => currentMode.LateTick(Time.fixedDeltaTime);
+	public void LateUpdate() => currentMode.LateTick(Time.deltaTime);
 	
 	#endregion
 

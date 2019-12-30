@@ -9,7 +9,7 @@ public partial class GameManager
     public class MainMode : GameMode
     {
         [SerializeField] private Character activePlayer;
-        [SerializeField] internal ThirdPersonCamera gameCamera;
+        [SerializeField] private ThirdPersonCamera gameCamera;
         
         [Header("UI")]
         [SerializeField] private HealthBar healthBar = null;
@@ -23,8 +23,8 @@ public partial class GameManager
         [SerializeField] private GameObject orangeHitSparkPrefab = null;
 
         [Header("Actor Controllers")]
-        [SerializeField] private PlayerController playerBrain;
-        [SerializeField] private ActorController followerBrain;
+        [SerializeField] private PlayerController playerBrain = null;
+        [SerializeField] private ActorController followerBrain = null;
 
         public Action<bool> OnPauseGame = delegate { };
         
@@ -54,6 +54,7 @@ public partial class GameManager
             if (!initialized)
             {
                 mainCamera = gameCamera.GetComponent<Camera>();
+                gameCamera.Init();
 
                 initialized = true;
                 cachedPhysicsPaused = false;
@@ -71,6 +72,14 @@ public partial class GameManager
             callback?.Invoke();
         }
 
+        private Vector3 lastVelocity;
+        
+        public override void FixedTick(float deltaTime)
+        {
+            ResolveCombatEvents();
+            foreach (var entity in entities) entity.FixedTick(Time.fixedDeltaTime);
+        }
+
         public override void Tick(float deltaTime)
         {
             // Swap characters
@@ -82,7 +91,7 @@ public partial class GameManager
             if (hitPause != null && hitPause.MoveNext()) return;
 
             // Hold the right bumper for slow-mo!
-            Time.timeScale = player.GetButton(PlayerAction.SlowMo) ? 0.25f : 1f;
+            Time.timeScale = player.GetButton(PlayerAction.SlowMo) ? 0.01f : 1f;
 
             // (Debug) Adjust health.
             if (Input.GetKeyDown(KeyCode.RightBracket)) activePlayer.Health += 5f;
@@ -95,18 +104,14 @@ public partial class GameManager
         {
             foreach (var entity in entities) entity.LateTick(Time.deltaTime);
 
-            gameCamera.UpdatePositionAndRotation();
+            var lookInput = player.GetAxis2D(PlayerAction.LookHorizontal, PlayerAction.LookVertical);
+            var lockOnTarget = activePlayer.IsLockedOn ? activePlayer.lockOnTarget : null;
+            gameCamera.UpdatePositionAndRotation(lookInput, lockOnTarget);
 
             if (!physicsPaused) UpdateLockOn();
 
             // Pause game if requested.
             if (player.GetButtonDown(PlayerAction.Pause)) PauseGame();
-        }
-
-        public override void FixedTick(float deltaTime)
-        {
-            ResolveCombatEvents();
-            foreach (var entity in entities) entity.FixedTick(Time.fixedDeltaTime);
         }
 
         public override void Clean()
@@ -175,7 +180,7 @@ public partial class GameManager
             activePlayer = newTarget;
             lockOnCollider.Init(activePlayer.transform);
             activePlayer.SetController(playerBrain); // Set the active player to use Player Brain
-            gameCamera.SetTarget(activePlayer, immediate); // Set the camera to follow the active player
+            gameCamera.SetFollowTarget(activePlayer, immediate); // Set the camera to follow the active player
             healthBar.RegisterPlayer(activePlayer);
         }
 
@@ -192,11 +197,12 @@ public partial class GameManager
             if (activePlayer.IsLockedOn)
             {
                 var lookVector = player.GetAxis2D(PlayerAction.LookHorizontal, PlayerAction.LookVertical);
+                if (Settings.InvertX) lookVector.x *= -1; // TODO: Setting should be cached.
+                if (Settings.InvertY) lookVector.y *= -1; // TODO: Setting should be cached.
                 if (lookInputStale && lookVector.Equals(Vector2.zero)) lookInputStale = false;
                 if (!lookInputStale && lookVector.sqrMagnitude > 0)
                 {
-                    var newTarget =
-                        lockOnCollider.GetTargetClosestToVector(activePlayer, activePlayer.lockOnTarget, lookVector);
+                    var newTarget = lockOnCollider.GetTargetClosestToVector(activePlayer, activePlayer.lockOnTarget, lookVector);
                     if (!ReferenceEquals(newTarget, null))
                     {
                         activePlayer.lockOnTarget = newTarget;

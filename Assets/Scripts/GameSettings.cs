@@ -6,7 +6,7 @@ public class GameSettings : ScriptableObject
 	public float deadZone = 0f;
 	public float _lookSensitivityX = 300f;
 	public float _lookSensitivityY = 150f;
-
+	
 	//TODO: Make "invert X/Y custom" editor vars and store value as +/-
 	public float lookSensitivityX
 	{
@@ -26,6 +26,9 @@ public class GameSettings : ScriptableObject
 
 	[SerializeField] private bool invertX = true;
 	[SerializeField] private bool invertY = true;
+
+	public bool InvertY => invertY;
+	public bool InvertX => invertX;
 
 //	private static GameSettings _instance;
 //	public static GameSettings I

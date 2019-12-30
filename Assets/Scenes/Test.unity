@@ -361,13 +361,16 @@ MonoBehaviour:
   normalPitchMinMax: {x: -60, y: 60}
   lockOnPitchMinMax: {x: 10, y: 50}
   offset: {x: 0, y: 0.25, z: 0}
-  dragAmount: {x: 0.1, y: 0.2, z: 0.2}
-  lockOnHorizontalDrag: 0.4
-  posSmoothTime: 1
+  dragAmount: {x: 0.1, y: 0.2, z: 0.25}
+  dragSmoothTime: {x: 1, y: 0.5, z: 1}
+  lockOnDragAmount: {x: 0.6, y: 0.2, z: 0.25}
+  lockOnSmoothTime: {x: 0.25, y: 0.5, z: 1}
   rotationSmoothTime: 0.05
+  lockOnRotationSmoothTime: 0.2
   turnWithPlayerFactor: 4
-  lockTime: 0.3
+  lockTime: 0.2
   unlockTime: 0.5
+  changeTargetTime: 0.3
   towardCameraDragScale: 0.2
   overheadDragScale: 0.4
 --- !u!114 &198612202
@@ -1229,6 +1232,14 @@ PrefabInstance:
       propertyPath: m_LocalPosition.z
       value: 0.00000018253922
       objectReference: {fileID: 0}
+    - target: {fileID: 1306851918, guid: 09e76c50c237c544bab6b4d67100a8dc, type: 3}
+      propertyPath: leanFactor
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1306851918, guid: 09e76c50c237c544bab6b4d67100a8dc, type: 3}
+      propertyPath: walkSpeed
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 1999456050, guid: 09e76c50c237c544bab6b4d67100a8dc, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.24953562
@@ -1299,6 +1310,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalPosition.y
       value: 0.6851511
+      objectReference: {fileID: 0}
+    - target: {fileID: 6115014930117111705, guid: 09e76c50c237c544bab6b4d67100a8dc,
+        type: 3}
+      propertyPath: m_CullingMode
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 09e76c50c237c544bab6b4d67100a8dc, type: 3}
@@ -3666,6 +3682,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4416901508690764, guid: 60fcc4cc7ee37b6479184572e6f0d931, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2269044525485535488, guid: 60fcc4cc7ee37b6479184572e6f0d931,
+        type: 3}
+      propertyPath: m_CullingMode
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []

@@ -61,11 +61,17 @@ public class PlayerController : ActorController
 
 		// Remap the input so the range is [0-1] accounting for the dead zone.
 		move = move.normalized * Mathf.InverseLerp(deadZone, 1, move.magnitude);
-		
-		if(actor is Character character && character.IsLockedOn)
-			return Quaternion.Slerp(GameManager.Camera.referenceRotation, character.lockOnOrientation, 0.5f) * move;
-		
+
+		//var yawRotation = Quaternion.AngleAxis(GameManager.Camera.transform.eulerAngles.y, Vector3.up);
+		var yawRotation = GameManager.Camera.YawRotation;
+
+		// if (actor is Character character && character.IsLockedOn)
+		// {
+		// 	return yawRotation * (Vector3.forward * move.z) +
+		// 		character.lockOnOrientation * (Vector3.right * move.x);
+		// }
+
 		// Orient the input relative to the camera.
-		return GameManager.Camera.referenceRotation * move;
+		return yawRotation * move;
 	}
 }
