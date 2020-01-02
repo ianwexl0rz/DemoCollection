@@ -30,6 +30,8 @@ public class AIController : ActorController
 
 	protected override void Tick(Actor actor)
 	{
+		actor.lockOnTarget = GameManager.GetPlayerCharacter();
+		
 		foreach(AIConditionalBehaviorGroup group in behaviorGroups)
 		{
 			if(EvaluateCondition(actor, group.condition, group.threshold))

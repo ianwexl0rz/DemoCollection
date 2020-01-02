@@ -33,7 +33,6 @@ public partial class GameManager
         private LockOnCollider lockOnCollider;
         private LockOnIndicator lockOnIndicator;
         private Camera mainCamera;
-        private bool lockedOn;
         private bool lookInputStale;
         private IEnumerator hitPause;
         private bool cachedPhysicsPaused;
@@ -41,14 +40,15 @@ public partial class GameManager
         [NonSerialized] private bool initialized;
 
         public ThirdPersonCamera MainCamera => gameCamera;
+        public Character ActivePlayer => activePlayer;
         
         private static List<Entity> entities = new List<Entity>();
         private static List<CombatEvent> combatEvents = new List<CombatEvent>();
 
         public static void AddEntity(Entity entity) => entities.Add(entity);
         public static void RemoveEntity(Entity entity) => entities.Remove(entity);
-        public static void AddCombatEvent(CombatEvent combatEvent) => combatEvents.Add(combatEvent);
-
+        public static void AddCombatEvents(IEnumerable<CombatEvent> combatEvent) => combatEvents.AddRange(combatEvent);
+        
         public override void Init(object context, Action callback = null)
         {
             if (!initialized)
@@ -71,12 +71,9 @@ public partial class GameManager
 
             callback?.Invoke();
         }
-
-        private Vector3 lastVelocity;
         
         public override void FixedTick(float deltaTime)
         {
-            ResolveCombatEvents();
             foreach (var entity in entities) entity.FixedTick(Time.fixedDeltaTime);
         }
 
@@ -94,8 +91,8 @@ public partial class GameManager
             Time.timeScale = player.GetButton(PlayerAction.SlowMo) ? 0.01f : 1f;
 
             // (Debug) Adjust health.
-            if (Input.GetKeyDown(KeyCode.RightBracket)) activePlayer.Health += 5f;
-            if (Input.GetKeyDown(KeyCode.LeftBracket)) activePlayer.Health -= 5f;
+            if (Input.GetKeyDown(KeyCode.RightBracket)) activePlayer.ApplyDamage(-5f);
+            if (Input.GetKeyDown(KeyCode.LeftBracket)) activePlayer.ApplyDamage(5f);
 
             foreach (var entity in entities) entity.Tick(Time.deltaTime);
         }
@@ -109,6 +106,8 @@ public partial class GameManager
             gameCamera.UpdatePositionAndRotation(lookInput, lockOnTarget);
 
             if (!physicsPaused) UpdateLockOn();
+            
+            ResolveCombatEvents();
 
             // Pause game if requested.
             if (player.GetButtonDown(PlayerAction.Pause)) PauseGame();
@@ -118,9 +117,10 @@ public partial class GameManager
         {
         }
 
-        private bool PhysicsPaused
+        public bool PhysicsPaused
         {
-            set
+            get => physicsPaused;
+            private set
             {
                 if (physicsPaused == value) return;
                 physicsPaused = value;

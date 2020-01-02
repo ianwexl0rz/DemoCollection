@@ -7,7 +7,7 @@ public class HealthBar : MonoBehaviour
     public void RegisterPlayer(Actor actor)
     {
         actor.OnHealthChanged += UpdateHealthBar;
-        UpdateHealthBar(actor.Health / actor.maxHealth);
+        UpdateHealthBar(actor.Health / actor.MaxHealth);
     }
 	
     public void UnregisterPlayer(Actor actor) => actor.OnHealthChanged -= UpdateHealthBar;

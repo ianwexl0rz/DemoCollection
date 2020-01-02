@@ -65,6 +65,8 @@ public class LockOnCollider : MonoBehaviour
 		return smallestAngle <= angleThreshold ? bestTarget : null;
 	}
 
+	// TODO: Replace trigger events with proximity check in actor update loop, plus sphere overlap for passive entities.
+	
 	private void OnTriggerEnter(Collider other)
 	{
 		if (!other.TryGetComponent<ILockOnTarget>(out var target)) return;
@@ -72,7 +74,7 @@ public class LockOnCollider : MonoBehaviour
 		if (potentialTargets.ContainsKey(target)) return;
 		potentialTargets.Add(target, Vector2.positiveInfinity);
 
-		if (target is IDestructable destructable)
+		if (target is IDamageable destructable)
 			destructable.OnDestroyCallback = () => potentialTargets.Remove(target);
 	}
 
@@ -85,7 +87,7 @@ public class LockOnCollider : MonoBehaviour
 		
 		// TODO: If the player is currently locked on, unlock.
 
-		if (target is IDestructable destructable)
+		if (target is IDamageable destructable)
 			destructable.OnDestroyCallback = () => { };
 	}
 }

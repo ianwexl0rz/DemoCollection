@@ -95,7 +95,7 @@ public class Entity : MonoBehaviour
 			savedState = new RigidbodyState(rb);
 
 			rb.isKinematic = true;
-			rb.velocity = Vector3.zero;
+			rb.velocity = Vector3.zero; 
 			rb.angularVelocity = Vector3.zero;
 
 			// Account for interpolation

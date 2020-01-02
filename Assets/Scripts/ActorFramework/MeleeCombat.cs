@@ -114,7 +114,8 @@ public class MeleeCombat : MonoBehaviour
 		//cancelOK = true;
 	}
 
-	public bool CheckHits(float completion, Vector3 lastWeaponPosition, Quaternion lastWeaponRotation, out float progress)
+	// TODO: CombatEvents should be passed in as an array and return the number of hits, so the function is non-allocating.
+	public bool CheckHits(float completion, Vector3 lastWeaponPosition, Quaternion lastWeaponRotation, ref List<CombatEvent> combatEvents)
 	{
 		var debugTime = Time.fixedDeltaTime * 8;
 		var pos = Vector3.Lerp(lastWeaponPosition, weaponRoot.position, completion);
@@ -136,11 +137,11 @@ public class MeleeCombat : MonoBehaviour
 
 		var success = false;
 		int currentStep;
-		progress = 0;
-
+		//progress = 0;
+		
 		for (currentStep = 0; currentStep < steps; currentStep++)
         {
-			progress = (currentStep + 1f) / steps;
+			var progress = (currentStep + 1f) / steps;
 
 			Vector3 blendedOrigin = Vector3.Lerp(lastOrigin, origin, progress);
             Vector3 blendedEnd = blendedOrigin + Vector3.Slerp(lastVector, currentVector, progress);
@@ -153,8 +154,8 @@ public class MeleeCombat : MonoBehaviour
 			addPoints[currentStep * 2 + 1] = finalEnd = blendedEnd;
 			addColors[currentStep * 2] = addColors[currentStep * 2 + 1] = Color.white;
 
-			success = CheckHit(blendedOrigin, blendedEnd);
-			success |= CheckHit(blendedEnd, blendedOrigin);
+			success |= CheckHit(blendedOrigin, blendedEnd, ref combatEvents);
+			success |= CheckHit(blendedEnd, blendedOrigin, ref combatEvents);
 
 			//if (success) break;
 		}
@@ -176,7 +177,7 @@ public class MeleeCombat : MonoBehaviour
 		}
 
 		// Only necessary if the hit check loop can be broken out of early...
-		// Requires "i" to be declared in the function scope 
+		// Requires "currentStep" to be declared in the function scope 
 		if (currentStep < steps - 1)
 		{
 			var newLength = (currentStep + 1) * 2;
@@ -223,7 +224,7 @@ public class MeleeCombat : MonoBehaviour
 		return success;
 	}
 
-	private bool CheckHit(Vector3 origin, Vector3 end)
+	private bool CheckHit(Vector3 origin, Vector3 end, ref List<CombatEvent> newCombatEvents)
 	{
 		var hits = Physics.RaycastAll(
 			origin,
@@ -252,14 +253,13 @@ public class MeleeCombat : MonoBehaviour
 				var hitDirection = (go.transform.position - transform.position).WithY(0f).normalized;
 				var combatEvent = new CombatEvent(actor, entity, hit.point, hitDirection, attackData);
 				
-				GameManager.MainMode.AddCombatEvent(combatEvent);
-
+				newCombatEvents.Add(combatEvent);
 				success = true;
 			}
 
 			hitObjects.Add(go);
 		}
-
+		
 		return success;
 	}
 

@@ -359,7 +359,6 @@ MonoBehaviour:
   distance: 2.5
   lowDistance: 1.8
   normalPitchMinMax: {x: -60, y: 60}
-  lockOnPitchMinMax: {x: 10, y: 50}
   offset: {x: 0, y: 0.25, z: 0}
   dragAmount: {x: 0.1, y: 0.2, z: 0.25}
   dragSmoothTime: {x: 1, y: 0.5, z: 1}
@@ -3632,6 +3631,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 707289323, guid: 60fcc4cc7ee37b6479184572e6f0d931, type: 3}
+      propertyPath: controller
+      value: 
+      objectReference: {fileID: 11400000, guid: 74f1afebb7d9527499848e5d4038a7ec,
+        type: 2}
     - target: {fileID: 1093183912855910, guid: 60fcc4cc7ee37b6479184572e6f0d931, type: 3}
       propertyPath: m_Name
       value: Girl

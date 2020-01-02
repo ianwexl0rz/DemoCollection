@@ -4,13 +4,11 @@ using System.Collections.Generic;
 using System.Collections;
 using System.Linq;
 
-public class Actor : Entity, ILockOnTarget, IDestructable
+public class Actor : Entity, ILockOnTarget, IDamageable
 {
 	[SerializeField]
 	protected ActorController controller;
 	public Animator animator { get; protected set; }
-
-	public bool isAwake = false;
 	public bool InputEnabled { get; set; }
 	public Vector3 move { get; set; }
 	public float look { get; set; }
@@ -22,25 +20,16 @@ public class Actor : Entity, ILockOnTarget, IDestructable
 
 	public Action<Actor> UpdateController = delegate { };
 	public Action OnResetAbilities = null;
-	public Action<float> OnHealthChanged = delegate {  };
+	public Action<float> OnHealthChanged { get; set; } = delegate {  };
+	
 	public Action UpdateAbilities = null;
 	public Action FixedUpdateAbilities = null;
 
 	[HideInInspector]
 	public List<ActorAbility> abilities = new List<ActorAbility>();
 
-	public float Health
-	{
-		get => health;
-		set
-		{
-			if (health.Equals(value)) return;
-			health = Mathf.Clamp(value, 0f, maxHealth);
-			OnHealthChanged(health / maxHealth);
-		}
-	}
-
-	public float maxHealth { get; protected set; }
+	public float Health { get; set; }
+	public float MaxHealth { get; set; }
 
 	protected readonly TimerGroup actorTimerGroup = new TimerGroup();
 	public Timer hitReaction { get; protected set; }
@@ -49,7 +38,8 @@ public class Actor : Entity, ILockOnTarget, IDestructable
 	public Action OnDestroyCallback { get; set; }
 
 	private Renderer[] renderers = null;
-	private float health;
+	private Coroutine damageFlash = null;
+	private static readonly int DamageFlash = Shader.PropertyToID("_DamageFlash");
 
 	private void Start()
 	{
@@ -68,7 +58,7 @@ public class Actor : Entity, ILockOnTarget, IDestructable
 	{
 		base.Awake();
 		animator = GetComponentInChildren<Animator>();
-		Health = maxHealth = 100f;
+		Health = MaxHealth = 100f;
 
 		InputEnabled = true;
 
@@ -93,10 +83,34 @@ public class Actor : Entity, ILockOnTarget, IDestructable
 		//Debug.Log("Ended Hit Reaction.");
 	}
 
+	private IEnumerator DoDamageFlash(float duration)
+	{
+		var time = 0f;
+		while (time < duration)
+		{
+			var t = time / duration;
+			var oneMinusT = 1 - t;
+			SetDamageFlash(oneMinusT * oneMinusT);
+			yield return null;
+			if (!GameManager.PhysicsPaused) time += Time.deltaTime;
+		}
+		SetDamageFlash(0);
+	}
+
+	private void SetDamageFlash(float value)
+	{
+		foreach (var r in renderers)
+		{
+			var propertyBlock = new MaterialPropertyBlock();
+			r.GetPropertyBlock(propertyBlock);
+			propertyBlock.SetFloat(DamageFlash, value);
+			r.SetPropertyBlock(propertyBlock);
+		}
+	}
+
 	public override void Tick(float deltaTime)
 	{
 		base.Tick(deltaTime);
-
 		UpdateController(this);
 		actorTimerGroup.Tick(Time.deltaTime);
 		IsVisible = renderers.Any(r => r != null && r.isVisible);
@@ -104,8 +118,7 @@ public class Actor : Entity, ILockOnTarget, IDestructable
 
 	protected override void OnPauseEntity(bool value)
 	{
-		if(animator != null)
-			animator.SetPaused(value);
+		if(animator != null) animator.SetPaused(value);
 	}
 
 	public ActorController GetController() => controller;
@@ -131,13 +144,21 @@ public class Actor : Entity, ILockOnTarget, IDestructable
 		return transform.position;
 	}
 
+	public void Destroy()
+	{
+		this.WaitForEndOfFrameThen(() => Destroy(gameObject));
+	}
+
 	public override void ApplyHit(Entity instigator, Vector3 point, Vector3 direction, AttackData attackData)
 	{
-		// Applies knockback.
+		// Apply knockback.
 		base.ApplyHit(instigator, point, direction, attackData);
 
-		Health = Mathf.Max(Health - attackData.damage, 0f);
-		//Debug.Log("Hit " + name + " - HP: " + health + "/" + maxHealth);
+		// Apply damage.
+		this.ApplyDamage(attackData.damage);
+
+		// Do damage flash.
+		this.OverrideCoroutine(ref damageFlash, DoDamageFlash(0.2f));
 
 		// TODO: Get reaction type from AttackData 
 		var duration = Mathf.Max(hitReaction.Duration - hitReaction.Current, attackData.stun);

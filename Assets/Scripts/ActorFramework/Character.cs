@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody), typeof(MeleeCombat))]
 public class Character : Actor
@@ -259,6 +260,7 @@ public class Character : Actor
 		var loops = Mathf.CeilToInt(deltaTime / MaxAnimationStep);
 		var dt = deltaTime / loops;
 
+		var combatEvents = new List<CombatEvent>();
 		for (var i = 0; i < loops; i++)
 		{
 			animator.Update(dt);
@@ -270,9 +272,10 @@ public class Character : Actor
 
 			if (MeleeCombat.ActiveHit)
 			{
-				if (MeleeCombat.CheckHits((i + 1f) / loops, lastWeaponPos, lastWeaponRot, out var progress))
+				if (MeleeCombat.CheckHits((i + 1f) / loops, lastWeaponPos, lastWeaponRot, ref combatEvents))
 				{
 					//TODO: If we hit more than one thing, trigger hits over sequential frames?
+					GameManager.MainMode.AddCombatEvents(combatEvents);
 				}
 			}
 		}

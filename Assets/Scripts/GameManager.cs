@@ -23,6 +23,8 @@ public partial class GameManager : MonoBehaviour
 
     public static GameSettings Settings => I.gameSettings;
     public static ThirdPersonCamera Camera => I.mainMode.MainCamera;
+    public static bool PhysicsPaused => I.mainMode.PhysicsPaused;
+    public static Character GetPlayerCharacter() => I.mainMode.ActivePlayer;
     public static Player player;
 
 	#region UNITY_METHODS
