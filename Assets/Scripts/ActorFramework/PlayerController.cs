@@ -4,7 +4,6 @@ using Rewired;
 [CreateAssetMenu(fileName = "Player Controller", menuName = "Actor/Controllers/Player Controller")]
 public class PlayerController : ActorController
 {
-	private readonly InputBuffer inputBuffer = new InputBuffer();
 	private Player player;
 
 	protected override void Init(Actor actor, object context = null)
@@ -15,9 +14,9 @@ public class PlayerController : ActorController
 
 	protected override void Tick(Actor actor)
 	{
-		inputBuffer.Update(Time.deltaTime);
+		base.Tick(actor);
 		
-		actor.move = CalculateMove(actor);
+		actor.move = CalculateMove();
 
 		if(!(actor is Character character)) return;
 		
@@ -30,15 +29,15 @@ public class PlayerController : ActorController
 
 		// Roll
 		if(player.GetButtonDown(PlayerAction.Roll))
-			inputBuffer.Add(character.TryRoll, 0.1f);
+			inputBuffer.Add(PlayerAction.Roll, 0.1f);
 
 		// Jump
 		if(player.GetButtonDown(PlayerAction.Jump))
-			inputBuffer.Add(character.TryJump, 0.1f);
+			inputBuffer.Add(PlayerAction.Jump, 0.1f);
 
 		// Attack
 		if(player.GetButtonDown(PlayerAction.Attack))
-			inputBuffer.Add(character.TryAttack, 0.5f);
+			inputBuffer.Add(PlayerAction.Attack, 0.5f);
 	}
 
 	protected override void Clean(Actor actor)
@@ -46,7 +45,7 @@ public class PlayerController : ActorController
 		actor.move = Vector3.zero;
 	}
 
-	private Vector3 CalculateMove(Actor actor)
+	private Vector3 CalculateMove()
 	{
 		var move = new Vector3
 		{
@@ -62,16 +61,7 @@ public class PlayerController : ActorController
 		// Remap the input so the range is [0-1] accounting for the dead zone.
 		move = move.normalized * Mathf.InverseLerp(deadZone, 1, move.magnitude);
 
-		//var yawRotation = Quaternion.AngleAxis(GameManager.Camera.transform.eulerAngles.y, Vector3.up);
-		var yawRotation = GameManager.Camera.YawRotation;
-
-		// if (actor is Character character && character.IsLockedOn)
-		// {
-		// 	return yawRotation * (Vector3.forward * move.z) +
-		// 		character.lockOnOrientation * (Vector3.right * move.x);
-		// }
-
 		// Orient the input relative to the camera.
-		return yawRotation * move;
+		return GameManager.Camera.YawRotation * move;
 	}
 }

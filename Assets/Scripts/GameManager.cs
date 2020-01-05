@@ -21,6 +21,8 @@ public partial class GameManager : MonoBehaviour
 		get { if(!instance) { instance = FindObjectOfType<GameManager>(); } return instance; }
 	}
 
+	public static ILockOnTarget LockOnCandidate => I.mainMode.lockOnCandidate;
+	
     public static GameSettings Settings => I.gameSettings;
     public static ThirdPersonCamera Camera => I.mainMode.MainCamera;
     public static bool PhysicsPaused => I.mainMode.PhysicsPaused;

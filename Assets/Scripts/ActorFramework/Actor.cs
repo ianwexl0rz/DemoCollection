@@ -7,21 +7,16 @@ using System.Linq;
 public class Actor : Entity, ILockOnTarget, IDamageable
 {
 	[SerializeField]
-	protected ActorController controller;
+	private ActorController controller;
 	public Animator animator { get; protected set; }
 	public bool InputEnabled { get; set; }
 	public Vector3 move { get; set; }
-	public float look { get; set; }
-	public bool lockOn { get; set; }
 	public bool IsVisible { get; set; }
-	public bool Recenter { get; set; }
+	public Action<float> OnHealthChanged { get; set; } = delegate {  };
 
 	public ILockOnTarget lockOnTarget = null;
-
 	public Action<Actor> UpdateController = delegate { };
 	public Action OnResetAbilities = null;
-	public Action<float> OnHealthChanged { get; set; } = delegate {  };
-	
 	public Action UpdateAbilities = null;
 	public Action FixedUpdateAbilities = null;
 
@@ -147,6 +142,11 @@ public class Actor : Entity, ILockOnTarget, IDamageable
 	public void Destroy()
 	{
 		this.WaitForEndOfFrameThen(() => Destroy(gameObject));
+	}
+
+	protected bool TryConsumeAction(int actionId)
+	{
+		return controller.inputBuffer.ConsumeAction(actionId);
 	}
 
 	public override void ApplyHit(Entity instigator, Vector3 point, Vector3 direction, AttackData attackData)

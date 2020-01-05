@@ -40,6 +40,8 @@ public class ThirdPersonCamera : MonoBehaviour
 
 	public Quaternion YawRotation => yawRotation;
 
+	public void SetTargetEulerAngles(Vector3 euler) => targetEulerAngles = euler;
+
 	public void SetFollowTarget(Character newFollowTarget, bool immediate)
 	{
 		player = newFollowTarget;
@@ -97,15 +99,6 @@ public class ThirdPersonCamera : MonoBehaviour
 		{
 			var t = time / duration;
 			yield return targetPos => MathUtility.SmoothStep(initialTargetPos, targetPos, t);
-			// yield return targetPos =>
-			// {
-				// var initialDir = (result - player.GetCenter()).WithY(0).normalized;
-				// result = MathUtility.SmoothStep(initialTargetPos, targetPos, t);
-				// var newDir = (result - player.GetCenter()).WithY(0).normalized;
-				// var angle = Vector3.SignedAngle(initialDir, newDir, Vector3.up);
-				// localDrag = Quaternion.AngleAxis(-angle, Vector3.up) * localDrag;
-				// return result;
-			// };
 			time += Time.deltaTime;
 		}
 	}
@@ -113,7 +106,7 @@ public class ThirdPersonCamera : MonoBehaviour
 	public void Init()
 	{
 		transitionToLockOnMode = TransitionToLockOnMode(lockTime);
-		changeLockOnTarget = ChangeLockOnTarget(Vector3.zero, changeTargetTime);
+		//changeLockOnTarget = ChangeLockOnTarget(Vector3.zero, changeTargetTime);
 	}
 
 	private ILockOnTarget lockOnTarget = null;
@@ -132,7 +125,7 @@ public class ThirdPersonCamera : MonoBehaviour
 			trackPos = player.GetLookPosition();
 		}
 
-		var shouldLockOn = player.lockOn && player.lockOnTarget != null;
+		var shouldLockOn = player.IsLockedOn;
 		if (shouldLockOn && !lockedOn)
 		{
 			lockedOn = true;
@@ -171,10 +164,14 @@ public class ThirdPersonCamera : MonoBehaviour
 			// If transitioning to lock-on mode, interpolate from initial rotation.
 			if (inTransition) playerToTarget = smoothPlayerToTarget(playerToTarget);
 
-			// // Accumulate drag in player-relative space.
-			// var delta = Quaternion.Inverse(playerToTarget) * (lastTrackPos - trackPos);
-			// localDrag += Vector3.Scale(delta, lockOnDragAmount);
-			// localDrag = MathUtility.SmoothDampPerAxis(localDrag, Vector3.zero, ref dragVectorVelocity, lockOnSmoothTime);
+			// Drag less if we're running toward the camera
+			var dragAway = Vector3.Dot(yawRotation * localDrag.normalized, -transform.forward);
+			dragAway = dragAway.LinearRemap(-1f, 1f, towardCameraDragScale, 1f);
+			
+			// Accumulate drag in player-relative space.
+			var dragDelta = Quaternion.Inverse(playerToTarget) * (lastTrackPos - trackPos);
+			localDrag += Vector3.Scale(dragDelta, lockOnDragAmount.WithZ(lockOnDragAmount.z * dragAway));
+			localDrag = MathUtility.SmoothDampPerAxis(localDrag, Vector3.zero, ref dragVectorVelocity, lockOnSmoothTime);
 
 			// Get the rotation from the camera to the target.
 			var camOrigin = trackPos + playerToTarget * localDrag + offset;
@@ -192,14 +189,6 @@ public class ThirdPersonCamera : MonoBehaviour
 			eulerAngles = MathUtility.SmoothDampAngle(eulerAngles, camToTarget.eulerAngles, ref rotationVelocity, lockOnRotationSmoothTime);
 			transform.eulerAngles = eulerAngles;
 			yawRotation = Quaternion.AngleAxis(eulerAngles.y, Vector3.up);
-			
-			// Drag less if we're running toward the camera
-			var dragAway = Vector3.Dot(yawRotation * localDrag.normalized, -transform.forward);
-			dragAway = dragAway.LinearRemap(-1f, 1f, towardCameraDragScale, 1f);
-			
-			var dragDelta = Quaternion.Inverse(playerToTarget) * (lastTrackPos - trackPos);
-			localDrag += Vector3.Scale(dragDelta, lockOnDragAmount.WithZ(lockOnDragAmount.z * dragAway));
-			localDrag = MathUtility.SmoothDampPerAxis(localDrag, Vector3.zero, ref dragVectorVelocity, lockOnSmoothTime);
 			
 			Debug.DrawLine(trackPos, targetPos, Color.cyan);
 		}

@@ -372,6 +372,7 @@ MonoBehaviour:
   changeTargetTime: 0.3
   towardCameraDragScale: 0.2
   overheadDragScale: 0.4
+  torquePID: {fileID: 11400000, guid: 69f38fed523c53c4eab89acbb4977ec0, type: 2}
 --- !u!114 &198612202
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1230,10 +1231,6 @@ PrefabInstance:
     - target: {fileID: 1253701821, guid: 09e76c50c237c544bab6b4d67100a8dc, type: 3}
       propertyPath: m_LocalPosition.z
       value: 0.00000018253922
-      objectReference: {fileID: 0}
-    - target: {fileID: 1306851918, guid: 09e76c50c237c544bab6b4d67100a8dc, type: 3}
-      propertyPath: leanFactor
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1306851918, guid: 09e76c50c237c544bab6b4d67100a8dc, type: 3}
       propertyPath: walkSpeed

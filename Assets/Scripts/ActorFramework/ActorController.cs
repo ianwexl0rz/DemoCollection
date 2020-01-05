@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class ActorController : ScriptableObject 
 {
+	public readonly InputBuffer inputBuffer = new InputBuffer();
+
 	public class Context
 	{
 	}
@@ -13,6 +15,7 @@ public class ActorController : ScriptableObject
 
 	protected virtual void Tick(Actor actor)
 	{
+		inputBuffer.Update(Time.deltaTime);
 	}
 
 	protected virtual void Clean(Actor actor)

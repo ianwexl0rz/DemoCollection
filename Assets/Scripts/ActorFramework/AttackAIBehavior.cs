@@ -7,11 +7,10 @@ class AttackAIBehavior : AIBehavior
 	{
 		if(actor.lockOnTarget == null) { return; }
 
-		actor.lockOn = true;
-
-		if(actor is Character character)
+		var controller = actor.GetController();
+		if(controller != null)
 		{
-			character.TryAttack();
+			controller.inputBuffer.Add(PlayerAction.Attack, 0.02f);
 		}
 	}
 }

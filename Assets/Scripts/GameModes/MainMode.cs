@@ -26,12 +26,15 @@ public partial class GameManager
         [SerializeField] private PlayerController playerBrain = null;
         [SerializeField] private ActorController followerBrain = null;
 
+        public ILockOnTarget lockOnCandidate;
+
         public Action<bool> OnPauseGame = delegate { };
         
         private int playerIndex;
         private List<Character> playerCharacters;
         private LockOnCollider lockOnCollider;
         private LockOnIndicator lockOnIndicator;
+        
         private Camera mainCamera;
         private bool lookInputStale;
         private IEnumerator hitPause;
@@ -188,13 +191,12 @@ public partial class GameManager
         {
             var closestToCenter = lockOnCollider.GetTargetClosestToCenter(mainCamera, activePlayer);
 
-            if (!activePlayer.lockOn)
+            if (!activePlayer.IsLockedOn)
             {
-                activePlayer.lockOnTarget = closestToCenter;
+                lockOnCandidate = closestToCenter;
                 lookInputStale = true;
             }
-
-            if (activePlayer.IsLockedOn)
+            else
             {
                 var lookVector = player.GetAxis2D(PlayerAction.LookHorizontal, PlayerAction.LookVertical);
                 if (Settings.InvertX) lookVector.x *= -1; // TODO: Setting should be cached.
@@ -205,14 +207,16 @@ public partial class GameManager
                     var newTarget = lockOnCollider.GetTargetClosestToVector(activePlayer, activePlayer.lockOnTarget, lookVector);
                     if (!ReferenceEquals(newTarget, null))
                     {
-                        activePlayer.lockOnTarget = newTarget;
+                        lockOnCandidate = newTarget;
                         lookInputStale = true;
+                        
+                        activePlayer.SetLockOnTarget(lockOnCandidate);
                     }
                 }
             }
 
             // Update lock-on indicator position.
-            lockOnIndicator.UpdatePosition(activePlayer.lockOn, activePlayer.lockOnTarget,
+            lockOnIndicator.UpdatePosition(activePlayer.IsLockedOn, lockOnCandidate,
                 mainCamera.transform.position);
         }
 

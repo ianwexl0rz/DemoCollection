@@ -12,8 +12,6 @@ public class FollowAIBehavior : AIBehavior
 	{
 		if(actor.lockOnTarget == null) { return; }
 
-		actor.lockOn = false;
-
 		Vector3 vector = (actor.lockOnTarget.GetLookPosition() - actor.GetLookPosition()).WithY(0f);
 
 		if(actor.move == Vector3.zero)
