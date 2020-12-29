@@ -12,7 +12,7 @@ public class Actor : Entity, ILockOnTarget, IDamageable
 	public bool InputEnabled { get; set; }
 	public Vector3 move { get; set; }
 	public bool IsVisible { get; set; }
-	public Action<float> OnHealthChanged { get; set; } = delegate {  };
+	public event Action<float> OnHealthChanged = delegate {  };
 
 	public ILockOnTarget lockOnTarget = null;
 	public Action<Actor> UpdateController = delegate { };
@@ -87,7 +87,7 @@ public class Actor : Entity, ILockOnTarget, IDamageable
 			var oneMinusT = 1 - t;
 			SetDamageFlash(oneMinusT * oneMinusT);
 			yield return null;
-			if (!GameManager.PhysicsPaused) time += Time.deltaTime;
+			if (!MainMode.PhysicsPaused) time += Time.deltaTime;
 		}
 		SetDamageFlash(0);
 	}
@@ -106,7 +106,9 @@ public class Actor : Entity, ILockOnTarget, IDamageable
 	public override void Tick(float deltaTime)
 	{
 		base.Tick(deltaTime);
-		UpdateController(this);
+		//UpdateController(this);
+		if (controller) controller.Tick();
+		
 		actorTimerGroup.Tick(Time.deltaTime);
 		IsVisible = renderers.Any(r => r != null && r.isVisible);
 	}
@@ -139,6 +141,27 @@ public class Actor : Entity, ILockOnTarget, IDamageable
 		return transform.position;
 	}
 
+	public void TakeDamage(float damage)
+	{
+		// Calculate new health (un-clamped so we can do "overkill" events, etc.)
+		var newHealth = Health - damage;
+
+		// Clamp new health.
+		newHealth = Mathf.Clamp(newHealth, 0, MaxHealth);
+        
+		// Early out if no change...
+		if (Health.Equals(newHealth)) return;
+
+		// Update health.
+		Health = newHealth;
+        
+		// Do callback.
+		OnHealthChanged(newHealth / MaxHealth);
+        
+		// Destroy if health is zero.
+		if (newHealth < Mathf.Epsilon) Destroy();
+	}
+
 	public void Destroy()
 	{
 		this.WaitForEndOfFrameThen(() => Destroy(gameObject));
@@ -155,7 +178,7 @@ public class Actor : Entity, ILockOnTarget, IDamageable
 		base.ApplyHit(instigator, point, direction, attackData);
 
 		// Apply damage.
-		this.ApplyDamage(attackData.damage);
+		TakeDamage(attackData.damage);
 
 		// Do damage flash.
 		this.OverrideCoroutine(ref damageFlash, DoDamageFlash(0.2f));

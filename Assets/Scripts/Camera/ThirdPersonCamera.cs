@@ -125,7 +125,7 @@ public class ThirdPersonCamera : MonoBehaviour
 			trackPos = player.GetLookPosition();
 		}
 
-		var shouldLockOn = player.IsLockedOn;
+		var shouldLockOn = player.IsLockedOn();
 		if (shouldLockOn && !lockedOn)
 		{
 			lockedOn = true;

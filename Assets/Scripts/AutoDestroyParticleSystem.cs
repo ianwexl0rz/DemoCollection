@@ -17,12 +17,12 @@ public class AutoDestroyParticleSystem : MonoBehaviour {
 		ps = GetComponent<ParticleSystem>();
 		originalPos = transform.position;
 		mainCamera = GameManager.Camera.GetComponent<Camera>();
-		GameManager.RegisterOnPauseGame(ToggleParticlePlayback);
+		PauseMode.OnPauseGame += ToggleParticlePlayback;
 	}
 
 	private void OnDisable()
 	{
-		GameManager.UnregisterOnPauseGame(ToggleParticlePlayback);
+		PauseMode.OnPauseGame -= ToggleParticlePlayback;
 	}
 
 	void ToggleParticlePlayback(bool paused)

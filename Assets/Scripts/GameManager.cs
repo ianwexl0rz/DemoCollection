@@ -1,33 +1,25 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using System;
-using System.Collections;
 using Rewired;
 
-public partial class GameManager : MonoBehaviour
+public class GameManager : MonoBehaviour
 {
-	[SerializeField] private GameSettings gameSettings;
-	[SerializeField] private GameModeType gameMode = GameModeType.Main;
+	[SerializeField] private GameSettings gameSettings = null;
 
 	[Header("Game Modes")]
 	[SerializeField] private MainMode mainMode = new MainMode();
 	[SerializeField] private PauseMode pauseMode = new PauseMode();
 
 	private static GameManager instance;
-	private GameMode currentMode = null;
 
-	private static GameManager I
-	{
-		get { if(!instance) { instance = FindObjectOfType<GameManager>(); } return instance; }
-	}
-
-	public static ILockOnTarget LockOnCandidate => I.mainMode.lockOnCandidate;
+	public static GameManager I => instance ? instance : instance = FindObjectOfType<GameManager>();
 	
     public static GameSettings Settings => I.gameSettings;
+    
     public static ThirdPersonCamera Camera => I.mainMode.MainCamera;
-    public static bool PhysicsPaused => I.mainMode.PhysicsPaused;
-    public static Character GetPlayerCharacter() => I.mainMode.ActivePlayer;
-    public static Player player;
+    
+    public static Character GetPlayerCharacter() => I.mainMode.PlayerCharacter;
 
 	#region UNITY_METHODS
 	
@@ -38,7 +30,10 @@ public partial class GameManager : MonoBehaviour
 		Application.targetFrameRate = -1;
 		
 		// Cache reference to player.
-		player = ReInput.players.GetPlayer(0);
+		var player = ReInput.players.GetPlayer(0);
+		PlayerController.RegisterPlayer(player);
+		GameMode.SetPlayer(player);
+		GameMode.RegisterModes(new List<GameMode> { mainMode, pauseMode });
 
 		DontDestroyOnLoad(this);
 	}
@@ -49,62 +44,21 @@ public partial class GameManager : MonoBehaviour
 		// 1) can take advantage of object pooling
 		// 2) load character status from room data
 
-		SetMode(gameMode, null, null, true);
+		GameMode.SetMode<MainMode>();
 		Cursor.lockState = CursorLockMode.Locked;
 	}
 
-	private void Update() => currentMode.Tick(Time.deltaTime);
+	private void Update() => GameMode.Current?.Tick(Time.deltaTime);
 
-	public void FixedUpdate() => currentMode.FixedTick(Time.fixedDeltaTime);
+	private void FixedUpdate() => GameMode.Current?.FixedTick(Time.fixedDeltaTime);
 
-	public void LateUpdate() => currentMode.LateTick(Time.deltaTime);
+	private void LateUpdate() => GameMode.Current?.LateTick(Time.deltaTime);
 	
 	#endregion
 
 	#region PUBLIC_METHODS
-	
-	public static void RegisterOnPauseGame(Action<bool> action) => I.mainMode.OnPauseGame += action;
-	public static void UnregisterOnPauseGame(Action<bool> action) => I.mainMode.OnPauseGame -= action;
-	
 	#endregion
 
 	#region PRIVATE_METHODS
-
-	private static void SetMode(GameModeType value, GameMode.Context context = null, Action callback = null, bool immediate = false)
-	{
-		GameMode mode;
-		switch (value)
-		{
-			case GameModeType.Main:
-				mode = I.mainMode;
-				break;
-			case GameModeType.Pause:
-				mode = I.pauseMode;
-				break;
-			default:
-				throw new ArgumentOutOfRangeException(nameof(value), value, $"GameModeType {nameof(value)} has no associated GameMode.");
-		}
-
-		void SetMode()
-		{
-			I.SetMode(mode, context, callback);
-			I.gameMode = value;
-		}
-		
-		if (immediate) SetMode();
-		else I.WaitForEndOfFrameThen(SetMode);
-	}
-
-	private void SetMode(GameMode value, object context = null, Action callback = null)
-	{
-		if (currentMode == value) return;
-
-		currentMode?.Clean();
-
-		// Initialize the new mode.
-		currentMode = value;
-		currentMode.Init(context, callback);
-	}
-	
 	#endregion
 }

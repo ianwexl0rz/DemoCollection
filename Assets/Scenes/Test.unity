@@ -3506,19 +3506,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameSettings: {fileID: 11400000, guid: 491122bfc34e6724c90d93067bb4cc0d, type: 2}
-  gameMode: 0
   mainMode:
-    activePlayer: {fileID: 1665052677}
+    playerCharacter: {fileID: 1665052677}
     gameCamera: {fileID: 198612201}
-    healthBar: {fileID: 1010547435218224748}
-    lockOnColliderPrefab: {fileID: 3674961934879777718, guid: 902861b06dc11d347a4716e3bb3ef779,
-      type: 3}
-    lockOnIndicatorPrefab: {fileID: 4292395687642920480, guid: d5b38022add3beb45b6c94117cefc6bd,
-      type: 3}
-    blueHitSparkPrefab: {fileID: 1312546261970878, guid: bc7a4bb76e52cad4c8ac1a9c9b37ed1c,
-      type: 3}
-    orangeHitSparkPrefab: {fileID: 1985286972383262, guid: 55973eedeec3c49499c7b31f6fb2037e,
-      type: 3}
+    combatSystem: {fileID: 11400000, guid: e627f69f114a44d4c8931870799cc01e, type: 2}
     playerBrain: {fileID: 11400000, guid: 197438d32256b794faf42212dfaf46b5, type: 2}
     followerBrain: {fileID: 11400000, guid: 3bd6e43a756db3642bc08e8a5ba40b8e, type: 2}
   pauseMode:
@@ -4532,18 +4523,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 91020eacd2369b64a88f97e65d9fda50, type: 3}
---- !u!114 &1010547435218224748 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 3636903249970784000, guid: 91020eacd2369b64a88f97e65d9fda50,
-    type: 3}
-  m_PrefabInstance: {fileID: 1010547435218224747}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fceb465e664314b43a4292b02c8d13fe, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &1010547435218224749 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8117614019120737473, guid: 91020eacd2369b64a88f97e65d9fda50,

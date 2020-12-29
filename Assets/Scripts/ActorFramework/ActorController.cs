@@ -1,8 +1,11 @@
 ﻿using System;
 using UnityEngine;
 
-public class ActorController : ScriptableObject 
+public class ActorController : ScriptableObject
 {
+	protected Actor actor;
+	public Actor Actor => actor;
+	
 	public readonly InputBuffer inputBuffer = new InputBuffer();
 
 	public class Context
@@ -11,14 +14,15 @@ public class ActorController : ScriptableObject
 	
 	protected virtual void Init(Actor actor, object context = null)
 	{
+		this.actor = actor;
 	}
 
-	protected virtual void Tick(Actor actor)
+	public virtual void Tick()
 	{
 		inputBuffer.Update(Time.deltaTime);
 	}
 
-	protected virtual void Clean(Actor actor)
+	protected virtual void Clean()
 	{
 	}
 
@@ -32,13 +36,13 @@ public class ActorController : ScriptableObject
 		}
 
 		Init(actor, context);
-		actor.UpdateController += Tick;
+		//actor.UpdateController += Tick;
 	}
 
 	public virtual void Disengage(Actor actor)
 	{
-		actor.UpdateController -= Tick;
-		Clean(actor);
+		//actor.UpdateController -= Tick;
+		Clean();
 	}
 	
 	protected static bool ValidateContext<T>(object context, out T specificContext) where T : Context

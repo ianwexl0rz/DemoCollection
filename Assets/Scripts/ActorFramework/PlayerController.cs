@@ -4,53 +4,56 @@ using Rewired;
 [CreateAssetMenu(fileName = "Player Controller", menuName = "Actor/Controllers/Player Controller")]
 public class PlayerController : ActorController
 {
-	private Player player;
+	public static PlayerController instance;
+	
+	public static Player Player { get; private set; }
+
+	public static void RegisterPlayer(Player player) => Player = player;
 
 	protected override void Init(Actor actor, object context = null)
 	{
-		player = GameManager.player;
+		if (instance == null) instance = this;
+		
+		base.Init(actor, context);
 		inputBuffer.Clear();
 	}
 
-	protected override void Tick(Actor actor)
+	public override void Tick()
 	{
-		base.Tick(actor);
+		base.Tick();
 		
 		actor.move = CalculateMove();
 
 		if(!(actor is Character character)) return;
 		
 		// Lock On
-		if(player.GetButtonDown(PlayerAction.LockOn))
+		if(Player.GetButtonDown(PlayerAction.LockOn))
 			character.TryLockOn();
 
 		// Run
-		character.Run = player.GetButton(PlayerAction.Sprint);
+		character.Run = Player.GetButton(PlayerAction.Sprint);
 
 		// Roll
-		if(player.GetButtonDown(PlayerAction.Roll))
+		if(Player.GetButtonDown(PlayerAction.Roll))
 			inputBuffer.Add(PlayerAction.Roll, 0.1f);
 
 		// Jump
-		if(player.GetButtonDown(PlayerAction.Jump))
+		if(Player.GetButtonDown(PlayerAction.Jump))
 			inputBuffer.Add(PlayerAction.Jump, 0.1f);
 
 		// Attack
-		if(player.GetButtonDown(PlayerAction.Attack))
+		if(Player.GetButtonDown(PlayerAction.Attack))
 			inputBuffer.Add(PlayerAction.Attack, 0.5f);
 	}
 
-	protected override void Clean(Actor actor)
-	{
-		actor.move = Vector3.zero;
-	}
+	protected override void Clean() => actor.move = Vector3.zero;
 
-	private Vector3 CalculateMove()
+	private static Vector3 CalculateMove()
 	{
 		var move = new Vector3
 		{
-			x = player.GetAxis(PlayerAction.MoveHorizontal),
-			z = player.GetAxis(PlayerAction.MoveVertical)
+			x = Player.GetAxis(PlayerAction.MoveHorizontal),
+			z = Player.GetAxis(PlayerAction.MoveVertical)
 		};
 		
 		var deadZone = GameManager.Settings.deadZone;

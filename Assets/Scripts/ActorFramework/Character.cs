@@ -58,7 +58,7 @@ public class Character : Actor
 
 	public bool Run { get; set; }
 	public ILockOnTarget lockOnTarget { get; set; }
-	public bool IsLockedOn => lockOnTarget != null;
+	public bool IsLockedOn() => lockOnTarget != null;
 	public CapsuleCollider CapsuleCollider { get; private set; }
 	public MeleeCombat MeleeCombat { get; private set; }
 
@@ -126,7 +126,7 @@ public class Character : Actor
 			else
 			{
 				// If we were not locked on, try to assign target...
-				var candidate = GameManager.LockOnCandidate;
+				var candidate = CombatSystem.LockOnCandidate;
 				if (candidate != null) lockOnTarget = candidate;
 				else
 				{
@@ -267,7 +267,7 @@ public class Character : Actor
 
 		if (rollAngle > 0)
 		{
-			var rollAxis = IsLockedOn && groundVelocity.magnitude >= minSpeed
+			var rollAxis = IsLockedOn() && groundVelocity.magnitude >= minSpeed
 				? Vector3.Cross(Quaternion.Inverse(lockOnOrientation) * inputOrientation * Vector3.forward, Vector3.down)
 				: Vector3.right;
 
@@ -311,7 +311,7 @@ public class Character : Actor
 				if (MeleeCombat.CheckHits((i + 1f) / loops, lastWeaponPos, lastWeaponRot, ref combatEvents))
 				{
 					//TODO: If we hit more than one thing, trigger hits over sequential frames?
-					GameManager.MainMode.AddCombatEvents(combatEvents);
+					CombatSystem.AddCombatEvents(combatEvents);
 				}
 			}
 		}

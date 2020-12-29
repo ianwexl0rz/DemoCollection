@@ -31,12 +31,12 @@ public class Entity : MonoBehaviour
 
 	protected virtual void OnEnable()
 	{
-		GameManager.MainMode.AddEntity(this);
+		MainMode.AddEntity(this);
 	}
 
 	protected virtual void OnDisable()
 	{
-		GameManager.MainMode.RemoveEntity(this);
+		MainMode.RemoveEntity(this);
 		if(IsPaused) { SetPaused(false); }
 	}
 

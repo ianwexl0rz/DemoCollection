@@ -24,15 +24,17 @@ public class AIController : ActorController
 
 	protected override void Init(Actor actor, object context = null)
 	{
+		base.Init(actor, context);
+		
 		if(context is ILockOnTarget lockOnTarget)
 			actor.lockOnTarget = lockOnTarget;
 	}
 
-	protected override void Tick(Actor actor)
+	public override void Tick()
 	{
-		base.Tick(actor);
+		base.Tick();
 		
-		actor.lockOnTarget = GameManager.GetPlayerCharacter();
+		actor.lockOnTarget = PlayerController.instance.Actor;
 		
 		foreach(AIConditionalBehaviorGroup group in behaviorGroups)
 		{
