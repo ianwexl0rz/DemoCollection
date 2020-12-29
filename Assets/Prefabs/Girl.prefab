@@ -9,11 +9,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4416901508690764}
-  - component: {fileID: 2269044525485535488}
   - component: {fileID: 54147962096831054}
   - component: {fileID: 136499514121446498}
   - component: {fileID: 707289323}
   - component: {fileID: 707289324}
+  - component: {fileID: 5116435249473848185}
   m_Layer: 8
   m_Name: Girl
   m_TagString: Untagged
@@ -37,25 +37,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!95 &2269044525485535488
-Animator:
-  serializedVersion: 3
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1093183912855910}
-  m_Enabled: 0
-  m_Avatar: {fileID: 9000000, guid: 7c5006bb81fdb476199973b6966f1d25, type: 3}
-  m_Controller: {fileID: 9100000, guid: 577eeeda8465542d99ad38a77ae2cd60, type: 2}
-  m_CullingMode: 1
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 0
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!54 &54147962096831054
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -99,7 +80,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   controller: {fileID: 11400000, guid: 3bd6e43a756db3642bc08e8a5ba40b8e, type: 2}
-  isAwake: 0
   abilities: []
   groundCheckHeight: 0.2
   rayOffsetDistance: 0.15
@@ -120,6 +100,7 @@ MonoBehaviour:
   maxTurnAir: 4
   hitBoxCollider: {fileID: 3621298156594705738}
   torquePID: {fileID: 11400000, guid: 00ed0bd437019a34dbf27b4bd064959e, type: 2}
+  lockOnOrientation: {x: 0, y: 0, z: 0, w: 0}
 --- !u!114 &707289324
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -136,6 +117,25 @@ MonoBehaviour:
   forwardAxis: {x: 1, y: 0, z: 0}
   weapon: {fileID: 11400000, guid: 90fb807831acc3143ae1a8a0242e70fd, type: 2}
   distThreshold: 0.1
+--- !u!95 &5116435249473848185
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1093183912855910}
+  m_Enabled: 0
+  m_Avatar: {fileID: 9000000, guid: 7c5006bb81fdb476199973b6966f1d25, type: 3}
+  m_Controller: {fileID: 9100000, guid: 577eeeda8465542d99ad38a77ae2cd60, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &1387081973337918690
 GameObject:
   m_ObjectHideFlags: 0
@@ -188,6 +188,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 2579297820314255046}
     m_Modifications:
+    - target: {fileID: 100000, guid: fc225afbbf8f8497da0bbf0a3394c4a2, type: 3}
+      propertyPath: m_Name
+      value: HAMMER_01
+      objectReference: {fileID: 0}
+    - target: {fileID: 100000, guid: fc225afbbf8f8497da0bbf0a3394c4a2, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: fc225afbbf8f8497da0bbf0a3394c4a2, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0
@@ -232,14 +240,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 100000, guid: fc225afbbf8f8497da0bbf0a3394c4a2, type: 3}
-      propertyPath: m_Name
-      value: HAMMER_01
-      objectReference: {fileID: 0}
-    - target: {fileID: 100000, guid: fc225afbbf8f8497da0bbf0a3394c4a2, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: fc225afbbf8f8497da0bbf0a3394c4a2, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -253,6 +253,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 4416901508690764}
     m_Modifications:
+    - target: {fileID: 100010, guid: 7c5006bb81fdb476199973b6966f1d25, type: 3}
+      propertyPath: m_Name
+      value: GirlMesh
+      objectReference: {fileID: 0}
     - target: {fileID: 400010, guid: 7c5006bb81fdb476199973b6966f1d25, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -296,10 +300,6 @@ PrefabInstance:
     - target: {fileID: 400010, guid: 7c5006bb81fdb476199973b6966f1d25, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 100010, guid: 7c5006bb81fdb476199973b6966f1d25, type: 3}
-      propertyPath: m_Name
-      value: GirlMesh
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 9500000, guid: 7c5006bb81fdb476199973b6966f1d25, type: 3}

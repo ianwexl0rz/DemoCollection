@@ -68,12 +68,12 @@ public static class MonoBehaviourExtensions
 		};
 	}
 
-	static public void SetPaused(this Animator animator, bool value)
+	public static void SetPaused(this Animator animator, bool value)
 	{
 		animator.speed = value ? 0f : 1f;
 	}
 
-	static public void RestoreState(this Rigidbody rb, RigidbodyState rigidbodyState)
+	public static void RestoreState(this Rigidbody rb, RigidbodyState rigidbodyState)
 	{
 		//Debug.Log("Restored " + rb.gameObject.name + " to velocity: "  + rigidbodyState.velocity.magnitude);
 
@@ -84,7 +84,7 @@ public static class MonoBehaviourExtensions
 		rb.isKinematic = rigidbodyState.isKinematic;
 	}
 
-	static public Vector3 FindNearestPointOnLine(this Vector3 point, Vector3 origin, Vector3 direction, float maxDistance = Mathf.Infinity)
+	public static Vector3 FindNearestPointOnLine(this Vector3 point, Vector3 origin, Vector3 direction, float maxDistance = Mathf.Infinity)
 	{
 		direction.Normalize();
 		Vector3 lhs = point - origin;

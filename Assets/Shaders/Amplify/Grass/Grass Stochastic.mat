@@ -105,7 +105,7 @@ Material:
     m_Colors:
     - Color_1E276533: {r: 1.2133267, g: 0.9427675, b: 0.599833, a: 0}
     - Color_793E36A9: {r: 0.24013717, g: -0.089029744, b: -0.33123177, a: 0}
-    - Color_ACD6639A: {r: 0.39430338, g: 0.47058815, b: 0.3388235, a: 0}
+    - Color_ACD6639A: {r: 0.56728333, g: 0.674, b: 0.48303336, a: 0}
     - Color_C216BA65: {r: -0.117331, g: -0.24264003, b: 0.61869544, a: 0}
     - Color_FE81320C: {r: -0.3470023, g: 0.39091346, b: 0.08750208, a: 0}
     - Vector2_64E189D5: {r: 10, g: 10, b: 1, a: 0}
@@ -122,6 +122,7 @@ Material:
     - _MainTexColorSpaceVector2: {r: -0.3470023, g: 0.3909135, b: 0.08750208, a: 0}
     - _MainTexColorSpaceVector3: {r: -0.117331, g: -0.24264, b: 0.6186954, a: 0}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
+  m_BuildTextureStacks: []
 --- !u!114 &6438301676815241605
 MonoBehaviour:
   m_ObjectHideFlags: 11

@@ -385,7 +385,7 @@ namespace Rewired.Integration.UnityUI {
 
             Vector2 pos = mouseInputSource.screenPosition;
 
-            if(mouseInputSource.locked) {
+            if(mouseInputSource.locked || !mouseInputSource.enabled) {
                 // We don't want to do ANY cursor-based interaction when the mouse is locked
                 leftData.position = new Vector2(-1.0f, -1.0f);
                 leftData.delta = Vector2.zero;
@@ -462,7 +462,7 @@ namespace Rewired.Integration.UnityUI {
             if(pointerEvent.sourceType == PointerEventType.Mouse) {
                 IMouseInputSource source = GetMouseInputSource(pointerEvent.playerId, pointerEvent.inputSourceIndex);
                 if(source != null) {
-                    targetGO = source.locked ? null : pointerEvent.pointerCurrentRaycast.gameObject;
+                    targetGO = !source.enabled || source.locked ? null : pointerEvent.pointerCurrentRaycast.gameObject;
                 } else {
                     targetGO = null;
                 }
@@ -476,7 +476,7 @@ namespace Rewired.Integration.UnityUI {
             if(!pointerEvent.IsPointerMoving() || pointerEvent.pointerDrag == null) return;
             if(pointerEvent.sourceType == PointerEventType.Mouse) {
                 IMouseInputSource source = GetMouseInputSource(pointerEvent.playerId, pointerEvent.inputSourceIndex);
-                if(source == null || source.locked) return;
+                if(source == null || source.locked || !source.enabled) return;
             }
 
             if(!pointerEvent.dragging

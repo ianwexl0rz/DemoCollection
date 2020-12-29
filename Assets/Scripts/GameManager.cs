@@ -35,7 +35,7 @@ public partial class GameManager : MonoBehaviour
 	{
 		instance = this;
 
-		Application.targetFrameRate = 60;
+		Application.targetFrameRate = -1;
 		
 		// Cache reference to player.
 		player = ReInput.players.GetPlayer(0);

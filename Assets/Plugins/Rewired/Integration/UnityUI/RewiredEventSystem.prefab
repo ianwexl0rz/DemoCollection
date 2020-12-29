@@ -37,12 +37,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 161136}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: -619905303, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
+  m_Script: {fileID: 11500000, guid: 6b991181f58043ec814f0900013f8cac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_FirstSelected: {fileID: 0}
   m_sendNavigationEvents: 1
   m_DragThreshold: 5
+  _alwaysUpdate: 0
 --- !u!114 &11461136
 MonoBehaviour:
   m_ObjectHideFlags: 1

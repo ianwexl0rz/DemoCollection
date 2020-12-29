@@ -76,6 +76,7 @@ namespace Rewired {
     using UnityEngine.SceneManagement;
 #endif
 
+    [AddComponentMenu("Rewired/Input Manager")]
     [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
     public sealed class InputManager : InputManager_Base {
 

@@ -58,7 +58,7 @@ namespace Rewired.Integration.UnityUI {
     using System.Collections.Generic;
     using Rewired.UI;
 
-    [AddComponentMenu("Event/Rewired Standalone Input Module")]
+    [AddComponentMenu("Rewired/Rewired Standalone Input Module")]
     public sealed class RewiredStandaloneInputModule : RewiredPointerInputModule {
 
         #region Rewired Constants
@@ -474,7 +474,7 @@ namespace Rewired.Integration.UnityUI {
         #endregion
 
         [NonSerialized]
-        private float m_PrevActionTime;
+        private double m_PrevActionTime;
         [NonSerialized]
         Vector2 m_LastMoveVector;
         [NonSerialized]
@@ -748,7 +748,7 @@ namespace Rewired.Integration.UnityUI {
 
                 // Debug.Log("Pressed: " + newPressed);
 
-                float time = Time.unscaledTime;
+                double time = ReInput.time.unscaledTime;
 
                 if (newPressed == pointerEvent.lastPress) {
                     var diffTime = time - pointerEvent.clickTime;
@@ -757,7 +757,7 @@ namespace Rewired.Integration.UnityUI {
                     else
                         pointerEvent.clickCount = 1;
 
-                    pointerEvent.clickTime = time;
+                    pointerEvent.clickTime = (float)time;
                 } else {
                     pointerEvent.clickCount = 1;
                 }
@@ -765,7 +765,7 @@ namespace Rewired.Integration.UnityUI {
                 pointerEvent.pointerPress = newPressed;
                 pointerEvent.rawPointerPress = currentOverGo;
 
-                pointerEvent.clickTime = time;
+                pointerEvent.clickTime = (float)time;
 
                 // Save the drag handler as well
                 pointerEvent.pointerDrag = ExecuteEvents.GetEventHandler<IDragHandler>(currentOverGo);
@@ -851,39 +851,27 @@ namespace Rewired.Integration.UnityUI {
                 Rewired.Player player = ReInput.players.GetPlayer(playerIds[i]);
                 if (player == null) continue;
                 if (usePlayingPlayersOnly && !player.isPlaying) continue;
+                
+                // Must double check against axis value because "Activate Action Buttons on Negative Value" may be enabled 
+                // and will prevent negative axis values from working because they're cancelled out by positive values.
+                float horizontal = GetAxis(player, horizontalActionId);
+                float vertical = GetAxis(player, verticalActionId);
+                
+                if(Mathf.Approximately(horizontal, 0f)) horizontal = 0f;
+                if(Mathf.Approximately(vertical, 0f)) vertical = 0f;
 
                 if (moveOneElementPerAxisPress) { // axis press moves only to the next UI element with each press
-                    float x = 0.0f;
-                    if (GetButtonDown(player, horizontalActionId)) x = 1.0f;
-                    else if (GetNegativeButtonDown(player, horizontalActionId)) x = -1.0f;
-
-                    float y = 0.0f;
-                    if (GetButtonDown(player, verticalActionId)) y = 1.0f;
-                    else if (GetNegativeButtonDown(player, verticalActionId)) y = -1.0f;
-
-                    move.x += x;
-                    move.y += y;
-
+                    if (GetButtonDown(player, horizontalActionId) && horizontal > 0f) move.x += 1.0f;
+                    if (GetNegativeButtonDown(player, horizontalActionId) && horizontal < 0f) move.x -= 1.0f;
+                    if (GetButtonDown(player, verticalActionId) && vertical > 0f) move.y += 1.0f;
+                    if (GetNegativeButtonDown(player, verticalActionId) && vertical < 0f) move.y -= 1.0f;
                 } else { // default behavior - axis press scrolls quickly through UI elements
-                    move.x += GetAxis(player, horizontalActionId);
-                    move.y += GetAxis(player, verticalActionId);
+                    // Use GetButton instead of GetAxis so the Input Behavior's Button Dead Zone is used for each Player
+                    if(GetButton(player, horizontalActionId) && horizontal > 0f) move.x += 1.0f;
+                    if(GetNegativeButton(player, horizontalActionId) && horizontal < 0f) move.x -= 1.0f;
+                    if(GetButton(player, verticalActionId) && vertical > 0f) move.y += 1.0f;
+                    if(GetNegativeButton(player, verticalActionId) && vertical < 0f) move.y -= 1.0f;
                 }
-
-                horizButton |= GetButtonDown(player, horizontalActionId) || GetNegativeButtonDown(player, horizontalActionId);
-                vertButton |= GetButtonDown(player, verticalActionId) || GetNegativeButtonDown(player, verticalActionId);
-            }
-
-            if (horizButton) {
-                if (move.x < 0)
-                    move.x = -1f;
-                if (move.x > 0)
-                    move.x = 1f;
-            }
-            if (vertButton) {
-                if (move.y < 0)
-                    move.y = -1f;
-                if (move.y > 0)
-                    move.y = 1f;
             }
             return move;
         }
@@ -894,7 +882,7 @@ namespace Rewired.Integration.UnityUI {
         private bool SendMoveEventToSelectedObject() {
             if (recompiling) return false; // never allow movement while recompiling
 
-            float time = Time.unscaledTime; // get the current time
+            double time = ReInput.time.unscaledTime; // get the current time
 
             // Check for zero movement and clear
             Vector2 movement = GetRawMoveVector();
@@ -908,7 +896,7 @@ namespace Rewired.Integration.UnityUI {
 
             // Check if a button/key/axis was just pressed this frame
             bool buttonDownHorizontal, buttonDownVertical;
-            CheckButtonOrKeyMovement(time, out buttonDownHorizontal, out buttonDownVertical);
+            CheckButtonOrKeyMovement(out buttonDownHorizontal, out buttonDownVertical);
 
             AxisEventData axisEventData = null;
 
@@ -917,7 +905,7 @@ namespace Rewired.Integration.UnityUI {
             if (allow) { // we had a button down event
 
                 // Get the axis move event now so we can tell the direction it will be moving
-                axisEventData = GetAxisEventData(movement.x, movement.y, 0.6f);
+                axisEventData = GetAxisEventData(movement.x, movement.y, 0f);
 
                 // Make sure the button down event was in the direction we would be moving, otherwise don't allow it.
                 // This filters out double movements when pressing somewhat diagonally and getting down events for both
@@ -931,7 +919,7 @@ namespace Rewired.Integration.UnityUI {
                 // Apply repeat delay and input actions per second limits
                 if (m_RepeatDelay > 0.0f) { // apply repeat delay
                     // Otherwise, user held down key or axis.
-                    // If direction didn't change at least 90 degrees, wait for delay before allowing consequtive event.
+                    // If direction didn't change at least 90 degrees, wait for delay before allowing consecutive event.
                     if (similarDir && m_ConsecutiveMoveCount == 1) { // this is the 2nd tick after the initial that activated the movement in this direction
                         allow = (time > m_PrevActionTime + m_RepeatDelay);
                         // If direction changed at least 90 degree, or we already had the delay, repeat at repeat rate.
@@ -946,7 +934,7 @@ namespace Rewired.Integration.UnityUI {
 
             // Get the axis move event
             if (axisEventData == null) {
-                axisEventData = GetAxisEventData(movement.x, movement.y, 0.6f);
+                axisEventData = GetAxisEventData(movement.x, movement.y, 0f);
             }
 
             if (axisEventData.moveDir != MoveDirection.None) {
@@ -964,7 +952,7 @@ namespace Rewired.Integration.UnityUI {
             return axisEventData.used;
         }
 
-        private void CheckButtonOrKeyMovement(float time, out bool downHorizontal, out bool downVertical) {
+        private void CheckButtonOrKeyMovement(out bool downHorizontal, out bool downVertical) {
             downHorizontal = false;
             downVertical = false;
 
@@ -1062,7 +1050,7 @@ namespace Rewired.Integration.UnityUI {
 
                 // Debug.Log("Pressed: " + newPressed);
 
-                float time = Time.unscaledTime;
+                double time = ReInput.time.unscaledTime;
 
                 if (newPressed == pointerEvent.lastPress) {
                     var diffTime = time - pointerEvent.clickTime;
@@ -1071,7 +1059,7 @@ namespace Rewired.Integration.UnityUI {
                     else
                         pointerEvent.clickCount = 1;
 
-                    pointerEvent.clickTime = time;
+                    pointerEvent.clickTime = (float)time;
                 } else {
                     pointerEvent.clickCount = 1;
                 }
@@ -1079,7 +1067,7 @@ namespace Rewired.Integration.UnityUI {
                 pointerEvent.pointerPress = newPressed;
                 pointerEvent.rawPointerPress = currentOverGo;
 
-                pointerEvent.clickTime = time;
+                pointerEvent.clickTime = (float)time;
 
                 // Save the drag handler as well
                 pointerEvent.pointerDrag = ExecuteEvents.GetEventHandler<IDragHandler>(currentOverGo);
@@ -1277,9 +1265,19 @@ namespace Rewired.Integration.UnityUI {
             }
         }
 
+        private bool GetButton(Player player, int actionId) {
+            if(actionId < 0) return false; // silence warnings
+            return player.GetButton(actionId);
+        }
+
         private bool GetButtonDown(Player player, int actionId) {
             if(actionId < 0) return false; // silence warnings
             return player.GetButtonDown(actionId);
+        }
+
+        private bool GetNegativeButton(Player player, int actionId) {
+            if(actionId < 0) return false; // silence warnings
+            return player.GetNegativeButton(actionId);
         }
 
         private bool GetNegativeButtonDown(Player player, int actionId) {

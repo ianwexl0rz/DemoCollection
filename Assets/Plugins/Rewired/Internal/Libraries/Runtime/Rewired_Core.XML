@@ -1076,21 +1076,21 @@
         </member>
         <member name="M:Rewired.ElementAssignmentConflictCheck.ToElementAssignment">
             <summary>
-            Converts ElementAssignmentConflictChec into an ElementAssignment.
+            Converts ElementAssignmentConflictCheck into an ElementAssignment.
             Can be used to make an element assignment.
             </summary>
             <returns>ElementAssignment</returns>
         </member>
         <member name="M:Rewired.ElementAssignmentConflictCheck.ToFullAxisAssignment">
             <summary>
-            Converts ElementAssignmentConflictChec into an ElementAssignment for a full axis assignment.
+            Converts ElementAssignmentConflictCheck into an ElementAssignment for a full axis assignment.
             Can be used to make an element assignment.
             </summary>
             <returns>ElementAssignment</returns>
         </member>
         <member name="M:Rewired.ElementAssignmentConflictCheck.ToSplitAxisAssignment">
             <summary>
-            Converts ElementAssignmentConflictChec into an ElementAssignment for a split axis assignment.
+            Converts ElementAssignmentConflictCheck into an ElementAssignment for a split axis assignment.
             Can be used to make an element assignment.
             </summary>
             <returns>ElementAssignment</returns>
@@ -2068,7 +2068,6 @@
             This is mostly useful for allowing the user to select search and 
             other parameters in the inspector.
             </summary>
-            <exclude></exclude>
         </member>
         <member name="P:Rewired.ComponentControls.Data.CustomControllerElementTarget.element">
             <summary>
@@ -2091,7 +2090,6 @@
             This is mostly useful for allowing the user to select search and 
             other parameters in the inspector.
             </summary>
-            <exclude></exclude>
         </member>
         <member name="T:Rewired.ComponentControls.Data.CustomControllerElementTargetSetForBoolean">
             <summary>
@@ -2099,7 +2097,6 @@
             This is mostly useful for allowing the user to select search and 
             other parameters in the inspector.
             </summary>
-            <exclude></exclude>
         </member>
         <member name="P:Rewired.ComponentControls.Data.CustomControllerElementTargetSetForBoolean.target">
             <summary>
@@ -2112,7 +2109,6 @@
             This is mostly useful for allowing the user to select search and 
             other parameters in the inspector.
             </summary>
-            <exclude></exclude>
         </member>
         <member name="P:Rewired.ComponentControls.Data.CustomControllerElementTargetSetForFloat.splitValue">
             <summary>
@@ -2139,7 +2135,6 @@
             Provides a means of selecting a particular Custom Controller element.
             This is mostly useful for allowing the user to select search parameters in the inspector.
             </summary>
-            <exclude></exclude>
         </member>
         <member name="M:Rewired.ComponentControls.Data.CustomControllerElementSelector.GetElementIndex(Rewired.CustomController)">
             <summary>
@@ -2189,7 +2184,6 @@
             Provides a means of selecting a particular Custom Controller.
             This is mostly useful for allowing the user to select search parameters in the inspector.
             </summary>
-            <exclude></exclude>
         </member>
         <member name="M:Rewired.ComponentControls.Data.CustomControllerSelector.GetCustomController">
             <summary>
@@ -3642,6 +3636,11 @@
             Otherwise, it will default to the lower-left corner of the allowed movement area.
             </summary>
         </member>
+        <member name="P:Rewired.Components.PlayerMouse.clampToMovementArea">
+            <summary>
+            If enabled, movement will be clamped to the <see cref="P:Rewired.Components.PlayerMouse.movementArea"/>.
+            </summary>
+        </member>
         <member name="P:Rewired.Components.PlayerMouse.movementArea">
             <summary>
             The allowed movement area for the mouse pointer.
@@ -4408,6 +4407,16 @@
         <member name="P:Rewired.Controller.Axis.timeInactiveRaw">
             <summary>
             The time in seconds this axis has been inactive based on raw value.
+            </summary>
+        </member>
+        <member name="P:Rewired.Controller.Axis.pollingDeadZone">
+            <summary>
+            The polling dead zone used when polling the axis.
+            In order for the axis to be detected when polling, the change in absolute value
+            of the axis over the polling period must be greater than this amount.
+            Do not set this value extremely low or noisy axes will be detected when at rest.
+            A value of -1 means the default global polling dead zone will be used instead.
+            [Default = -1]
             </summary>
         </member>
         <member name="T:Rewired.Controller.Button">
@@ -7393,6 +7402,11 @@
             Otherwise, it will default to the lower-left corner of the allowed movement area.
             </summary>
         </member>
+        <member name="P:Rewired.PlayerMouse.clampToMovementArea">
+            <summary>
+            If enabled, movement will be clamped to the <see cref="P:Rewired.PlayerMouse.movementArea"/>.
+            </summary>
+        </member>
         <member name="P:Rewired.PlayerMouse.movementArea">
             <summary>
             The allowed movement area for the mouse pointer.
@@ -7482,6 +7496,11 @@
             <summary>
             If enabled, the screen position will default to the center of the allowed movement area.
             Otherwise, it will default to the lower-left corner of the allowed movement area.
+            </summary>
+        </member>
+        <member name="F:Rewired.PlayerMouse.Definition.clampToMovementArea">
+            <summary>
+            If enabled, movement will be clamped to the <see cref="F:Rewired.PlayerMouse.Definition.movementArea"/>.
             </summary>
         </member>
         <member name="F:Rewired.PlayerMouse.Definition.movementArea">
@@ -7584,7 +7603,17 @@
             </summary>
             <exclude></exclude>
         </member>
+        <member name="T:Rewired.Data.IConfigVars_Internal">
+            <summary>
+            Provides an interface to get and set values in ConfigVars from plugins.
+            </summary>
+        </member>
         <member name="M:Rewired.Data.ConfigVars.GetPlatformVar_disableKeyboard">
+            <summary>
+            Runtime only!
+            </summary>
+        </member>
+        <member name="M:Rewired.Data.ConfigVars.SetPlatformVar_disableKeyboard(System.Boolean)">
             <summary>
             Runtime only!
             </summary>
@@ -15041,7 +15070,7 @@
             <param name="controllerType">The controller type.</param>
             <returns></returns>
         </member>
-        <member name="M:Rewired.Player.ControllerHelper.FindLastActiveControllerOfType(Rewired.ControllerType,Rewired.Controller@,System.Single@)">
+        <member name="M:Rewired.Player.ControllerHelper.FindLastActiveControllerOfType(Rewired.ControllerType,Rewired.Controller@,System.Double@)">
             <summary>
             Don't use for Mouse/KB
             </summary>
@@ -18265,6 +18294,18 @@
             This is used for version checking on Rewred objects.
             </summary>
         </member>
+        <member name="P:Rewired.ReInput.configVars">
+            <summary>
+            DO NOT CALL THIS FROM A PLUGIN!!!!
+            Use pluginConfigVars instead.
+            </summary>
+        </member>
+        <member name="P:Rewired.ReInput.UserData">
+            <summary>
+            DO NOT CALL THIS FROM A PLUGIN!!!!
+            Use pluginConfigVars instead.
+            </summary>
+        </member>
         <member name="P:Rewired.ReInput.currentUnityFrame">
             <summary>
             The current Unity frame.
@@ -18408,6 +18449,28 @@
             If enabled, the corner directions on all hats will activate the adjacent 2 cardinal direction buttons instead of the corner button.
             This is useful if you need joystick hats to behave like D-Pads instead of 8-way hats.
             This setting can be changed without resetting Rewired.
+            </summary>
+        </member>
+        <member name="P:Rewired.ReInput.ConfigHelper.defaultAbsoluteAxisPollingDeadZone">
+            <summary>
+            The default polling dead zone used when polling Absolute coordinate mode axes.
+            In order for the axis to be detected when polling, the change in absolute value
+            of the axis over the polling period must be greater than this amount.
+            Do not set this value too low or noisy axes will be detected.
+            This only applies to axes that use an Absolute coordinate system such as joysticks.
+            Each indivisual axis may override this default value.
+            [Default = 0.7]
+            </summary>
+        </member>
+        <member name="P:Rewired.ReInput.ConfigHelper.defaultRelativeAxisPollingDeadZone">
+            <summary>
+            The default polling dead zone used when polling Relative coordinate mode axes.
+            In order for the axis to be detected when polling, the change in absolute value
+            of the axis over the polling period must be greater than this amount.
+            Do not set this value too low or noisy axes will be detected.
+            This only applies to axes that use a Relative coordinate system such as mouse axes.
+            Each indivisual axis may override this default value.
+            [Default = 100]
             </summary>
         </member>
         <member name="P:Rewired.ReInput.ConfigHelper.activateActionButtonsOnNegativeValue">
@@ -19015,7 +19078,8 @@
         </member>
         <member name="T:Rewired.ReInput.MappingHelper">
             <summary>
-            Provides access to all mapping-related members.
+            Provides access to all mapping-related data defined in the Rewired Editor.
+            This data is read-only. Data created in the Rewired Editor cannot be changed at run time.
             </summary>
         </member>
         <member name="M:Rewired.ReInput.MappingHelper.GetMapCategory(System.Int32)">
@@ -19373,7 +19437,7 @@
         </member>
         <member name="M:Rewired.ReInput.MappingHelper.GetControllerMapInstance(Rewired.Controller,System.Int32,System.Int32)">
             <summary>
-            Gets an instanced copy of a Controller Map.
+            Gets a copy of a Controller Map.
             This can be used to view the default Controller Map setup in the Rewired Input Manager.
             </summary>
             <param name="controller">Controller for which to retrieve the map</param>
@@ -19383,7 +19447,7 @@
         </member>
         <member name="M:Rewired.ReInput.MappingHelper.GetControllerMapInstance(Rewired.Controller,System.String,System.String)">
             <summary>
-            Gets an instanced copy of a Controller Map.
+            Gets a copy of a Controller Map.
             This can be used to view the default Controller Map setup in the Rewired Input Manager.
             </summary>
             <param name="controller">Controller for which to retrieve the map</param>
@@ -19393,7 +19457,7 @@
         </member>
         <member name="M:Rewired.ReInput.MappingHelper.GetControllerMapInstance(Rewired.ControllerIdentifier,System.String,System.String)">
             <summary>
-            Gets an instanced copy of a Controller Map.
+            Gets a copy of a Controller Map.
             This can be used to view the default Controller Map setup in the Rewired Input Manager.
             This overload can be used when no Controller is actually connected and available to be used to look up the correct Controller Maps to load.
             The Controller Map returned by this method is not guarateed to be consistent with the Controller Map that would be loaded
@@ -19411,7 +19475,7 @@
         </member>
         <member name="M:Rewired.ReInput.MappingHelper.GetControllerMapInstance(Rewired.ControllerIdentifier,System.Int32,System.Int32)">
             <summary>
-            Gets an instanced copy of a Controller Map.
+            Gets a copy of a Controller Map.
             This can be used to view the default Controller Map setup in the Rewired Input Manager.
             This overload can be used when no Controller is actually connected and available to be used to look up the correct Controller Maps to load.
             The Controller Map returned by this method is not guarateed to be consistent with the Controller Map that would be loaded
@@ -19429,7 +19493,7 @@
         </member>
         <member name="M:Rewired.ReInput.MappingHelper.GetJoystickMapInstance(Rewired.Joystick,System.Int32,System.Int32)">
             <summary>
-            Gets an instanced copy of a Joystick Map.
+            Gets a copy of a Joystick Map.
             This can be used to view the default Joystick Map setup in the Rewired Input Manager.
             </summary>
             <param name="joystick">Joystick for which to retrieve the map</param>
@@ -19439,7 +19503,7 @@
         </member>
         <member name="M:Rewired.ReInput.MappingHelper.GetJoystickMapInstance(Rewired.Joystick,System.String,System.String)">
             <summary>
-            Gets an instanced copy of a Joystick Map.
+            Gets a copy of a Joystick Map.
             This can be used to view the default Joystick Map setup in the Rewired Input Manager.
             </summary>
             <param name="joystick">Joystick for which to retrieve the map</param>
@@ -19449,7 +19513,7 @@
         </member>
         <member name="M:Rewired.ReInput.MappingHelper.GetJoystickMapInstance(System.Guid,System.Int32,System.Int32)">
             <summary>
-            Gets an instanced copy of a joystick map from the default controller maps.
+            Gets a copy of a joystick map from the default controller maps.
             This overload can be used when no Joystick is actually connected and available to be used to look up the correct Controller Maps to load.
             The Controller Map returned by this method is not guarateed to be consistent with the Controller Map that would be loaded
             were the actual device to be connected. This is due to the fact that different Controller Maps may be loaded depending on the
@@ -19466,7 +19530,7 @@
         </member>
         <member name="M:Rewired.ReInput.MappingHelper.GetJoystickMapInstance(System.Guid,System.String,System.String)">
             <summary>
-            Gets an instanced copy of a joystick map from the default controller maps.
+            Gets a copy of a joystick map from the default controller maps.
             This overload can be used when no Joystick is actually connected and available to be used to look up the correct Controller Maps to load.
             The Controller Map returned by this method is not guarateed to be consistent with the Controller Map that would be loaded
             were the actual device to be connected. This is due to the fact that different Controller Maps may be loaded depending on the
@@ -19483,7 +19547,7 @@
         </member>
         <member name="M:Rewired.ReInput.MappingHelper.GetJoystickMapInstance(Rewired.ControllerIdentifier,System.Int32,System.Int32)">
             <summary>
-            Gets an instanced copy of a joystick map from the default controller maps.
+            Gets a copy of a joystick map from the default controller maps.
             This overload can be used when no Joystick is actually connected and available to be used to look up the correct Controller Maps to load.
             The Controller Map returned by this method is not guarateed to be consistent with the Controller Map that would be loaded
             were the actual device to be connected. This is due to the fact that different Controller Maps may be loaded depending on the
@@ -19500,7 +19564,7 @@
         </member>
         <member name="M:Rewired.ReInput.MappingHelper.GetJoystickMapInstance(Rewired.ControllerIdentifier,System.String,System.String)">
             <summary>
-            Gets an instanced copy of a joystick map from the default controller maps.
+            Gets a copy of a joystick map from the default controller maps.
             This overload can be used when no Joystick is actually connected and available to be used to look up the correct Controller Maps to load.
             The Controller Map returned by this method is not guarateed to be consistent with the Controller Map that would be loaded
             were the actual device to be connected. This is due to the fact that different Controller Maps may be loaded depending on the
@@ -19517,7 +19581,7 @@
         </member>
         <member name="M:Rewired.ReInput.MappingHelper.GetKeyboardMapInstance(System.Int32,System.Int32)">
             <summary>
-            Gets an instanced copy of a Keyboard Map.
+            Gets a copy of a Keyboard Map.
             This can be used to view the default Keyboard Map setup in the Rewired Input Manager.
             </summary>
             <param name="mapCategoryId">Map Category Id</param>
@@ -19526,7 +19590,7 @@
         </member>
         <member name="M:Rewired.ReInput.MappingHelper.GetKeyboardMapInstance(System.String,System.String)">
             <summary>
-            Gets an instanced copy of a Keyboard Map.
+            Gets a copy of a Keyboard Map.
             This can be used to view the default Keyboard Map setup in the Rewired Input Manager.
             </summary>
             <param name="mapCategoryName">Map Category Name</param>
@@ -19535,7 +19599,7 @@
         </member>
         <member name="M:Rewired.ReInput.MappingHelper.GetMouseMapInstance(System.Int32,System.Int32)">
             <summary>
-            Gets an instanced copy of a Mouse Map.
+            Gets a copy of a Mouse Map.
             This can be used to view the default Mouse Map setup in the Rewired Input Manager.
             </summary>
             <param name="mapCategoryId">Map Category Id</param>
@@ -19544,7 +19608,7 @@
         </member>
         <member name="M:Rewired.ReInput.MappingHelper.GetMouseMapInstance(System.String,System.String)">
             <summary>
-            Gets an instanced copy of a Mouse Map.
+            Gets a copy of a Mouse Map.
             This can be used to view the default Mouse Map setup in the Rewired Input Manager.
             </summary>
             <param name="mapCategoryName">Map Category Name</param>
@@ -19553,7 +19617,7 @@
         </member>
         <member name="M:Rewired.ReInput.MappingHelper.GetCustomControllerMapInstance(Rewired.CustomController,System.Int32,System.Int32)">
             <summary>
-            Gets an instanced copy of a Custom Controller Map.
+            Gets a copy of a Custom Controller Map.
             This can be used to view the default Custom Controller Map setup in the Rewired Input Manager.
             </summary>
             <param name="customController">Custom Controller for which to retrieve the map</param>
@@ -19563,7 +19627,7 @@
         </member>
         <member name="M:Rewired.ReInput.MappingHelper.GetCustomControllerMapInstance(Rewired.CustomController,System.String,System.String)">
             <summary>
-            Gets an instanced copy of a Custom Controller Map.
+            Gets a copy of a Custom Controller Map.
             This can be used to view the default Custom Controller Map setup in the Rewired Input Manager.
             </summary>
             <param name="customController">Custom Controller for which to retrieve the map</param>
@@ -19573,7 +19637,7 @@
         </member>
         <member name="M:Rewired.ReInput.MappingHelper.GetCustomControllerMapInstance(Rewired.ControllerIdentifier,System.Int32,System.Int32)">
             <summary>
-            Gets an instanced copy of a custom controller map from the default controller maps.
+            Gets a copy of a custom controller map from the default controller maps.
             This overload can be used when no Custom Controller is actually connected and available to be used to look up the correct Controller Maps to load.
             The Controller Map returned by this method is not guarateed to be consistent with the Controller Map that would be loaded
             were the actual device to be connected. This is due to the fact that different Controller Maps may be loaded depending on the
@@ -19590,7 +19654,7 @@
         </member>
         <member name="M:Rewired.ReInput.MappingHelper.GetCustomControllerMapInstance(Rewired.ControllerIdentifier,System.String,System.String)">
             <summary>
-            Gets an instanced copy of a custom controller map from the default controller maps.
+            Gets a copy of a custom controller map from the default controller maps.
             This overload can be used when no Custom Controller is actually connected and available to be used to look up the correct Controller Maps to load.
             The Controller Map returned by this method is not guarateed to be consistent with the Controller Map that would be loaded
             were the actual device to be connected. This is due to the fact that different Controller Maps may be loaded depending on the
@@ -19607,7 +19671,7 @@
         </member>
         <member name="M:Rewired.ReInput.MappingHelper.GetControllerMapInstanceSavedOrDefault(System.Int32,Rewired.Controller,System.Int32,System.Int32)">
             <summary>
-            Gets an instanced copy of a Controller Map.
+            Gets a copy of a Controller Map.
             This can be used to view the Controller Map saved in user data if available or the default Controller Map setup in the Rewired Input Manager.
             The Controller Map will be first loaded from <see cref="T:Rewired.Data.UserDataStore"/>. If none is found, it will be loaded from the Rewired Input Manager defaults.
             <see cref="T:Rewired.Data.UserDataStore"/> must implement <see cref="T:Rewired.Interfaces.IControllerMapStore"/> or data cannot be loaded from saved user data.
@@ -19620,7 +19684,7 @@
         </member>
         <member name="M:Rewired.ReInput.MappingHelper.GetControllerMapInstanceSavedOrDefault(System.Int32,Rewired.Controller,System.String,System.String)">
             <summary>
-            Gets an instanced copy of a Controller Map.
+            Gets a copy of a Controller Map.
             This can be used to view the Controller Map saved in user data if available or the default Controller Map setup in the Rewired Input Manager.
             The Controller Map will be first loaded from <see cref="T:Rewired.Data.UserDataStore"/>. If none is found, it will be loaded from the Rewired Input Manager defaults.
             <see cref="T:Rewired.Data.UserDataStore"/> must implement <see cref="T:Rewired.Interfaces.IControllerMapStore"/> or data cannot be loaded from saved user data.
@@ -19633,7 +19697,7 @@
         </member>
         <member name="M:Rewired.ReInput.MappingHelper.GetControllerMapInstanceSavedOrDefault(System.Int32,Rewired.ControllerIdentifier,System.Int32,System.Int32)">
             <summary>
-            Gets an instanced copy of a Controller Map.
+            Gets a copy of a Controller Map.
             This can be used to view the Controller Map saved in user data if available or the default Controller Map setup in the Rewired Input Manager.
             The Controller Map will be first loaded from <see cref="T:Rewired.Data.UserDataStore"/>. If none is found, it will be loaded from the Rewired Input Manager defaults.
             <see cref="T:Rewired.Data.UserDataStore"/> must implement <see cref="T:Rewired.Interfaces.IControllerMapStore"/> or data cannot be loaded from saved user data.
@@ -19653,7 +19717,7 @@
         </member>
         <member name="M:Rewired.ReInput.MappingHelper.GetControllerMapInstanceSavedOrDefault(System.Int32,Rewired.ControllerIdentifier,System.String,System.String)">
             <summary>
-            Gets an instanced copy of a Controller Map.
+            Gets a copy of a Controller Map.
             This can be used to view the Controller Map saved in user data if available or the default Controller Map setup in the Rewired Input Manager.
             The Controller Map will be first loaded from <see cref="T:Rewired.Data.UserDataStore"/>. If none is found, it will be loaded from the Rewired Input Manager defaults.
             <see cref="T:Rewired.Data.UserDataStore"/> must implement <see cref="T:Rewired.Interfaces.IControllerMapStore"/> or data cannot be loaded from saved user data.
@@ -19673,7 +19737,7 @@
         </member>
         <member name="M:Rewired.ReInput.MappingHelper.GetJoystickMapInstanceSavedOrDefault(System.Int32,Rewired.Joystick,System.Int32,System.Int32)">
             <summary>
-            Gets an instanced copy of a Joystick Map.
+            Gets a copy of a Joystick Map.
             This can be used to view the Controller Map saved in user data if available or the default Controller Map setup in the Rewired Input Manager.
             The Controller Map will be first loaded from <see cref="T:Rewired.Data.UserDataStore"/>. If none is found, it will be loaded from the Rewired Input Manager defaults.
             <see cref="T:Rewired.Data.UserDataStore"/> must implement <see cref="T:Rewired.Interfaces.IControllerMapStore"/> or data cannot be loaded from saved user data.
@@ -19686,7 +19750,7 @@
         </member>
         <member name="M:Rewired.ReInput.MappingHelper.GetJoystickMapInstanceSavedOrDefault(System.Int32,Rewired.Joystick,System.String,System.String)">
             <summary>
-            Gets an instanced copy of a Joystick Map.
+            Gets a copy of a Joystick Map.
             This can be used to view the Controller Map saved in user data if available or the default Controller Map setup in the Rewired Input Manager.
             The Controller Map will be first loaded from <see cref="T:Rewired.Data.UserDataStore"/>. If none is found, it will be loaded from the Rewired Input Manager defaults.
             <see cref="T:Rewired.Data.UserDataStore"/> must implement <see cref="T:Rewired.Interfaces.IControllerMapStore"/> or data cannot be loaded from saved user data.
@@ -19737,7 +19801,7 @@
         </member>
         <member name="M:Rewired.ReInput.MappingHelper.GetCustomControllerMapInstanceSavedOrDefault(System.Int32,Rewired.CustomController,System.Int32,System.Int32)">
             <summary>
-            Gets an instanced copy of a Custom Controller Map.
+            Gets a copy of a Custom Controller Map.
             This can be used to view the Controller Map saved in user data if available or the default Controller Map setup in the Rewired Input Manager.
             The Controller Map will be first loaded from <see cref="T:Rewired.Data.UserDataStore"/>. If none is found, it will be loaded from the Rewired Input Manager defaults.
             <see cref="T:Rewired.Data.UserDataStore"/> must implement <see cref="T:Rewired.Interfaces.IControllerMapStore"/> or data cannot be loaded from saved user data.
@@ -19750,7 +19814,7 @@
         </member>
         <member name="M:Rewired.ReInput.MappingHelper.GetCustomControllerMapInstanceSavedOrDefault(System.Int32,Rewired.CustomController,System.String,System.String)">
             <summary>
-            Gets an instanced copy of a Custom Controller Map.
+            Gets a copy of a Custom Controller Map.
             This can be used to view the Controller Map saved in user data if available or the default Controller Map setup in the Rewired Input Manager.
             The Controller Map will be first loaded from <see cref="T:Rewired.Data.UserDataStore"/>. If none is found, it will be loaded from the Rewired Input Manager defaults.
             <see cref="T:Rewired.Data.UserDataStore"/> must implement <see cref="T:Rewired.Interfaces.IControllerMapStore"/> or data cannot be loaded from saved user data.
@@ -19765,7 +19829,7 @@
         <!-- Badly formed XML comment ignored for member "M:Rewired.ReInput.MappingHelper.GetCustomControllerMapInstanceSavedOrDefault(System.Int32,Rewired.ControllerIdentifier,System.String,System.String)" -->
         <member name="M:Rewired.ReInput.MappingHelper.GetKeyboardMapInstanceSavedOrDefault(System.Int32,System.Int32,System.Int32)">
             <summary>
-            Gets an instanced copy of a Keyboard Map.
+            Gets a copy of a Keyboard Map.
             This can be used to view the Controller Map saved in user data if available or the default Controller Map setup in the Rewired Input Manager.
             The Controller Map will be first loaded from <see cref="T:Rewired.Data.UserDataStore"/>. If none is found, it will be loaded from the Rewired Input Manager defaults.
             <see cref="T:Rewired.Data.UserDataStore"/> must implement <see cref="T:Rewired.Interfaces.IControllerMapStore"/> or data cannot be loaded from saved user data.
@@ -19777,7 +19841,7 @@
         </member>
         <member name="M:Rewired.ReInput.MappingHelper.GetKeyboardMapInstanceSavedOrDefault(System.Int32,System.String,System.String)">
             <summary>
-            Gets an instanced copy of a Keyboard Map.
+            Gets a copy of a Keyboard Map.
             This can be used to view the Controller Map saved in user data if available or the default Controller Map setup in the Rewired Input Manager.
             The Controller Map will be first loaded from <see cref="T:Rewired.Data.UserDataStore"/>. If none is found, it will be loaded from the Rewired Input Manager defaults.
             <see cref="T:Rewired.Data.UserDataStore"/> must implement <see cref="T:Rewired.Interfaces.IControllerMapStore"/> or data cannot be loaded from saved user data.
@@ -19789,7 +19853,7 @@
         </member>
         <member name="M:Rewired.ReInput.MappingHelper.GetMouseMapInstanceSavedOrDefault(System.Int32,System.Int32,System.Int32)">
             <summary>
-            Gets an instanced copy of a Mouse Map.
+            Gets a copy of a Mouse Map.
             This can be used to view the Controller Map saved in user data if available or the default Controller Map setup in the Rewired Input Manager.
             The Controller Map will be first loaded from <see cref="T:Rewired.Data.UserDataStore"/>. If none is found, it will be loaded from the Rewired Input Manager defaults.
             <see cref="T:Rewired.Data.UserDataStore"/> must implement <see cref="T:Rewired.Interfaces.IControllerMapStore"/> or data cannot be loaded from saved user data.
@@ -19801,7 +19865,7 @@
         </member>
         <member name="M:Rewired.ReInput.MappingHelper.GetMouseMapInstanceSavedOrDefault(System.Int32,System.String,System.String)">
             <summary>
-            Gets an instanced copy of a Mouse Map.
+            Gets a copy of a Mouse Map.
             This can be used to view the Controller Map saved in user data if available or the default Controller Map setup in the Rewired Input Manager.
             The Controller Map will be first loaded from <see cref="T:Rewired.Data.UserDataStore"/>. If none is found, it will be loaded from the Rewired Input Manager defaults.
             <see cref="T:Rewired.Data.UserDataStore"/> must implement <see cref="T:Rewired.Interfaces.IControllerMapStore"/> or data cannot be loaded from saved user data.
@@ -19832,7 +19896,7 @@
         </member>
         <member name="M:Rewired.ReInput.MappingHelper.GetControllerTemplateMapInstance(System.Guid,System.Int32,System.Int32)">
             <summary>
-            Gets an instanced copy of a Controller Template Map from the default controller maps.
+            Gets a copy of a Controller Template Map from the default controller maps.
             This can be used to view the default Controller Template Map setup in the Rewired Input Manager.
             </summary>
             <param name="templateTypeGuid">Controller Template type guid</param>
@@ -19842,7 +19906,7 @@
         </member>
         <member name="M:Rewired.ReInput.MappingHelper.GetControllerTemplateMapInstance(System.Guid,System.String,System.String)">
             <summary>
-            Gets an instanced copy of a Controller Template Map from the default controller maps.
+            Gets a copy of a Controller Template Map from the default controller maps.
             This can be used to view the default Controller Template Map setup in the Rewired Input Manager.
             </summary>
             <param name="templateTypeGuid">Controller Template type guid</param>
@@ -19852,31 +19916,31 @@
         </member>
         <member name="M:Rewired.ReInput.MappingHelper.GetControllerMapLayoutManagerRuleSetInstance(System.Int32)">
             <summary>
-            Gets an instance of the Controller Map Layout Manager Rule Set at the specified id.
+            Gets a copy of the Controller Map Layout Manager Rule Set at the specified id.
             </summary>
             <param name="id">The id of the Controller Map Layout Manager Rule Set.</param>
             <returns>An instance of the Controller Map Layout Manager Rule Set at the specified id.</returns>
         </member>
         <member name="M:Rewired.ReInput.MappingHelper.GetControllerMapLayoutManagerRuleSetInstance(System.String)">
             <summary>
-            Gets an instance of the Controller Map Layout Manager Rule Set at the specified name.
+            Gets a copy of the Controller Map Layout Manager Rule Set with the specified name.
             </summary>
             <param name="name">The name of the Controller Map Layout Manager Rule Set.</param>
-            <returns>An instance of the Controller Map Layout Manager Rule Set at the specified name.</returns>
+            <returns>A copy of the Controller Map Layout Manager Rule Set with the specified name.</returns>
         </member>
         <member name="M:Rewired.ReInput.MappingHelper.GetControllerMapEnablerRuleSetInstance(System.Int32)">
             <summary>
-            Gets an instance of the Controller Map Enabler Rule Set at the specified id.
+            Gets a copy of the Controller Map Enabler Rule Set at the specified id.
             </summary>
             <param name="id">The id of the Controller Map Enabler Rule Set.</param>
-            <returns>An instance of the Controller Map Enabler Rule Set at the specified id.</returns>
+            <returns>A copy of the Controller Map Enabler Rule Set at the specified id.</returns>
         </member>
         <member name="M:Rewired.ReInput.MappingHelper.GetControllerMapEnablerRuleSetInstance(System.String)">
             <summary>
-            Gets an instance of the Controller Map Enabler Rule Set at the specified name.
+            Gets a copy of the Controller Map Enabler Rule Set with the specified name.
             </summary>
             <param name="name">The name of the Controller Map Enabler Rule Set.</param>
-            <returns>An instance of the Controller Map Enabler Rule Set at the specified name.</returns>
+            <returns>A copy of the Controller Map Enabler Rule Set with the specified name.</returns>
         </member>
         <member name="P:Rewired.ReInput.MappingHelper.MapCategories">
             <summary>
@@ -21014,6 +21078,33 @@
         <member name="P:Rewired.Utils.Classes.Data.ScreenRect.center">
             <summary>
             The center of the rect.
+            </summary>
+        </member>
+        <member name="T:Rewired.Utils.Classes.Data.GetSetValue`1">
+            <summary>
+            Gets or sets a value using delegates.
+            </summary>
+            <typeparam name="T"></typeparam>
+        </member>
+        <member name="T:Rewired.Utils.Classes.Data.KeyedGetSetValueStore`1">
+            <exclude></exclude>
+            <summary>
+            Class for accessing GetSetValue.
+            This is a concrete class without an interface to make it more versatile
+            because IL2CPP cannot handle generic methods on interfaces.
+            </summary>
+            <typeparam name="TKey"></typeparam>
+        </member>
+        <member name="M:Rewired.Utils.Classes.Data.KeyedGetSetValueStore`1.#ctor(System.Collections.Generic.Dictionary{`0,System.Object},System.Boolean)">
+            <param name="valueDelegates">Must contain objects that implement IGetSetValue.</param>
+            <param name="isReadOnlyCollection">If true, the collection is read-only and cannot be modified. Values can still be set.</param>
+        </member>
+        <member name="M:Rewired.Utils.Classes.Data.KeyedGetSetValueStore`1.#ctor(System.Boolean)">
+            <param name="isReadOnlyCollection">If true, the collection is read-only and cannot be modified. Values can still be set.</param>
+        </member>
+        <member name="P:Rewired.Utils.Classes.Data.KeyedGetSetValueStore`1.isReadOnlyCollection">
+            <summary>
+            If true, the collection is read-only and cannot be modified. Values can still be set.
             </summary>
         </member>
         <member name="M:Rewired.Utils.ExtensionMethods.IsNullOrDestroyed(System.Object)">
@@ -22162,7 +22253,7 @@
         </member>
         <member name="T:Rewired.Utils.Classes.Utility.LowLevelInputEventQueue">
             <summary>
-            This uses native buffers even though they're slower read/write than byte[] or int/float[]
+            This uses native buffers even though they're slower read/write than byte[] or int/double[]
             because it means we can allocate a lot of memeory and release it without garbage
             collection.
             </summary>
