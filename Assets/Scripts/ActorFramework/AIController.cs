@@ -22,7 +22,7 @@ public class AIController : ActorController
 {
 	public List<AIConditionalBehaviorGroup> behaviorGroups = new List<AIConditionalBehaviorGroup>();
 
-	protected override void Init(Actor actor, object context = null)
+	public override void Init(Actor actor, object context = null)
 	{
 		base.Init(actor, context);
 		
@@ -30,11 +30,11 @@ public class AIController : ActorController
 			actor.lockOnTarget = lockOnTarget;
 	}
 
-	public override void Tick()
+	protected override void OnTick(Actor actor, float deltaTime)
 	{
-		base.Tick();
+		//actor.lockOnTarget = PlayerController.instance.Actor;
 		
-		actor.lockOnTarget = PlayerController.instance.Actor;
+		// TODO: Make sure lockon target stays current.
 		
 		foreach(AIConditionalBehaviorGroup group in behaviorGroups)
 		{

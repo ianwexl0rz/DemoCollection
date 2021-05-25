@@ -10,18 +10,16 @@ public class PlayerController : ActorController
 
 	public static void RegisterPlayer(Player player) => Player = player;
 
-	protected override void Init(Actor actor, object context = null)
+	public override void Init(Actor actor, object context = null)
 	{
 		if (instance == null) instance = this;
 		
 		base.Init(actor, context);
-		inputBuffer.Clear();
+		actor.inputBuffer.Clear();
 	}
 
-	public override void Tick()
+	protected override void OnTick(Actor actor, float deltaTime)
 	{
-		base.Tick();
-		
 		actor.move = CalculateMove();
 
 		if(!(actor is Character character)) return;
@@ -35,18 +33,18 @@ public class PlayerController : ActorController
 
 		// Roll
 		if(Player.GetButtonDown(PlayerAction.Roll))
-			inputBuffer.Add(PlayerAction.Roll, 0.1f);
+			actor.inputBuffer.Add(PlayerAction.Roll, 0.1f);
 
 		// Jump
 		if(Player.GetButtonDown(PlayerAction.Jump))
-			inputBuffer.Add(PlayerAction.Jump, 0.1f);
+			actor.inputBuffer.Add(PlayerAction.Jump, 0.1f);
 
 		// Attack
 		if(Player.GetButtonDown(PlayerAction.Attack))
-			inputBuffer.Add(PlayerAction.Attack, 0.5f);
+			actor.inputBuffer.Add(PlayerAction.Attack, 0.5f);
 	}
 
-	protected override void Clean() => actor.move = Vector3.zero;
+	//protected override void Clean() => actor.move = Vector3.zero;
 
 	private static Vector3 CalculateMove()
 	{

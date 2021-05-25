@@ -6,8 +6,6 @@ using System.Linq;
 
 public class Actor : Entity, ILockOnTarget, IDamageable
 {
-	[SerializeField]
-	private ActorController controller;
 	public Animator animator { get; protected set; }
 	public bool InputEnabled { get; set; }
 	public Vector3 move { get; set; }
@@ -20,6 +18,8 @@ public class Actor : Entity, ILockOnTarget, IDamageable
 	public Action UpdateAbilities = null;
 	public Action FixedUpdateAbilities = null;
 
+	public event Action<Actor, float> OnTick;
+
 	[HideInInspector]
 	public List<ActorAbility> abilities = new List<ActorAbility>();
 
@@ -31,18 +31,12 @@ public class Actor : Entity, ILockOnTarget, IDamageable
 	public Timer jumpAllowance { get; protected set; }
 
 	public Action OnDestroyCallback { get; set; }
+	
+	public readonly InputBuffer inputBuffer = new InputBuffer();
 
 	private Renderer[] renderers = null;
 	private Coroutine damageFlash = null;
 	private static readonly int DamageFlash = Shader.PropertyToID("_DamageFlash");
-
-	private void Start()
-	{
-		if (controller != null)
-		{
-			controller.Engage(this);
-		}
-	}
 
 	protected virtual void OnDestroy()
 	{
@@ -106,10 +100,9 @@ public class Actor : Entity, ILockOnTarget, IDamageable
 	public override void Tick(float deltaTime)
 	{
 		base.Tick(deltaTime);
-		//UpdateController(this);
-		if (controller) controller.Tick();
-		
-		actorTimerGroup.Tick(Time.deltaTime);
+		OnTick?.Invoke(this, deltaTime);
+		inputBuffer.Tick(deltaTime);
+		actorTimerGroup.Tick(deltaTime);
 		IsVisible = renderers.Any(r => r != null && r.isVisible);
 	}
 
@@ -118,12 +111,10 @@ public class Actor : Entity, ILockOnTarget, IDamageable
 		if(animator != null) animator.SetPaused(value);
 	}
 
-	public ActorController GetController() => controller;
-
 	public void SetController(ActorController newController, object context = null)
 	{
-		newController.Engage(this, context);
-		controller = newController;
+		newController.Init(this, context);
+		OnTick = newController.Tick;
 	}
 
 	private void ResetAbilities()
@@ -169,7 +160,7 @@ public class Actor : Entity, ILockOnTarget, IDamageable
 
 	protected bool TryConsumeAction(int actionId)
 	{
-		return controller.inputBuffer.ConsumeAction(actionId);
+		return inputBuffer.ConsumeAction(actionId);
 	}
 
 	public override void ApplyHit(Entity instigator, Vector3 point, Vector3 direction, AttackData attackData)

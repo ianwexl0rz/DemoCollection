@@ -1,17 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using UnityEngine;
-using Object = UnityEngine.Object;
 
 public class LockOnCollider : MonoBehaviour
 {
-	private Dictionary<ILockOnTarget, Vector2> potentialTargets = new Dictionary<ILockOnTarget, Vector2>();
 	[SerializeField] private float angleThreshold = 45f;
 
 	public void Init(Transform parent)
 	{
-		potentialTargets.Clear();
 		gameObject.SetActive(false);
 		var t = transform;
 		t.SetParent(parent);
@@ -19,7 +14,7 @@ public class LockOnCollider : MonoBehaviour
 		gameObject.SetActive(true);
 	}
 	
-	public ILockOnTarget GetTargetClosestToCenter(Camera cam, Actor self)
+	public ILockOnTarget GetTargetClosestToCenter(Dictionary<ILockOnTarget, Vector2> potentialTargets)
 	{
 		if (potentialTargets.Count == 0)
 			return null;
@@ -27,38 +22,29 @@ public class LockOnCollider : MonoBehaviour
 		ILockOnTarget bestTarget = null;
 		var bestDistance = Mathf.Infinity;
 
-		foreach (var target in potentialTargets.Keys.ToList())
+		foreach (var screenPosByTarget in potentialTargets)
 		{
-			if ((Actor)target == self || !target.IsVisible) continue;
-
-			// Screen position relative to center.
-			var screenPos = (Vector2)cam.WorldToScreenPoint(target.GetLookPosition()) - new Vector2(cam.pixelWidth, cam.pixelHeight) * 0.5f;
-			potentialTargets[target] = screenPos;
-			
-			var distanceFromCenter = screenPos.magnitude;
+			var distanceFromCenter = screenPosByTarget.Value.magnitude;
 			if (distanceFromCenter >= bestDistance) continue;
 			
-			bestTarget = target;
+			bestTarget = screenPosByTarget.Key;
 			bestDistance = distanceFromCenter;
 		}
 
 		return bestTarget;
 	}
 
-	public ILockOnTarget GetTargetClosestToVector(Actor self, ILockOnTarget current, Vector2 inputVector)
+	public ILockOnTarget GetTargetClosestToVector(Dictionary<ILockOnTarget, Vector2> potentialTargets, Vector2 inputVector, Vector2 currentTargetScreenPos)
 	{
 		ILockOnTarget bestTarget = null;
 		var smallestAngle = Mathf.Infinity;
 
-		foreach(var kp in potentialTargets)
+		foreach(var screenPosByTarget in potentialTargets)
 		{
-			var target = kp.Key;
-			if ((Actor)target == self || target == current || !target.IsVisible) continue;
-
-			var angle = Vector2.Angle(inputVector.normalized, (kp.Value - potentialTargets[current]).normalized);
+			var angle = Vector2.Angle(inputVector.normalized, screenPosByTarget.Value - currentTargetScreenPos.normalized);
 			if (angle >= smallestAngle) continue;
 
-			bestTarget = target;
+			bestTarget = screenPosByTarget.Key;
 			smallestAngle = angle;
 		}
 		
@@ -69,25 +55,13 @@ public class LockOnCollider : MonoBehaviour
 	
 	private void OnTriggerEnter(Collider other)
 	{
-		if (!other.TryGetComponent<ILockOnTarget>(out var target)) return;
-		
-		if (potentialTargets.ContainsKey(target)) return;
-		potentialTargets.Add(target, Vector2.positiveInfinity);
-
-		if (target is IDamageable destructable)
-			destructable.OnDestroyCallback = () => potentialTargets.Remove(target);
+		if (other.TryGetComponent<ILockOnTarget>(out var target))
+			CombatSystem.AddTargetInRange(target);
 	}
 
 	private void OnTriggerExit(Collider other)
 	{
-		if (!other.TryGetComponent<ILockOnTarget>(out var target)) return;
-		
-		if (!potentialTargets.ContainsKey(target)) return;
-		potentialTargets.Remove(target);
-		
-		// TODO: If the player is currently locked on, unlock.
-
-		if (target is IDamageable destructable)
-			destructable.OnDestroyCallback = () => { };
+		if (other.TryGetComponent<ILockOnTarget>(out var target))
+			CombatSystem.RemoveTargetInRange(target);
 	}
 }

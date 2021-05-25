@@ -270,7 +270,7 @@ Animator:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1947941858301876}
-  m_Enabled: 1
+  m_Enabled: 0
   m_Avatar: {fileID: 9000000, guid: 8c96fbc477da0405b9c477725bb7a7fe, type: 3}
   m_Controller: {fileID: 9100000, guid: c97417f297d644503b5f4a021c6fd4dc, type: 2}
   m_CullingMode: 0
@@ -293,15 +293,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 642a57e0cf005a6428466df6f124aa2c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  controller: {fileID: 0}
+  controller: {fileID: 11400000, guid: 197438d32256b794faf42212dfaf46b5, type: 2}
   abilities: []
   groundCheckHeight: 0.2
   rayOffsetDistance: 0.15
   extraGroundRays: 8
   minSpeed: 0.25
   walkSpeed: 3
-  runSpeed: 4
+  runSpeed: 5
   acceleration: 40
+  airAcceleration: 0
   directionalSpeedScale: {x: 0.8, y: 0.75}
   jumpHeight: 1
   jumpCount: 1
@@ -314,7 +315,6 @@ MonoBehaviour:
   maxTurnAir: 4
   hitBoxCollider: {fileID: 839335706}
   torquePID: {fileID: 11400000, guid: 00ed0bd437019a34dbf27b4bd064959e, type: 2}
-  lockOnOrientation: {x: 0, y: 0, z: 0, w: 0}
 --- !u!114 &1306851917
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -513,6 +513,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 400028, guid: 8c96fbc477da0405b9c477725bb7a7fe, type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 400028, guid: 8c96fbc477da0405b9c477725bb7a7fe, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
@@ -525,6 +529,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 400028, guid: 8c96fbc477da0405b9c477725bb7a7fe, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 400028, guid: 8c96fbc477da0405b9c477725bb7a7fe, type: 3}
       propertyPath: m_LocalRotation.x
       value: 0
       objectReference: {fileID: 0}
@@ -534,14 +542,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 400028, guid: 8c96fbc477da0405b9c477725bb7a7fe, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 400028, guid: 8c96fbc477da0405b9c477725bb7a7fe, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 400028, guid: 8c96fbc477da0405b9c477725bb7a7fe, type: 3}
-      propertyPath: m_RootOrder
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 400028, guid: 8c96fbc477da0405b9c477725bb7a7fe, type: 3}
@@ -557,20 +557,20 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 400040, guid: 8c96fbc477da0405b9c477725bb7a7fe, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0.004718256
-      objectReference: {fileID: 0}
-    - target: {fileID: 400040, guid: 8c96fbc477da0405b9c477725bb7a7fe, type: 3}
       propertyPath: m_LocalRotation.w
       value: 0.17902537
       objectReference: {fileID: 0}
-    - target: {fileID: 400042, guid: 8c96fbc477da0405b9c477725bb7a7fe, type: 3}
+    - target: {fileID: 400040, guid: 8c96fbc477da0405b9c477725bb7a7fe, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.013413281
+      value: 0.004718256
       objectReference: {fileID: 0}
     - target: {fileID: 400042, guid: 8c96fbc477da0405b9c477725bb7a7fe, type: 3}
       propertyPath: m_LocalRotation.w
       value: -0.19577155
+      objectReference: {fileID: 0}
+    - target: {fileID: 400042, guid: 8c96fbc477da0405b9c477725bb7a7fe, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.013413281
       objectReference: {fileID: 0}
     - target: {fileID: 13700000, guid: 8c96fbc477da0405b9c477725bb7a7fe, type: 3}
       propertyPath: m_Materials.Array.data[0]

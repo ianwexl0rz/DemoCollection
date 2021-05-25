@@ -120,24 +120,23 @@ public class MainMode : GameMode
         SetPlayer(playerCharacters[playerIndex]);
     }
 
-    private void SetPlayer(Character newTarget, bool immediate = false)
+    private void SetPlayer(Character newPlayer, bool immediate = false)
     {
-        if (playerCharacter != newTarget && playerCharacter)
+        if (playerCharacter != null && playerCharacter != newPlayer)
         {
-            playerCharacter.SetController(followerBrain, newTarget); // Set the old active player to use Follower Brain
-            UnsetPlayer();
+            playerCharacter.SetController(followerBrain, newPlayer); // Set the old active player to use Follower Brain
         }
 
-        playerCharacter = newTarget;
+        playerCharacter = newPlayer;
         playerCharacter.SetController(playerBrain); // Set the active player to use Player Brain
         gameCamera.SetFollowTarget(playerCharacter, immediate); // Set the camera to follow the active player
 
         OnSetPlayer(playerCharacter);
     }
         
-    private void UnsetPlayer()
-    {
-        playerCharacter = null;
-        OnUnsetPlayer();
-    }
+    // private void UnsetPlayer()
+    // {
+    //     playerCharacter = null;
+    //     OnUnsetPlayer();
+    // }
 }

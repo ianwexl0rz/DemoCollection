@@ -51,15 +51,15 @@ namespace AmplifyShaderEditor
 		{
 			AmplifyShaderEditorWindow.CreateNewTemplateShader( "e1de45c0d41f68c41b2cc20c8b9c05ef" );
 		}
-		[MenuItem( "Assets/Create/Amplify Shader/Universal/Cel Shaded + SSS", false, 85 )]
+		[MenuItem( "Assets/Create/Amplify Shader/Universal/Cel Shaded", false, 85 )]
 		public static void ApplyTemplate9()
 		{
-			AmplifyShaderEditorWindow.CreateNewTemplateShader( "e92dacfbb76aca84a9cf42cd8b5228fc" );
+			AmplifyShaderEditorWindow.CreateNewTemplateShader( "af8c29dd691e0e14fbfe92fd55725540" );
 		}
-		[MenuItem( "Assets/Create/Amplify Shader/Universal/Cel Shaded", false, 85 )]
+		[MenuItem( "Assets/Create/Amplify Shader/Universal/Cel Shaded + SSS", false, 85 )]
 		public static void ApplyTemplate10()
 		{
-			AmplifyShaderEditorWindow.CreateNewTemplateShader( "af8c29dd691e0e14fbfe92fd55725540" );
+			AmplifyShaderEditorWindow.CreateNewTemplateShader( "e92dacfbb76aca84a9cf42cd8b5228fc" );
 		}
 	}
 }

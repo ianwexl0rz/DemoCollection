@@ -17,6 +17,7 @@ public class Character : Actor
 	[SerializeField] private float walkSpeed = 2f;
 	[SerializeField] private float runSpeed = 4f;
 	[SerializeField] private float acceleration = 40;
+	[SerializeField] private float airAcceleration = 10;
 	[SerializeField] private Vector2 directionalSpeedScale = Vector2.one;
 	[SerializeField] private float jumpHeight = 4f;
 	[SerializeField] private int jumpCount = 1;
@@ -29,13 +30,17 @@ public class Character : Actor
 	[SerializeField] private float maxTurnAir = 4f;
 	[SerializeField] private CapsuleCollider hitBoxCollider = null;
 	[SerializeField] private PID3 torquePID = null;
+	[SerializeField] private PID3 planarVelocityPID = null;
 
 	private bool isGrounded;
 	private Vector3 torqueIntegral;
 	private Vector3 torqueError;
+	
+	private Vector3 planarVelocityIntegral;
+	private Vector3 planarVelocityError;
 	private Vector3 groundVelocity = Vector3.zero;
 	private Quaternion inputOrientation;
-	public Quaternion lockOnOrientation;
+	//public Quaternion lockOnOrientation;
 	private Vector3 groundNormal;
 	private Vector3 groundPoint;
 	private Vector3 groundCheckPoint;
@@ -58,7 +63,6 @@ public class Character : Actor
 
 	public bool Run { get; set; }
 	public ILockOnTarget lockOnTarget { get; set; }
-	public bool IsLockedOn() => lockOnTarget != null;
 	public CapsuleCollider CapsuleCollider { get; private set; }
 	public MeleeCombat MeleeCombat { get; private set; }
 
@@ -68,7 +72,7 @@ public class Character : Actor
 		MeleeCombat = GetComponent<MeleeCombat>();
 		CapsuleCollider = GetComponent<CapsuleCollider>();
 
-		inputOrientation = Quaternion.LookRotation(transform.forward);
+		//inputOrientation = Quaternion.LookRotation(transform.forward);
 		remainingJumps = jumpCount;
 		rb.maxAngularVelocity = MaxAngularVelocity;
 
@@ -137,37 +141,16 @@ public class Character : Actor
 				}
 			}
 		}
-
-		if (lockOnTarget != null)
-		{
-			var toLockOnTarget = (lockOnTarget.GetLookPosition() - GetLookPosition()).WithY(0f).normalized;
-			lockOnOrientation = Quaternion.LookRotation(toLockOnTarget);
-		}
-
-		var addVelocity = Vector3.zero;
 		
 		// Update desired velocity if there is input.
 		if (move.normalized != Vector3.zero && InputEnabled && !hitReaction.InProgress)
 		{
-			var input = move;
-
 			// Player should look towards input vector, if not locked on.
 			inputOrientation = Quaternion.LookRotation(move.normalized);
-
-			// If rolling on the ground, use the player direction instead of direct input.
-			var rollingOnGround = isGrounded && rollAngle > Mathf.Epsilon;
-			if (rollingOnGround) input = inputOrientation * Vector3.forward * move.magnitude;
-
-			if (isGrounded) addVelocity = deltaTime * (isGrounded ? acceleration : acceleration * 0.25f) * input;
 		}
 		
-		// Interpolate desired rotation to target orientation.
-		var useGroundTurnRate = isGrounded && rollAngle < Mathf.Epsilon;
-		var maxTurnRate = useGroundTurnRate ? maxTurnGround : maxTurnAir;
-		var targetOrientation = lockOnTarget != null ? lockOnOrientation : inputOrientation;
-		desiredRotation = Quaternion.RotateTowards(desiredRotation, targetOrientation, maxTurnRate);
+		desiredVelocity += (isGrounded ? acceleration : airAcceleration) * deltaTime * move;
 
-		if (isGrounded) desiredVelocity += addVelocity;
 		var speed = desiredVelocity.magnitude;
 		
 		// Apply friction
@@ -178,19 +161,26 @@ public class Character : Actor
 
 		if (isGrounded)
 		{
-			
 			// Speed is only variable when NOT sprinting.
-			var normalSpeed = Mathf.Max(minSpeed, walkSpeed * move.sqrMagnitude);
-			var shouldRun = Run && isGrounded && rollAngle < Mathf.Epsilon;
-			var targetSpeed = shouldRun ? runSpeed : normalSpeed;
-			
+			//var normalSpeed = Mathf.Max(minSpeed, walkSpeed * move.sqrMagnitude);
+			var shouldRun = Run && rollAngle < Mathf.Epsilon;
+			var targetSpeed = shouldRun ? runSpeed : walkSpeed;
+
 			// Slower while walking backwards...
-			// var dot = Vector3.Dot(desiredVelocity, transform.forward);
-			// targetSpeed = Mathf.Lerp(targetSpeed, targetSpeed * 0.5f, -dot);
+			//var dot = Vector3.Dot(desiredVelocity, transform.forward);
+			//targetSpeed = Mathf.Lerp(targetSpeed, targetSpeed * 0.5f, -dot);
 			speed = Mathf.Min(speed, targetSpeed);
 		}
 
 		groundVelocity = (desiredVelocity.normalized * speed).WithY(0f);
+		
+		// var shouldRun = Run && rollAngle < Mathf.Epsilon;
+		// var targetSpeed = shouldRun ? runSpeed : walkSpeed;
+		// var targetVelocity = (move * targetSpeed).WithY(rb.velocity.y);
+		// var acc = planarVelocityPID.Output(rb.velocity, targetVelocity, ref planarVelocityIntegral,
+		// 	ref planarVelocityError, deltaTime);
+		// rb.AddForce(acc, ForceMode.Acceleration);
+		// groundVelocity = rb.velocity.WithY(0);
 		
 		// Jump.
 		if (remainingJumps > 0 && TryConsumeAction(PlayerAction.Jump))
@@ -246,7 +236,7 @@ public class Character : Actor
 				if (remainingJumps == jumpCount) remainingJumps = 0;
 
 				// HACK: We jumped and it's OK to check for the ground again
-				if (jumping) jumping = false;
+				jumping = false;
 			}
 
 			// We passed the peak of the jump
@@ -262,20 +252,10 @@ public class Character : Actor
 			rollAngle += rollSpeed * Time.fixedDeltaTime;
 			if (rollAngle >= 360f) rollAngle = 0f;
 		}
-		
-		var rotation = desiredRotation;
 
-		if (rollAngle > 0)
-		{
-			var rollAxis = IsLockedOn() && groundVelocity.magnitude >= minSpeed
-				? Vector3.Cross(Quaternion.Inverse(lockOnOrientation) * inputOrientation * Vector3.forward, Vector3.down)
-				: Vector3.right;
-
-			var rollRot = Quaternion.AngleAxis(rollAngle, rollAxis);
-			rotation *= rollRot;
-		}
-
-		var targetTorque = rb.rotation.TorqueTo(rotation, deltaTime);
+		// Handle rotation.
+		var targetRotation = GetTargetRotation();
+		var targetTorque = rb.rotation.TorqueTo(targetRotation, deltaTime);
 		var torque = torquePID.Output(rb.angularVelocity, targetTorque, ref torqueIntegral, ref torqueError, deltaTime);
 		rb.AddTorque(torque, ForceMode.Acceleration);
 
@@ -287,6 +267,28 @@ public class Character : Actor
 			// TODO: Should maybe set attack ID and generic attack trigger?
 			if(animator != null) { animator.SetTrigger(Attack); }
 		}
+	}
+
+	private Quaternion GetTargetRotation()
+	{
+		var maxTurnRate = isGrounded && rollAngle < Mathf.Epsilon ? maxTurnGround : maxTurnAir;
+		var rollAxis = Vector3.right;
+
+		if (lockOnTarget != null)
+		{
+			var toLockOnTarget = (lockOnTarget.GetLookPosition() - GetLookPosition()).WithY(0f).normalized;
+			var lockOnOrientation = Quaternion.LookRotation(toLockOnTarget);
+			desiredRotation = Quaternion.RotateTowards(desiredRotation, lockOnOrientation, maxTurnRate);
+
+			if (rollAngle > 0 && groundVelocity.magnitude >= minSpeed)
+				rollAxis = Vector3.Cross(Quaternion.Inverse(lockOnOrientation) * inputOrientation * Vector3.forward, Vector3.down);
+		}
+		else
+		{
+			desiredRotation = Quaternion.RotateTowards(desiredRotation, inputOrientation, maxTurnRate);
+		}
+
+		return rollAngle > 0 ? desiredRotation * Quaternion.AngleAxis(rollAngle, rollAxis) : desiredRotation;
 	}
 
 	protected override void UpdateAnimation(float deltaTime)
@@ -343,27 +345,27 @@ public class Character : Actor
 			var origin = raycastOrigin + dir * rayOffsetDistance;
 
 			// Red = No Hit, Yellow = Hit, Green = Ground
-			//Color[] color = { Color.red, Color.yellow, Color.green };
-			//var status = 0;
+			Color[] color = { Color.red, Color.yellow, Color.green };
+			var status = 0;
 
 			if (Physics.Raycast(origin, Vector3.down, out RaycastHit hit, groundCheckHeight + 0.2f, ~LayerMask.GetMask("Actor", "ProxyObject")))
 			{
-
 				// This would prevent walking up ramps that are too steep
-				//if(Vector3.Angle(hit.normal, Vector3.up) > 45f)
-				//{
-				//	status = 1;
-				//	continue;
-				//}
-
-				averageNormal += hit.normal;
-				averagePoint += hit.point;
-				averageDistance += hit.distance;
-				groundHitCount++;
-				//status = 2;
+				if(Vector3.Angle(hit.normal, Vector3.up) > 45f)
+				{
+					status = 1;
+				}
+				else
+				{
+					averageNormal += hit.normal;
+					averagePoint += hit.point;
+					averageDistance += hit.distance;
+					groundHitCount++;
+					status = 2;
+				}
 			}
 
-			//Debug.DrawLine(origin, origin + Vector3.down * groundCheckHeight, color[status]);
+			Debug.DrawLine(origin, origin + Vector3.down * groundCheckHeight, color[status]);
 		}
 
 		// Did we hit the ground?

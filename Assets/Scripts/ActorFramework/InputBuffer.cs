@@ -17,7 +17,7 @@ public class InputBuffer : List<KeyValuePair<int, float>>
 		return hasAction;
 	}
 
-	public void Update(float deltaTime)
+	public void Tick(float deltaTime)
 	{
 		// Attempt input from newest to oldest.
 		for(var i = Count; i-- > 0;)

@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Rewired;
 using UnityEngine;
 
@@ -23,6 +24,8 @@ public class CombatSystem : ScriptableObject
     private bool lookInputStale;
 
     public static ILockOnTarget LockOnCandidate { get; private set; }
+
+    private static List<ILockOnTarget> targetsInRange = new List<ILockOnTarget>();
 
     public void Init(Player player)
     {
@@ -52,13 +55,22 @@ public class CombatSystem : ScriptableObject
         combatEvents.Clear();
     }
 
+    private Vector2 GetScreenPos(ILockOnTarget lockOnTarget, Camera mainCamera)
+    {
+        return (Vector2) mainCamera.WorldToScreenPoint(lockOnTarget.GetLookPosition()) - new Vector2(mainCamera.pixelWidth, mainCamera.pixelHeight) * 0.5f;
+    }
+
     public void UpdateLockOn(Character playerCharacter, Camera mainCamera)
     {
-        var closestToCenter = lockOnCollider.GetTargetClosestToCenter(mainCamera, playerCharacter);
+        var currentTarget = playerCharacter.lockOnTarget;
+        var potentialTargets = targetsInRange
+            .Except(new []{playerCharacter, currentTarget})
+            .Where(k => k.IsVisible)
+            .ToDictionary(k => k, k => GetScreenPos(k, mainCamera));
 
-        if (!playerCharacter.IsLockedOn())
+        if (currentTarget == null)
         {
-            LockOnCandidate = closestToCenter;
+            LockOnCandidate = lockOnCollider.GetTargetClosestToCenter(potentialTargets);
             lookInputStale = true;
         }
         else
@@ -69,7 +81,9 @@ public class CombatSystem : ScriptableObject
             if (lookInputStale && lookVector.Equals(Vector2.zero)) lookInputStale = false;
             if (!lookInputStale && lookVector.sqrMagnitude > 0)
             {
-                var newTarget = lockOnCollider.GetTargetClosestToVector(playerCharacter, playerCharacter.lockOnTarget, lookVector);
+                var halfScreenPixels = new Vector2(mainCamera.pixelWidth, mainCamera.pixelHeight) * 0.5f;
+                var currentTargetScreenPos = (Vector2) mainCamera.WorldToScreenPoint(currentTarget.GetLookPosition()) - halfScreenPixels;
+                var newTarget = lockOnCollider.GetTargetClosestToVector(potentialTargets, lookVector, currentTargetScreenPos);
                 if (!ReferenceEquals(newTarget, null))
                 {
                     LockOnCandidate = newTarget;
@@ -81,8 +95,27 @@ public class CombatSystem : ScriptableObject
         }
 
         // Update lock-on indicator position.
-        lockOnIndicator.UpdatePosition(playerCharacter.IsLockedOn(), LockOnCandidate,
+        lockOnIndicator.UpdatePosition(playerCharacter.lockOnTarget != null, LockOnCandidate,
             mainCamera.transform.position);
+    }
+
+    public static void AddTargetInRange(ILockOnTarget lockOnTarget)
+    {
+        if (targetsInRange.Contains(lockOnTarget)) return;
+        targetsInRange.Add(lockOnTarget);
+
+        if (lockOnTarget is IDamageable destructable)
+            destructable.OnDestroyCallback = () => targetsInRange.Remove(lockOnTarget);
+    }
+
+    public static void RemoveTargetInRange(ILockOnTarget lockOnTarget)
+    {
+        if (!targetsInRange.Contains(lockOnTarget)) return;
+        targetsInRange.Remove(lockOnTarget);
+		
+        // TODO: If the player is currently locked on, unlock.
+        if (lockOnTarget is IDamageable destructable)
+            destructable.OnDestroyCallback = () => { };
     }
     
     private bool GetHitSpark(Entity entity, out GameObject hitSpark)
