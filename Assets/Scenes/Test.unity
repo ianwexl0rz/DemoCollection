@@ -3397,9 +3397,14 @@ MonoBehaviour:
   mainMode:
     playerCharacter: {fileID: 1655508766}
     gameCamera: {fileID: 198612201}
-    combatSystem: {fileID: 11400000, guid: e627f69f114a44d4c8931870799cc01e, type: 2}
+    lockOnColliderPrefab: {fileID: 3674961934879777718, guid: 902861b06dc11d347a4716e3bb3ef779,
+      type: 3}
     playerBrain: {fileID: 11400000, guid: 197438d32256b794faf42212dfaf46b5, type: 2}
     followerBrain: {fileID: 11400000, guid: 3bd6e43a756db3642bc08e8a5ba40b8e, type: 2}
+    blueHitSparkPrefab: {fileID: 1312546261970878, guid: bc7a4bb76e52cad4c8ac1a9c9b37ed1c,
+      type: 3}
+    orangeHitSparkPrefab: {fileID: 1985286972383262, guid: 55973eedeec3c49499c7b31f6fb2037e,
+      type: 3}
   pauseMode:
     pauseMenu: {fileID: 1010547435218224749}
 --- !u!4 &1675173628

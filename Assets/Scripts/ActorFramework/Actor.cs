@@ -29,8 +29,6 @@ public class Actor : Entity, ILockOnTarget, IDamageable
 	protected readonly TimerGroup actorTimerGroup = new TimerGroup();
 	public Timer hitReaction { get; protected set; }
 	public Timer jumpAllowance { get; protected set; }
-
-	public Action OnDestroyCallback { get; set; }
 	
 	public readonly InputBuffer inputBuffer = new InputBuffer();
 
@@ -38,10 +36,6 @@ public class Actor : Entity, ILockOnTarget, IDamageable
 	private Coroutine damageFlash = null;
 	private static readonly int DamageFlash = Shader.PropertyToID("_DamageFlash");
 
-	protected virtual void OnDestroy()
-	{
-		OnDestroyCallback();
-	}
 
 	public override void Awake()
 	{

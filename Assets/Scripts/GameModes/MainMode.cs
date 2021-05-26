@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -8,29 +9,37 @@ using Object = UnityEngine.Object;
 public class MainMode : GameMode
 {
     public static event Action<Actor> OnSetPlayer = delegate {  };
-    public static event Action OnUnsetPlayer = delegate {  };
+    //public static event Action OnUnsetPlayer = delegate {  };
     
+    private static IEnumerator hitPause;
+
     [FormerlySerializedAs("activePlayer")]
     [SerializeField] private Character playerCharacter = null;
     [SerializeField] private ThirdPersonCamera gameCamera = null;
-    [SerializeField] private CombatSystem combatSystem = null;
+    [FormerlySerializedAs("lockOnColliderPrefab")] [SerializeField] private LockOn lockOnPrefab = null;
 
     [Header("Actor Controllers")]
     [SerializeField] private PlayerController playerBrain = null;
     [SerializeField] private ActorController followerBrain = null;
     
+    [Header("Hit Sparks")]
+    [SerializeField] private GameObject blueHitSparkPrefab = null;
+    [SerializeField] private GameObject orangeHitSparkPrefab = null;
+    
     private int playerIndex;
     private List<Character> playerCharacters;
-
     private Camera mainCamera;
     private bool cachedPhysicsPaused;
     [NonSerialized] private static bool physicsPaused;
     [NonSerialized] private bool initialized;
+    
 
     public ThirdPersonCamera MainCamera => gameCamera;
     public Character PlayerCharacter => playerCharacter;
 
     private static List<Entity> entities = new List<Entity>();
+    
+    private static List<CombatEvent> combatEvents = new List<CombatEvent>();
 
     public static void AddEntity(Entity entity) => entities.Add(entity);
     public static void RemoveEntity(Entity entity) => entities.Remove(entity);
@@ -45,7 +54,8 @@ public class MainMode : GameMode
             initialized = true;
             cachedPhysicsPaused = false;
             
-            combatSystem.Init(player);
+            var lockOnCollider = Object.Instantiate(lockOnPrefab);
+            lockOnCollider.Init();
 
             playerCharacters = new List<Character>(Object.FindObjectsOfType<Character>());
             if (playerCharacter != null) playerIndex = playerCharacters.IndexOf(playerCharacter);
@@ -71,7 +81,7 @@ public class MainMode : GameMode
         // TODO: Player input should be received even if hit pause is active.
 
         // Wait for hit pause to conclude.
-        if (CombatSystem.TickHitPause()) return;
+        if (hitPause != null && hitPause.MoveNext()) return;
 
         // Hold the right bumper for slow-mo!
         Time.timeScale = player.GetButton(PlayerAction.SlowMo) ? 0.01f : 1f;
@@ -85,14 +95,18 @@ public class MainMode : GameMode
 
     public override void LateTick(float deltaTime)
     {
-        foreach (var entity in entities) entity.LateTick(Time.deltaTime);
+        foreach (var entity in entities) entity.LateTick(deltaTime);
 
         var lookInput = player.GetAxis2D(PlayerAction.LookHorizontal, PlayerAction.LookVertical);
         
         gameCamera.UpdatePositionAndRotation(lookInput, playerCharacter.lockOnTarget);
         
-        if (!physicsPaused) combatSystem.UpdateLockOn(playerCharacter, mainCamera);
-        combatSystem.ResolveCombatEvents();
+        var lookVector = player.GetAxis2D(PlayerAction.LookHorizontal, PlayerAction.LookVertical);
+        if (GameManager.Settings.InvertX) lookInput.x *= -1; // TODO: Setting should be cached.
+        if (GameManager.Settings.InvertY) lookInput.y *= -1; // TODO: Setting should be cached.
+        
+        if (!physicsPaused) LockOn.UpdateLockOn(playerCharacter, mainCamera, lookInput);
+        ResolveCombatEvents();
 
         // Pause game if requested.
         if (player.GetButtonDown(PlayerAction.Pause))
@@ -133,10 +147,44 @@ public class MainMode : GameMode
 
         OnSetPlayer(playerCharacter);
     }
-        
-    // private void UnsetPlayer()
-    // {
-    //     playerCharacter = null;
-    //     OnUnsetPlayer();
-    // }
+    
+    public static void AddCombatEvents(IEnumerable<CombatEvent> combatEvent) => combatEvents.AddRange(combatEvent);
+
+    public void ResolveCombatEvents()
+    {
+        foreach (var combatEvent in combatEvents)
+        {
+            var (instigator, target, point, direction, attackData) = combatEvent;
+            target.ApplyHit(instigator, point, direction, attackData);
+            hitPause = HitPause(Time.fixedDeltaTime * attackData.hitPause);
+
+            if (GetHitSpark(target, out var hitSpark)) Object.Instantiate(hitSpark, point, Quaternion.identity);
+        }
+
+        combatEvents.Clear();
+    }
+    
+    private bool GetHitSpark(Entity entity, out GameObject hitSpark)
+    {
+        return hitSpark =
+            entity is Actor ? blueHitSparkPrefab :
+            !(entity is null) ? orangeHitSparkPrefab : null;
+    }
+    
+    private static IEnumerator HitPause(float duration)
+    {
+        yield return new WaitForEndOfFrame();
+        SetPhysicsPaused(true);
+
+        while (duration > 0)
+        {
+            duration -= Time.deltaTime;
+            player.SetVibration(0, 0.5f);
+            player.SetVibration(1, 0.5f);
+            yield return null;
+        }
+
+        player.StopVibration();
+        SetPhysicsPaused(false);
+    }
 }

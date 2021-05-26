@@ -130,7 +130,7 @@ public class Character : Actor
 			else
 			{
 				// If we were not locked on, try to assign target...
-				var candidate = CombatSystem.LockOnCandidate;
+				var candidate = LockOn.LockOnCandidate;
 				if (candidate != null) lockOnTarget = candidate;
 				else
 				{
@@ -313,7 +313,7 @@ public class Character : Actor
 				if (MeleeCombat.CheckHits((i + 1f) / loops, lastWeaponPos, lastWeaponRot, ref combatEvents))
 				{
 					//TODO: If we hit more than one thing, trigger hits over sequential frames?
-					CombatSystem.AddCombatEvents(combatEvents);
+					MainMode.AddCombatEvents(combatEvents);
 				}
 			}
 		}
