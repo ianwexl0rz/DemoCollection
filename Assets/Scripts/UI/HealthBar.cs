@@ -1,18 +1,27 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public class HealthBar : MonoBehaviour
 {
     [SerializeField] private RectTransform healthBarFill;
 
-    public void OnEnable() => MainMode.OnSetPlayer += RegisterPlayer;
+    private static HealthBar _instance;
 
-    public void OnDisable() => MainMode.OnSetPlayer -= RegisterPlayer;
+    private void Awake() => _instance = this;
 
-    private void RegisterPlayer(Actor actor)
+    public static void RegisterPlayer(Actor actor)
     {
         actor.OnHealthChanged += UpdateHealthBar;
         UpdateHealthBar(actor.Health / actor.MaxHealth);
     }
 
-    private void UpdateHealthBar(float normalizedHealth) => healthBarFill.anchorMax = new Vector2(normalizedHealth, healthBarFill.anchorMax.y);
+    public static void UnregisterPlayer(Actor actor)
+    {
+        actor.OnHealthChanged -= UpdateHealthBar;
+    }
+
+    public static void UpdateHealthBar(float normalizedHealth)
+    {
+        _instance.healthBarFill.anchorMax = new Vector2(normalizedHealth, _instance.healthBarFill.anchorMax.y);
+    }
 }

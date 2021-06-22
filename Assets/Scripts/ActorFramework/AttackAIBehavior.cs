@@ -6,6 +6,6 @@ class AttackAIBehavior : AIBehavior
 	public override void Tick(Actor actor)
 	{
 		if(actor.lockOnTarget != null)
-			actor.inputBuffer.Add(PlayerAction.Attack, 0.02f);
+			actor.InputBuffer.Add(PlayerAction.Attack, 0.02f);
 	}
 }

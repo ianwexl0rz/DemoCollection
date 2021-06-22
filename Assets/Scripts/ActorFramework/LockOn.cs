@@ -2,17 +2,18 @@
 using System.Linq;
 using UnityEngine;
 
-public class LockOn : MonoBehaviour
+[CreateAssetMenu]
+public class LockOn : ScriptableObject
 {
 	[Header("Lock On")]
 	[SerializeField] private LockOnIndicator lockOnIndicatorPrefab = null;
 	[SerializeField] private float range = 10f;
-	[SerializeField] private float angleThreshold = 45f;
+	[SerializeField] private float angleThreshold = 90f;
 
 	private static LockOnIndicator lockOnIndicator;
 	private static bool lookInputStale;
-
 	private static LockOn _instance;
+	
 	public static ILockOnTarget LockOnCandidate { get; private set; }
 
 	public void Init()
@@ -20,17 +21,17 @@ public class LockOn : MonoBehaviour
 		_instance = this;
 		lockOnIndicator = Instantiate(lockOnIndicatorPrefab);
 		lockOnIndicator.Init();
-		MainMode.OnSetPlayer += actor => _instance.SetFocusedTransform(actor.transform);
+		//MainMode.OnSetPlayer += actor => _instance.SetFocusedTransform(actor.transform);
 	}
 
-	public void SetFocusedTransform(Transform parent)
-	{
-		gameObject.SetActive(false);
-		var t = transform;
-		t.SetParent(parent);
-		t.localPosition = Vector3.zero;
-		gameObject.SetActive(true);
-	}
+	// public void SetFocusedTransform(Transform parent)
+	// {
+	// 	gameObject.SetActive(false);
+	// 	var t = transform;
+	// 	t.SetParent(parent);
+	// 	t.localPosition = Vector3.zero;
+	// 	gameObject.SetActive(true);
+	// }
     
 	private static Vector2 GetScreenPos(ILockOnTarget lockOnTarget, Camera mainCamera)
     {
@@ -40,8 +41,8 @@ public class LockOn : MonoBehaviour
     public static void UpdateLockOn(Character playerCharacter, Camera mainCamera, Vector2 lookInput)
     {
         var currentTarget = playerCharacter.lockOnTarget;
-
-        //var targetsInRange = Physics.OverlapSphere(playerCharacter.transform.position, _instance.range).Select(c => c.GetComponent<ILockOnTarget>());
+        
+        // TODO: Potential targets should add or remove themselves on Tick.
         
         var potentialTargets = Physics.OverlapSphere(playerCharacter.transform.position, _instance.range)
 	        .Select(c => c.GetComponent<ILockOnTarget>())

@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 41c2defa027b0454685cc8fe6735264f, type: 3}
+  m_Name: LockOn
+  m_EditorClassIdentifier: 
+  lockOnIndicatorPrefab: {fileID: 4292395687642920480, guid: d5b38022add3beb45b6c94117cefc6bd,
+    type: 3}
+  range: 10
+  angleThreshold: 90

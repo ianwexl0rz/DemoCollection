@@ -293,7 +293,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 642a57e0cf005a6428466df6f124aa2c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  controller: {fileID: 11400000, guid: 197438d32256b794faf42212dfaf46b5, type: 2}
   abilities: []
   groundCheckHeight: 0.2
   rayOffsetDistance: 0.15
@@ -305,7 +304,7 @@ MonoBehaviour:
   airAcceleration: 0
   directionalSpeedScale: {x: 0.8, y: 0.75}
   jumpHeight: 1
-  jumpCount: 1
+  jumpCount: 2
   gravityScale: 1
   rollSpeed: 540
   speedSmoothTime: 0.05
@@ -315,6 +314,7 @@ MonoBehaviour:
   maxTurnAir: 4
   hitBoxCollider: {fileID: 839335706}
   torquePID: {fileID: 11400000, guid: 00ed0bd437019a34dbf27b4bd064959e, type: 2}
+  planarVelocityPID: {fileID: 11400000, guid: 00ed0bd437019a34dbf27b4bd064959e, type: 2}
 --- !u!114 &1306851917
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -24,13 +24,11 @@ public class AIController : ActorController
 
 	public override void Init(Actor actor, object context = null)
 	{
-		base.Init(actor, context);
-		
 		if(context is ILockOnTarget lockOnTarget)
 			actor.lockOnTarget = lockOnTarget;
 	}
 
-	protected override void OnTick(Actor actor, float deltaTime)
+	public override void Tick(Actor actor, float deltaTime)
 	{
 		//actor.lockOnTarget = PlayerController.instance.Actor;
 		

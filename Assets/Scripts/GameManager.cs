@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
-using System;
 using Rewired;
 
 public class GameManager : MonoBehaviour
@@ -18,8 +17,6 @@ public class GameManager : MonoBehaviour
     public static GameSettings Settings => I.gameSettings;
     
     public static ThirdPersonCamera Camera => I.mainMode.MainCamera;
-    
-    public static Character GetPlayerCharacter() => I.mainMode.PlayerCharacter;
 
 	#region UNITY_METHODS
 	

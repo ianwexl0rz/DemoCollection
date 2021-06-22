@@ -3,9 +3,9 @@ using UnityEngine;
 
 public abstract class ActorController : ScriptableObject
 {
-	protected abstract void OnTick(Actor actor, float deltaTime);
+	public abstract void Init(Actor actor, object context = null);
 
-	public virtual void Init(Actor actor, object context = null) => actor.OnTick += OnTick;
+	public virtual void Clean(Actor actor) { }
 
-	public void Tick(Actor actor, float deltaTime) => OnTick(actor, deltaTime);
+	public abstract void Tick(Actor actor, float deltaTime);
 }

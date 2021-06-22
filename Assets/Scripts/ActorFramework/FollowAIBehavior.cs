@@ -10,40 +10,38 @@ public class FollowAIBehavior : AIBehavior
 
 	public override void Tick(Actor actor)
 	{
-		if(actor.lockOnTarget == null) { return; }
+		if(actor == null || actor.Equals(null) || actor.lockOnTarget == null || actor.lockOnTarget.Equals(null)) { return; }
 
-		Vector3 vector = (actor.lockOnTarget.GetLookPosition() - actor.GetLookPosition()).WithY(0f);
+		var toTarget = (actor.lockOnTarget.GetLookPosition() - actor.GetLookPosition()).WithY(0f);
 
-		if(actor.move == Vector3.zero)
+		if(actor.Move == Vector3.zero)
 		{
-			if(vector.magnitude > startDistance)
+			if(toTarget.magnitude > startDistance)
 			{
-				actor.move = vector.normalized;
+				actor.Move = toTarget.normalized;
 			}
 		}
-		else if(vector.magnitude > stopDistance)
+		else if(toTarget.magnitude > stopDistance)
 		{
-			if(actor is Character)
+			if(actor is Character player)
 			{
-				Character player = actor as Character;
-
-				if(!player.Run && vector.magnitude > startRunDistance)
+				if(!player.Run && toTarget.magnitude > startRunDistance)
 				{
 					// Start running
 					player.Run = true;
 				}
-				else if(player.Run && vector.magnitude < stopRunDistance)
+				else if(player.Run && toTarget.magnitude < stopRunDistance)
 				{
 					// Stop running
 					player.Run = false;
 				}
 			}
 
-			actor.move = vector.normalized;
+			actor.Move = toTarget.normalized;
 		}
 		else
 		{
-			actor.move = Vector3.zero;
+			actor.Move = Vector3.zero;
 		}
 	}
 }

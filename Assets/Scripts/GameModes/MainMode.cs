@@ -8,15 +8,13 @@ using Object = UnityEngine.Object;
 [Serializable]
 public class MainMode : GameMode
 {
-    public static event Action<Actor> OnSetPlayer = delegate {  };
-    //public static event Action OnUnsetPlayer = delegate {  };
-    
     private static IEnumerator hitPause;
+    private static MainMode _instance;
 
     [FormerlySerializedAs("activePlayer")]
     [SerializeField] private Character playerCharacter = null;
     [SerializeField] private ThirdPersonCamera gameCamera = null;
-    [FormerlySerializedAs("lockOnColliderPrefab")] [SerializeField] private LockOn lockOnPrefab = null;
+    [SerializeField] private LockOn lockOn = null;
 
     [Header("Actor Controllers")]
     [SerializeField] private PlayerController playerBrain = null;
@@ -32,10 +30,8 @@ public class MainMode : GameMode
     private bool cachedPhysicsPaused;
     [NonSerialized] private static bool physicsPaused;
     [NonSerialized] private bool initialized;
-    
 
     public ThirdPersonCamera MainCamera => gameCamera;
-    public Character PlayerCharacter => playerCharacter;
 
     private static List<Entity> entities = new List<Entity>();
     
@@ -48,14 +44,14 @@ public class MainMode : GameMode
     {
         if (!initialized)
         {
-            mainCamera = gameCamera.GetComponent<Camera>();
-            gameCamera.Init();
-
             initialized = true;
+
+            _instance = this;
             cachedPhysicsPaused = false;
             
-            var lockOnCollider = Object.Instantiate(lockOnPrefab);
-            lockOnCollider.Init();
+            mainCamera = gameCamera.GetComponent<Camera>();
+            gameCamera.Init();
+            lockOn.Init();
 
             playerCharacters = new List<Character>(Object.FindObjectsOfType<Character>());
             if (playerCharacter != null) playerIndex = playerCharacters.IndexOf(playerCharacter);
@@ -101,9 +97,8 @@ public class MainMode : GameMode
         
         gameCamera.UpdatePositionAndRotation(lookInput, playerCharacter.lockOnTarget);
         
-        var lookVector = player.GetAxis2D(PlayerAction.LookHorizontal, PlayerAction.LookVertical);
         if (GameManager.Settings.InvertX) lookInput.x *= -1; // TODO: Setting should be cached.
-        if (GameManager.Settings.InvertY) lookInput.y *= -1; // TODO: Setting should be cached.
+        //if (GameManager.Settings.InvertY) lookInput.y *= -1; // TODO: Setting should be cached.
         
         if (!physicsPaused) LockOn.UpdateLockOn(playerCharacter, mainCamera, lookInput);
         ResolveCombatEvents();
@@ -144,8 +139,6 @@ public class MainMode : GameMode
         playerCharacter = newPlayer;
         playerCharacter.SetController(playerBrain); // Set the active player to use Player Brain
         gameCamera.SetFollowTarget(playerCharacter, immediate); // Set the camera to follow the active player
-
-        OnSetPlayer(playerCharacter);
     }
     
     public static void AddCombatEvents(IEnumerable<CombatEvent> combatEvent) => combatEvents.AddRange(combatEvent);

@@ -35,12 +35,10 @@ public class Character : Actor
 	private bool isGrounded;
 	private Vector3 torqueIntegral;
 	private Vector3 torqueError;
-	
 	private Vector3 planarVelocityIntegral;
 	private Vector3 planarVelocityError;
 	private Vector3 groundVelocity = Vector3.zero;
-	private Quaternion inputOrientation;
-	//public Quaternion lockOnOrientation;
+	private Vector3 lookDirection;
 	private Vector3 groundNormal;
 	private Vector3 groundPoint;
 	private Vector3 groundCheckPoint;
@@ -101,7 +99,7 @@ public class Character : Actor
 		Vector3 desiredVelocity;
 
 		// Stop angular velocity if animation has root motion.
-		if (animator.applyRootMotion)
+		if (Animator.applyRootMotion)
 		{
 			rb.angularVelocity = Vector3.zero;
 			return;
@@ -142,14 +140,7 @@ public class Character : Actor
 			}
 		}
 		
-		// Update desired velocity if there is input.
-		if (move.normalized != Vector3.zero && InputEnabled && !hitReaction.InProgress)
-		{
-			// Player should look towards input vector, if not locked on.
-			inputOrientation = Quaternion.LookRotation(move.normalized);
-		}
-		
-		desiredVelocity += (isGrounded ? acceleration : airAcceleration) * deltaTime * move;
+		desiredVelocity += (isGrounded ? acceleration : airAcceleration) * deltaTime * Move;
 
 		var speed = desiredVelocity.magnitude;
 		
@@ -191,6 +182,7 @@ public class Character : Actor
 			var jumpVelocity = Mathf.Sqrt(2 * -Physics.gravity.y * gravityScale * jumpHeight);
 			rb.velocity = groundVelocity.WithY(jumpVelocity);
 		}
+		
 
 		// Get the point directly below the center of the capsule, using its current rotation.
 		var length = hitBoxCollider.height * 0.5f + groundCheckHeight;
@@ -225,12 +217,12 @@ public class Character : Actor
 		else
 		{
 			// Reset jump allowance if we ran off a ledge OR jumped
-			if (wasGrounded) jumpAllowance.Reset(Time.fixedDeltaTime * 4);
+			if (wasGrounded) JumpAllowance.Reset(Time.fixedDeltaTime * 4);
 			
 			// Set center of mass to the center while airborne.
 			rb.centerOfMass = CapsuleCollider.center;
 
-			if (!jumpAllowance.InProgress)
+			if (!JumpAllowance.InProgress)
 			{
 				// Ran out of coyote time and didn't jump
 				if (remainingJumps == jumpCount) remainingJumps = 0;
@@ -265,7 +257,7 @@ public class Character : Actor
 			InputEnabled = false;
 
 			// TODO: Should maybe set attack ID and generic attack trigger?
-			if(animator != null) { animator.SetTrigger(Attack); }
+			if(Animator != null) { Animator.SetTrigger(Attack); }
 		}
 	}
 
@@ -274,6 +266,9 @@ public class Character : Actor
 		var maxTurnRate = isGrounded && rollAngle < Mathf.Epsilon ? maxTurnGround : maxTurnAir;
 		var rollAxis = Vector3.right;
 
+		var validLookInput = isGrounded && Move.normalized != Vector3.zero && InputEnabled && !HitReaction.InProgress;
+		if (validLookInput) lookDirection = Move.normalized;
+
 		if (lockOnTarget != null)
 		{
 			var toLockOnTarget = (lockOnTarget.GetLookPosition() - GetLookPosition()).WithY(0f).normalized;
@@ -281,11 +276,11 @@ public class Character : Actor
 			desiredRotation = Quaternion.RotateTowards(desiredRotation, lockOnOrientation, maxTurnRate);
 
 			if (rollAngle > 0 && groundVelocity.magnitude >= minSpeed)
-				rollAxis = Vector3.Cross(Quaternion.Inverse(lockOnOrientation) * inputOrientation * Vector3.forward, Vector3.down);
+				rollAxis = Vector3.Cross(Quaternion.Inverse(lockOnOrientation) * lookDirection, Vector3.down);
 		}
-		else
+		else if (validLookInput)
 		{
-			desiredRotation = Quaternion.RotateTowards(desiredRotation, inputOrientation, maxTurnRate);
+			desiredRotation = Quaternion.RotateTowards(desiredRotation, Quaternion.LookRotation(lookDirection.normalized), maxTurnRate);
 		}
 
 		return rollAngle > 0 ? desiredRotation * Quaternion.AngleAxis(rollAngle, rollAxis) : desiredRotation;
@@ -301,7 +296,7 @@ public class Character : Actor
 		var combatEvents = new List<CombatEvent>();
 		for (var i = 0; i < loops; i++)
 		{
-			animator.Update(dt);
+			Animator.Update(dt);
 
 			// Calculate the position and rotation the weapon WOULD have if the character did not move/rotate this frame.
 			// This allows us to blend to the ACTUAL position/rotation over multiple steps.
@@ -400,47 +395,51 @@ public class Character : Actor
 		return groundCheckPoint;//transform.position;
 	}
 
-	public bool TryLockOn()
+	public void QueueLockOn() => queueLockOn = true;
+
+	public override void ApplyHit(Entity instigator, Vector3 point, Vector3 direction, AttackData attackData)
 	{
-		queueLockOn = true;
-		return true;
+		base.ApplyHit(instigator, point, direction, attackData);
+		
+		MeleeCombat.isAttacking = false;
+		MeleeCombat.cancelOK = true;
 	}
 
 	private void UpdateAnimationParameters()
 	{
-		if(animator == null || animator.runtimeAnimatorController == null) { return; }
+		if(Animator == null || Animator.runtimeAnimatorController == null) { return; }
 
 		//control speed percent in animator so that character walks or runs depending on speed
 		var animationSpeedPercent = IsPaused ? 0f : groundVelocity.magnitude / runSpeed;
 
 		//reference for animator
-		animator.SetFloat(SpeedPercent, animationSpeedPercent, speedSmoothTime, Time.deltaTime);
+		Animator.SetFloat(SpeedPercent, animationSpeedPercent, speedSmoothTime, Time.deltaTime);
 
-		foreach(var parameter in animator.parameters)
+		foreach(var parameter in Animator.parameters)
 		{
 			var nameHash = parameter.nameHash;
 			if(nameHash == InAir)
 			{
-				animator.SetBool(InAir, !isGrounded);
+				Animator.SetBool(InAir, !isGrounded);
 			}
 			else if(nameHash == DirectionY)
 			{
 				var directionY = Mathf.Clamp01(Mathf.InverseLerp(1f, -1f, rb.velocity.y));
-				animator.SetFloat(DirectionY, directionY, speedSmoothTime, Time.deltaTime);
+				Animator.SetFloat(DirectionY, directionY, speedSmoothTime, Time.deltaTime);
 			}
 			else if(nameHash == VelocityX)
 			{
 				var velocityX = Vector3.Dot(groundVelocity, transform.right) / runSpeed;
-				animator.SetFloat(VelocityX, velocityX, speedSmoothTime, Time.deltaTime);
+				Animator.SetFloat(VelocityX, velocityX, speedSmoothTime, Time.deltaTime);
 			}
 			else if(nameHash == VelocityZ)
 			{
 				var velocityZ = Vector3.Dot(groundVelocity, transform.forward) / runSpeed;
-				animator.SetFloat(VelocityZ, velocityZ, speedSmoothTime, Time.deltaTime);
+				Animator.SetFloat(VelocityZ, velocityZ, speedSmoothTime, Time.deltaTime);
 			}
 			else if(nameHash == InHitStun)
 			{
-				animator.SetBool(InHitStun, hitReaction.InProgress);
+				Animator.SetBool(InHitStun, HitReaction.InProgress);
 			}
 		}
 	}

@@ -6,49 +6,40 @@ using System.Linq;
 
 public class Actor : Entity, ILockOnTarget, IDamageable
 {
-	public Animator animator { get; protected set; }
+	protected Animator Animator { get; private set; }
 	public bool InputEnabled { get; set; }
-	public Vector3 move { get; set; }
+	public Vector3 Move { get; set; }
 	public bool IsVisible { get; set; }
 	public event Action<float> OnHealthChanged = delegate {  };
 
 	public ILockOnTarget lockOnTarget = null;
-	public Action<Actor> UpdateController = delegate { };
-	public Action OnResetAbilities = null;
-	public Action UpdateAbilities = null;
-	public Action FixedUpdateAbilities = null;
-
-	public event Action<Actor, float> OnTick;
-
-	[HideInInspector]
-	public List<ActorAbility> abilities = new List<ActorAbility>();
-
 	public float Health { get; set; }
 	public float MaxHealth { get; set; }
-
-	protected readonly TimerGroup actorTimerGroup = new TimerGroup();
-	public Timer hitReaction { get; protected set; }
-	public Timer jumpAllowance { get; protected set; }
 	
-	public readonly InputBuffer inputBuffer = new InputBuffer();
+	public readonly InputBuffer InputBuffer = new InputBuffer();
 
-	private Renderer[] renderers = null;
-	private Coroutine damageFlash = null;
+	protected Timer HitReaction { get; private set; }
+	protected Timer JumpAllowance { get; private set; }
+
+	private ActorController _controller;
+	private Renderer[] _renderers = null;
+	private Coroutine _damageFlash = null;
+	private readonly TimerGroup _actorTimerGroup = new TimerGroup();
 	private static readonly int DamageFlash = Shader.PropertyToID("_DamageFlash");
-
+	
 
 	public override void Awake()
 	{
 		base.Awake();
-		animator = GetComponentInChildren<Animator>();
+		Animator = GetComponentInChildren<Animator>();
 		Health = MaxHealth = 100f;
 
 		InputEnabled = true;
 
-		renderers = GetComponentsInChildren<Renderer>();
+		_renderers = GetComponentsInChildren<Renderer>();
 
-		actorTimerGroup.Add(hitReaction = new Timer(0f, StartHitReaction, EndHitReaction, true));
-		actorTimerGroup.Add(jumpAllowance = new Timer());
+		_actorTimerGroup.Add(HitReaction = new Timer(0f, StartHitReaction, EndHitReaction, true));
+		_actorTimerGroup.Add(JumpAllowance = new Timer());
 	}
 
 	private void StartHitReaction()
@@ -82,7 +73,7 @@ public class Actor : Entity, ILockOnTarget, IDamageable
 
 	private void SetDamageFlash(float value)
 	{
-		foreach (var r in renderers)
+		foreach (var r in _renderers)
 		{
 			var propertyBlock = new MaterialPropertyBlock();
 			r.GetPropertyBlock(propertyBlock);
@@ -94,26 +85,24 @@ public class Actor : Entity, ILockOnTarget, IDamageable
 	public override void Tick(float deltaTime)
 	{
 		base.Tick(deltaTime);
-		OnTick?.Invoke(this, deltaTime);
-		inputBuffer.Tick(deltaTime);
-		actorTimerGroup.Tick(deltaTime);
-		IsVisible = renderers.Any(r => r != null && r.isVisible);
+		if (_controller) _controller.Tick(this, deltaTime);
+		InputBuffer.Tick(deltaTime);
+		_actorTimerGroup.Tick(deltaTime);
+		IsVisible = _renderers.Any(r => r != null && r.isVisible);
 	}
 
 	protected override void OnPauseEntity(bool value)
 	{
-		if(animator != null) animator.SetPaused(value);
+		if(Animator != null) Animator.SetPaused(value);
 	}
-
+	
 	public void SetController(ActorController newController, object context = null)
 	{
+		if (_controller != null)
+			_controller.Clean(this);
+			
 		newController.Init(this, context);
-		OnTick = newController.Tick;
-	}
-
-	private void ResetAbilities()
-	{
-		OnResetAbilities?.Invoke();
+		_controller = newController;
 	}
 
 	public virtual Vector3 GetLookPosition()
@@ -154,7 +143,7 @@ public class Actor : Entity, ILockOnTarget, IDamageable
 
 	protected bool TryConsumeAction(int actionId)
 	{
-		return inputBuffer.ConsumeAction(actionId);
+		return InputBuffer.ConsumeAction(actionId);
 	}
 
 	public override void ApplyHit(Entity instigator, Vector3 point, Vector3 direction, AttackData attackData)
@@ -166,16 +155,10 @@ public class Actor : Entity, ILockOnTarget, IDamageable
 		TakeDamage(attackData.damage);
 
 		// Do damage flash.
-		this.OverrideCoroutine(ref damageFlash, DoDamageFlash(0.2f));
+		this.OverrideCoroutine(ref _damageFlash, DoDamageFlash(0.2f));
 
 		// TODO: Get reaction type from AttackData 
-		var duration = Mathf.Max(hitReaction.Duration - hitReaction.Current, attackData.stun);
-		hitReaction.Reset(duration);
-
-		if(this is Character character)
-		{
-			character.MeleeCombat.isAttacking = false;
-			character.MeleeCombat.cancelOK = true;
-		}
+		var duration = Mathf.Max(HitReaction.Duration - HitReaction.Current, attackData.stun);
+		HitReaction.Reset(duration);
 	}
 }

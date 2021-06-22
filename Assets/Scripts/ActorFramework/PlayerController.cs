@@ -13,35 +13,41 @@ public class PlayerController : ActorController
 	public override void Init(Actor actor, object context = null)
 	{
 		if (instance == null) instance = this;
-		
-		base.Init(actor, context);
-		actor.inputBuffer.Clear();
+
+		actor.InputBuffer.Clear();
+		HealthBar.RegisterPlayer(actor);
 	}
 
-	protected override void OnTick(Actor actor, float deltaTime)
+	public override void Clean(Actor actor)
 	{
-		actor.move = CalculateMove();
+		if (actor is Character character) character.SetLockOnTarget(null);
+		HealthBar.UnregisterPlayer(actor);
+	}
+
+	public override void Tick(Actor actor, float deltaTime)
+	{
+		actor.Move = CalculateMove();
 
 		if(!(actor is Character character)) return;
 		
 		// Lock On
 		if(Player.GetButtonDown(PlayerAction.LockOn))
-			character.TryLockOn();
+			character.QueueLockOn();
 
 		// Run
 		character.Run = Player.GetButton(PlayerAction.Sprint);
 
 		// Roll
 		if(Player.GetButtonDown(PlayerAction.Roll))
-			actor.inputBuffer.Add(PlayerAction.Roll, 0.1f);
+			actor.InputBuffer.Add(PlayerAction.Roll, 0.1f);
 
 		// Jump
 		if(Player.GetButtonDown(PlayerAction.Jump))
-			actor.inputBuffer.Add(PlayerAction.Jump, 0.1f);
+			actor.InputBuffer.Add(PlayerAction.Jump, 0.1f);
 
 		// Attack
 		if(Player.GetButtonDown(PlayerAction.Attack))
-			actor.inputBuffer.Add(PlayerAction.Attack, 0.5f);
+			actor.InputBuffer.Add(PlayerAction.Attack, 0.5f);
 	}
 
 	//protected override void Clean() => actor.move = Vector3.zero;

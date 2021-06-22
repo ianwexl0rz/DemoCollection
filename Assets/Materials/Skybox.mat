@@ -19,6 +19,7 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs: []
+    m_Ints: []
     m_Floats:
     - _AtmosphereThickness: 0.64
     - _Exposure: 2.4
@@ -27,4 +28,5 @@ Material:
     - _SunSizeConvergence: 5
     m_Colors:
     - _GroundColor: {r: 0.34337837, g: 0.42048246, b: 0.462, a: 1}
-    - _SkyTint: {r: 1, g: 1, b: 1, a: 1}
+    - _SkyTint: {r: 0.362, g: 0.8131112, b: 1, a: 1}
+  m_BuildTextureStacks: []
