@@ -119,7 +119,7 @@ public class DynamicBone : Entity
 		var axis = GetDirectionFromInt(capsule.direction);
 
 		joint.connectedAnchor = isRoot ? parentEntity.transform.InverseTransformPoint(referenceBone.position) : referenceBone.localPosition;
-		rb.centerOfMass = capsule.center - axis * capsule.height * (centerOfMass - 0.5f);
+		rb.centerOfMass = capsule.center - axis * (capsule.height * (centerOfMass - 0.5f));
 
 		rb.AddForce(windDirection * windInfluence, ForceMode.Acceleration);
 		var targetTorque = rb.rotation.TorqueTo(targetRotation, deltaTime);

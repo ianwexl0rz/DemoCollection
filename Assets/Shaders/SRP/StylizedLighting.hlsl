@@ -27,12 +27,12 @@ half3 DirectBDRFCelShaded(BRDFData brdfData, half3 normalWS, half3 lightDirectio
 
     // GGX Distribution multiplied by combined approximation of Visibility and Fresnel
     // BRDFspec = (D * V * F) / 4.0
-    // D = roughness² / ( NoH² * (roughness² - 1) + 1 )²
-    // V * F = 1.0 / ( LoH² * (roughness + 0.5) )
+    // D = roughnessÂ² / ( NoHÂ² * (roughnessÂ² - 1) + 1 )Â²
+    // V * F = 1.0 / ( LoHÂ² * (roughness + 0.5) )
     // See "Optimizing PBR for Mobile" from Siggraph 2015 moving mobile graphics course
     // https://community.arm.com/events/1155
 
-    // Final BRDFspec = roughness² / ( NoH² * (roughness² - 1) + 1 )² * (LoH² * (roughness + 0.5) * 4.0)
+    // Final BRDFspec = roughnessÂ² / ( NoHÂ² * (roughnessÂ² - 1) + 1 )Â² * (LoHÂ² * (roughness + 0.5) * 4.0)
     // We further optimize a few light invariant terms
     // brdfData.normalizationTerm = (roughness + 0.5) * 4.0 rewritten as roughness * 4.0 + 2.0 to a fit a MAD.
     half d = NoH * NoH * brdfData.roughness2MinusOne + 1.00001h;
@@ -119,7 +119,7 @@ half3 LightingCelShadedSSS(BRDFData brdfData, half3 lightColor, half3 lightDirec
 	//half celShading = saturate((NdotL - 0.4 * (1 - falloff)) / (falloff)) * 0.6;
 	//celShading += saturate(NdotL / falloff) * 0.4;
 
-	half celShading = saturate(NdotL / falloff);
+	half celShading = smoothstep(0, falloff, saturate(NdotL)); //saturate(NdotL / falloff);
 
     half3 sss = max(sssData.ambient, (1 - saturate(abs(NdotL / sssData.thickness)))) * sssData.color * sssData.thickness;
     half3 radiance = lightColor * lightAttenuation * (celShading + sss);

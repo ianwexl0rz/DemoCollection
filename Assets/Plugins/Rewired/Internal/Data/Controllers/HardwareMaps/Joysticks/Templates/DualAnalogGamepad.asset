@@ -6507,6 +6507,14 @@ MonoBehaviour:
       joystickId: 13
       joystickId2: 0
       splitAxis: 0
+    - templateId: 17
+      joystickId: 14
+      joystickId2: 0
+      splitAxis: 0
+    - templateId: 18
+      joystickId: 15
+      joystickId2: 0
+      splitAxis: 0
     - templateId: 19
       joystickId: 16
       joystickId2: 0

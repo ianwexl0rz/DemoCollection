@@ -8,9 +8,9 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Sword
-  m_Shader: {fileID: 4800000, guid: ed4d8d2cd5e9cb64683419fe59fd50a4, type: 3}
+  m_Shader: {fileID: 4800000, guid: dc16fca7ed95f654ba09d6b090ffda62, type: 3}
   m_ShaderKeywords: _EMISSION
-  m_LightmapFlags: 5
+  m_LightmapFlags: 2
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
@@ -63,10 +63,12 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    m_Ints: []
     m_Floats:
     - _Ambient: 0
     - _BumpScale: 1
     - _Cutoff: 0.5
+    - _DamageFlash: 0
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
     - _EdgeLight: 0.9
@@ -86,7 +88,7 @@ Material:
     - _SSSTerminatorExponent: 0
     - _SSSThickness: 1
     - _Scale: 1
-    - _ShadowFalloff: 0.05
+    - _ShadowFalloff: 1
     - _Smoothness: 0.76
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
@@ -100,5 +102,7 @@ Material:
     - _Albedo: {r: 1, g: 1, b: 1, a: 0}
     - _Color: {r: 0, g: 0, b: 0, a: 1}
     - _EmissionColor: {r: 2.0131118, g: 3.6949522, b: 4.867144, a: 1}
+    - _MainColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
     - _ShadowColor: {r: 0, g: 0.8666668, b: 1, a: 1}
-    - _SubsurfaceColor: {r: 1, g: 0, b: 0, a: 0}
+    - _SubsurfaceColor: {r: 0, g: 0, b: 0, a: 0}
+  m_BuildTextureStacks: []

@@ -189,13 +189,13 @@ namespace Rewired.Utils {
         public bool IsEditorSceneViewFocused() {
 #if UNITY_EDITOR
             ArrayList sceneViews = UnityEditor.SceneView.sceneViews;
-            if(sceneViews == null) return false;
+            if (sceneViews == null) return false;
             string focusedWindowTitle = GetFocusedEditorWindowTitle();
-            for(int i = 0; i < sceneViews.Count; i++) {
+            for (int i = 0; i < sceneViews.Count; i++) {
                 UnityEditor.SceneView sceneView = sceneViews[i] as UnityEditor.SceneView;
-                if(sceneView == null) continue;
+                if (sceneView == null) continue;
 #if UNITY_2017_PLUS
-                if(sceneView.titleContent.text == focusedWindowTitle) return true;
+                if (sceneView.titleContent.text == focusedWindowTitle) return true;
 #else
                 if (sceneView.title == focusedWindowTitle) return true;
 #endif
@@ -804,13 +804,36 @@ namespace Rewired.Utils {
             return -1;
         }
 #endif
+
+        #region Windows Standalone
+
+#if UNITY_2021_1_OR_NEWER
+
+#if (UNITY_STANDALONE_WIN && !UNITY_EDITOR) || (UNITY_EDITOR_WIN)
+
+        public void WindowsStandalone_ForwardRawInput(System.IntPtr rawInputHeaderIndices, System.IntPtr rawInputDataIndices, uint indicesCount, System.IntPtr rawInputData, uint rawInputDataSize) {
+#if UNITY_2021_2_OR_NEWER
+            Rewired.Internal.Windows.Functions.ForwardRawInput(rawInputHeaderIndices, rawInputDataIndices, indicesCount, rawInputData, rawInputDataSize);
+#else
+            throw new System.NotImplementedException();
+#endif
+        }
+
+#else
+        public void WindowsStandalone_ForwardRawInput(System.IntPtr rawInputHeaderIndices, System.IntPtr rawInputDataIndices, uint indicesCount, System.IntPtr rawInputData, uint rawInputDataSize) {}
+#endif
+
+#endif
+
+        #endregion
+
         #region Unity UI
 
 
 #if SUPPORTS_UNITY_UI
 
         public bool UnityUI_Graphic_GetRaycastTarget(object graphic) {
-            if(graphic as UnityEngine.UI.Graphic == null) return false;
+            if (graphic as UnityEngine.UI.Graphic == null) return false;
 #if UNITY_5_2_PLUS
             return (graphic as UnityEngine.UI.Graphic).raycastTarget;
 #else
@@ -818,7 +841,7 @@ namespace Rewired.Utils {
 #endif
         }
         public void UnityUI_Graphic_SetRaycastTarget(object graphic, bool value) {
-            if(graphic as UnityEngine.UI.Graphic == null) return;
+            if (graphic as UnityEngine.UI.Graphic == null) return;
 #if UNITY_5_2_PLUS
             (graphic as UnityEngine.UI.Graphic).raycastTarget = value;
 #endif
@@ -835,7 +858,7 @@ namespace Rewired.Utils {
         public bool UnityInput_IsTouchPressureSupported {
             get {
 #if UNITY_5_3_PLUS
-              return UnityEngine.Input.touchPressureSupported;
+                return UnityEngine.Input.touchPressureSupported;
 #else
                 return false;
 #endif

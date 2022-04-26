@@ -84,6 +84,7 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    m_Ints: []
     m_Floats:
     - _AlphaClip: 0
     - _Ambient: 0
@@ -91,6 +92,7 @@ Material:
     - _BumpScale: 1
     - _Cull: 2
     - _Cutoff: 0.5
+    - _DamageFlash: 0
     - _DetailNormalMapScale: 1
     - _DirectLightDepth: 0
     - _Distortion: 1
@@ -118,7 +120,7 @@ Material:
     - _Scale: 1
     - _ShadowFalloff: 0.05
     - _Shininess: 0.5
-    - _Smoothness: 0.346
+    - _Smoothness: 0.591
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
@@ -139,3 +141,4 @@ Material:
     - _ShadowColor: {r: 0, g: 0.92708635, b: 1, a: 1}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
     - _SubsurfaceColor: {r: 0.5294118, g: 0.92926025, b: 1, a: 0}
+  m_BuildTextureStacks: []

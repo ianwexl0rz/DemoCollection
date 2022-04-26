@@ -105,6 +105,8 @@ Material:
     - _AlphaClip: 0
     - _Ambient: 0.331
     - _Blend: 0
+    - _BlueMax: 0.7
+    - _BlueMin: 0.5
     - _BumpScale: 1
     - _ClearCoat: 0
     - _ClearCoatMask: 0
@@ -117,10 +119,14 @@ Material:
     - _DstBlend: 0
     - _EdgeLight: 1
     - _EnvironmentReflections: 1
+    - _Falloff: 1
+    - _Float0: 0
+    - _Float1: 0
     - _GlossMapScale: 1
     - _Glossiness: 0
     - _GlossinessSource: 0
     - _GlossyReflections: 1
+    - _LipSmoothness: 0.474
     - _Metallic: 0
     - _Mode: 0
     - _NormalDistortion: -1.04
@@ -129,6 +135,10 @@ Material:
     - _Power: 6.09
     - _QueueOffset: 0
     - _ReceiveShadows: 1
+    - _RedMax: 1
+    - _RedMin: 0.3
+    - _SSSAmbient: 0.929
+    - _SSSDepth: 0.107
     - _Scale: 1
     - _ShadowFalloff: 0.285
     - _Shininess: 0.09
@@ -146,11 +156,17 @@ Material:
     - _ZWrite: 1
     m_Colors:
     - _Albedo: {r: 0.865, g: 0.53802997, b: 0.37454498, a: 0}
-    - _BaseColor: {r: 0.9254902, g: 0.67843133, b: 0.53725487, a: 1}
+    - _BaseColor: {r: 0.88699996, g: 0.5769806, b: 0.40474758, a: 1}
+    - _BlueColor: {r: 0.08448491, g: 0.18074241, b: 0.2769999, a: 1}
     - _Color: {r: 0.8387991, g: 0.41788512, b: 0.2501583, a: 1}
+    - _Color0: {r: 0.41509426, g: 0.064613715, b: 0.064613715, a: 0}
+    - _Color1: {r: 0, g: 0.6079955, b: 1, a: 0}
     - _EmissionColor: {r: 0.106000006, g: 0, b: 0, a: 1}
     - _MainColor: {r: 0.9254902, g: 0.6784314, b: 0.5372549, a: 1}
+    - _RedColor: {r: 0.5058824, g: 0.2757059, b: 0.24029414, a: 1}
+    - _SSSColor: {r: 1, g: 0, b: 0, a: 0}
     - _ShadowColor: {r: 0, g: 0, b: 0, a: 1}
+    - _SkinColor: {r: 0.872, g: 0.6371413, b: 0.519712, a: 0}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
     - _SubsurfaceColor: {r: 0.475, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []

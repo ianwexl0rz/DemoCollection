@@ -42,7 +42,7 @@ public class Entity : MonoBehaviour
 
 	public virtual void Awake()
 	{
-		rb = GetComponent<Rigidbody>();
+		rb = GetComponentInChildren<Rigidbody>();
 	}
 
 	public virtual void Tick(float deltaTime)
@@ -118,7 +118,7 @@ public class Entity : MonoBehaviour
 	public virtual void ApplyHit(Entity instigator, Vector3 point, Vector3 direction, AttackData attackData)
 	{
 		var velocity = direction * (attackData.knockback / Time.fixedDeltaTime);
-		//rb.AddForceAtPosition(velocity, hit.point, ForceMode.Acceleration);
-		rb.AddForce(velocity, ForceMode.Acceleration);
+		//rb.AddForceAtPosition(velocity, point, ForceMode.Impulse);
+		rb.AddForce(velocity, ForceMode.Impulse);
 	}
 }

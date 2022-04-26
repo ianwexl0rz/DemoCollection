@@ -47,6 +47,7 @@ public class MeleeCombat : MonoBehaviour
 		if(weapon.prefab != null)
 		{
 			var w = Instantiate(weapon.prefab, weaponRoot).transform;
+			w.localScale = Vector3.one;
 
 			if(weapon.forwardAxis != forwardAxis)
 			{
@@ -250,7 +251,8 @@ public class MeleeCombat : MonoBehaviour
 
 			if(entity != null)
 			{
-				var hitDirection = (go.transform.position - transform.position).WithY(0f).normalized;
+				var hitDirection = (hit.point - transform.position).WithY(0f).normalized;
+//				var hitDirection = (go.transform.position - transform.position).WithY(0f).normalized;
 				var combatEvent = new CombatEvent(actor, entity, hit.point, hitDirection, attackData);
 				
 				newCombatEvents.Add(combatEvent);

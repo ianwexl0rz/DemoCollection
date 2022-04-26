@@ -113,7 +113,7 @@ Material:
     - _QueueOffset: 0
     - _ReceiveShadows: 1
     - _Scale: 1
-    - _ShadowFalloff: 0.2
+    - _ShadowFalloff: 0.475
     - _Shininess: 0
     - _Smoothness: 0
     - _SmoothnessSource: 0
@@ -127,7 +127,7 @@ Material:
     - _WorkflowMode: 1
     - _ZWrite: 1
     m_Colors:
-    - _Albedo: {r: 0.0695126, g: 0.31231287, b: 0.376, a: 1}
+    - _Albedo: {r: 0.103773594, g: 0.103773594, b: 0.103773594, a: 1}
     - _BaseColor: {r: 0.32425496, g: 0.13574347, b: 0.1496709, a: 1}
     - _Color: {r: 0.08582804, g: 0.016492004, b: 0.019531198, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}

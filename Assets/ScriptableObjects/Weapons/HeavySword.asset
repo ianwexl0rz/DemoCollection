@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d9e3e1a5ece28214085e4aa828e96b8c, type: 3}
   m_Name: HeavySword
   m_EditorClassIdentifier: 
-  prefab: {fileID: 3450633854991776217, guid: acd0e63cf4d020643b4f2548c6717ad5, type: 3}
+  prefab: {fileID: 6921199170743483723, guid: 0ff8a2dc4d39d094bb9a80c6f708348a, type: 3}
   forwardAxis: {x: 0, y: -1, z: 0}
   length: 1.2
   trailMaterial: {fileID: 2100000, guid: 681571f3fdc7f094694615d03a1adc5f, type: 2}

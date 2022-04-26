@@ -8692,14 +8692,14 @@
             map. Failing that, it will search for a generic map. If no map is found, a blank map will be loaded.
             </summary>
         </member>
-        <member name="M:Rewired.Data.UserData.FindKeyboardMap_Game(System.Int32,System.Int32)">
+        <member name="M:Rewired.Data.UserData.FindKeyboardMap_Game(Rewired.Keyboard,System.Int32,System.Int32)">
             <summary>
             Searches the user-defined maps for a matching map based on category, layout, controller Guid, and template Guid.
             First it will search for an exact controller guid + category + layout match. If no controller guid's match, it search for a template
             map. Failing that, it will search for a generic map. If no map is found, a blank map will be loaded.
             </summary>
         </member>
-        <member name="M:Rewired.Data.UserData.FindMouseMap_Game(System.Int32,System.Int32)">
+        <member name="M:Rewired.Data.UserData.FindMouseMap_Game(Rewired.Mouse,System.Int32,System.Int32)">
             <summary>
             Searches the user-defined maps for a matching map based on category, layout, controller Guid, and template Guid.
             First it will search for an exact controller guid + category + layout match. If no controller guid's match, it search for a template
@@ -21660,6 +21660,11 @@
         </member>
         <member name="M:Rewired.Utils.Libraries.TinyJson.JsonWriter.ToJson(System.Object)">
             <exclude></exclude>
+        </member>
+        <member name="M:Rewired.Utils.Libraries.JoyShock.Motion.Update(System.Single,System.Single,System.Single,System.Single,System.Single,System.Single,System.Single,System.Single)">
+            <summary>
+            The gyro inputs should be calibrated degrees per second but have no other processing
+            </summary>
         </member>
         <member name="T:Rewired.Utils.SafeDelegate">
             <summary>

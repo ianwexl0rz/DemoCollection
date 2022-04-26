@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(Rigidbody), typeof(MeleeCombat))]
+[RequireComponent(typeof(Rigidbody))]
 public class Character : Actor
 {
 	private const float MaxAnimationStep = 1f / 30f;
@@ -139,8 +139,11 @@ public class Character : Actor
 				}
 			}
 		}
-		
-		desiredVelocity += (isGrounded ? acceleration : airAcceleration) * deltaTime * Move;
+
+		if (!MeleeCombat.isAttacking)
+		{
+			desiredVelocity += (isGrounded ? acceleration : airAcceleration) * deltaTime * Move;
+		}
 
 		var speed = desiredVelocity.magnitude;
 		
@@ -280,6 +283,9 @@ public class Character : Actor
 		}
 		else if (validLookInput)
 		{
+			//if (groundVelocity != Vector3.zero)
+			//	desiredRotation = Quaternion.LookRotation(groundVelocity);
+			
 			desiredRotation = Quaternion.RotateTowards(desiredRotation, Quaternion.LookRotation(lookDirection.normalized), maxTurnRate);
 		}
 
