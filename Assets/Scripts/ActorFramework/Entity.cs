@@ -27,12 +27,13 @@ public class Entity : MonoBehaviour
 	
 	public event Action<float> OnUpdatePhysics;
 
-	public Rigidbody Rigidbody { get; private set; }
-	public bool IsPaused { get; private set; }
-
 	private RigidbodyState _savedState;
 	private List<Entity> _subEntities = new List<Entity>();
-
+	
+	public Rigidbody Rigidbody { get; private set; }
+	
+	public bool IsPaused { get; private set; }
+	
 	protected virtual void OnEnable()
 	{
 		MainMode.AddEntity(this);
@@ -74,7 +75,6 @@ public class Entity : MonoBehaviour
 	}
 
 	protected virtual void UpdateAnimation(float deltaTime) => OnUpdateAnimation?.Invoke(deltaTime);
-
 	protected virtual void UpdatePhysics(float deltaTime) => OnUpdatePhysics?.Invoke(deltaTime);
 
 	protected virtual void OnPauseEntity(bool value)
@@ -89,9 +89,13 @@ public class Entity : MonoBehaviour
 	{
 		if(IsPaused == value) { return; }
 		IsPaused = value;
+
+		var animator = GetComponent<Animator>();
 		
 		if(value)
 		{
+			if (animator) animator.speed = 0;
+			
 			_savedState = new RigidbodyState(Rigidbody);
 
 			Rigidbody.isKinematic = true;
@@ -108,6 +112,8 @@ public class Entity : MonoBehaviour
 		}
 		else
 		{
+			if (animator) animator.speed = 1;
+
 			Rigidbody.WakeUp();
 			Rigidbody.RestoreState(_savedState);
 		}

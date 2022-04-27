@@ -16,7 +16,6 @@ public class CharacterMotor : MonoBehaviour
 		public bool IsInHitStun;
 	}
 
-	private const float MaxAnimationStep = 1f / 30f;
 	private const float MaxAngularVelocity = 50f;
 	public event Action<AnimatedProperties> OnAnimatedPropertiesChanged;
 
@@ -61,10 +60,7 @@ public class CharacterMotor : MonoBehaviour
 	private bool _queueJump;
 	private bool _jumping;
 	private int _remainingJumps;
-	private Matrix4x4 _lastTRS;
 	private Quaternion _desiredRotation;
-
-	public Matrix4x4 LastTRS => _lastTRS;
 	
 	public bool Run { get; set; }
 	
@@ -81,19 +77,18 @@ public class CharacterMotor : MonoBehaviour
 
 		_desiredRotation = Quaternion.LookRotation(transform.forward);
 		_remainingJumps = jumpCount;
-
-		_lastTRS = Matrix4x4.TRS(transform.position, transform.rotation, transform.localScale);
 	}
 
 #if UNITY_EDITOR
 	private void OnValidate()
 	{
-		if (_actor != null && _actor.Rigidbody != null) _actor.Rigidbody.maxAngularVelocity = MaxAngularVelocity;
+		if (_actor == null || _actor.Rigidbody == null) return;
+		_actor.Rigidbody.maxAngularVelocity = MaxAngularVelocity;
 	}
 
 	private void OnDrawGizmosSelected()
 	{
-		if (_actor != null && _actor.Rigidbody == null) { return; }
+		if (_actor == null || _actor.Rigidbody == null) return;
 		Gizmos.color = Color.blue;
 		Gizmos.DrawSphere(_actor.Rigidbody.worldCenterOfMass, 0.1f);
 	}
@@ -275,22 +270,11 @@ public class CharacterMotor : MonoBehaviour
 		
 		OnAnimatedPropertiesChanged?.Invoke(input);
 
-		var loops = Mathf.CeilToInt(deltaTime / MaxAnimationStep);
-		var dt = deltaTime / loops;
-
-		for (var i = 0; i < loops; i++)
-		{
-			_actor.Animator.Update(dt);
-			_actor.UpdateSubFrameAnimation((i + 1f) / loops);
-		}
-		
 		// Set the center of mass to the point on the collider directly below the center, using it's current rotation.
 		var length = hitBoxCollider.height * 0.5f + groundCheckHeight;
 		var ray = new Ray(transform.TransformPoint(hitBoxCollider.center) + Vector3.down * length, Vector3.up);
 		hitBoxCollider.Raycast(ray, out var hitInfo, length);
 		_groundCheckPoint = hitInfo.point;
-
-		_lastTRS = Matrix4x4.TRS(transform.position, transform.rotation, transform.localScale);
 	}
 
 	private bool CheckForGround()

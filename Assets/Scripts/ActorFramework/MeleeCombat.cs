@@ -35,7 +35,7 @@ public class MeleeCombat : MonoBehaviour
 	{
 		actor = GetComponent<Actor>();
 		actor.OnHandleAbilityInput += HandleInput;
-		actor.OnUpdateSubFrameAnimation += ProcessAttackAnimation;
+		actor.PostUpdateAnimation += ProcessAttackAnimation;
 		actor.OnReceiveHit += ReceiveHit;
 
 		_motor = GetComponent<CharacterMotor>();
@@ -57,18 +57,18 @@ public class MeleeCombat : MonoBehaviour
 		}
 	}
 
-	private void ProcessAttackAnimation(float progress)
+	private void ProcessAttackAnimation()
 	{
 		if (ActiveHit)
 		{
-			var characterLastTRS = _motor.LastTRS;
+			var characterLastTRS = actor.LastTRS;
 
 			// Calculate the position and rotation the weapon WOULD have if the character did not move/rotate this frame.
 			// This allows us to blend to the ACTUAL position/rotation over multiple steps.
 			var lastWeaponPos = characterLastTRS.MultiplyPoint3x4(transform.InverseTransformPoint(WeaponRoot.position));
 			var lastWeaponRot = characterLastTRS.rotation * Quaternion.Inverse(transform.rotation) * WeaponRoot.rotation;
 			
-			if (CheckHits(progress, lastWeaponPos, lastWeaponRot, out var combatEvents))
+			if (CheckHits(1, lastWeaponPos, lastWeaponRot, out var combatEvents))
 			{
 				//TODO: If we hit more than one thing, trigger hits over sequential frames?
 				MainMode.AddCombatEvents(combatEvents);
@@ -174,6 +174,7 @@ public class MeleeCombat : MonoBehaviour
         Vector3 lastVector = lastEnd - lastOrigin;
 
         int steps = 1 + (int)((currentVector - lastVector).magnitude / distThreshold);
+        //Debug.Log($"checked in {steps} steps");
 
         float colorRange = ((float)steps).LinearRemap(1f, 5f, 0.5f, 0f);
         Color color = Color.HSVToRGB(Mathf.Clamp01(colorRange), 1, 1);

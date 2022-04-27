@@ -16,7 +16,7 @@ public class Actor : Entity, IDamageable
 	
 	public event Action OnHandleAbilityInput;
 
-	public event Action<float> OnUpdateSubFrameAnimation;
+	public event Action PostUpdateAnimation;
 
 	public event Action<float> OnHealthChanged = delegate {  };
 
@@ -45,7 +45,8 @@ public class Actor : Entity, IDamageable
 	public Timer HitReaction { get; private set; }
 
 	public Timer JumpAllowance { get; private set; }
-
+	
+	public Matrix4x4 LastTRS { get; set; }
 
 	public override void Awake()
 	{
@@ -63,6 +64,8 @@ public class Actor : Entity, IDamageable
 			true));
 		
 		_actorTimerGroup.Add(JumpAllowance = new Timer());
+		
+		LastTRS = Matrix4x4.TRS(transform.position, transform.rotation, transform.localScale);
 	}
 
 	protected override void UpdatePhysics(float deltaTime)
@@ -74,13 +77,12 @@ public class Actor : Entity, IDamageable
 	protected override void UpdateAnimation(float deltaTime)
 	{
 		base.UpdateAnimation(deltaTime);
-	}
 
-	public void UpdateSubFrameAnimation(float progress)
-	{
-		OnUpdateSubFrameAnimation?.Invoke(progress);
+		PostUpdateAnimation?.Invoke();
+		
+		LastTRS = Matrix4x4.TRS(transform.position, transform.rotation, transform.localScale);
 	}
-
+	
 	private IEnumerator DoDamageFlash(float duration)
 	{
 		var time = 0f;
