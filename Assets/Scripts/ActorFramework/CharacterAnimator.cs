@@ -21,7 +21,7 @@ namespace ActorFramework
             _animator = GetComponent<Animator>();
             var motor = GetComponent<CharacterMotor>();
 
-            motor.OnAnimatedPropertiesChanged += SetParameters;
+            if (motor != null) motor.OnAnimatedPropertiesChanged += SetParameters;
         }
 
         private void SetParameters(CharacterMotor.AnimatedProperties input)

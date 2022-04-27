@@ -29,14 +29,13 @@ public class PlayerController : ActorController
 	{
 		actor.Move = CalculateMove();
 
-		if(!(actor.GetComponent<CharacterMotor>() is CharacterMotor motor)) return;
-		
 		// Lock On
 		if(Player.GetButtonDown(PlayerAction.LockOn))
-			motor.QueueLockOn();
+			HandleLockOnInput(actor);
 
 		// Run
-		motor.Run = Player.GetButton(PlayerAction.Sprint);
+		if(actor.GetComponent<CharacterMotor>() is CharacterMotor motor) 
+			motor.Run = Player.GetButton(PlayerAction.Sprint);
 
 		// Roll
 		if(Player.GetButtonDown(PlayerAction.Roll))
@@ -50,8 +49,6 @@ public class PlayerController : ActorController
 		if(Player.GetButtonDown(PlayerAction.Attack))
 			actor.InputBuffer.Add(PlayerAction.Attack, 0.5f);
 	}
-
-	//protected override void Clean() => actor.move = Vector3.zero;
 
 	private static Vector3 CalculateMove()
 	{
@@ -71,5 +68,27 @@ public class PlayerController : ActorController
 
 		// Orient the input relative to the camera.
 		return GameManager.Camera.YawRotation * move;
+	}
+
+	private void HandleLockOnInput(Actor actor)
+	{
+		if (actor.TrackedTarget != null)
+		{
+			// If we were locked on, break lock...
+			actor.TrackedTarget = null;
+		}
+		else
+		{
+			// If we were not locked on, try to assign target...
+			var candidate = LockOn.TrackableCandidate;
+			if (candidate != null) actor.TrackedTarget = candidate;
+			else
+			{
+				// Recenter the camera if there is no viable target.
+				var cross = Vector3.Cross(actor.transform.right, Vector3.up);
+				var lookRotation = Quaternion.LookRotation(cross);
+				GameManager.Camera.SetTargetEulerAngles(lookRotation.eulerAngles);
+			}
+		}
 	}
 }

@@ -57,7 +57,6 @@ public class CharacterMotor : MonoBehaviour
 	private Vector3 _groundPoint;
 	private Vector3 _groundCheckPoint;
 	private float _rollAngle;
-	private bool _queueLockOn;
 	private bool _queueRoll;
 	private bool _queueJump;
 	private bool _jumping;
@@ -71,7 +70,7 @@ public class CharacterMotor : MonoBehaviour
 	
 	public CapsuleCollider CapsuleCollider { get; private set; }
 
-	private void Awake()
+	private void Start()
 	{
 		_actor = GetComponent<Actor>();
 		_actor.Rigidbody.maxAngularVelocity = MaxAngularVelocity;
@@ -120,30 +119,6 @@ public class CharacterMotor : MonoBehaviour
 		else
 		{
 			desiredVelocity = _actor.Rigidbody.velocity.WithY(0f);
-		}
-
-		if (_queueLockOn)
-		{
-			_queueLockOn = false;
-
-			if (_actor.TrackedTarget != null)
-			{
-				// If we were locked on, break lock...
-				_actor.TrackedTarget = null;
-			}
-			else
-			{
-				// If we were not locked on, try to assign target...
-				var candidate = LockOn.TrackableCandidate;
-				if (candidate != null) _actor.TrackedTarget = candidate;
-				else
-				{
-					// Recenter the camera if there is no viable target.
-					var cross = Vector3.Cross(transform.right, Vector3.up);
-					var lookRotation = Quaternion.LookRotation(cross);
-					GameManager.Camera.SetTargetEulerAngles(lookRotation.eulerAngles);
-				}
-			}
 		}
 
 		if (_actor.InputEnabled)
@@ -379,6 +354,4 @@ public class CharacterMotor : MonoBehaviour
 		_groundPoint = averagePoint;
 		return true;
 	}
-
-	public void QueueLockOn() => _queueLockOn = true;
 }

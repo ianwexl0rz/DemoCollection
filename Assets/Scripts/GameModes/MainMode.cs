@@ -135,7 +135,7 @@ public class MainMode : GameMode
     {
         if (playerActor != null && playerActor != newPlayer)
         {
-            playerActor.SetController(followerBrain, newPlayer); // Set the old active player to use Follower Brain
+            playerActor.SetController(followerBrain, newPlayer.GetComponent<ITrackable>()); // Set the old active player to use Follower Brain
         }
 
         playerActor = newPlayer;
