@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using ActorFramework;
 using UnityEngine;
 
-[RequireComponent(typeof(Rigidbody))]
-public class CharacterMotor : Actor
+[RequireComponent(typeof(Actor))]
+public class CharacterMotor : MonoBehaviour
 {
 	public struct AnimatedProperties
 	{
@@ -15,8 +15,6 @@ public class CharacterMotor : Actor
 		public float VelocityZ;
 		public bool IsInHitStun;
 	}
-	
-	// TODO: Separate component from Actor
 
 	private const float MaxAnimationStep = 1f / 30f;
 	private const float MaxAngularVelocity = 50f;
@@ -47,6 +45,7 @@ public class CharacterMotor : Actor
 	[SerializeField] private PID3 torquePID = null;
 	[SerializeField] private PID3 planarVelocityPID = null;
 
+	private Actor _actor;
 	private bool _isGrounded;
 	private Vector3 _torqueIntegral;
 	private Vector3 _torqueError;
@@ -67,46 +66,48 @@ public class CharacterMotor : Actor
 	private Quaternion _desiredRotation;
 
 	public Matrix4x4 LastTRS => _lastTRS;
-
+	
 	public bool Run { get; set; }
 	
 	public CapsuleCollider CapsuleCollider { get; private set; }
 
-	public override void Awake()
+	private void Awake()
 	{
-		base.Awake();
+		_actor = GetComponent<Actor>();
+		_actor.Rigidbody.maxAngularVelocity = MaxAngularVelocity;
+		_actor.OnUpdateAnimation += UpdateAnimation;
+		_actor.OnUpdatePhysics += UpdatePhysics;
+
 		CapsuleCollider = GetComponent<CapsuleCollider>();
 
-		//inputOrientation = Quaternion.LookRotation(transform.forward);
+		_desiredRotation = Quaternion.LookRotation(transform.forward);
 		_remainingJumps = jumpCount;
-		rb.maxAngularVelocity = MaxAngularVelocity;
 
-		var t = transform;
-		_lastTRS = Matrix4x4.TRS(t.position, t.rotation, t.localScale);
+		_lastTRS = Matrix4x4.TRS(transform.position, transform.rotation, transform.localScale);
 	}
 
 #if UNITY_EDITOR
 	private void OnValidate()
 	{
-		if (rb != null) rb.maxAngularVelocity = MaxAngularVelocity;
+		if (_actor != null && _actor.Rigidbody != null) _actor.Rigidbody.maxAngularVelocity = MaxAngularVelocity;
 	}
 
 	private void OnDrawGizmosSelected()
 	{
-		if (rb == null) { return; }
+		if (_actor != null && _actor.Rigidbody == null) { return; }
 		Gizmos.color = Color.blue;
-		Gizmos.DrawSphere(rb.worldCenterOfMass, 0.1f);
+		Gizmos.DrawSphere(_actor.Rigidbody.worldCenterOfMass, 0.1f);
 	}
 #endif
 
-	protected override void UpdatePhysics(float deltaTime)
+	protected void UpdatePhysics(float deltaTime)
 	{
 		Vector3 desiredVelocity;
 
 		// Stop angular velocity if animation has root motion.
-		if (Animator.applyRootMotion)
+		if (_actor.Animator.applyRootMotion)
 		{
-			rb.angularVelocity = Vector3.zero;
+			_actor.Rigidbody.angularVelocity = Vector3.zero;
 			return;
 		}
 
@@ -114,27 +115,27 @@ public class CharacterMotor : Actor
 		{
 			// Invert ground normal rotation to get unbiased ground velocity
 			var groundRotation = Quaternion.LookRotation(Vector3.forward, _groundNormal);
-			desiredVelocity = Quaternion.Inverse(groundRotation) * rb.velocity;
+			desiredVelocity = Quaternion.Inverse(groundRotation) * _actor.Rigidbody.velocity;
 		}
 		else
 		{
-			desiredVelocity = rb.velocity.WithY(0f);
+			desiredVelocity = _actor.Rigidbody.velocity.WithY(0f);
 		}
 
 		if (_queueLockOn)
 		{
 			_queueLockOn = false;
 
-			if (TrackedTarget != null)
+			if (_actor.TrackedTarget != null)
 			{
 				// If we were locked on, break lock...
-				TrackedTarget = null;
+				_actor.TrackedTarget = null;
 			}
 			else
 			{
 				// If we were not locked on, try to assign target...
 				var candidate = LockOn.TrackableCandidate;
-				if (candidate != null) TrackedTarget = candidate;
+				if (candidate != null) _actor.TrackedTarget = candidate;
 				else
 				{
 					// Recenter the camera if there is no viable target.
@@ -145,9 +146,9 @@ public class CharacterMotor : Actor
 			}
 		}
 
-		if (InputEnabled)
+		if (_actor.InputEnabled)
 		{
-			desiredVelocity += (_isGrounded ? acceleration : airAcceleration) * deltaTime * Move;
+			desiredVelocity += (_isGrounded ? acceleration : airAcceleration) * deltaTime * _actor.Move;
 		}
 
 		var speed = desiredVelocity.magnitude;
@@ -182,13 +183,13 @@ public class CharacterMotor : Actor
 		// groundVelocity = rb.velocity.WithY(0);
 		
 		// Jump.
-		if (_remainingJumps > 0 && TryConsumeAction(PlayerAction.Jump))
+		if (_remainingJumps > 0 && _actor.TryConsumeAction(PlayerAction.Jump))
 		{
 			_jumping = true;
 			_remainingJumps--;
 
 			var jumpVelocity = Mathf.Sqrt(2 * -Physics.gravity.y * gravityScale * jumpHeight);
-			rb.velocity = _groundVelocity.WithY(jumpVelocity);
+			_actor.Rigidbody.velocity = _groundVelocity.WithY(jumpVelocity);
 		}
 		
 
@@ -211,26 +212,26 @@ public class CharacterMotor : Actor
 			var finalVelocity = Quaternion.LookRotation(Vector3.forward, _groundNormal) * _groundVelocity;
 			
 			// Set center of mass to the point on the capsule directly below the center.
-			rb.centerOfMass = transform.InverseTransformPoint(_groundCheckPoint);
+			_actor.Rigidbody.centerOfMass = transform.InverseTransformPoint(_groundCheckPoint);
 
 			// Apply force slightly above the center of mass to make the actor lean with acceleration.
-			var offset = rb.worldCenterOfMass + Vector3.up * (leanFactor * _groundVelocity.magnitude / runSpeed);
-			var deltaVelocity = finalVelocity - rb.velocity;
-			rb.AddForceAtPosition(deltaVelocity, offset, ForceMode.VelocityChange);
+			var offset = _actor.Rigidbody.worldCenterOfMass + Vector3.up * (leanFactor * _groundVelocity.magnitude / runSpeed);
+			var deltaVelocity = finalVelocity - _actor.Rigidbody.velocity;
+			_actor.Rigidbody.AddForceAtPosition(deltaVelocity, offset, ForceMode.VelocityChange);
 			
 			// Snap to ground.
-			var groundOffset = rb.position - _groundCheckPoint;
-			rb.MovePosition(rb.position.WithY(_groundPoint.y + groundOffset.y));
+			var groundOffset = _actor.Rigidbody.position - _groundCheckPoint;
+			_actor.Rigidbody.MovePosition(_actor.Rigidbody.position.WithY(_groundPoint.y + groundOffset.y));
 		}
 		else
 		{
 			// Reset jump allowance if we ran off a ledge OR jumped
-			if (wasGrounded) JumpAllowance.Reset(Time.fixedDeltaTime * 4);
+			if (wasGrounded) _actor.JumpAllowance.Reset(Time.fixedDeltaTime * 4);
 			
 			// Set center of mass to the center while airborne.
-			rb.centerOfMass = CapsuleCollider.center;
+			_actor.Rigidbody.centerOfMass = CapsuleCollider.center;
 
-			if (!JumpAllowance.InProgress)
+			if (!_actor.JumpAllowance.InProgress)
 			{
 				// Ran out of coyote time and didn't jump
 				if (_remainingJumps == jumpCount) _remainingJumps = 0;
@@ -240,14 +241,14 @@ public class CharacterMotor : Actor
 			}
 
 			// We passed the peak of the jump
-			if (_jumping && rb.velocity.y <= 0f) _jumping = false;
+			if (_jumping && _actor.Rigidbody.velocity.y <= 0f) _jumping = false;
 
 			// Set new velocity.
-			rb.velocity = _groundVelocity.WithY(rb.velocity.y) + Physics.gravity * (gravityScale * Time.fixedDeltaTime);
+			_actor.Rigidbody.velocity = _groundVelocity.WithY(_actor.Rigidbody.velocity.y) + Physics.gravity * (gravityScale * Time.fixedDeltaTime);
 		}
 
 		// Roll.
-		if (_rollAngle > 0f && _rollAngle < 360f || TryConsumeAction(PlayerAction.Roll))
+		if (_rollAngle > 0f && _rollAngle < 360f || _actor.TryConsumeAction(PlayerAction.Roll))
 		{
 			_rollAngle += rollSpeed * Time.fixedDeltaTime;
 			if (_rollAngle >= 360f) _rollAngle = 0f;
@@ -255,11 +256,9 @@ public class CharacterMotor : Actor
 
 		// Handle rotation.
 		var targetRotation = GetTargetRotation();
-		var targetTorque = rb.rotation.TorqueTo(targetRotation, deltaTime);
-		var torque = torquePID.Output(rb.angularVelocity, targetTorque, ref _torqueIntegral, ref _torqueError, deltaTime);
-		rb.AddTorque(torque, ForceMode.Acceleration);
-
-		if (InputEnabled) HandleAbilityInput();
+		var targetTorque = _actor.Rigidbody.rotation.TorqueTo(targetRotation, deltaTime);
+		var torque = torquePID.Output(_actor.Rigidbody.angularVelocity, targetTorque, ref _torqueIntegral, ref _torqueError, deltaTime);
+		_actor.Rigidbody.AddTorque(torque, ForceMode.Acceleration);
 	}
 
 	private Quaternion GetTargetRotation()
@@ -267,12 +266,12 @@ public class CharacterMotor : Actor
 		var maxTurnRate = _isGrounded && _rollAngle < Mathf.Epsilon ? maxTurnGround : maxTurnAir;
 		var rollAxis = Vector3.right;
 
-		var validLookInput = _isGrounded && Move.normalized != Vector3.zero && InputEnabled && !HitReaction.InProgress;
-		if (validLookInput) _lookDirection = Move.normalized;
+		var validLookInput = _isGrounded && _actor.Move.normalized != Vector3.zero && _actor.InputEnabled && !_actor.HitReaction.InProgress;
+		if (validLookInput) _lookDirection = _actor.Move.normalized;
 
-		if (TrackedTarget != null)
+		if (_actor.TrackedTarget != null)
 		{
-			var toLockOnTarget = (TrackedTarget.GetEyesPosition() - GetEyesPosition()).WithY(0f).normalized;
+			var toLockOnTarget = (_actor.TrackedTarget.GetEyesPosition() - _actor.GetEyesPosition()).WithY(0f).normalized;
 			var lockOnOrientation = Quaternion.LookRotation(toLockOnTarget);
 			_desiredRotation = Quaternion.RotateTowards(_desiredRotation, lockOnOrientation, maxTurnRate);
 
@@ -287,16 +286,16 @@ public class CharacterMotor : Actor
 		return _rollAngle > 0 ? _desiredRotation * Quaternion.AngleAxis(_rollAngle, rollAxis) : _desiredRotation;
 	}
 
-	protected override void UpdateAnimation(float deltaTime)
+	protected void UpdateAnimation(float deltaTime)
 	{
 		var input = new AnimatedProperties()
 		{
-			MoveSpeedNormalized = IsPaused ? 0f : _groundVelocity.magnitude / runSpeed,
+			MoveSpeedNormalized = _actor.IsPaused ? 0f : _groundVelocity.magnitude / runSpeed,
 			IsGrounded = _isGrounded,
-			DirectionY = Mathf.Clamp01(Mathf.InverseLerp(1f, -1f, rb.velocity.y)),
+			DirectionY = Mathf.Clamp01(Mathf.InverseLerp(1f, -1f, _actor.Rigidbody.velocity.y)),
 			VelocityX = Vector3.Dot(_groundVelocity, transform.right) / runSpeed,
 			VelocityZ = Vector3.Dot(_groundVelocity, transform.forward) / runSpeed,
-			IsInHitStun = HitReaction.InProgress
+			IsInHitStun = _actor.HitReaction.InProgress
 		};
 		
 		OnAnimatedPropertiesChanged?.Invoke(input);
@@ -306,8 +305,8 @@ public class CharacterMotor : Actor
 
 		for (var i = 0; i < loops; i++)
 		{
-			Animator.Update(dt);
-			PartialTickAnimationListeners((i + 1f) / loops);
+			_actor.Animator.Update(dt);
+			_actor.UpdateSubFrameAnimation((i + 1f) / loops);
 		}
 		
 		// Set the center of mass to the point on the collider directly below the center, using it's current rotation.
@@ -372,7 +371,7 @@ public class CharacterMotor : Actor
 		if (!_isGrounded)
 		{
 			// Become grounded ONLY if the distance to ground is less than projected fall distance
-			var projectedFallDistance = (-rb.velocity.y - Physics.gravity.y * gravityScale) * Time.fixedDeltaTime;
+			var projectedFallDistance = (-_actor.Rigidbody.velocity.y - Physics.gravity.y * gravityScale) * Time.fixedDeltaTime;
 			if (averageDistance > projectedFallDistance) { return false; }
 		}
 
@@ -380,10 +379,6 @@ public class CharacterMotor : Actor
 		_groundPoint = averagePoint;
 		return true;
 	}
-
-	public override Vector3 GetEyesPosition() => transform.TransformPoint(CapsuleCollider.center);
-
-	public override Vector3 GetGroundPosition() => _groundCheckPoint;
 
 	public void QueueLockOn() => _queueLockOn = true;
 }

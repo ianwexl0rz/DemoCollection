@@ -4087,7 +4087,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gameSettings: {fileID: 11400000, guid: 491122bfc34e6724c90d93067bb4cc0d, type: 2}
   mainMode:
-    playerCharacter: {fileID: 1832815582}
+    playerActor: {fileID: 1832815588}
     gameCamera: {fileID: 198612201}
     lockOn: {fileID: 11400000, guid: 507620f70343fc94c826011c3ad03caa, type: 2}
     playerBrain: {fileID: 11400000, guid: 197438d32256b794faf42212dfaf46b5, type: 2}
@@ -4484,16 +4484,16 @@ Transform:
   m_Father: {fileID: 187832608}
   m_RootOrder: 17
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1832815582 stripped
+--- !u!114 &1832815588 stripped
 MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 5455417119612974577, guid: 75489aca81aea7245a9dd721b0dd2309,
+  m_CorrespondingSourceObject: {fileID: -2076662725767434592, guid: 75489aca81aea7245a9dd721b0dd2309,
     type: 3}
   m_PrefabInstance: {fileID: 5455417118928354303}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 642a57e0cf005a6428466df6f124aa2c, type: 3}
+  m_Script: {fileID: 11500000, guid: 8fc45452a6e65dd448528717be0423f3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1001 &1901282817

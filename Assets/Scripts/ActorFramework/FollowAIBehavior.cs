@@ -23,17 +23,17 @@ public class FollowAIBehavior : AIBehavior
 		}
 		else if(toTarget.magnitude > stopDistance)
 		{
-			if(actor is CharacterMotor player)
+			if(actor.GetComponent<CharacterMotor>() is CharacterMotor motor)
 			{
-				if(!player.Run && toTarget.magnitude > startRunDistance)
+				if(!motor.Run && toTarget.magnitude > startRunDistance)
 				{
 					// Start running
-					player.Run = true;
+					motor.Run = true;
 				}
-				else if(player.Run && toTarget.magnitude < stopRunDistance)
+				else if(motor.Run && toTarget.magnitude < stopRunDistance)
 				{
 					// Stop running
-					player.Run = false;
+					motor.Run = false;
 				}
 			}
 

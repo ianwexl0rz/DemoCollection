@@ -11,9 +11,10 @@ public class MainMode : GameMode
     private static IEnumerator hitPause;
     private static MainMode _instance;
 
+    [FormerlySerializedAs("playerCharacterMotor")]
     [FormerlySerializedAs("playerCharacter")]
     [FormerlySerializedAs("activePlayer")]
-    [SerializeField] private CharacterMotor playerCharacterMotor = null;
+    [SerializeField] private Actor playerActor = null;
     [SerializeField] private ThirdPersonCamera gameCamera = null;
     [SerializeField] private LockOn lockOn = null;
 
@@ -25,8 +26,8 @@ public class MainMode : GameMode
     [SerializeField] private GameObject blueHitSparkPrefab = null;
     [SerializeField] private GameObject orangeHitSparkPrefab = null;
     
-    private int playerIndex;
-    private List<CharacterMotor> playerCharacters;
+    private int actorIndex;
+    private List<Actor> actorsInScene;
     private Camera mainCamera;
     private bool cachedPhysicsPaused;
     [NonSerialized] private static bool physicsPaused;
@@ -54,10 +55,10 @@ public class MainMode : GameMode
             gameCamera.Init();
             lockOn.Init();
 
-            playerCharacters = new List<CharacterMotor>(Object.FindObjectsOfType<CharacterMotor>());
-            if (playerCharacterMotor != null) playerIndex = playerCharacters.IndexOf(playerCharacterMotor);
+            actorsInScene = new List<Actor>(Object.FindObjectsOfType<Actor>());
+            if (playerActor != null) actorIndex = actorsInScene.IndexOf(playerActor);
 
-            SetPlayer(playerCharacterMotor, true);
+            SetPlayer(playerActor, true);
             Cursor.lockState = CursorLockMode.Locked;
         }
 
@@ -84,8 +85,8 @@ public class MainMode : GameMode
         Time.timeScale = player.GetButton(PlayerAction.SlowMo) ? 0.01f : 1f;
 
         // (Debug) Adjust health.
-        if (Input.GetKeyDown(KeyCode.RightBracket)) playerCharacterMotor.TakeDamage(-5f);
-        if (Input.GetKeyDown(KeyCode.LeftBracket)) playerCharacterMotor.TakeDamage(5f);
+        if (Input.GetKeyDown(KeyCode.RightBracket)) playerActor.TakeDamage(-5f);
+        if (Input.GetKeyDown(KeyCode.LeftBracket)) playerActor.TakeDamage(5f);
 
         foreach (var entity in entities) entity.Tick(Time.deltaTime);
     }
@@ -96,12 +97,12 @@ public class MainMode : GameMode
 
         var lookInput = player.GetAxis2D(PlayerAction.LookHorizontal, PlayerAction.LookVertical);
 
-        gameCamera.UpdatePositionAndRotation(lookInput, playerCharacterMotor.TrackedTarget);
+        gameCamera.UpdatePositionAndRotation(lookInput, playerActor.TrackedTarget);
         
         if (GameManager.Settings.InvertX) lookInput.x *= -1; // TODO: Setting should be cached.
         //if (GameManager.Settings.InvertY) lookInput.y *= -1; // TODO: Setting should be cached.
 
-        if (!physicsPaused) LockOn.UpdateLockOn(playerCharacterMotor, mainCamera, lookInput);
+        if (!physicsPaused) LockOn.UpdateLockOn(playerActor, mainCamera, lookInput);
         ResolveCombatEvents();
 
         // Pause game if requested.
@@ -126,20 +127,20 @@ public class MainMode : GameMode
 
     private void CyclePlayer()
     {
-        playerIndex = (playerIndex + 1) % playerCharacters.Count;
-        SetPlayer(playerCharacters[playerIndex]);
+        actorIndex = (actorIndex + 1) % actorsInScene.Count;
+        SetPlayer(actorsInScene[actorIndex]);
     }
 
-    private void SetPlayer(CharacterMotor newPlayer, bool immediate = false)
+    private void SetPlayer(Actor newPlayer, bool immediate = false)
     {
-        if (playerCharacterMotor != null && playerCharacterMotor != newPlayer)
+        if (playerActor != null && playerActor != newPlayer)
         {
-            playerCharacterMotor.SetController(followerBrain, newPlayer); // Set the old active player to use Follower Brain
+            playerActor.SetController(followerBrain, newPlayer); // Set the old active player to use Follower Brain
         }
 
-        playerCharacterMotor = newPlayer;
-        playerCharacterMotor.SetController(playerBrain); // Set the active player to use Player Brain
-        gameCamera.SetFollowTarget(playerCharacterMotor, immediate); // Set the camera to follow the active player
+        playerActor = newPlayer;
+        playerActor.SetController(playerBrain); // Set the active player to use Player Brain
+        gameCamera.SetFollowTarget(playerActor.GetComponent<ITrackable>(), immediate); // Set the camera to follow the active player
     }
     
     public static void AddCombatEvents(IEnumerable<CombatEvent> combatEvent) => combatEvents.AddRange(combatEvent);

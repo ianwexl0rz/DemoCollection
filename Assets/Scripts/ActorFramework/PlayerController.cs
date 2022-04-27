@@ -29,14 +29,14 @@ public class PlayerController : ActorController
 	{
 		actor.Move = CalculateMove();
 
-		if(!(actor is CharacterMotor character)) return;
+		if(!(actor.GetComponent<CharacterMotor>() is CharacterMotor motor)) return;
 		
 		// Lock On
 		if(Player.GetButtonDown(PlayerAction.LockOn))
-			character.QueueLockOn();
+			motor.QueueLockOn();
 
 		// Run
-		character.Run = Player.GetButton(PlayerAction.Sprint);
+		motor.Run = Player.GetButton(PlayerAction.Sprint);
 
 		// Roll
 		if(Player.GetButtonDown(PlayerAction.Roll))

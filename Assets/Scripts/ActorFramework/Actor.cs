@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Collections;
 using System.Linq;
 
-public class Actor : Entity, ITrackable, IDamageable
+public class Actor : Entity, IDamageable
 {
 	private static readonly int DamageFlash = Shader.PropertyToID("_DamageFlash");
 
@@ -16,7 +16,7 @@ public class Actor : Entity, ITrackable, IDamageable
 	
 	public event Action OnHandleAbilityInput;
 
-	public event Action<float> OnPartialTickAnimation;
+	public event Action<float> OnUpdateSubFrameAnimation;
 
 	public event Action<float> OnHealthChanged = delegate {  };
 
@@ -42,9 +42,9 @@ public class Actor : Entity, ITrackable, IDamageable
 
 	public readonly InputBuffer InputBuffer = new InputBuffer();
 
-	protected Timer HitReaction { get; private set; }
+	public Timer HitReaction { get; private set; }
 
-	protected Timer JumpAllowance { get; private set; }
+	public Timer JumpAllowance { get; private set; }
 
 
 	public override void Awake()
@@ -65,14 +65,20 @@ public class Actor : Entity, ITrackable, IDamageable
 		_actorTimerGroup.Add(JumpAllowance = new Timer());
 	}
 
-	protected void PartialTickAnimationListeners(float progress)
+	protected override void UpdatePhysics(float deltaTime)
 	{
-		OnPartialTickAnimation?.Invoke(progress);
+		base.UpdatePhysics(deltaTime);
+		if (InputEnabled) OnHandleAbilityInput?.Invoke();
 	}
-	
-	protected void HandleAbilityInput()
+
+	protected override void UpdateAnimation(float deltaTime)
 	{
-		OnHandleAbilityInput?.Invoke();
+		base.UpdateAnimation(deltaTime);
+	}
+
+	public void UpdateSubFrameAnimation(float progress)
+	{
+		OnUpdateSubFrameAnimation?.Invoke(progress);
 	}
 
 	private IEnumerator DoDamageFlash(float duration)
@@ -93,6 +99,7 @@ public class Actor : Entity, ITrackable, IDamageable
 	{
 		foreach (var r in _renderers)
 		{
+			if (r == null) continue;
 			var propertyBlock = new MaterialPropertyBlock();
 			r.GetPropertyBlock(propertyBlock);
 			propertyBlock.SetFloat(DamageFlash, value);

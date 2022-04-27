@@ -208,9 +208,11 @@ GameObject:
   - component: {fileID: 54013669590684724}
   - component: {fileID: 136221232741552080}
   - component: {fileID: 7910286249557555350}
+  - component: {fileID: 4193483838583071648}
   - component: {fileID: 1306851918}
   - component: {fileID: 1306851917}
   - component: {fileID: 2723904033582651686}
+  - component: {fileID: -6717047811651370323}
   m_Layer: 8
   m_Name: Heavy
   m_TagString: Untagged
@@ -287,6 +289,19 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &4193483838583071648
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1947941858301876}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fc45452a6e65dd448528717be0423f3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  controller: {fileID: 0}
 --- !u!114 &1306851918
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -299,7 +314,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 642a57e0cf005a6428466df6f124aa2c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  controller: {fileID: 0}
   groundCheckHeight: 0.2
   rayOffsetDistance: 0.15
   extraGroundRays: 8
@@ -350,6 +364,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dampTime: 0.05
+--- !u!114 &-6717047811651370323
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1947941858301876}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4a3171578f584018a111747f168f7c59, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _capsuleCollider: {fileID: 136221232741552080}
 --- !u!1 &1600557156720074942
 GameObject:
   m_ObjectHideFlags: 0
@@ -413,7 +440,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isRoot: 1
-  parentEntity: {fileID: 1306851918}
+  parentEntity: {fileID: 4193483838583071648}
   referenceBone: {fileID: 5595153552641103748}
   syncReferenceBone: 1
   radius: 0.07
@@ -489,7 +516,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isRoot: 1
-  parentEntity: {fileID: 1306851918}
+  parentEntity: {fileID: 4193483838583071648}
   referenceBone: {fileID: 5595153552641103750}
   syncReferenceBone: 1
   radius: 0.07

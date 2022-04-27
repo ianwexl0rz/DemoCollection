@@ -32,7 +32,7 @@ public class DynamicBone : Entity
     {
 		CreateJoint();
 	    CreateCollider();
-	    rb.maxAngularVelocity = 20f;
+	    Rigidbody.maxAngularVelocity = 20f;
 	    cacheRotation = referenceBone.rotation;
     }
 
@@ -86,7 +86,7 @@ public class DynamicBone : Entity
 	private void CreateJoint()
 	{
 		joint = gameObject.AddComponent<ConfigurableJoint>();
-		joint.connectedBody = parentEntity.rb;
+		joint.connectedBody = parentEntity.Rigidbody;
 		joint.autoConfigureConnectedAnchor = false;
 		joint.xMotion = ConfigurableJointMotion.Locked;
 		joint.yMotion = ConfigurableJointMotion.Locked;
@@ -115,16 +115,16 @@ public class DynamicBone : Entity
 	{
 		base.UpdatePhysics(deltaTime);
 
-		var targetRotation = isRoot ? cacheRotation : parentEntity.rb.rotation * cacheRotation;
+		var targetRotation = isRoot ? cacheRotation : parentEntity.Rigidbody.rotation * cacheRotation;
 		var axis = GetDirectionFromInt(capsule.direction);
 
 		joint.connectedAnchor = isRoot ? parentEntity.transform.InverseTransformPoint(referenceBone.position) : referenceBone.localPosition;
-		rb.centerOfMass = capsule.center - axis * (capsule.height * (centerOfMass - 0.5f));
+		Rigidbody.centerOfMass = capsule.center - axis * (capsule.height * (centerOfMass - 0.5f));
 
-		rb.AddForce(windDirection * windInfluence, ForceMode.Acceleration);
-		var targetTorque = rb.rotation.TorqueTo(targetRotation, deltaTime);
-		var torque = torquePID.Output(rb.angularVelocity, targetTorque, ref torqueIntegral, ref torqueError, deltaTime);
-		rb.AddTorque(Vector3.Scale(torque, stiffnessPerAxis), ForceMode.Acceleration);
+		Rigidbody.AddForce(windDirection * windInfluence, ForceMode.Acceleration);
+		var targetTorque = Rigidbody.rotation.TorqueTo(targetRotation, deltaTime);
+		var torque = torquePID.Output(Rigidbody.angularVelocity, targetTorque, ref torqueIntegral, ref torqueError, deltaTime);
+		Rigidbody.AddTorque(Vector3.Scale(torque, stiffnessPerAxis), ForceMode.Acceleration);
 	}
 	
 #if UNITY_EDITOR
@@ -136,10 +136,10 @@ public class DynamicBone : Entity
 		Gizmos.color = Color.red;
 		GizmosEx.DrawWireCapsule(pos, rot, radius, height + radius * 2);
 
-		if (rb == null) { return; }
+		if (Rigidbody == null) { return; }
 
 		Gizmos.color = Color.gray;
-		Gizmos.DrawSphere(transform.TransformPoint(rb.centerOfMass), 0.05f);
+		Gizmos.DrawSphere(transform.TransformPoint(Rigidbody.centerOfMass), 0.05f);
 	}
 #endif
 

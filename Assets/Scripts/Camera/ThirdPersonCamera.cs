@@ -56,7 +56,7 @@ public class ThirdPersonCamera : MonoBehaviour
 		while (time < duration)
 		{
 			var t = time / duration;
-			lastTrackPos = trackPos = MathUtility.SmoothStep(initialPos, player.GetEyesPosition(), t);
+			lastTrackPos = trackPos = MathUtility.SmoothStep(initialPos, player.GetCenter(), t);
 			focalHeight = Mathf.SmoothStep(initialHeight, player.GetHeight() * 0.5f, t);
 			localDrag *= 1 - t;
 			autoTurn = false;
@@ -64,7 +64,7 @@ public class ThirdPersonCamera : MonoBehaviour
 			time += Time.deltaTime;
 		}
 		
-		lastTrackPos = trackPos = player.GetEyesPosition();
+		lastTrackPos = trackPos = player.GetCenter();
 		focalHeight = player.GetHeight() * 0.5f;
 		localDrag = Vector3.zero;
 		autoTurn = true;
@@ -118,7 +118,7 @@ public class ThirdPersonCamera : MonoBehaviour
 		if (!blendToPlayer.MoveNext())
 		{
 			lastTrackPos = trackPos;
-			trackPos = player.GetEyesPosition();
+			trackPos = player.GetCenter();
 		}
 
 		var shouldLockOn = trackedTarget != null;

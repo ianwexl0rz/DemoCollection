@@ -11,10 +11,12 @@ GameObject:
   - component: {fileID: 4416901508690764}
   - component: {fileID: 54147962096831054}
   - component: {fileID: 136499514121446498}
-  - component: {fileID: 707289323}
-  - component: {fileID: 707289324}
   - component: {fileID: 5116435249473848185}
+  - component: {fileID: -12541596981864813}
+  - component: {fileID: 707289323}
   - component: {fileID: -7573771792531204498}
+  - component: {fileID: 707289324}
+  - component: {fileID: -7017686476038204768}
   m_Layer: 8
   m_Name: Girl
   m_TagString: Untagged
@@ -69,6 +71,39 @@ CapsuleCollider:
   m_Height: 1.4
   m_Direction: 1
   m_Center: {x: 0, y: 0.9, z: 0}
+--- !u!95 &5116435249473848185
+Animator:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1093183912855910}
+  m_Enabled: 0
+  m_Avatar: {fileID: 9000000, guid: 7c5006bb81fdb476199973b6966f1d25, type: 3}
+  m_Controller: {fileID: 9100000, guid: 577eeeda8465542d99ad38a77ae2cd60, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &-12541596981864813
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1093183912855910}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fc45452a6e65dd448528717be0423f3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  controller: {fileID: 0}
 --- !u!114 &707289323
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -81,7 +116,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 642a57e0cf005a6428466df6f124aa2c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  controller: {fileID: 11400000, guid: 3bd6e43a756db3642bc08e8a5ba40b8e, type: 2}
   groundCheckHeight: 0.2
   rayOffsetDistance: 0.15
   extraGroundRays: 8
@@ -103,6 +137,19 @@ MonoBehaviour:
   hitBoxCollider: {fileID: 3621298156594705738}
   torquePID: {fileID: 11400000, guid: 00ed0bd437019a34dbf27b4bd064959e, type: 2}
   planarVelocityPID: {fileID: 0}
+--- !u!114 &-7573771792531204498
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1093183912855910}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc88d87fc5ee48a8b6408d21415b4cdb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dampTime: 0.05
 --- !u!114 &707289324
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -119,27 +166,7 @@ MonoBehaviour:
   forwardAxis: {x: 1, y: 0, z: 0}
   weapon: {fileID: 11400000, guid: 90fb807831acc3143ae1a8a0242e70fd, type: 2}
   distThreshold: 0.1
---- !u!95 &5116435249473848185
-Animator:
-  serializedVersion: 4
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1093183912855910}
-  m_Enabled: 0
-  m_Avatar: {fileID: 9000000, guid: 7c5006bb81fdb476199973b6966f1d25, type: 3}
-  m_Controller: {fileID: 9100000, guid: 577eeeda8465542d99ad38a77ae2cd60, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
---- !u!114 &-7573771792531204498
+--- !u!114 &-7017686476038204768
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -148,10 +175,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1093183912855910}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dc88d87fc5ee48a8b6408d21415b4cdb, type: 3}
+  m_Script: {fileID: 11500000, guid: 4a3171578f584018a111747f168f7c59, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dampTime: 0.05
+  _capsuleCollider: {fileID: 136499514121446498}
 --- !u!1 &1387081973337918690
 GameObject:
   m_ObjectHideFlags: 0

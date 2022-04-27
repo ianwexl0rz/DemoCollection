@@ -23,11 +23,15 @@ public struct RigidbodyState
 
 public class Entity : MonoBehaviour
 {
-	public Rigidbody rb { get; private set; }
-	protected bool IsPaused { get; private set; }
+	public event Action<float> OnUpdateAnimation;
+	
+	public event Action<float> OnUpdatePhysics;
 
-	private RigidbodyState savedState;
-	private List<Entity> subEntities = new List<Entity>();
+	public Rigidbody Rigidbody { get; private set; }
+	public bool IsPaused { get; private set; }
+
+	private RigidbodyState _savedState;
+	private List<Entity> _subEntities = new List<Entity>();
 
 	protected virtual void OnEnable()
 	{
@@ -42,7 +46,7 @@ public class Entity : MonoBehaviour
 
 	public virtual void Awake()
 	{
-		rb = GetComponentInChildren<Rigidbody>();
+		Rigidbody = GetComponentInChildren<Rigidbody>();
 	}
 
 	public virtual void Tick(float deltaTime)
@@ -55,7 +59,7 @@ public class Entity : MonoBehaviour
 
 		UpdateAnimation(deltaTime);
 
-		foreach (var entity in subEntities)
+		foreach (var entity in _subEntities)
 			entity.LateTick(deltaTime);
 	}
 
@@ -65,25 +69,21 @@ public class Entity : MonoBehaviour
 
 		UpdatePhysics(deltaTime);
 
-		foreach (var entity in subEntities)
+		foreach (var entity in _subEntities)
 			entity.FixedTick(deltaTime);
 	}
 
-	protected virtual void UpdateAnimation(float deltaTime)
-	{
-	}
+	protected virtual void UpdateAnimation(float deltaTime) => OnUpdateAnimation?.Invoke(deltaTime);
 
-	protected virtual void UpdatePhysics(float deltaTime)
-	{
-	}
+	protected virtual void UpdatePhysics(float deltaTime) => OnUpdatePhysics?.Invoke(deltaTime);
 
 	protected virtual void OnPauseEntity(bool value)
 	{
 	}
 
-	public void AddSubEntity(Entity entity) => subEntities.Add(entity);
+	public void AddSubEntity(Entity entity) => _subEntities.Add(entity);
 
-	public void RemoveSubEntity(Entity entity) => subEntities.Remove(entity);
+	public void RemoveSubEntity(Entity entity) => _subEntities.Remove(entity);
 
 	public void SetPaused(bool value)
 	{
@@ -92,33 +92,33 @@ public class Entity : MonoBehaviour
 		
 		if(value)
 		{
-			savedState = new RigidbodyState(rb);
+			_savedState = new RigidbodyState(Rigidbody);
 
-			rb.isKinematic = true;
-			rb.velocity = Vector3.zero; 
-			rb.angularVelocity = Vector3.zero;
+			Rigidbody.isKinematic = true;
+			Rigidbody.velocity = Vector3.zero; 
+			Rigidbody.angularVelocity = Vector3.zero;
 
 			// Account for interpolation
 			// TODO: Set rigidbody position between current transform position and previous transform position
 			// depending on sub-frame collision. Also set animator.Simulate() to that time.
 			var t = transform;
-			rb.position = t.position;
-			rb.rotation = t.rotation;
-			rb.Sleep();
+			Rigidbody.position = t.position;
+			Rigidbody.rotation = t.rotation;
+			Rigidbody.Sleep();
 		}
 		else
 		{
-			rb.WakeUp();
-			rb.RestoreState(savedState);
+			Rigidbody.WakeUp();
+			Rigidbody.RestoreState(_savedState);
 		}
 
-		foreach (var entity in subEntities) entity.SetPaused(value);
+		foreach (var entity in _subEntities) entity.SetPaused(value);
 	}
 
 	public virtual void ApplyHit(Entity instigator, Vector3 point, Vector3 direction, AttackData attackData)
 	{
 		var velocity = direction * (attackData.knockback / Time.fixedDeltaTime);
 		//rb.AddForceAtPosition(velocity, point, ForceMode.Impulse);
-		rb.AddForce(velocity, ForceMode.Impulse);
+		Rigidbody.AddForce(velocity, ForceMode.Impulse);
 	}
 }

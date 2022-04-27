@@ -43,9 +43,11 @@ GameObject:
   - component: {fileID: 5407255053017717643}
   - component: {fileID: 5356605740521111663}
   - component: {fileID: 5698680696155516962}
+  - component: {fileID: -2076662725767434592}
   - component: {fileID: 5455417119612974577}
-  - component: {fileID: 5455417119612974578}
   - component: {fileID: -8125500235304199321}
+  - component: {fileID: 5455417119612974578}
+  - component: {fileID: 5523151079513506425}
   m_Layer: 8
   m_Name: 256fes
   m_TagString: Untagged
@@ -121,6 +123,19 @@ Animator:
   m_HasTransformHierarchy: 0
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &-2076662725767434592
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5454812784484718603}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fc45452a6e65dd448528717be0423f3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  controller: {fileID: 0}
 --- !u!114 &5455417119612974577
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -133,7 +148,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 642a57e0cf005a6428466df6f124aa2c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  controller: {fileID: 0}
   groundCheckHeight: 0.2
   rayOffsetDistance: 0.15
   extraGroundRays: 8
@@ -155,6 +169,19 @@ MonoBehaviour:
   hitBoxCollider: {fileID: 5455417118671401125}
   torquePID: {fileID: 11400000, guid: 00ed0bd437019a34dbf27b4bd064959e, type: 2}
   planarVelocityPID: {fileID: 11400000, guid: 00ed0bd437019a34dbf27b4bd064959e, type: 2}
+--- !u!114 &-8125500235304199321
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5454812784484718603}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc88d87fc5ee48a8b6408d21415b4cdb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dampTime: 0.05
 --- !u!114 &5455417119612974578
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -171,7 +198,7 @@ MonoBehaviour:
   forwardAxis: {x: 0, y: 1, z: 0}
   weapon: {fileID: 11400000, guid: b6cad30b31a56a140ade13f5d4e4bbed, type: 2}
   distThreshold: 0.1
---- !u!114 &-8125500235304199321
+--- !u!114 &5523151079513506425
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -180,10 +207,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 5454812784484718603}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dc88d87fc5ee48a8b6408d21415b4cdb, type: 3}
+  m_Script: {fileID: 11500000, guid: 4a3171578f584018a111747f168f7c59, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dampTime: 0.05
+  _capsuleCollider: {fileID: 5356605740521111663}
 --- !u!1 &5455417118671401127
 GameObject:
   m_ObjectHideFlags: 0

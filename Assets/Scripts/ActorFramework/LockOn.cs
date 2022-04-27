@@ -40,45 +40,43 @@ public class LockOn : ScriptableObject
         return (Vector2) mainCamera.WorldToScreenPoint(trackable.GetEyesPosition()) - new Vector2(mainCamera.pixelWidth, mainCamera.pixelHeight) * 0.5f;
     }
 
-    public static void UpdateLockOn(CharacterMotor playerCharacterMotor, Camera mainCamera, Vector2 lookInput)
+    public static void UpdateLockOn(Actor player, Camera mainCamera, Vector2 lookInput)
     {
-        var currentTarget = playerCharacterMotor.TrackedTarget;
-        
-        // TODO: Potential targets should add or remove themselves on Tick.
+	    // TODO: Potential targets should add or remove themselves on Tick.
 
-        var potentialTargets = Physics.OverlapSphere(playerCharacterMotor.transform.position, _instance.range)
+        var potentialTargets = Physics.OverlapSphere(player.transform.position, _instance.range)
 	        .Select(collider => collider.GetComponent<ITrackable>())
-	        .Except(new []{playerCharacterMotor, currentTarget, null})
-	        .Where(trackable => trackable.IsVisible)
+	        .Except(new []{player.GetComponent<ITrackable>(), player.TrackedTarget, null})
+	        .Where(trackable => trackable.IsVisible())
             .ToDictionary(trackable => trackable, trackable => GetScreenPos(trackable, mainCamera));
         
-        if (currentTarget == null)
+        if (player.TrackedTarget == null)
         {
             TrackableCandidate = GetTrackableClosestToCenter(potentialTargets);
             lookInputStale = true;
         }
         else
         {
-	        TrackableCandidate = currentTarget;
+	        TrackableCandidate = player.TrackedTarget;
 	        
 	        if (lookInputStale && lookInput.Equals(Vector2.zero)) lookInputStale = false;
             if (!lookInputStale && lookInput.sqrMagnitude > 0)
             {
                 var halfScreenPixels = new Vector2(mainCamera.pixelWidth, mainCamera.pixelHeight) * 0.5f;
-                var currentTargetScreenPos = (Vector2) mainCamera.WorldToScreenPoint(currentTarget.GetEyesPosition()) - halfScreenPixels;
+                var currentTargetScreenPos = (Vector2) mainCamera.WorldToScreenPoint(player.TrackedTarget.GetEyesPosition()) - halfScreenPixels;
                 var newTarget = GetTrackableClosestToVector(potentialTargets, lookInput, currentTargetScreenPos);
                 if (!ReferenceEquals(newTarget, null))
                 {
                     TrackableCandidate = newTarget;
                     lookInputStale = true;
                         
-                    playerCharacterMotor.TrackedTarget = TrackableCandidate;
+                    player.TrackedTarget = TrackableCandidate;
                 }
             }
         }
 
         // Update lock-on indicator position.
-        lockOnIndicator.UpdatePosition(playerCharacterMotor.TrackedTarget != null, TrackableCandidate,
+        lockOnIndicator.UpdatePosition(player.TrackedTarget != null, TrackableCandidate,
             mainCamera.transform.position);
     }
 

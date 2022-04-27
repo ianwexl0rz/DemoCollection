@@ -29,12 +29,16 @@ public class MeleeCombat : MonoBehaviour
 
 	private Actor actor = null;
 
+	private CharacterMotor _motor;
+
 	private void Awake()
 	{
 		actor = GetComponent<Actor>();
 		actor.OnHandleAbilityInput += HandleInput;
-		actor.OnPartialTickAnimation += ProcessAttackAnimation;
+		actor.OnUpdateSubFrameAnimation += ProcessAttackAnimation;
 		actor.OnReceiveHit += ReceiveHit;
+
+		_motor = GetComponent<CharacterMotor>();
 
 		if(weapon == null) return;
 
@@ -57,7 +61,7 @@ public class MeleeCombat : MonoBehaviour
 	{
 		if (ActiveHit)
 		{
-			var characterLastTRS = ((CharacterMotor) actor).LastTRS;
+			var characterLastTRS = _motor.LastTRS;
 
 			// Calculate the position and rotation the weapon WOULD have if the character did not move/rotate this frame.
 			// This allows us to blend to the ACTUAL position/rotation over multiple steps.
@@ -149,10 +153,7 @@ public class MeleeCombat : MonoBehaviour
 	{
 		 isAttacking = false;
 
-		if(actor is CharacterMotor character)
-		{
-			character.InputEnabled = true;
-		}
+		actor.InputEnabled = true;
 
 		//cancelOK = true;
 	}
