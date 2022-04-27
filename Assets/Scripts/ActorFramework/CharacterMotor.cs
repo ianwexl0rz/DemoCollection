@@ -1,11 +1,26 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using ActorFramework;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
-public class Character : Actor
+public class CharacterMotor : Actor
 {
+	public struct AnimatedProperties
+	{
+		public float MoveSpeedNormalized;
+		public bool IsGrounded;
+		public float DirectionY;
+		public float VelocityX;
+		public float VelocityZ;
+		public bool IsInHitStun;
+	}
+	
+	// TODO: Separate component from Actor
+
 	private const float MaxAnimationStep = 1f / 30f;
 	private const float MaxAngularVelocity = 50f;
+	public event Action<AnimatedProperties> OnAnimatedPropertiesChanged;
 
 	[Header("Ground Detection")]
 	[SerializeField] private float groundCheckHeight = 0.4f;
@@ -32,50 +47,42 @@ public class Character : Actor
 	[SerializeField] private PID3 torquePID = null;
 	[SerializeField] private PID3 planarVelocityPID = null;
 
-	private bool isGrounded;
-	private Vector3 torqueIntegral;
-	private Vector3 torqueError;
-	private Vector3 planarVelocityIntegral;
-	private Vector3 planarVelocityError;
-	private Vector3 groundVelocity = Vector3.zero;
-	private Vector3 lookDirection;
-	private Vector3 groundNormal;
-	private Vector3 groundPoint;
-	private Vector3 groundCheckPoint;
-	private float rollAngle;
-	private bool queueLockOn;
-	private bool queueRoll;
-	private bool queueJump;
-	private bool jumping;
-	private int remainingJumps;
-	private Matrix4x4 lastTRS;
-	
-	private static readonly int Attack = Animator.StringToHash("lightAttack");
-	private static readonly int SpeedPercent = Animator.StringToHash("speedPercent");
-	private static readonly int InAir = Animator.StringToHash("inAir");
-	private static readonly int DirectionY = Animator.StringToHash("directionY");
-	private static readonly int VelocityX = Animator.StringToHash("velocityX");
-	private static readonly int VelocityZ = Animator.StringToHash("velocityZ");
-	private static readonly int InHitStun = Animator.StringToHash("InHitStun");
-	private Quaternion desiredRotation;
+	private bool _isGrounded;
+	private Vector3 _torqueIntegral;
+	private Vector3 _torqueError;
+	private Vector3 _planarVelocityIntegral;
+	private Vector3 _planarVelocityError;
+	private Vector3 _groundVelocity = Vector3.zero;
+	private Vector3 _lookDirection;
+	private Vector3 _groundNormal;
+	private Vector3 _groundPoint;
+	private Vector3 _groundCheckPoint;
+	private float _rollAngle;
+	private bool _queueLockOn;
+	private bool _queueRoll;
+	private bool _queueJump;
+	private bool _jumping;
+	private int _remainingJumps;
+	private Matrix4x4 _lastTRS;
+	private Quaternion _desiredRotation;
+
+	public Matrix4x4 LastTRS => _lastTRS;
 
 	public bool Run { get; set; }
-	public ILockOnTarget lockOnTarget { get; set; }
+	
 	public CapsuleCollider CapsuleCollider { get; private set; }
-	public MeleeCombat MeleeCombat { get; private set; }
 
 	public override void Awake()
 	{
 		base.Awake();
-		MeleeCombat = GetComponent<MeleeCombat>();
 		CapsuleCollider = GetComponent<CapsuleCollider>();
 
 		//inputOrientation = Quaternion.LookRotation(transform.forward);
-		remainingJumps = jumpCount;
+		_remainingJumps = jumpCount;
 		rb.maxAngularVelocity = MaxAngularVelocity;
 
 		var t = transform;
-		lastTRS = Matrix4x4.TRS(t.position, t.rotation, t.localScale);
+		_lastTRS = Matrix4x4.TRS(t.position, t.rotation, t.localScale);
 	}
 
 #if UNITY_EDITOR
@@ -92,8 +99,6 @@ public class Character : Actor
 	}
 #endif
 
-	public void SetLockOnTarget(ILockOnTarget target) => lockOnTarget = target;
-
 	protected override void UpdatePhysics(float deltaTime)
 	{
 		Vector3 desiredVelocity;
@@ -105,10 +110,10 @@ public class Character : Actor
 			return;
 		}
 
-		if (isGrounded)
+		if (_isGrounded)
 		{
 			// Invert ground normal rotation to get unbiased ground velocity
-			var groundRotation = Quaternion.LookRotation(Vector3.forward, groundNormal);
+			var groundRotation = Quaternion.LookRotation(Vector3.forward, _groundNormal);
 			desiredVelocity = Quaternion.Inverse(groundRotation) * rb.velocity;
 		}
 		else
@@ -116,20 +121,20 @@ public class Character : Actor
 			desiredVelocity = rb.velocity.WithY(0f);
 		}
 
-		if (queueLockOn)
+		if (_queueLockOn)
 		{
-			queueLockOn = false;
+			_queueLockOn = false;
 
-			if (lockOnTarget != null)
+			if (TrackedTarget != null)
 			{
 				// If we were locked on, break lock...
-				lockOnTarget = null;
+				TrackedTarget = null;
 			}
 			else
 			{
 				// If we were not locked on, try to assign target...
-				var candidate = LockOn.LockOnCandidate;
-				if (candidate != null) lockOnTarget = candidate;
+				var candidate = LockOn.TrackableCandidate;
+				if (candidate != null) TrackedTarget = candidate;
 				else
 				{
 					// Recenter the camera if there is no viable target.
@@ -140,24 +145,24 @@ public class Character : Actor
 			}
 		}
 
-		if (!MeleeCombat.isAttacking)
+		if (InputEnabled)
 		{
-			desiredVelocity += (isGrounded ? acceleration : airAcceleration) * deltaTime * Move;
+			desiredVelocity += (_isGrounded ? acceleration : airAcceleration) * deltaTime * Move;
 		}
 
 		var speed = desiredVelocity.magnitude;
 		
 		// Apply friction
-		if (isGrounded && rollAngle < Mathf.Epsilon)
+		if (_isGrounded && _rollAngle < Mathf.Epsilon)
 		{
 			speed = Mathf.Max(desiredVelocity.magnitude - friction * deltaTime, 0f);
 		}
 
-		if (isGrounded)
+		if (_isGrounded)
 		{
 			// Speed is only variable when NOT sprinting.
 			//var normalSpeed = Mathf.Max(minSpeed, walkSpeed * move.sqrMagnitude);
-			var shouldRun = Run && rollAngle < Mathf.Epsilon;
+			var shouldRun = Run && _rollAngle < Mathf.Epsilon;
 			var targetSpeed = shouldRun ? runSpeed : walkSpeed;
 
 			// Slower while walking backwards...
@@ -166,7 +171,7 @@ public class Character : Actor
 			speed = Mathf.Min(speed, targetSpeed);
 		}
 
-		groundVelocity = (desiredVelocity.normalized * speed).WithY(0f);
+		_groundVelocity = (desiredVelocity.normalized * speed).WithY(0f);
 		
 		// var shouldRun = Run && rollAngle < Mathf.Epsilon;
 		// var targetSpeed = shouldRun ? runSpeed : walkSpeed;
@@ -177,13 +182,13 @@ public class Character : Actor
 		// groundVelocity = rb.velocity.WithY(0);
 		
 		// Jump.
-		if (remainingJumps > 0 && TryConsumeAction(PlayerAction.Jump))
+		if (_remainingJumps > 0 && TryConsumeAction(PlayerAction.Jump))
 		{
-			jumping = true;
-			remainingJumps--;
+			_jumping = true;
+			_remainingJumps--;
 
 			var jumpVelocity = Mathf.Sqrt(2 * -Physics.gravity.y * gravityScale * jumpHeight);
-			rb.velocity = groundVelocity.WithY(jumpVelocity);
+			rb.velocity = _groundVelocity.WithY(jumpVelocity);
 		}
 		
 
@@ -191,31 +196,31 @@ public class Character : Actor
 		var length = hitBoxCollider.height * 0.5f + groundCheckHeight;
 		var ray = new Ray(transform.TransformPoint(hitBoxCollider.center) + Vector3.down * length, Vector3.up);
 		hitBoxCollider.Raycast(ray, out var hitInfo, length);
-		groundCheckPoint = hitInfo.point;
+		_groundCheckPoint = hitInfo.point;
 
 		// Update grounded status.
-		var wasGrounded = isGrounded;
-		isGrounded = !jumping && CheckForGround();
+		var wasGrounded = _isGrounded;
+		_isGrounded = !_jumping && CheckForGround();
 
-		if (isGrounded)
+		if (_isGrounded)
 		{
 			// Reset remaining jumps if we just landed.
-			if (!wasGrounded) remainingJumps = jumpCount;
+			if (!wasGrounded) _remainingJumps = jumpCount;
 
 			// Make ground velocity perpendicular to ground normal.
-			var finalVelocity = Quaternion.LookRotation(Vector3.forward, groundNormal) * groundVelocity;
+			var finalVelocity = Quaternion.LookRotation(Vector3.forward, _groundNormal) * _groundVelocity;
 			
 			// Set center of mass to the point on the capsule directly below the center.
-			rb.centerOfMass = transform.InverseTransformPoint(groundCheckPoint);
+			rb.centerOfMass = transform.InverseTransformPoint(_groundCheckPoint);
 
 			// Apply force slightly above the center of mass to make the actor lean with acceleration.
-			var offset = rb.worldCenterOfMass + Vector3.up * (leanFactor * groundVelocity.magnitude / runSpeed);
+			var offset = rb.worldCenterOfMass + Vector3.up * (leanFactor * _groundVelocity.magnitude / runSpeed);
 			var deltaVelocity = finalVelocity - rb.velocity;
 			rb.AddForceAtPosition(deltaVelocity, offset, ForceMode.VelocityChange);
 			
 			// Snap to ground.
-			var groundOffset = rb.position - groundCheckPoint;
-			rb.MovePosition(rb.position.WithY(groundPoint.y + groundOffset.y));
+			var groundOffset = rb.position - _groundCheckPoint;
+			rb.MovePosition(rb.position.WithY(_groundPoint.y + groundOffset.y));
 		}
 		else
 		{
@@ -228,110 +233,95 @@ public class Character : Actor
 			if (!JumpAllowance.InProgress)
 			{
 				// Ran out of coyote time and didn't jump
-				if (remainingJumps == jumpCount) remainingJumps = 0;
+				if (_remainingJumps == jumpCount) _remainingJumps = 0;
 
 				// HACK: We jumped and it's OK to check for the ground again
-				jumping = false;
+				_jumping = false;
 			}
 
 			// We passed the peak of the jump
-			if (jumping && rb.velocity.y <= 0f) jumping = false;
+			if (_jumping && rb.velocity.y <= 0f) _jumping = false;
 
 			// Set new velocity.
-			rb.velocity = groundVelocity.WithY(rb.velocity.y) + Physics.gravity * (gravityScale * Time.fixedDeltaTime);
+			rb.velocity = _groundVelocity.WithY(rb.velocity.y) + Physics.gravity * (gravityScale * Time.fixedDeltaTime);
 		}
 
 		// Roll.
-		if (rollAngle > 0f && rollAngle < 360f || TryConsumeAction(PlayerAction.Roll))
+		if (_rollAngle > 0f && _rollAngle < 360f || TryConsumeAction(PlayerAction.Roll))
 		{
-			rollAngle += rollSpeed * Time.fixedDeltaTime;
-			if (rollAngle >= 360f) rollAngle = 0f;
+			_rollAngle += rollSpeed * Time.fixedDeltaTime;
+			if (_rollAngle >= 360f) _rollAngle = 0f;
 		}
 
 		// Handle rotation.
 		var targetRotation = GetTargetRotation();
 		var targetTorque = rb.rotation.TorqueTo(targetRotation, deltaTime);
-		var torque = torquePID.Output(rb.angularVelocity, targetTorque, ref torqueIntegral, ref torqueError, deltaTime);
+		var torque = torquePID.Output(rb.angularVelocity, targetTorque, ref _torqueIntegral, ref _torqueError, deltaTime);
 		rb.AddTorque(torque, ForceMode.Acceleration);
 
-		if (!MeleeCombat.isAttacking && InputEnabled && TryConsumeAction(PlayerAction.Attack))
-		{
-			MeleeCombat.isAttacking = true;
-			InputEnabled = false;
-
-			// TODO: Should maybe set attack ID and generic attack trigger?
-			if(Animator != null) { Animator.SetTrigger(Attack); }
-		}
+		if (InputEnabled) HandleAbilityInput();
 	}
 
 	private Quaternion GetTargetRotation()
 	{
-		var maxTurnRate = isGrounded && rollAngle < Mathf.Epsilon ? maxTurnGround : maxTurnAir;
+		var maxTurnRate = _isGrounded && _rollAngle < Mathf.Epsilon ? maxTurnGround : maxTurnAir;
 		var rollAxis = Vector3.right;
 
-		var validLookInput = isGrounded && Move.normalized != Vector3.zero && InputEnabled && !HitReaction.InProgress;
-		if (validLookInput) lookDirection = Move.normalized;
+		var validLookInput = _isGrounded && Move.normalized != Vector3.zero && InputEnabled && !HitReaction.InProgress;
+		if (validLookInput) _lookDirection = Move.normalized;
 
-		if (lockOnTarget != null)
+		if (TrackedTarget != null)
 		{
-			var toLockOnTarget = (lockOnTarget.GetLookPosition() - GetLookPosition()).WithY(0f).normalized;
+			var toLockOnTarget = (TrackedTarget.GetEyesPosition() - GetEyesPosition()).WithY(0f).normalized;
 			var lockOnOrientation = Quaternion.LookRotation(toLockOnTarget);
-			desiredRotation = Quaternion.RotateTowards(desiredRotation, lockOnOrientation, maxTurnRate);
+			_desiredRotation = Quaternion.RotateTowards(_desiredRotation, lockOnOrientation, maxTurnRate);
 
-			if (rollAngle > 0 && groundVelocity.magnitude >= minSpeed)
-				rollAxis = Vector3.Cross(Quaternion.Inverse(lockOnOrientation) * lookDirection, Vector3.down);
+			if (_rollAngle > 0 && _groundVelocity.magnitude >= minSpeed)
+				rollAxis = Vector3.Cross(Quaternion.Inverse(lockOnOrientation) * _lookDirection, Vector3.down);
 		}
 		else if (validLookInput)
 		{
-			//if (groundVelocity != Vector3.zero)
-			//	desiredRotation = Quaternion.LookRotation(groundVelocity);
-			
-			desiredRotation = Quaternion.RotateTowards(desiredRotation, Quaternion.LookRotation(lookDirection.normalized), maxTurnRate);
+			_desiredRotation = Quaternion.RotateTowards(_desiredRotation, Quaternion.LookRotation(_lookDirection.normalized), maxTurnRate);
 		}
 
-		return rollAngle > 0 ? desiredRotation * Quaternion.AngleAxis(rollAngle, rollAxis) : desiredRotation;
+		return _rollAngle > 0 ? _desiredRotation * Quaternion.AngleAxis(_rollAngle, rollAxis) : _desiredRotation;
 	}
 
 	protected override void UpdateAnimation(float deltaTime)
 	{
-		UpdateAnimationParameters();
+		var input = new AnimatedProperties()
+		{
+			MoveSpeedNormalized = IsPaused ? 0f : _groundVelocity.magnitude / runSpeed,
+			IsGrounded = _isGrounded,
+			DirectionY = Mathf.Clamp01(Mathf.InverseLerp(1f, -1f, rb.velocity.y)),
+			VelocityX = Vector3.Dot(_groundVelocity, transform.right) / runSpeed,
+			VelocityZ = Vector3.Dot(_groundVelocity, transform.forward) / runSpeed,
+			IsInHitStun = HitReaction.InProgress
+		};
+		
+		OnAnimatedPropertiesChanged?.Invoke(input);
 
 		var loops = Mathf.CeilToInt(deltaTime / MaxAnimationStep);
 		var dt = deltaTime / loops;
 
-		var combatEvents = new List<CombatEvent>();
 		for (var i = 0; i < loops; i++)
 		{
 			Animator.Update(dt);
-
-			// Calculate the position and rotation the weapon WOULD have if the character did not move/rotate this frame.
-			// This allows us to blend to the ACTUAL position/rotation over multiple steps.
-			var lastWeaponPos = lastTRS.MultiplyPoint3x4(transform.InverseTransformPoint(MeleeCombat.WeaponRoot.position));
-			var lastWeaponRot = lastTRS.rotation * Quaternion.Inverse(transform.rotation) * MeleeCombat.WeaponRoot.rotation;
-
-			if (MeleeCombat.ActiveHit)
-			{
-				if (MeleeCombat.CheckHits((i + 1f) / loops, lastWeaponPos, lastWeaponRot, ref combatEvents))
-				{
-					//TODO: If we hit more than one thing, trigger hits over sequential frames?
-					MainMode.AddCombatEvents(combatEvents);
-				}
-			}
+			PartialTickAnimationListeners((i + 1f) / loops);
 		}
 		
 		// Set the center of mass to the point on the collider directly below the center, using it's current rotation.
 		var length = hitBoxCollider.height * 0.5f + groundCheckHeight;
 		var ray = new Ray(transform.TransformPoint(hitBoxCollider.center) + Vector3.down * length, Vector3.up);
 		hitBoxCollider.Raycast(ray, out var hitInfo, length);
-		groundCheckPoint = hitInfo.point;
+		_groundCheckPoint = hitInfo.point;
 
-		var transform1 = transform;
-		lastTRS = Matrix4x4.TRS(transform1.position, transform1.rotation, transform1.localScale);
+		_lastTRS = Matrix4x4.TRS(transform.position, transform.rotation, transform.localScale);
 	}
 
 	private bool CheckForGround()
 	{
-		var raycastOrigin = groundCheckPoint + Vector3.up * groundCheckHeight;
+		var raycastOrigin = _groundCheckPoint + Vector3.up * groundCheckHeight;
 		var forward = Vector3.Cross(transform.right, Vector3.up).normalized;
 
 		var groundHitCount = 0;
@@ -379,74 +369,21 @@ public class Character : Actor
 		// Is the ground too steep?
 		if (Vector3.Angle(averageNormal, Vector3.up) > 45f) { return false; }
 
-		if (!isGrounded)
+		if (!_isGrounded)
 		{
 			// Become grounded ONLY if the distance to ground is less than projected fall distance
 			var projectedFallDistance = (-rb.velocity.y - Physics.gravity.y * gravityScale) * Time.fixedDeltaTime;
 			if (averageDistance > projectedFallDistance) { return false; }
 		}
 
-		groundNormal = averageNormal;
-		groundPoint = averagePoint;
+		_groundNormal = averageNormal;
+		_groundPoint = averagePoint;
 		return true;
 	}
 
-	public override Vector3 GetLookPosition()
-	{
-		return transform.TransformPoint(CapsuleCollider.center);
-	}
+	public override Vector3 GetEyesPosition() => transform.TransformPoint(CapsuleCollider.center);
 
-	public override Vector3 GetGroundPosition()
-	{
-		return groundCheckPoint;//transform.position;
-	}
+	public override Vector3 GetGroundPosition() => _groundCheckPoint;
 
-	public void QueueLockOn() => queueLockOn = true;
-
-	public override void ApplyHit(Entity instigator, Vector3 point, Vector3 direction, AttackData attackData)
-	{
-		base.ApplyHit(instigator, point, direction, attackData);
-		
-		MeleeCombat.isAttacking = false;
-		MeleeCombat.cancelOK = true;
-	}
-
-	private void UpdateAnimationParameters()
-	{
-		if(Animator == null || Animator.runtimeAnimatorController == null) { return; }
-
-		//control speed percent in animator so that character walks or runs depending on speed
-		var animationSpeedPercent = IsPaused ? 0f : groundVelocity.magnitude / runSpeed;
-
-		//reference for animator
-		Animator.SetFloat(SpeedPercent, animationSpeedPercent, speedSmoothTime, Time.deltaTime);
-
-		foreach(var parameter in Animator.parameters)
-		{
-			var nameHash = parameter.nameHash;
-			if(nameHash == InAir)
-			{
-				Animator.SetBool(InAir, !isGrounded);
-			}
-			else if(nameHash == DirectionY)
-			{
-				var directionY = Mathf.Clamp01(Mathf.InverseLerp(1f, -1f, rb.velocity.y));
-				Animator.SetFloat(DirectionY, directionY, speedSmoothTime, Time.deltaTime);
-			}
-			else if(nameHash == VelocityX)
-			{
-				var velocityX = Vector3.Dot(groundVelocity, transform.right) / runSpeed;
-				Animator.SetFloat(VelocityX, velocityX, speedSmoothTime, Time.deltaTime);
-			}
-			else if(nameHash == VelocityZ)
-			{
-				var velocityZ = Vector3.Dot(groundVelocity, transform.forward) / runSpeed;
-				Animator.SetFloat(VelocityZ, velocityZ, speedSmoothTime, Time.deltaTime);
-			}
-			else if(nameHash == InHitStun)
-			{
-				Animator.SetBool(InHitStun, HitReaction.InProgress);
-			}
-		}
-	}
+	public void QueueLockOn() => _queueLockOn = true;
 }

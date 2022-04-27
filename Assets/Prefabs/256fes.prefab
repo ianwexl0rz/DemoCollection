@@ -45,6 +45,7 @@ GameObject:
   - component: {fileID: 5698680696155516962}
   - component: {fileID: 5455417119612974577}
   - component: {fileID: 5455417119612974578}
+  - component: {fileID: -8125500235304199321}
   m_Layer: 8
   m_Name: 256fes
   m_TagString: Untagged
@@ -132,6 +133,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 642a57e0cf005a6428466df6f124aa2c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  controller: {fileID: 0}
   groundCheckHeight: 0.2
   rayOffsetDistance: 0.15
   extraGroundRays: 8
@@ -169,6 +171,19 @@ MonoBehaviour:
   forwardAxis: {x: 0, y: 1, z: 0}
   weapon: {fileID: 11400000, guid: b6cad30b31a56a140ade13f5d4e4bbed, type: 2}
   distThreshold: 0.1
+--- !u!114 &-8125500235304199321
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5454812784484718603}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc88d87fc5ee48a8b6408d21415b4cdb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dampTime: 0.05
 --- !u!1 &5455417118671401127
 GameObject:
   m_ObjectHideFlags: 0

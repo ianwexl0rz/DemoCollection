@@ -10,9 +10,9 @@ public class FollowAIBehavior : AIBehavior
 
 	public override void Tick(Actor actor)
 	{
-		if(actor == null || actor.Equals(null) || actor.lockOnTarget == null || actor.lockOnTarget.Equals(null)) { return; }
+		if(actor == null || actor.Equals(null) || actor.TrackedTarget == null || actor.TrackedTarget.Equals(null)) { return; }
 
-		var toTarget = (actor.lockOnTarget.GetLookPosition() - actor.GetLookPosition()).WithY(0f);
+		var toTarget = (actor.TrackedTarget.GetEyesPosition() - actor.GetEyesPosition()).WithY(0f);
 
 		if(actor.Move == Vector3.zero)
 		{
@@ -23,7 +23,7 @@ public class FollowAIBehavior : AIBehavior
 		}
 		else if(toTarget.magnitude > stopDistance)
 		{
-			if(actor is Character player)
+			if(actor is CharacterMotor player)
 			{
 				if(!player.Run && toTarget.magnitude > startRunDistance)
 				{

@@ -23,7 +23,7 @@ public class ThirdPersonCamera : MonoBehaviour
 	public float towardCameraDragScale = 0.2f;
 	public float overheadDragScale = 0.4f;
 	
-	private Character player = null;
+	private ITrackable player = null;
 	private bool autoTurn;
 	private bool lockedOn;
 	private float focalHeight = 0f;
@@ -42,7 +42,7 @@ public class ThirdPersonCamera : MonoBehaviour
 
 	public void SetTargetEulerAngles(Vector3 euler) => targetEulerAngles = euler;
 
-	public void SetFollowTarget(Character newFollowTarget, bool immediate)
+	public void SetFollowTarget(ITrackable newFollowTarget, bool immediate)
 	{
 		player = newFollowTarget;
 		blendToPlayer = BlendToPlayer(immediate ? 0 : unlockTime);
@@ -56,16 +56,16 @@ public class ThirdPersonCamera : MonoBehaviour
 		while (time < duration)
 		{
 			var t = time / duration;
-			lastTrackPos = trackPos = MathUtility.SmoothStep(initialPos, player.GetLookPosition(), t);
-			focalHeight = Mathf.SmoothStep(initialHeight, player.CapsuleCollider.height * 0.5f, t);
+			lastTrackPos = trackPos = MathUtility.SmoothStep(initialPos, player.GetEyesPosition(), t);
+			focalHeight = Mathf.SmoothStep(initialHeight, player.GetHeight() * 0.5f, t);
 			localDrag *= 1 - t;
 			autoTurn = false;
 			yield return null;
 			time += Time.deltaTime;
 		}
 		
-		lastTrackPos = trackPos = player.GetLookPosition();
-		focalHeight = player.CapsuleCollider.height * 0.5f;
+		lastTrackPos = trackPos = player.GetEyesPosition();
+		focalHeight = player.GetHeight() * 0.5f;
 		localDrag = Vector3.zero;
 		autoTurn = true;
 	}
@@ -106,15 +106,11 @@ public class ThirdPersonCamera : MonoBehaviour
 	public void Init()
 	{
 		transitionToLockOnMode = TransitionToLockOnMode(lockTime);
-		//changeLockOnTarget = ChangeLockOnTarget(Vector3.zero, changeTargetTime);
 	}
-
-	private ILockOnTarget lockOnTarget = null;
-	private IEnumerator<Func<Vector3, Vector3>> changeLockOnTarget;
-
-	public void UpdatePositionAndRotation(Vector2 lookInput, ILockOnTarget newLockOnTarget)
+	
+	public void UpdatePositionAndRotation(Vector2 lookInput, ITrackable trackedTarget)
 	{
-		if (!player || !isEnabled) return;
+		if (player == null || !isEnabled) return;
 
 		var dt = Time.deltaTime;
 
@@ -122,10 +118,10 @@ public class ThirdPersonCamera : MonoBehaviour
 		if (!blendToPlayer.MoveNext())
 		{
 			lastTrackPos = trackPos;
-			trackPos = player.GetLookPosition();
+			trackPos = player.GetEyesPosition();
 		}
 
-		var shouldLockOn = player.lockOnTarget != null;
+		var shouldLockOn = trackedTarget != null;
 		if (shouldLockOn && !lockedOn)
 		{
 			lockedOn = true;
@@ -137,27 +133,9 @@ public class ThirdPersonCamera : MonoBehaviour
 		if (inTransition || shouldLockOn)
 		{
 			var (smoothPlayerToTarget, smoothCamToTarget) = transitionToLockOnMode.Current;
-
-			// Interpolate target position towards new target...
-			// if (lockOnTarget != newLockOnTarget)
-			// {
-			// 	if (lockOnTarget != null)
-			// 	{
-			// 		var initialTargetPos = lockOnTarget.GetCenter();
-			// 		changeLockOnTarget = ChangeLockOnTarget(initialTargetPos, changeTargetTime);
-			// 	}
-			// 	lockOnTarget = newLockOnTarget;
-			// }
-			//
-			// // Get target position.
-			// var targetPosRaw = newLockOnTarget.GetCenter();
-			//
-			// // If changing target, interpolate from initial target position.
-			// var isChangingTarget = changeLockOnTarget.MoveNext();
-			// var targetPos = isChangingTarget ? changeLockOnTarget.Current(targetPosRaw) : targetPosRaw;
 			
 			// Get target position.
-			var targetPos = newLockOnTarget.GetCenter();
+			var targetPos = trackedTarget.GetCenter();
 			
 			var playerToTarget = Quaternion.LookRotation(targetPos - player.GetCenter());
 			

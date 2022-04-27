@@ -14,13 +14,14 @@ public class PlayerController : ActorController
 	{
 		if (instance == null) instance = this;
 
+		actor.TrackedTarget = null;
 		actor.InputBuffer.Clear();
 		HealthBar.RegisterPlayer(actor);
 	}
 
 	public override void Clean(Actor actor)
 	{
-		if (actor is Character character) character.SetLockOnTarget(null);
+		//if (actor is Character character) character.SetLockOnTarget(null);
 		HealthBar.UnregisterPlayer(actor);
 	}
 
@@ -28,7 +29,7 @@ public class PlayerController : ActorController
 	{
 		actor.Move = CalculateMove();
 
-		if(!(actor is Character character)) return;
+		if(!(actor is CharacterMotor character)) return;
 		
 		// Lock On
 		if(Player.GetButtonDown(PlayerAction.LockOn))

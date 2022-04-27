@@ -4,29 +4,48 @@ using System.Collections.Generic;
 using System.Collections;
 using System.Linq;
 
-public class Actor : Entity, ILockOnTarget, IDamageable
+public class Actor : Entity, ITrackable, IDamageable
 {
-	protected Animator Animator { get; private set; }
-	public bool InputEnabled { get; set; }
-	public Vector3 Move { get; set; }
-	public bool IsVisible { get; set; }
+	private static readonly int DamageFlash = Shader.PropertyToID("_DamageFlash");
+
+	public event Action OnReceiveHit;
+	
+	public event Action OnBeginHitReaction;
+	
+	public event Action OnEndHitReaction;
+	
+	public event Action OnHandleAbilityInput;
+
+	public event Action<float> OnPartialTickAnimation;
+
 	public event Action<float> OnHealthChanged = delegate {  };
 
-	public ILockOnTarget lockOnTarget = null;
-	public float Health { get; set; }
-	public float MaxHealth { get; set; }
-	
-	public readonly InputBuffer InputBuffer = new InputBuffer();
+	[SerializeField] private ActorController controller;
 
-	protected Timer HitReaction { get; private set; }
-	protected Timer JumpAllowance { get; private set; }
-
-	private ActorController _controller;
 	private Renderer[] _renderers = null;
 	private Coroutine _damageFlash = null;
 	private readonly TimerGroup _actorTimerGroup = new TimerGroup();
-	private static readonly int DamageFlash = Shader.PropertyToID("_DamageFlash");
-	
+
+	public Animator Animator { get; private set; }
+
+	public bool InputEnabled { get; set; }
+
+	public Vector3 Move { get; set; }
+
+	public bool IsVisible { get; set; }
+
+	public ITrackable TrackedTarget { get; set; }
+
+	public float Health { get; set; }
+
+	public float MaxHealth { get; set; }
+
+	public readonly InputBuffer InputBuffer = new InputBuffer();
+
+	protected Timer HitReaction { get; private set; }
+
+	protected Timer JumpAllowance { get; private set; }
+
 
 	public override void Awake()
 	{
@@ -38,23 +57,22 @@ public class Actor : Entity, ILockOnTarget, IDamageable
 
 		_renderers = GetComponentsInChildren<Renderer>();
 
-		_actorTimerGroup.Add(HitReaction = new Timer(0f, StartHitReaction, EndHitReaction, true));
+		_actorTimerGroup.Add(HitReaction = new Timer(0f, 
+			() => InputEnabled = false, 
+			() => InputEnabled = true,
+			true));
+		
 		_actorTimerGroup.Add(JumpAllowance = new Timer());
 	}
 
-	private void StartHitReaction()
+	protected void PartialTickAnimationListeners(float progress)
 	{
-		if(this is Character character)
-			character.MeleeCombat.isAttacking = false;
-
-		InputEnabled = false;
-		//Debug.LogFormat("Started Hit Reaction with duration of {0}.", hitReaction.Duration);
+		OnPartialTickAnimation?.Invoke(progress);
 	}
-
-	private void EndHitReaction()
+	
+	protected void HandleAbilityInput()
 	{
-		InputEnabled = true;
-		//Debug.Log("Ended Hit Reaction.");
+		OnHandleAbilityInput?.Invoke();
 	}
 
 	private IEnumerator DoDamageFlash(float duration)
@@ -85,7 +103,7 @@ public class Actor : Entity, ILockOnTarget, IDamageable
 	public override void Tick(float deltaTime)
 	{
 		base.Tick(deltaTime);
-		if (_controller) _controller.Tick(this, deltaTime);
+		if (controller) controller.Tick(this, deltaTime);
 		InputBuffer.Tick(deltaTime);
 		_actorTimerGroup.Tick(deltaTime);
 		IsVisible = _renderers.Any(r => r != null && r.isVisible);
@@ -98,22 +116,16 @@ public class Actor : Entity, ILockOnTarget, IDamageable
 	
 	public void SetController(ActorController newController, object context = null)
 	{
-		if (_controller != null)
-			_controller.Clean(this);
+		if (controller != null)
+			controller.Clean(this);
 			
 		newController.Init(this, context);
-		_controller = newController;
+		controller = newController;
 	}
 
-	public virtual Vector3 GetLookPosition()
-	{
-		return transform.position;
-	}
+	public virtual Vector3 GetEyesPosition() => transform.position;
 
-	public virtual Vector3 GetGroundPosition()
-	{
-		return transform.position;
-	}
+	public virtual Vector3 GetGroundPosition() => transform.position;
 
 	public void TakeDamage(float damage)
 	{
@@ -141,7 +153,7 @@ public class Actor : Entity, ILockOnTarget, IDamageable
 		this.WaitForEndOfFrameThen(() => Destroy(gameObject));
 	}
 
-	protected bool TryConsumeAction(int actionId)
+	public bool TryConsumeAction(int actionId)
 	{
 		return InputBuffer.ConsumeAction(actionId);
 	}
@@ -160,5 +172,7 @@ public class Actor : Entity, ILockOnTarget, IDamageable
 		// TODO: Get reaction type from AttackData 
 		var duration = Mathf.Max(HitReaction.Duration - HitReaction.Current, attackData.stun);
 		HitReaction.Reset(duration);
+		
+		OnReceiveHit?.Invoke();
 	}
 }

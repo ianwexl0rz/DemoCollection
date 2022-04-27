@@ -17,9 +17,9 @@ public class LockOnIndicator : MonoBehaviour
         renderer.sharedMaterial = inactiveMaterial;
     }
     
-    public void UpdatePosition(bool lockedOn, ILockOnTarget target, Vector3 camPos)
+    public void UpdatePosition(bool lockedOn, ITrackable trackable, Vector3 camPos)
     {
-        if(target == null)
+        if(trackable == null)
         {
             gameObject.SetActive(false);
             return;
@@ -27,8 +27,8 @@ public class LockOnIndicator : MonoBehaviour
 		
         if(!gameObject.activeSelf) gameObject.SetActive(true);
 
-        var indicatorPos = target.GetLookPosition();
-        if(target is Character character)
+        var indicatorPos = trackable.GetEyesPosition();
+        if(trackable is CharacterMotor character)
         {
             indicatorPos += (character.CapsuleCollider.height * 0.5f + indicatorHeightOffset) * Vector3.up;
         }

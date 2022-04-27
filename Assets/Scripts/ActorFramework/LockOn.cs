@@ -13,8 +13,10 @@ public class LockOn : ScriptableObject
 	private static LockOnIndicator lockOnIndicator;
 	private static bool lookInputStale;
 	private static LockOn _instance;
+
+	[SerializeField] private List<GameObject> potentialDataProviders = new List<GameObject>();
 	
-	public static ILockOnTarget LockOnCandidate { get; private set; }
+	public static ITrackable TrackableCandidate { get; private set; }
 
 	public void Init()
 	{
@@ -33,57 +35,59 @@ public class LockOn : ScriptableObject
 	// 	gameObject.SetActive(true);
 	// }
     
-	private static Vector2 GetScreenPos(ILockOnTarget lockOnTarget, Camera mainCamera)
+	private static Vector2 GetScreenPos(ITrackable trackable, Camera mainCamera)
     {
-        return (Vector2) mainCamera.WorldToScreenPoint(lockOnTarget.GetLookPosition()) - new Vector2(mainCamera.pixelWidth, mainCamera.pixelHeight) * 0.5f;
+        return (Vector2) mainCamera.WorldToScreenPoint(trackable.GetEyesPosition()) - new Vector2(mainCamera.pixelWidth, mainCamera.pixelHeight) * 0.5f;
     }
 
-    public static void UpdateLockOn(Character playerCharacter, Camera mainCamera, Vector2 lookInput)
+    public static void UpdateLockOn(CharacterMotor playerCharacterMotor, Camera mainCamera, Vector2 lookInput)
     {
-        var currentTarget = playerCharacter.lockOnTarget;
+        var currentTarget = playerCharacterMotor.TrackedTarget;
         
         // TODO: Potential targets should add or remove themselves on Tick.
-        
-        var potentialTargets = Physics.OverlapSphere(playerCharacter.transform.position, _instance.range)
-	        .Select(c => c.GetComponent<ILockOnTarget>())
-            .Except(new []{playerCharacter, currentTarget, null})
-            .Where(k => k.IsVisible)
-            .ToDictionary(k => k, k => GetScreenPos(k, mainCamera));
 
+        var potentialTargets = Physics.OverlapSphere(playerCharacterMotor.transform.position, _instance.range)
+	        .Select(collider => collider.GetComponent<ITrackable>())
+	        .Except(new []{playerCharacterMotor, currentTarget, null})
+	        .Where(trackable => trackable.IsVisible)
+            .ToDictionary(trackable => trackable, trackable => GetScreenPos(trackable, mainCamera));
+        
         if (currentTarget == null)
         {
-            LockOnCandidate = GetTargetClosestToCenter(potentialTargets);
+            TrackableCandidate = GetTrackableClosestToCenter(potentialTargets);
             lookInputStale = true;
         }
         else
         {
+	        TrackableCandidate = currentTarget;
+	        
 	        if (lookInputStale && lookInput.Equals(Vector2.zero)) lookInputStale = false;
             if (!lookInputStale && lookInput.sqrMagnitude > 0)
             {
                 var halfScreenPixels = new Vector2(mainCamera.pixelWidth, mainCamera.pixelHeight) * 0.5f;
-                var currentTargetScreenPos = (Vector2) mainCamera.WorldToScreenPoint(currentTarget.GetLookPosition()) - halfScreenPixels;
-                var newTarget = GetTargetClosestToVector(potentialTargets, lookInput, currentTargetScreenPos);
+                var currentTargetScreenPos = (Vector2) mainCamera.WorldToScreenPoint(currentTarget.GetEyesPosition()) - halfScreenPixels;
+                var newTarget = GetTrackableClosestToVector(potentialTargets, lookInput, currentTargetScreenPos);
                 if (!ReferenceEquals(newTarget, null))
                 {
-                    LockOnCandidate = newTarget;
+                    TrackableCandidate = newTarget;
                     lookInputStale = true;
                         
-                    playerCharacter.SetLockOnTarget(LockOnCandidate);
+                    playerCharacterMotor.TrackedTarget = TrackableCandidate;
                 }
             }
         }
 
         // Update lock-on indicator position.
-        lockOnIndicator.UpdatePosition(playerCharacter.lockOnTarget != null, LockOnCandidate,
+        lockOnIndicator.UpdatePosition(playerCharacterMotor.TrackedTarget != null, TrackableCandidate,
             mainCamera.transform.position);
     }
 
-    private static ILockOnTarget GetTargetClosestToCenter(Dictionary<ILockOnTarget, Vector2> potentialTargets)
+    private static ITrackable GetTrackableClosestToCenter(Dictionary<ITrackable, Vector2> potentialTargets)
 	{
 		if (potentialTargets.Count == 0)
 			return null;
 
-		ILockOnTarget bestTarget = null;
+		ITrackable bestTrackable = null;
 		var bestDistance = Mathf.Infinity;
 
 		foreach (var screenPosByTarget in potentialTargets)
@@ -91,16 +95,16 @@ public class LockOn : ScriptableObject
 			var distanceFromCenter = screenPosByTarget.Value.magnitude;
 			if (distanceFromCenter >= bestDistance) continue;
 			
-			bestTarget = screenPosByTarget.Key;
+			bestTrackable = screenPosByTarget.Key;
 			bestDistance = distanceFromCenter;
 		}
 
-		return bestTarget;
+		return bestTrackable;
 	}
 
-	private static ILockOnTarget GetTargetClosestToVector(Dictionary<ILockOnTarget, Vector2> potentialTargets, Vector2 lookInput, Vector2 currentTargetScreenPos)
+	private static ITrackable GetTrackableClosestToVector(Dictionary<ITrackable, Vector2> potentialTargets, Vector2 lookInput, Vector2 currentTargetScreenPos)
 	{
-		ILockOnTarget bestTarget = null;
+		ITrackable bestTrackable = null;
 		var smallestAngle = Mathf.Infinity;
 
 		foreach(var screenPosByTarget in potentialTargets)
@@ -108,10 +112,10 @@ public class LockOn : ScriptableObject
 			var angle = Vector2.Angle(lookInput.normalized, screenPosByTarget.Value - currentTargetScreenPos.normalized);
 			if (angle >= smallestAngle) continue;
 
-			bestTarget = screenPosByTarget.Key;
+			bestTrackable = screenPosByTarget.Key;
 			smallestAngle = angle;
 		}
 		
-		return smallestAngle <= _instance.angleThreshold ? bestTarget : null;
+		return smallestAngle <= _instance.angleThreshold ? bestTrackable : null;
 	}
 }

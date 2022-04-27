@@ -5,6 +5,8 @@ using System;
 [RequireComponent(typeof(Actor))]
 public class MeleeCombat : MonoBehaviour
 {
+	private static readonly int Attack = Animator.StringToHash("lightAttack");
+
 	[SerializeField] private Transform weaponRoot = null;
 	[SerializeField] private Vector3 forwardAxis = new Vector3(-1,0,0);
 	[SerializeField] private MeleeWeapon weapon = null;
@@ -30,10 +32,50 @@ public class MeleeCombat : MonoBehaviour
 	private void Awake()
 	{
 		actor = GetComponent<Actor>();
+		actor.OnHandleAbilityInput += HandleInput;
+		actor.OnPartialTickAnimation += ProcessAttackAnimation;
+		actor.OnReceiveHit += ReceiveHit;
 
 		if(weapon == null) return;
 
 		InitWeapon();
+	}
+
+	private void HandleInput()
+	{
+		if (!isAttacking && actor.TryConsumeAction(PlayerAction.Attack))
+		{
+			isAttacking = true;
+			actor.InputEnabled = false;
+
+			// TODO: Should maybe set attack ID and generic attack trigger?
+			if(actor.Animator != null) { actor.Animator.SetTrigger(Attack); }
+		}
+	}
+
+	private void ProcessAttackAnimation(float progress)
+	{
+		if (ActiveHit)
+		{
+			var characterLastTRS = ((CharacterMotor) actor).LastTRS;
+
+			// Calculate the position and rotation the weapon WOULD have if the character did not move/rotate this frame.
+			// This allows us to blend to the ACTUAL position/rotation over multiple steps.
+			var lastWeaponPos = characterLastTRS.MultiplyPoint3x4(transform.InverseTransformPoint(WeaponRoot.position));
+			var lastWeaponRot = characterLastTRS.rotation * Quaternion.Inverse(transform.rotation) * WeaponRoot.rotation;
+			
+			if (CheckHits(progress, lastWeaponPos, lastWeaponRot, out var combatEvents))
+			{
+				//TODO: If we hit more than one thing, trigger hits over sequential frames?
+				MainMode.AddCombatEvents(combatEvents);
+			}
+		}
+	}
+
+	private void ReceiveHit()
+	{
+		isAttacking = false;
+		cancelOK = true;
 	}
 
 	[ContextMenu("Refresh Weapon")]
@@ -107,7 +149,7 @@ public class MeleeCombat : MonoBehaviour
 	{
 		 isAttacking = false;
 
-		if(actor is Character character)
+		if(actor is CharacterMotor character)
 		{
 			character.InputEnabled = true;
 		}
@@ -116,8 +158,10 @@ public class MeleeCombat : MonoBehaviour
 	}
 
 	// TODO: CombatEvents should be passed in as an array and return the number of hits, so the function is non-allocating.
-	public bool CheckHits(float completion, Vector3 lastWeaponPosition, Quaternion lastWeaponRotation, ref List<CombatEvent> combatEvents)
+	public bool CheckHits(float completion, Vector3 lastWeaponPosition, Quaternion lastWeaponRotation, out List<CombatEvent> combatEvents)
 	{
+		combatEvents = new List<CombatEvent>();
+
 		var debugTime = Time.fixedDeltaTime * 8;
 		var pos = Vector3.Lerp(lastWeaponPosition, weaponRoot.position, completion);
 		var rot = Quaternion.Slerp(lastWeaponRotation, weaponRoot.rotation, completion);

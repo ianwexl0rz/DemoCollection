@@ -24,8 +24,8 @@ public class AIController : ActorController
 
 	public override void Init(Actor actor, object context = null)
 	{
-		if(context is ILockOnTarget lockOnTarget)
-			actor.lockOnTarget = lockOnTarget;
+		if(context is ITrackable trackable)
+			actor.TrackedTarget = trackable;
 	}
 
 	public override void Tick(Actor actor, float deltaTime)
@@ -59,9 +59,9 @@ public class AIController : ActorController
 
 	private bool ProximityCheck(Actor actor, float threshold)
 	{
-		if(actor.lockOnTarget == null) { return false; }
+		if(actor.TrackedTarget == null) { return false; }
 
-		var vector = (actor.lockOnTarget.GetLookPosition() - actor.GetLookPosition()).WithY(0f);
+		var vector = (actor.TrackedTarget.GetEyesPosition() - actor.GetEyesPosition()).WithY(0f);
 		return vector.magnitude <= threshold;
 	}
 }
