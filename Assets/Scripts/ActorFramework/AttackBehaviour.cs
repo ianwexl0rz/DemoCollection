@@ -5,14 +5,14 @@ using System.Linq;
 public class AttackBehaviour : StateMachineBehaviour
 {
 	public bool applyRootMotion = false;
-	private MeleeCombat combat = null;
+	//private MeleeCombat combat = null;
 
-	private bool fullyTransitioned = false;
+	private bool _fullyTransitioned = false;
 
 	// OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
 	override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
 	{
-		combat = animator.GetComponent<MeleeCombat>();
+		//combat = animator.GetComponent<MeleeCombat>();
 		//combat.isAttacking = true;
 
 		//animator.SetFloat("attackLength", stateInfo.length);
@@ -23,15 +23,15 @@ public class AttackBehaviour : StateMachineBehaviour
 			animator.SetBool("isAttacking", true);
 			//Debug.Log("is this getting called?");
 		}
-		fullyTransitioned = false;
+		_fullyTransitioned = false;
 	}
 
 	// OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
 	override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
 	{
-		if(!animator.IsInTransition(0) && !fullyTransitioned)
+		if(!animator.IsInTransition(0) && !_fullyTransitioned)
 		{
-			fullyTransitioned = true;
+			_fullyTransitioned = true;
 			animator.applyRootMotion = applyRootMotion;
 		}
 	}

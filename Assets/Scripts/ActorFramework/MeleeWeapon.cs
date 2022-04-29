@@ -1,12 +1,36 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Collections.Generic;
+using UnityEngine;
 
-[CreateAssetMenu(menuName = "Weapon/Melee Weapon", fileName = "New Melee Weapon")]
-public class MeleeWeapon : ScriptableObject
+public class MeleeWeapon : MonoBehaviour
 {
-	public GameObject prefab = null;
-	public Vector3 forwardAxis = Vector3.up;
+	public event Action OnNewHit;
+	public event Action<Transform, Vector3[]> OnProcessHit;
+	public event Action OnEndHit;
+
 	public float length = 1f;
-	public Material trailMaterial = null;
-	public bool showTrail = true;
 	public AttackDataSet attackDataSet = null;
+
+	public void ProcessHit(Transform actorTransform, Vector3[] collisionPoints)
+	{
+		OnProcessHit?.Invoke(transform, collisionPoints);
+	}
+	
+	public void NewHit()
+	{
+		OnNewHit?.Invoke();
+	}
+	
+	public void EndHit()
+	{
+		OnEndHit?.Invoke();
+	}
+	
+#if UNITY_EDITOR
+	private void OnDrawGizmos()
+	{
+		Gizmos.color = Color.red;
+		Gizmos.DrawWireSphere(transform.position + transform.up * length, 0.05f);
+	}
+#endif
 }

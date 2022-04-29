@@ -87,35 +87,40 @@ public class Entity : MonoBehaviour
 
 	public void SetPaused(bool value)
 	{
-		if(IsPaused == value) { return; }
+		if (IsPaused == value)
+		{
+			return;
+		}
+
 		IsPaused = value;
 
+		// TODO: Animator and KCC should subscribe to OnPause event
 		var animator = GetComponent<Animator>();
-		
-		if(value)
+		if (animator) animator.speed = value ? 0 : 1;
+
+		// TODO: Move rigidbody handling to "PhysicsEntity" child class
+		if (Rigidbody != null)
 		{
-			if (animator) animator.speed = 0;
-			
-			_savedState = new RigidbodyState(Rigidbody);
+			if (value)
+			{
+				_savedState = new RigidbodyState(Rigidbody);
+				Rigidbody.isKinematic = true;
+				Rigidbody.velocity = Vector3.zero;
+				Rigidbody.angularVelocity = Vector3.zero;
 
-			Rigidbody.isKinematic = true;
-			Rigidbody.velocity = Vector3.zero; 
-			Rigidbody.angularVelocity = Vector3.zero;
-
-			// Account for interpolation
-			// TODO: Set rigidbody position between current transform position and previous transform position
-			// depending on sub-frame collision. Also set animator.Simulate() to that time.
-			var t = transform;
-			Rigidbody.position = t.position;
-			Rigidbody.rotation = t.rotation;
-			Rigidbody.Sleep();
-		}
-		else
-		{
-			if (animator) animator.speed = 1;
-
-			Rigidbody.WakeUp();
-			Rigidbody.RestoreState(_savedState);
+				// Account for interpolation
+				// TODO: Set rigidbody position between current transform position and previous transform position
+				// depending on sub-frame collision. Also set animator.Simulate() to that time.
+				var t = transform;
+				Rigidbody.position = t.position;
+				Rigidbody.rotation = t.rotation;
+				Rigidbody.Sleep();
+			}
+			else
+			{
+				Rigidbody.WakeUp();
+				Rigidbody.RestoreState(_savedState);
+			}
 		}
 
 		foreach (var entity in _subEntities) entity.SetPaused(value);
@@ -124,7 +129,7 @@ public class Entity : MonoBehaviour
 	public virtual void ApplyHit(Entity instigator, Vector3 point, Vector3 direction, AttackData attackData)
 	{
 		var velocity = direction * (attackData.knockback / Time.fixedDeltaTime);
-		//rb.AddForceAtPosition(velocity, point, ForceMode.Impulse);
-		Rigidbody.AddForce(velocity, ForceMode.Impulse);
+		Rigidbody.AddForceAtPosition(velocity, point, ForceMode.Impulse);
+		//Rigidbody.AddForce(velocity, ForceMode.Impulse);
 	}
 }

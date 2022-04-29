@@ -41,28 +41,31 @@ public class DynamicBone : Entity
 	{
 		if (!Application.isPlaying && referenceBone != null)
 		{
-			transform.position = referenceBone.position;
-			transform.rotation = referenceBone.rotation;
-
-			if (referenceBone.transform.childCount > 0)
+			if (syncReferenceBone)
 			{
-				var child = referenceBone.GetChild(0);
+				transform.position = referenceBone.position;
+				transform.rotation = referenceBone.rotation;
 
-				var dir = 0;
+				if (referenceBone.transform.childCount > 0)
+				{
+					var child = referenceBone.GetChild(0);
 
-				if (child.localPosition.y * child.localPosition.y > child.localPosition.x * child.localPosition.x)
-					dir++;
+					var dir = 0;
 
-				if (child.localPosition.z * child.localPosition.z > child.localPosition.y * child.localPosition.y)
-					dir++;
+					if (child.localPosition.y * child.localPosition.y > child.localPosition.x * child.localPosition.x)
+						dir++;
 
-				direction = dir;
-				center = child.localPosition * 0.5f;
-				height = child.localPosition.magnitude;
-			}
-			else
-			{
-				center = GetDirectionFromInt(direction) * height * (flip ? -0.5f : 0.5f);
+					if (child.localPosition.z * child.localPosition.z > child.localPosition.y * child.localPosition.y)
+						dir++;
+
+					direction = dir;
+					center = child.localPosition * 0.5f;
+					height = child.localPosition.magnitude;
+				}
+				else
+				{
+					center = GetDirectionFromInt(direction) * height * (flip ? -0.5f : 0.5f);
+				}
 			}
 		}
 		else if (capsule != null)

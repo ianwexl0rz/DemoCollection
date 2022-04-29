@@ -3,6 +3,16 @@ using UnityEngine;
 
 namespace ActorFramework
 {
+    public struct AnimatedMotorProperties
+    {
+        public float MoveSpeedNormalized;
+        public bool IsGrounded;
+        public float DirectionY;
+        public float VelocityX;
+        public float VelocityZ;
+        public bool IsHitReacting;
+    }
+    
     public class CharacterAnimator : MonoBehaviour
     {
         private static readonly int SpeedPercent = Animator.StringToHash("speedPercent");
@@ -20,11 +30,13 @@ namespace ActorFramework
         {
             _animator = GetComponent<Animator>();
             var motor = GetComponent<CharacterMotor>();
-
             if (motor != null) motor.OnAnimatedPropertiesChanged += SetParameters;
+            
+            var locomotion = GetComponent<CharacterLocomotion>();
+            if (locomotion != null) locomotion.OnAnimatedPropertiesChanged += SetParameters;
         }
 
-        private void SetParameters(CharacterMotor.AnimatedProperties input)
+        private void SetParameters(AnimatedMotorProperties input)
         {
             if(_animator == null || _animator.runtimeAnimatorController == null) { return; }
 
@@ -51,7 +63,7 @@ namespace ActorFramework
                 }
                 else if(nameHash == InHitStun)
                 {
-                    _animator.SetBool(InHitStun, input.IsInHitStun);
+                    _animator.SetBool(InHitStun, input.IsHitReacting);
                 }
             }
         }

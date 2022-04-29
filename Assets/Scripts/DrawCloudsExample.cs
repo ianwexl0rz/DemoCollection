@@ -10,7 +10,7 @@ public class DrawCloudsExample : MonoBehaviour {
     float offset;
 
     public int layer;
-    public Camera camera;
+    public new Camera camera;
     private Matrix4x4 matrix;
     private Matrix4x4[] matrices;
     public bool castShadows = false;

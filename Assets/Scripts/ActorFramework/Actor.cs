@@ -8,11 +8,7 @@ public class Actor : Entity, IDamageable
 {
 	private static readonly int DamageFlash = Shader.PropertyToID("_DamageFlash");
 
-	public event Action OnReceiveHit;
-	
-	public event Action OnBeginHitReaction;
-	
-	public event Action OnEndHitReaction;
+	public event Action OnGetHit;
 	
 	public event Action OnHandleAbilityInput;
 
@@ -29,8 +25,6 @@ public class Actor : Entity, IDamageable
 	public Animator Animator { get; private set; }
 
 	public bool InputEnabled { get; set; }
-
-	public Vector3 Move { get; set; }
 
 	public bool IsVisible { get; set; }
 
@@ -135,6 +129,8 @@ public class Actor : Entity, IDamageable
 	public virtual Vector3 GetEyesPosition() => transform.position;
 
 	public virtual Vector3 GetGroundPosition() => transform.position;
+	
+	public Vector3 GetTrackedTargetDirection() => (TrackedTarget.GetEyesPosition() - GetEyesPosition()).WithY(0f).normalized;
 
 	public void TakeDamage(float damage)
 	{
@@ -182,6 +178,6 @@ public class Actor : Entity, IDamageable
 		var duration = Mathf.Max(HitReaction.Duration - HitReaction.Current, attackData.stun);
 		HitReaction.Reset(duration);
 		
-		OnReceiveHit?.Invoke();
+		OnGetHit?.Invoke();
 	}
 }

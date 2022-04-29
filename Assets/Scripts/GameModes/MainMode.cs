@@ -19,7 +19,7 @@ public class MainMode : GameMode
     [SerializeField] private LockOn lockOn = null;
 
     [Header("Actor Controllers")]
-    [SerializeField] private PlayerController playerBrain = null;
+    [SerializeField] private ActorController playerBrain = null;
     [SerializeField] private ActorController followerBrain = null;
     
     [Header("Hit Sparks")]

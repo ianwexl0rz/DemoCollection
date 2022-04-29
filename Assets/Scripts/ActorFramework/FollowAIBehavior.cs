@@ -14,34 +14,34 @@ public class FollowAIBehavior : AIBehavior
 
 		var toTarget = (actor.TrackedTarget.GetEyesPosition() - actor.GetEyesPosition()).WithY(0f);
 
-		if(actor.Move == Vector3.zero)
+		if(!(actor.GetComponent<CharacterMotor>() is CharacterMotor motor)) return;
+
+		
+		if(motor.Move == Vector3.zero)
 		{
 			if(toTarget.magnitude > startDistance)
 			{
-				actor.Move = toTarget.normalized;
+				motor.Move = toTarget.normalized;
 			}
 		}
 		else if(toTarget.magnitude > stopDistance)
 		{
-			if(actor.GetComponent<CharacterMotor>() is CharacterMotor motor)
+			if(!motor.Run && toTarget.magnitude > startRunDistance)
 			{
-				if(!motor.Run && toTarget.magnitude > startRunDistance)
-				{
-					// Start running
-					motor.Run = true;
-				}
-				else if(motor.Run && toTarget.magnitude < stopRunDistance)
-				{
-					// Stop running
-					motor.Run = false;
-				}
+				// Start running
+				motor.Run = true;
+			}
+			else if(motor.Run && toTarget.magnitude < stopRunDistance)
+			{
+				// Stop running
+				motor.Run = false;
 			}
 
-			actor.Move = toTarget.normalized;
+			motor.Move = toTarget.normalized;
 		}
 		else
 		{
-			actor.Move = Vector3.zero;
+			motor.Move = Vector3.zero;
 		}
 	}
 }

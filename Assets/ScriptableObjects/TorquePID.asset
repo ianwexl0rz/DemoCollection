@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Kp: 20
   Ki: 0
-  Kd: 0.2
+  Kd: 0.1

@@ -162,9 +162,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 905d8f9e5d6de914a91d8c1492351769, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  weaponRoot: {fileID: 2579297820314255046}
-  forwardAxis: {x: 1, y: 0, z: 0}
-  weapon: {fileID: 11400000, guid: 90fb807831acc3143ae1a8a0242e70fd, type: 2}
+  weaponBone: {fileID: 2579297820314255046}
+  weaponBoneUp: {x: 1, y: 0, z: 0}
+  weaponBoneForward: {x: 0, y: 1, z: 0}
+  weaponPrefab: {fileID: 6850581974420892519, guid: e95c377a6bb659c4bbfb08b12a7bef12,
+    type: 3}
   distThreshold: 0.1
 --- !u!114 &-7017686476038204768
 MonoBehaviour:

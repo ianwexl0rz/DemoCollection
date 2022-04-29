@@ -6,18 +6,8 @@ using UnityEngine;
 [RequireComponent(typeof(Actor))]
 public class CharacterMotor : MonoBehaviour
 {
-	public struct AnimatedProperties
-	{
-		public float MoveSpeedNormalized;
-		public bool IsGrounded;
-		public float DirectionY;
-		public float VelocityX;
-		public float VelocityZ;
-		public bool IsInHitStun;
-	}
-
 	private const float MaxAngularVelocity = 50f;
-	public event Action<AnimatedProperties> OnAnimatedPropertiesChanged;
+	public event Action<AnimatedMotorProperties> OnAnimatedPropertiesChanged;
 
 	[Header("Ground Detection")]
 	[SerializeField] private float groundCheckHeight = 0.4f;
@@ -35,14 +25,12 @@ public class CharacterMotor : MonoBehaviour
 	[SerializeField] private int jumpCount = 1;
 	[SerializeField] private float gravityScale = 1f;
 	[SerializeField] private float rollSpeed = 540f;
-	[SerializeField] private float speedSmoothTime = 0.1f;
 	[SerializeField] private float leanFactor = 1.5f;
 	[SerializeField] private float friction = 16;
 	[SerializeField] private float maxTurnGround = 10f;
 	[SerializeField] private float maxTurnAir = 4f;
 	[SerializeField] private CapsuleCollider hitBoxCollider = null;
 	[SerializeField] private PID3 torquePID = null;
-	[SerializeField] private PID3 planarVelocityPID = null;
 
 	private Actor _actor;
 	private bool _isGrounded;
@@ -61,6 +49,8 @@ public class CharacterMotor : MonoBehaviour
 	private bool _jumping;
 	private int _remainingJumps;
 	private Quaternion _desiredRotation;
+	
+	public Vector3 Move { get; set; }
 	
 	public bool Run { get; set; }
 	
@@ -118,7 +108,7 @@ public class CharacterMotor : MonoBehaviour
 
 		if (_actor.InputEnabled)
 		{
-			desiredVelocity += (_isGrounded ? acceleration : airAcceleration) * deltaTime * _actor.Move;
+			desiredVelocity += (_isGrounded ? acceleration : airAcceleration) * deltaTime * Move;
 		}
 
 		var speed = desiredVelocity.magnitude;
@@ -236,13 +226,12 @@ public class CharacterMotor : MonoBehaviour
 		var maxTurnRate = _isGrounded && _rollAngle < Mathf.Epsilon ? maxTurnGround : maxTurnAir;
 		var rollAxis = Vector3.right;
 
-		var validLookInput = _isGrounded && _actor.Move.normalized != Vector3.zero && _actor.InputEnabled && !_actor.HitReaction.InProgress;
-		if (validLookInput) _lookDirection = _actor.Move.normalized;
+		var validLookInput = _isGrounded && Move.normalized != Vector3.zero && _actor.InputEnabled && !_actor.HitReaction.InProgress;
+		if (validLookInput) _lookDirection = Move.normalized;
 
 		if (_actor.TrackedTarget != null)
 		{
-			var toLockOnTarget = (_actor.TrackedTarget.GetEyesPosition() - _actor.GetEyesPosition()).WithY(0f).normalized;
-			var lockOnOrientation = Quaternion.LookRotation(toLockOnTarget);
+			var lockOnOrientation = Quaternion.LookRotation(_actor.GetTrackedTargetDirection());
 			_desiredRotation = Quaternion.RotateTowards(_desiredRotation, lockOnOrientation, maxTurnRate);
 
 			if (_rollAngle > 0 && _groundVelocity.magnitude >= minSpeed)
@@ -258,14 +247,14 @@ public class CharacterMotor : MonoBehaviour
 
 	protected void UpdateAnimation(float deltaTime)
 	{
-		var input = new AnimatedProperties()
+		var input = new AnimatedMotorProperties()
 		{
 			MoveSpeedNormalized = _actor.IsPaused ? 0f : _groundVelocity.magnitude / runSpeed,
 			IsGrounded = _isGrounded,
 			DirectionY = Mathf.Clamp01(Mathf.InverseLerp(1f, -1f, _actor.Rigidbody.velocity.y)),
 			VelocityX = Vector3.Dot(_groundVelocity, transform.right) / runSpeed,
 			VelocityZ = Vector3.Dot(_groundVelocity, transform.forward) / runSpeed,
-			IsInHitStun = _actor.HitReaction.InProgress
+			IsHitReacting = _actor.HitReaction.InProgress
 		};
 		
 		OnAnimatedPropertiesChanged?.Invoke(input);

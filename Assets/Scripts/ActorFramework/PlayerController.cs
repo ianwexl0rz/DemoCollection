@@ -1,19 +1,26 @@
-﻿using UnityEngine;
+﻿using ActorFramework;
+using UnityEngine;
 using Rewired;
 
-[CreateAssetMenu(fileName = "Player Controller", menuName = "Actor/Controllers/Player Controller")]
+[CreateAssetMenu(fileName = "Player Controller KCC", menuName = "Actor/Controllers/Player Controller KCC")]
 public class PlayerController : ActorController
 {
-	public static PlayerController instance;
+	public static PlayerController Instance;
 	
 	public static Player Player { get; private set; }
 
 	public static void RegisterPlayer(Player player) => Player = player;
 
+	private CharacterLocomotion _locomotion;
+	private CharacterMotor _legacyMotor;
+
 	public override void Init(Actor actor, object context = null)
 	{
-		if (instance == null) instance = this;
+		if (Instance == null) Instance = this;
 
+		_locomotion = actor.GetComponent<CharacterLocomotion>();
+		_legacyMotor = actor.GetComponent<CharacterMotor>();
+		
 		actor.TrackedTarget = null;
 		actor.InputBuffer.Clear();
 		HealthBar.RegisterPlayer(actor);
@@ -27,31 +34,60 @@ public class PlayerController : ActorController
 
 	public override void Tick(Actor actor, float deltaTime)
 	{
-		actor.Move = CalculateMove();
-
-		// Lock On
-		if(Player.GetButtonDown(PlayerAction.LockOn))
+		if(Player.GetButtonDown(PlayerAction.LockOn)) 
 			HandleLockOnInput(actor);
-
-		// Run
-		if(actor.GetComponent<CharacterMotor>() is CharacterMotor motor) 
-			motor.Run = Player.GetButton(PlayerAction.Sprint);
-
-		// Roll
-		if(Player.GetButtonDown(PlayerAction.Roll))
-			actor.InputBuffer.Add(PlayerAction.Roll, 0.1f);
-
-		// Jump
-		if(Player.GetButtonDown(PlayerAction.Jump))
-			actor.InputBuffer.Add(PlayerAction.Jump, 0.1f);
-
-		// Attack
+		
 		if(Player.GetButtonDown(PlayerAction.Attack))
 			actor.InputBuffer.Add(PlayerAction.Attack, 0.5f);
+		
+
+
+		if (_locomotion != null)
+		{
+			var move = CalculateMove(actor);
+
+			var inputs = new CharacterInputs()
+			{
+				Move = move,
+				Look = CalculateLook(actor, move),
+				Run = Player.GetButton(PlayerAction.Sprint),
+				BeginJump = Player.GetButtonDown(PlayerAction.Jump),
+				BeginRoll = Player.GetButtonDown(PlayerAction.Roll),
+				IsInHitStun = actor.HitReaction.InProgress
+			};
+
+			_locomotion.SetInputs(ref inputs);
+		}
+		else if (_legacyMotor != null)
+		{
+			// Run
+			if (actor.GetComponent<CharacterMotor>() is CharacterMotor motor)
+			{
+				motor.Move = CalculateMove(actor);
+				motor.Run = Player.GetButton(PlayerAction.Sprint);
+			}
+			
+			// Roll
+			if(Player.GetButtonDown(PlayerAction.Roll))
+				actor.InputBuffer.Add(PlayerAction.Roll, 0.1f);
+
+			// Jump
+			if(Player.GetButtonDown(PlayerAction.Jump))
+				actor.InputBuffer.Add(PlayerAction.Jump, 0.1f);
+		}
 	}
 
-	private static Vector3 CalculateMove()
+	private static Vector3 CalculateLook(Actor actor, Vector3 move)
 	{
+		if (!actor.InputEnabled) return actor.transform.forward;
+		
+		return actor.TrackedTarget == null ? move : actor.GetTrackedTargetDirection();
+	}
+
+	private static Vector3 CalculateMove(Actor actor)
+	{
+		if (!actor.InputEnabled) return Vector3.zero;
+		
 		var move = new Vector3
 		{
 			x = Player.GetAxis(PlayerAction.MoveHorizontal),
