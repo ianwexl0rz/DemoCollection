@@ -229,7 +229,7 @@ public class CharacterMotor : MonoBehaviour
 		var validLookInput = _isGrounded && Move.normalized != Vector3.zero && _actor.InputEnabled && !_actor.HitReaction.InProgress;
 		if (validLookInput) _lookDirection = Move.normalized;
 
-		if (_actor.TrackedTarget != null)
+		if (!ReferenceEquals(_actor.TrackedTarget, null))
 		{
 			var lockOnOrientation = Quaternion.LookRotation(_actor.GetTrackedTargetDirection());
 			_desiredRotation = Quaternion.RotateTowards(_desiredRotation, lockOnOrientation, maxTurnRate);

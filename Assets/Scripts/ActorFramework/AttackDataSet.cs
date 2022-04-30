@@ -63,7 +63,7 @@ public class AttackTimer
 [CreateAssetMenu]
 public class AttackDataSet : ScriptableObject
 {
-	[SerializeField]
-	private List<AttackData> _attacks = new List<AttackData>();
-	public List<AttackData> attacks { get { return _attacks; } private set { _attacks = value; } }
+	[SerializeField] private List<AttackData> _attacks;
+
+	public AttackData GetAttackData(string attackName) => _attacks.Find(d => d.name == attackName);
 }

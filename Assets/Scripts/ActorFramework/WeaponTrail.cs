@@ -18,7 +18,7 @@ public class WeaponTrail : MonoBehaviour
 		var weapon = GetComponent<MeleeWeapon>();
 
 		weapon.OnNewHit += ClearVertices;
-		weapon.OnProcessHit += UpdateAndShowMesh;
+		weapon.OnCheckHits += UpdateAndShowMesh;
 		weapon.OnEndHit += HideMesh;
 
 		_renderer = gameObject.AddComponent<MeshRenderer>();

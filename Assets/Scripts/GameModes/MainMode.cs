@@ -143,7 +143,7 @@ public class MainMode : GameMode
         gameCamera.SetFollowTarget(playerActor.GetComponent<ITrackable>(), immediate); // Set the camera to follow the active player
     }
     
-    public static void AddCombatEvents(IEnumerable<CombatEvent> combatEvent) => combatEvents.AddRange(combatEvent);
+    public static void AddCombatEvent(CombatEvent combatEvent) => combatEvents.Add(combatEvent);
 
     public void ResolveCombatEvents()
     {
