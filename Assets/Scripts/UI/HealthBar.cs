@@ -1,4 +1,5 @@
 ﻿using System;
+using ActorFramework;
 using UnityEngine;
 
 public class HealthBar : MonoBehaviour
@@ -9,15 +10,15 @@ public class HealthBar : MonoBehaviour
 
     private void Awake() => _instance = this;
 
-    public static void RegisterPlayer(Actor actor)
+    public static void RegisterHealthComponent(Health health)
     {
-        actor.OnHealthChanged += UpdateHealthBar;
-        UpdateHealthBar(actor.Health / actor.MaxHealth);
+        health.OnValueChanged += UpdateHealthBar;
+        UpdateHealthBar((float)health.Current / health.Max);
     }
 
-    public static void UnregisterPlayer(Actor actor)
+    public static void UnregisterHealthComponent(Health health)
     {
-        actor.OnHealthChanged -= UpdateHealthBar;
+        health.OnValueChanged -= UpdateHealthBar;
     }
 
     public static void UpdateHealthBar(float normalizedHealth)

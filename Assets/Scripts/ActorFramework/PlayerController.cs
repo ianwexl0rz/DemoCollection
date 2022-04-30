@@ -23,13 +23,13 @@ public class PlayerController : ActorController
 		
 		actor.TrackedTarget = null;
 		actor.InputBuffer.Clear();
-		HealthBar.RegisterPlayer(actor);
+		HealthBar.RegisterHealthComponent(actor.Health);
 	}
 
 	public override void Clean(Actor actor)
 	{
 		//if (actor is Character character) character.SetLockOnTarget(null);
-		HealthBar.UnregisterPlayer(actor);
+		HealthBar.UnregisterHealthComponent(actor.Health);
 	}
 
 	public override void Tick(Actor actor, float deltaTime)

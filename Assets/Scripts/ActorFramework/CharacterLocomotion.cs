@@ -58,6 +58,8 @@ namespace ActorFramework
         private float _timeSinceJumpRequested = Mathf.Infinity;
         private float _timeSinceLastAbleToJump = 0f;
         private float _rollAngle;
+        private bool _justSwitchedFromRigidbody;
+        private Vector3 _rbVelocity;
         
         [SerializeField] private PID3 torquePID = null;
         private Vector3 _torqueIntegral;
@@ -158,9 +160,6 @@ namespace ActorFramework
             Motor.SetPosition(rb.position);
             Motor.SetRotation(rb.rotation);
         }
-
-        private bool _justSwitchedFromRigidbody;
-        private Vector3 _rbVelocity;
 
         public void UpdateVelocity(ref Vector3 currentVelocity, float deltaTime)
         {

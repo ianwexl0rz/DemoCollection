@@ -79,8 +79,6 @@ public class MeleeWeapon : MonoBehaviour
 	{
 		var hits = Physics.RaycastAll(current, range, LayerMask.GetMask("Actor", "PhysicsObject"));
 
-		var success = false;
-
 		foreach (var hit in hits)
 		{
 			var go = hit.collider.gameObject;
@@ -101,7 +99,6 @@ public class MeleeWeapon : MonoBehaviour
 				var combatEvent = new CombatEvent(_user.Actor, entity, hit.point, hitDirection, _currentAttackData);
 
 				MainMode.AddCombatEvent(combatEvent);
-				success = true;
 			}
 
 			_hitGameObjects.Add(go);

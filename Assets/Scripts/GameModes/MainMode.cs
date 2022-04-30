@@ -85,8 +85,8 @@ public class MainMode : GameMode
         Time.timeScale = player.GetButton(PlayerAction.SlowMo) ? 0.01f : 1f;
 
         // (Debug) Adjust health.
-        if (Input.GetKeyDown(KeyCode.RightBracket)) playerActor.TakeDamage(-5f);
-        if (Input.GetKeyDown(KeyCode.LeftBracket)) playerActor.TakeDamage(5f);
+        if (Input.GetKeyDown(KeyCode.RightBracket)) playerActor.Health.TakeDamage(-5);
+        if (Input.GetKeyDown(KeyCode.LeftBracket)) playerActor.Health.TakeDamage(5);
 
         foreach (var entity in entities) entity.Tick(Time.deltaTime);
     }

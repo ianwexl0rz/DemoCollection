@@ -17,6 +17,7 @@ GameObject:
   - component: {fileID: -7573771792531204498}
   - component: {fileID: 707289324}
   - component: {fileID: -7017686476038204768}
+  - component: {fileID: 7989309479502167338}
   m_Layer: 8
   m_Name: Girl
   m_TagString: Untagged
@@ -129,14 +130,12 @@ MonoBehaviour:
   jumpCount: 1
   gravityScale: 1
   rollSpeed: 540
-  speedSmoothTime: 0.05
   leanFactor: 1.5
   friction: 16
   maxTurnGround: 10
   maxTurnAir: 4
   hitBoxCollider: {fileID: 3621298156594705738}
   torquePID: {fileID: 11400000, guid: 00ed0bd437019a34dbf27b4bd064959e, type: 2}
-  planarVelocityPID: {fileID: 0}
 --- !u!114 &-7573771792531204498
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -162,10 +161,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 905d8f9e5d6de914a91d8c1492351769, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  weaponBone: {fileID: 2579297820314255046}
+  WeaponBone: {fileID: 2579297820314255046}
   weaponBoneUp: {x: 1, y: 0, z: 0}
   weaponBoneForward: {x: 0, y: 1, z: 0}
-  weaponPrefab: {fileID: 6850581974420892519, guid: e95c377a6bb659c4bbfb08b12a7bef12,
+  defaultWeaponPrefab: {fileID: 6850581974420892519, guid: e95c377a6bb659c4bbfb08b12a7bef12,
     type: 3}
   distThreshold: 0.1
 --- !u!114 &-7017686476038204768
@@ -180,6 +179,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a3171578f584018a111747f168f7c59, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &7989309479502167338
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1093183912855910}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b542462a5c324b839af5971dae578305, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Current: 100
+  Max: 100
 --- !u!1 &1387081973337918690
 GameObject:
   m_ObjectHideFlags: 0

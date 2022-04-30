@@ -213,6 +213,7 @@ GameObject:
   - component: {fileID: 1306851917}
   - component: {fileID: 2723904033582651686}
   - component: {fileID: -6717047811651370323}
+  - component: {fileID: -5350974085317787461}
   m_Layer: 8
   m_Name: Heavy
   m_TagString: Untagged
@@ -327,14 +328,12 @@ MonoBehaviour:
   jumpCount: 2
   gravityScale: 1
   rollSpeed: 540
-  speedSmoothTime: 0.05
   leanFactor: 1.5
   friction: 16
   maxTurnGround: 20
   maxTurnAir: 4
   hitBoxCollider: {fileID: 839335706}
   torquePID: {fileID: 11400000, guid: 00ed0bd437019a34dbf27b4bd064959e, type: 2}
-  planarVelocityPID: {fileID: 11400000, guid: 00ed0bd437019a34dbf27b4bd064959e, type: 2}
 --- !u!114 &1306851917
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -347,10 +346,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 905d8f9e5d6de914a91d8c1492351769, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  weaponBone: {fileID: 5595153552641103766}
+  WeaponBone: {fileID: 5595153552641103766}
   weaponBoneUp: {x: -1, y: 0, z: 0}
   weaponBoneForward: {x: 0, y: -1, z: 0}
-  weaponPrefab: {fileID: 6895388633802375867, guid: acd0e63cf4d020643b4f2548c6717ad5,
+  defaultWeaponPrefab: {fileID: 6895388633802375867, guid: acd0e63cf4d020643b4f2548c6717ad5,
     type: 3}
   distThreshold: 0.1
 --- !u!114 &2723904033582651686
@@ -378,6 +377,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a3171578f584018a111747f168f7c59, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &-5350974085317787461
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1947941858301876}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b542462a5c324b839af5971dae578305, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Current: 100
+  Max: 100
 --- !u!1 &1600557156720074942
 GameObject:
   m_ObjectHideFlags: 0

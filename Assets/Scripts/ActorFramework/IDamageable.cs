@@ -1,12 +1,9 @@
 ﻿using System;
+using ActorFramework;
 
 public interface IDamageable
 {
-	float Health { get; set; }
-	float MaxHealth { get; set; }
-	event Action<float> OnHealthChanged;
+	public Health Health { get; }
 
-	void TakeDamage(float damage);
-
-	void Destroy();
+	public void Die();
 }

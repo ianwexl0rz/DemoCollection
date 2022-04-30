@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections;
 using System.Linq;
+using ActorFramework;
 
 public class Actor : Entity, IDamageable
 {
@@ -18,9 +19,10 @@ public class Actor : Entity, IDamageable
 
 	[SerializeField] private ActorController controller;
 
-	private Renderer[] _renderers = null;
-	private Coroutine _damageFlash = null;
-	private readonly TimerGroup _actorTimerGroup = new TimerGroup();
+	private Health _health;
+	private Renderer[] _renderers;
+	private Coroutine _damageFlash;
+	private TimerGroup _actorTimerGroup;
 
 	public Animator Animator { get; private set; }
 
@@ -30,7 +32,7 @@ public class Actor : Entity, IDamageable
 
 	public ITrackable TrackedTarget { get; set; }
 
-	public float Health { get; set; }
+	public Health Health => _health;
 
 	public float MaxHealth { get; set; }
 
@@ -39,27 +41,24 @@ public class Actor : Entity, IDamageable
 	public Timer HitReaction { get; private set; }
 
 	public Timer JumpAllowance { get; private set; }
-	
-	public Matrix4x4 LastTRS { get; set; }
 
 	public override void Awake()
 	{
 		base.Awake();
-		Animator = GetComponentInChildren<Animator>();
-		Health = MaxHealth = 100f;
+		Animator = GetComponent<Animator>();
+		_health = GetComponent<Health>();
+		_health.RegisterCallbacks(this);
 
 		InputEnabled = true;
 
 		_renderers = GetComponentsInChildren<Renderer>();
 
-		_actorTimerGroup.Add(HitReaction = new Timer(0f, 
-			() => InputEnabled = false, 
-			() => InputEnabled = true,
-			true));
-		
-		_actorTimerGroup.Add(JumpAllowance = new Timer());
-		
-		LastTRS = Matrix4x4.TRS(transform.position, transform.rotation, transform.localScale);
+		_actorTimerGroup = new TimerGroup();
+		_actorTimerGroup.AddRange( new Timer[]
+		{
+			HitReaction = new Timer(0f, () => InputEnabled = false, () => InputEnabled = true,true),
+			JumpAllowance = new Timer()
+		});
 	}
 
 	protected override void UpdatePhysics(float deltaTime)
@@ -73,8 +72,6 @@ public class Actor : Entity, IDamageable
 		base.UpdateAnimation(deltaTime);
 
 		PostUpdateAnimation?.Invoke();
-		
-		LastTRS = Matrix4x4.TRS(transform.position, transform.rotation, transform.localScale);
 	}
 	
 	private IEnumerator DoDamageFlash(float duration)
@@ -132,28 +129,7 @@ public class Actor : Entity, IDamageable
 	
 	public Vector3 GetTrackedTargetDirection() => (TrackedTarget.GetEyesPosition() - GetEyesPosition()).WithY(0f).normalized;
 
-	public void TakeDamage(float damage)
-	{
-		// Calculate new health (un-clamped so we can do "overkill" events, etc.)
-		var newHealth = Health - damage;
-
-		// Clamp new health.
-		newHealth = Mathf.Clamp(newHealth, 0, MaxHealth);
-        
-		// Early out if no change...
-		if (Health.Equals(newHealth)) return;
-
-		// Update health.
-		Health = newHealth;
-        
-		// Do callback.
-		OnHealthChanged(newHealth / MaxHealth);
-        
-		// Destroy if health is zero.
-		if (newHealth < Mathf.Epsilon) Destroy();
-	}
-
-	public void Destroy()
+	public void Die()
 	{
 		this.WaitForEndOfFrameThen(() => Destroy(gameObject));
 	}
@@ -169,7 +145,7 @@ public class Actor : Entity, IDamageable
 		base.ApplyHit(instigator, point, direction, attackData);
 
 		// Apply damage.
-		TakeDamage(attackData.damage);
+		_health.TakeDamage((int)attackData.damage);
 
 		// Do damage flash.
 		this.OverrideCoroutine(ref _damageFlash, DoDamageFlash(0.2f));

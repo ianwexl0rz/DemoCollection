@@ -48,6 +48,7 @@ GameObject:
   - component: {fileID: -8125500235304199321}
   - component: {fileID: 5455417119612974578}
   - component: {fileID: 5523151079513506425}
+  - component: {fileID: 1537068579254803253}
   m_Layer: 8
   m_Name: 256fes
   m_TagString: Untagged
@@ -161,14 +162,12 @@ MonoBehaviour:
   jumpCount: 2
   gravityScale: 1
   rollSpeed: 540
-  speedSmoothTime: 0.05
   leanFactor: 1.5
   friction: 16
   maxTurnGround: 20
   maxTurnAir: 4
   hitBoxCollider: {fileID: 5455417118671401125}
   torquePID: {fileID: 11400000, guid: 00ed0bd437019a34dbf27b4bd064959e, type: 2}
-  planarVelocityPID: {fileID: 11400000, guid: 00ed0bd437019a34dbf27b4bd064959e, type: 2}
 --- !u!114 &-8125500235304199321
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -194,9 +193,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 905d8f9e5d6de914a91d8c1492351769, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  weaponRoot: {fileID: 8574625706168611968}
-  forwardAxis: {x: 0, y: 1, z: 0}
-  weapon: {fileID: 11400000, guid: b6cad30b31a56a140ade13f5d4e4bbed, type: 2}
+  WeaponBone: {fileID: 0}
+  weaponBoneUp: {x: 0, y: 1, z: 0}
+  weaponBoneForward: {x: 0, y: 0, z: 1}
+  defaultWeaponPrefab: {fileID: 0}
   distThreshold: 0.1
 --- !u!114 &5523151079513506425
 MonoBehaviour:
@@ -210,6 +210,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a3171578f584018a111747f168f7c59, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1537068579254803253
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5454812784484718603}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b542462a5c324b839af5971dae578305, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Current: 100
+  Max: 100
 --- !u!1 &5455417118671401127
 GameObject:
   m_ObjectHideFlags: 0
@@ -329,12 +343,6 @@ PrefabInstance:
 --- !u!4 &5484874108964981946 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 65ce08173cff05b4e988e5e1464f8a55,
-    type: 3}
-  m_PrefabInstance: {fileID: 5446143378916191057}
-  m_PrefabAsset: {fileID: 0}
---- !u!4 &8574625706168611968 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 4425813758580482001, guid: 65ce08173cff05b4e988e5e1464f8a55,
     type: 3}
   m_PrefabInstance: {fileID: 5446143378916191057}
   m_PrefabAsset: {fileID: 0}

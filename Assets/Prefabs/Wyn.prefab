@@ -732,6 +732,7 @@ GameObject:
   - component: {fileID: 1060932922}
   - component: {fileID: 9170561332842650779}
   - component: {fileID: -6032788613016244853}
+  - component: {fileID: 4167252249261259951}
   m_Layer: 8
   m_Name: Wyn
   m_TagString: Player
@@ -869,14 +870,12 @@ MonoBehaviour:
   jumpCount: 1
   gravityScale: 1
   rollSpeed: 540
-  speedSmoothTime: 0.05
   leanFactor: 1.5
   friction: 16
   maxTurnGround: 10
   maxTurnAir: 4
   hitBoxCollider: {fileID: 4662930471931945586}
   torquePID: {fileID: 11400000, guid: 00ed0bd437019a34dbf27b4bd064959e, type: 2}
-  planarVelocityPID: {fileID: 0}
 --- !u!114 &1060932922
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -889,10 +888,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 905d8f9e5d6de914a91d8c1492351769, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  weaponBone: {fileID: 4295379533120550}
+  WeaponBone: {fileID: 4295379533120550}
   weaponBoneUp: {x: 0, y: 0, z: 1}
   weaponBoneForward: {x: 0, y: 1, z: 0}
-  weaponPrefab: {fileID: 598718201804428128, guid: 5ca2b9dd911b269419d80faf959b414f,
+  defaultWeaponPrefab: {fileID: 598718201804428128, guid: 5ca2b9dd911b269419d80faf959b414f,
     type: 3}
   distThreshold: 0.1
 --- !u!114 &9170561332842650779
@@ -920,6 +919,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a3171578f584018a111747f168f7c59, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &4167252249261259951
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1849219369495232}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b542462a5c324b839af5971dae578305, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Current: 100
+  Max: 100
 --- !u!1 &1901694637806216
 GameObject:
   m_ObjectHideFlags: 0
