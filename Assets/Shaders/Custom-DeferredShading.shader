@@ -53,11 +53,13 @@ half4 CalculateLight (unity_v2f_deferred i, UNITY_VPOS_TYPE screenPos : SV_Posit
 	light.color = _LightColor.rgb * atten;// *shadows;
 
 	// unpack Gbuffer
-	half4 gbuffer0 = tex2D (_CameraGBufferTexture0, uv);
-	half4 gbuffer1 = tex2D (_CameraGBufferTexture1, uv);
-	half4 gbuffer2 = tex2D (_CameraGBufferTexture2, uv);
+	float4 gbuffer0 = tex2D (_CameraGBufferTexture0, uv);
+	float4 gbuffer1 = tex2D (_CameraGBufferTexture1, uv);
+	float4 gbuffer2 = tex2D (_CameraGBufferTexture2, uv);
 
-	if (gbuffer2.a == 0)
+	half useCustom = 1.0 / 3.0;
+	
+	if (gbuffer2.a == useCustom)
 	{
 		half2 pixel = 1 / _ScreenParams;
 		bool evenPixel = fmod(screenPos.y, 2) == fmod(screenPos.x, 2);
@@ -72,14 +74,26 @@ half4 CalculateLight (unity_v2f_deferred i, UNITY_VPOS_TYPE screenPos : SV_Posit
 		float4 b3 = tex2D(_CameraGBufferTexture1, half2(uv.x, uv.y + pixel.y));
 		float4 b4 = tex2D(_CameraGBufferTexture1, half2(uv.x, uv.y - pixel.y));
 
-		half diffChroma = GetChroma(gbuffer0.rg, a1.rg, a2.rg, a3.rg, a4.rg);
-		half specChroma = GetChromaWithType(gbuffer1.rgb, b1.rgb, b2.rgb, b3.rgb, b4.rgb);
-
-		half3 baseColor = half3(gbuffer0.r, lerp(half2(diffChroma, gbuffer0.g), half2(gbuffer0.g, diffChroma), evenPixel));
-		//baseColor = YCoCgToRGB(baseColor);
+		float4 c1 = tex2D(_CameraGBufferTexture2, half2(uv.x + pixel.x, uv.y));
+		float4 c2 = tex2D(_CameraGBufferTexture2, half2(uv.x - pixel.x, uv.y));
+		float4 c3 = tex2D(_CameraGBufferTexture2, half2(uv.x, uv.y + pixel.y));
+		float4 c4 = tex2D(_CameraGBufferTexture2, half2(uv.x, uv.y - pixel.y));
 		
-		half3 specColor = half3(gbuffer1.r, lerp(half2(specChroma, gbuffer1.g), half2(gbuffer1.g, specChroma), evenPixel));
-		//specColor = gbuffer1.b > 0 ? gbuffer1.r : YCoCgToRGB(specColor);
+		a1.b = c1.a == useCustom;
+		a2.b = c2.a == useCustom;
+		a3.b = c3.a == useCustom;
+		a4.b = c4.a == useCustom;
+
+		b1.b = b1.b == 0 && c1.a == useCustom;
+		b2.b = b2.b == 0 && c2.a == useCustom;
+		b3.b = b3.b == 0 && c3.a == useCustom;
+		b4.b = b4.b == 0 && c4.a == useCustom;
+		
+		float diffChroma = GetChromaWithType(gbuffer0.rgb, a1.rgb, a2.rgb, a3.rgb, a4.rgb);
+		float specChroma = GetChromaWithType(gbuffer1.rgb, b1.rgb, b2.rgb, b3.rgb, b4.rgb);
+
+		float3 baseColor = float3(gbuffer0.r, lerp(float2(diffChroma, gbuffer0.g), float2(gbuffer0.g, diffChroma), evenPixel));
+		float3 specColor = float3(gbuffer1.r, lerp(float2(specChroma, gbuffer1.g), float2(gbuffer1.g, specChroma), evenPixel));
 
 		CustomData data = CustomDataFromGbuffer(baseColor, specColor, gbuffer0, gbuffer1, gbuffer2);
 		
@@ -111,7 +125,7 @@ half4 CalculateLight (unity_v2f_deferred i, UNITY_VPOS_TYPE screenPos : SV_Posit
 		
 		half4 res = UNITY_BRDF_PBS(data.diffuseColor, data.specularColor, oneMinusReflectivity, data.smoothness, data.normalWorld, -eyeVec, light, ind);
 		// Use custom shading with standard materials
-		//half4 res = CUSTOM_BRDF(data.diffuseColor, 0, data.specularColor, 0, 0, 1, oneMinusReflectivity, data.smoothness, data.normalWorld, -eyeVec, light, ind);
+		//half4 res = CUSTOM_BRDF(data.diffuseColor, 0, data.specularColor, 0, 0, 1, oneMinusReflectivity, data.smoothness, data.normalWorld, -eyeVec, light, shadows, ind);
 
 		return res;
 	}

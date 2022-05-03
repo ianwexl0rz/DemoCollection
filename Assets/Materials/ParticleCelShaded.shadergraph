@@ -314,6 +314,9 @@
     },
     "m_ActiveTargets": [
         {
+            "m_Id": "f8e925115e184b2e8061ff435efe0c69"
+        },
+        {
             "m_Id": "0cb24b2b0dda4af9a3c5a353ed5a574a"
         }
     ]
@@ -1725,6 +1728,12 @@
 
 {
     "m_SGVersion": 0,
+    "m_Type": "UnityEditor.Rendering.BuiltIn.ShaderGraph.BuiltInUnlitSubTarget",
+    "m_ObjectId": "ce4fe101951d40afad156bb6c6a456cc"
+}
+
+{
+    "m_SGVersion": 0,
     "m_Type": "UnityEditor.ShaderGraph.ColorRGBMaterialSlot",
     "m_ObjectId": "d1f3da7eb42a4ffa87bdc0eb64620cb2",
     "m_Id": 0,
@@ -1827,6 +1836,23 @@
     "m_ShaderOutputName": "Sampler",
     "m_StageCapability": 3,
     "m_BareResource": false
+}
+
+{
+    "m_SGVersion": 2,
+    "m_Type": "UnityEditor.Rendering.BuiltIn.ShaderGraph.BuiltInTarget",
+    "m_ObjectId": "f8e925115e184b2e8061ff435efe0c69",
+    "m_ActiveSubTarget": {
+        "m_Id": "ce4fe101951d40afad156bb6c6a456cc"
+    },
+    "m_AllowMaterialOverride": false,
+    "m_SurfaceType": 1,
+    "m_ZWriteControl": 0,
+    "m_ZTestMode": 4,
+    "m_AlphaMode": 2,
+    "m_RenderFace": 2,
+    "m_AlphaClip": false,
+    "m_CustomEditorGUI": ""
 }
 
 {

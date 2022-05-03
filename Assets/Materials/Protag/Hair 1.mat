@@ -2,14 +2,15 @@
 %TAG !u! tag:unity3d.com,2011:
 --- !u!21 &2100000
 Material:
-  serializedVersion: 6
+  serializedVersion: 8
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Hair 1
-  m_Shader: {fileID: 4800000, guid: 5a58b7dec1cab0c45b3c765629594b41, type: 3}
-  m_ShaderKeywords: 
+  m_Shader: {fileID: 4800000, guid: 289f6d7fd8e4d0542b05fb923a2492d0, type: 3}
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -96,10 +97,10 @@ Material:
     - _DetailAlbedoMapScale: 1
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
-    - _EdgeLight: 0
+    - _EdgeLight: 0.317
     - _EnvironmentReflections: 1
     - _GlossMapScale: 1
-    - _Glossiness: 0
+    - _Glossiness: 0.759
     - _GlossyReflections: 1
     - _Metallic: 0
     - _Mode: 0
@@ -120,11 +121,11 @@ Material:
     - __dirty: 1
     m_Colors:
     - _BaseColor: {r: 0.07946667, g: 0.2573723, b: 0.29799998, a: 1}
-    - _Color: {r: 0.07946665, g: 0.25737226, b: 0.29799995, a: 1}
+    - _Color: {r: 0.4283552, g: 0.546, b: 0.325416, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _MainColor: {r: 0.09417998, g: 0.26318124, b: 0.34, a: 1}
     - _SecondaryColor: {r: 0, g: 0, b: 0, a: 0}
-    - _ShadowColor: {r: 0, g: 0, b: 0, a: 1}
+    - _ShadowColor: {r: 0, g: 0.034091737, b: 0.6509804, a: 1}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
   m_BuildTextureStacks: []
 --- !u!114 &6423929982319365599

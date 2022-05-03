@@ -665,7 +665,7 @@ void fragDeferred (
 
     data.occlusion      = occlusion;
     data.smoothness     = s.smoothness;
-    data.normalWorld    = half4(s.normalWorld, 0);
+    data.normalWorld    = half4(s.normalWorld, 1.0 / 3.0);
     data.shadowColor    = s.shadowColor;
     data.translucency   = s.translucency;
     data.edgeLight      = s.edgeLight;

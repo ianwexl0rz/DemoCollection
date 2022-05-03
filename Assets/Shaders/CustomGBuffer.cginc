@@ -85,9 +85,6 @@ float GetChroma(float2 a0, float2 a1, float2 a2, float2 a3, float2 a4)
 
 	float W = w.x + w.y + w.z + w.w;
 
-	// more performant?
-	//w.x = lerp(1, w.x, W > 0); W = lerp(1, W, W > 0);
-
 	// handle the special case where all the weights are zero
 	w.x = (W == 0.0) ? 1.0 : w.x; W = (W == 0.0) ? 1.0 : W;
 	return (w.x * a1.y + w.y * a2.y + w.z * a3.y + w.w * a4.y) / W;
@@ -100,7 +97,7 @@ float GetChromaWithType(float3 a0, float3 a1, float3 a2, float3 a3, float3 a4)
 	float4 w = 1.0 - step(30.0 / 255.0, abs(lum - a0.x));
 
 	// only blend if same type
-	w *= a0.z > 0 == float4(a1.z, a2.z, a3.z, a4.z) > 0;
+	w *= float4(a1.z, a2.z, a3.z, a4.z);
 
 	float W = w.x + w.y + w.z + w.w;
 
