@@ -92,10 +92,10 @@ half4 CalculateLight (unity_v2f_deferred i, UNITY_VPOS_TYPE screenPos : SV_Posit
 		float diffChroma = GetChromaWithType(gbuffer0.rgb, a1.rgb, a2.rgb, a3.rgb, a4.rgb);
 		float specChroma = GetChromaWithType(gbuffer1.rgb, b1.rgb, b2.rgb, b3.rgb, b4.rgb);
 
-		float3 baseColor = float3(gbuffer0.r, lerp(float2(diffChroma, gbuffer0.g), float2(gbuffer0.g, diffChroma), evenPixel));
-		float3 specColor = float3(gbuffer1.r, lerp(float2(specChroma, gbuffer1.g), float2(gbuffer1.g, specChroma), evenPixel));
+		float3 diffuseYCoCg = float3(gbuffer0.r, lerp(float2(diffChroma, gbuffer0.g), float2(gbuffer0.g, diffChroma), evenPixel));
+		float3 specularYCoCg = float3(gbuffer1.r, lerp(float2(specChroma, gbuffer1.g), float2(gbuffer1.g, specChroma), evenPixel));
 
-		CustomData data = CustomDataFromGbuffer(baseColor, specColor, gbuffer0, gbuffer1, gbuffer2);
+		CustomData data = CustomDataFromGbuffer(diffuseYCoCg, specularYCoCg, gbuffer0, gbuffer1, gbuffer2);
 		
 		float3 eyeVec = normalize(wpos - _WorldSpaceCameraPos);
 		half oneMinusReflectivity = 1 - SpecularStrength(data.specularColor);
@@ -112,7 +112,13 @@ half4 CalculateLight (unity_v2f_deferred i, UNITY_VPOS_TYPE screenPos : SV_Posit
 	{
 		light.color *= shadows;
 
+#ifdef USE_CUSTOM_FOR_STANDARD
+		float3 diffuseYCoCg = RGBToYCoCg(gbuffer0.rgb);
+		float3 specularYCoCg = RGBToYCoCg(gbuffer1.rgb);
+		CustomData data = CustomDataFromGbuffer(diffuseYCoCg, specularYCoCg, gbuffer0, gbuffer1, gbuffer2);
+#else
 		UnityStandardData data = UnityStandardDataFromGbuffer(gbuffer0, gbuffer1, gbuffer2);
+#endif
 
 		float3 eyeVec = normalize(wpos - _WorldSpaceCameraPos);
 		half oneMinusReflectivity = 1 - SpecularStrength(data.specularColor);
@@ -122,10 +128,11 @@ half4 CalculateLight (unity_v2f_deferred i, UNITY_VPOS_TYPE screenPos : SV_Posit
 		ind.diffuse = 0;
 		ind.specular = 0;
 
-		
+#ifdef USE_CUSTOM_FOR_STANDARD
+		half4 res = CUSTOM_BRDF(data.diffuseColor, data.shadowColor, data.specularColor, data.translucency, data.edgeLight, 1, oneMinusReflectivity, data.smoothness, data.normalWorld, -eyeVec, light, shadows, ind);
+#else
 		half4 res = UNITY_BRDF_PBS(data.diffuseColor, data.specularColor, oneMinusReflectivity, data.smoothness, data.normalWorld, -eyeVec, light, ind);
-		// Use custom shading with standard materials
-		//half4 res = CUSTOM_BRDF(data.diffuseColor, 0, data.specularColor, 0, 0, 1, oneMinusReflectivity, data.smoothness, data.normalWorld, -eyeVec, light, shadows, ind);
+#endif
 
 		return res;
 	}

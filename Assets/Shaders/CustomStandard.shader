@@ -167,6 +167,9 @@ Shader "Custom/Cel Shaded"
 			Name "DEFERRED"
 			Tags { "LightMode" = "Deferred" }
 
+			// TODO: Should be a material setting.
+			Cull Off
+			
 			CGPROGRAM
 			#pragma target 3.0
 			#pragma exclude_renderers nomrt

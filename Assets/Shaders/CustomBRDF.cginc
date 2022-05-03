@@ -1,5 +1,10 @@
 ﻿#include "UnityDeferredLibrary.cginc"
 
+half InvLerp(half value, half a, half b)
+{
+    return (value - a) / (b - a);
+}
+
 // Main Physically Based BRDF
 // Derived from Disney work and based on Torrance-Sparrow micro-facet model
 //
@@ -17,11 +22,8 @@ half4 CUSTOM_BRDF (half3 diffColor, half3 shadowColor, half3 specColor, half3 tr
 {
 
     half perceptualRoughness = SmoothnessToPerceptualRoughness (smoothness);
-    half3 halfDir = Unity_SafeNormalize (light.dir + viewDir);
-
-    // Stylize the specular
-    half3 sharpHalfDir = lerp(0, 1.05, halfDir);
-    halfDir = lerp(halfDir, sharpHalfDir, 1 - step(smoothness, 0));
+    half3 halfDir = Unity_SafeNormalize (float3(light.dir) + viewDir);
+    halfDir *= (1 + pow(perceptualRoughness, 4));
 
 // NdotV should not be negative for visible pixels, but it can happen due to perspective projection and normal mapping
 // In this case normal should be modified to become valid (i.e facing camera) and not cause weird artifacts.
@@ -43,26 +45,15 @@ half4 CUSTOM_BRDF (half3 diffColor, half3 shadowColor, half3 specColor, half3 tr
     half nv = abs(dot(normal, viewDir));    // This abs allow to limit artifact
 #endif
 
-	half nlUnclamped = dot(normal, light.dir);
-    half nl = saturate(nlUnclamped);
+    half nl = saturate(dot(normal, light.dir));
     half nh = saturate(dot(normal, halfDir));
 
     half lv = saturate(dot(light.dir, viewDir));
     half lh = saturate(dot(light.dir, halfDir));
 
-    float halfLambert = nlUnclamped * 0.5 + 0.5;
-
     half diffuseTerm = DisneyDiffuse(nv, nl, lh, perceptualRoughness) * nl;
-
-    //hardness = edgeLightStrength;
-
-    half sharpNl = 1-pow(1-diffuseTerm, 2);
-    half diffModified = smoothstep(0, 0.1 + (1-hardness) * 0.9, diffuseTerm);
-    diffModified = lerp(sharpNl, diffModified, 0.8 * hardness);
-    diffuseTerm = lerp(diffuseTerm, diffModified, hardness);
-
-    float fresnel = smoothstep(0.5, 0.4, nv);
-    float edgelight = saturate((nl - nv) * 4) * fresnel;
+    //half diffuseTerm = smoothstep(0, 0.1, nl);
+    //shadows = smoothstep(0, 0.1, shadows);
 
     // Specular term
     // HACK: theoretically we should divide diffuseTerm by Pi and not multiply specularTerm!
@@ -71,7 +62,7 @@ half4 CUSTOM_BRDF (half3 diffColor, half3 shadowColor, half3 specColor, half3 tr
     half roughness = PerceptualRoughnessToRoughness(perceptualRoughness);
 
 #if UNITY_BRDF_GGX
-    half V = SmithJointGGXVisibilityTerm (nl * 4, nv * 4, roughness);
+    half V = SmithJointGGXVisibilityTerm (nl, nv, roughness);
     half D = GGXTerm (nh, roughness);
 #else
     // Legacy
@@ -104,40 +95,33 @@ half4 CUSTOM_BRDF (half3 diffColor, half3 shadowColor, half3 specColor, half3 tr
 
     half grazingTerm = saturate(smoothness + (1-oneMinusReflectivity));
 
-    float distortion = 1;
-    float power = 1;
-    float scale = 2;
+    float atten = smoothstep(0, 0.25, diffuseTerm * shadows);
+    half3 color = diffColor * (gi.diffuse + light.color * atten)
+    + specularTerm * light.color * FresnelTerm(specColor, lh) * atten
+    + surfaceReduction * gi.specular * FresnelLerp(specColor, grazingTerm, nv);
 
+#if defined (DIRECTIONAL)
+    
+    float distortion = 1;
+    float power = 4;
+    float scale = 1;
+    float fillShadows = 1;//saturate(1 - atten);
+    float transmission = saturate(dot(-normal, light.dir)) * shadows;
+    float3 ambient = transmission + lerp(0, fillShadows, pow(translucency, 8));
+    
     //Source: https://colinbarrebrisebois.com/2011/03/07/gdc-2011-approximating-translucency-for-a-fast-cheap-and-convincing-subsurface-scattering-look/
     float3 H = light.dir + normal * distortion;
     float VdotH = pow(saturate(dot(viewDir, -H)), power) * scale;
-    float3 sss = light.color * (VdotH /*+ Ambient*/) * translucency;
+    float3 sss = light.color * (VdotH + ambient) * translucency;
+    
+    color += saturate(shadowColor) * sss;
 
-    half transPow = pow(translucency, 4);
-    half3 spec = specularTerm * FresnelTerm(specColor, lh);
-
-    // Darken diffuse in the middle if translucent
-    diffColor *= lerp(1, max(1 - pow(nv, 2), diffColor), translucency * (1 - lv));
-
-    half3 color = 
-#if defined (DIRECTIONAL)
-        diffColor * (gi.diffuse + light.color * max(diffuseTerm * shadows, shadowColor * transPow))
-#else
-        diffColor * (gi.diffuse + light.color * max(diffuseTerm * shadows, 0))
+    float edgeLight = saturate((nl - nv) * 4) * smoothstep(0.5, 0.4, nv);
+    edgeLight *= edgeLightStrength * specColor * 4 * light.color;
+    color += edgeLight;
+    
 #endif
-        + max(edgelight * edgeLightStrength * specColor * (1 + diffColor) * 4, spec) * light.color * shadows
-        + surfaceReduction * gi.specular * FresnelLerp(specColor, grazingTerm, nv);
-
-    float halfLdotV = dot(light.dir + normal * distortion, viewDir) * 0.5 + 0.5;
-
-
-#if defined (DIRECTIONAL)
-    half fadedShadows = light.color * lerp(shadows, 1, transPow * 0.25);
-    half transmission = halfLdotV * (1-halfLambert) * translucency;
-    transmission = pow(transmission * scale, 2);
-    color += max(shadowColor, spec) * max(sss, transmission) * fadedShadows;
-#endif
-
+    
     return half4(color, 1);
 }
 

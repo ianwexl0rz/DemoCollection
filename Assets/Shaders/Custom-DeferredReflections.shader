@@ -87,10 +87,10 @@ half4 frag (unity_v2f_deferred i, UNITY_VPOS_TYPE screenPos : SV_Position) : SV_
 		float diffChroma = GetChromaWithType(gbuffer0.rgb, a1.rgb, a2.rgb, a3.rgb, a4.rgb);
 		float specChroma = GetChromaWithType(gbuffer1.rgb, b1.rgb, b2.rgb, b3.rgb, b4.rgb);
 
-		float3 baseColor = float3(gbuffer0.r, lerp(float2(diffChroma, gbuffer0.g), float2(gbuffer0.g, diffChroma), evenPixel));
-		float3 specColor = float3(gbuffer1.r, lerp(float2(specChroma, gbuffer1.g), float2(gbuffer1.g, specChroma), evenPixel));
+		float3 diffuseYCoCg = float3(gbuffer0.r, lerp(float2(diffChroma, gbuffer0.g), float2(gbuffer0.g, diffChroma), evenPixel));
+		float3 specularYCoCg = float3(gbuffer1.r, lerp(float2(specChroma, gbuffer1.g), float2(gbuffer1.g, specChroma), evenPixel));
 
-		CustomData data = CustomDataFromGbuffer(baseColor, specColor, gbuffer0, gbuffer1, gbuffer2);
+		CustomData data = CustomDataFromGbuffer(diffuseYCoCg, specularYCoCg, gbuffer0, gbuffer1, gbuffer2);
 
 		float3 eyeVec = normalize(worldPos - _WorldSpaceCameraPos);
 		half oneMinusReflectivity = 1 - SpecularStrength(data.specularColor);
@@ -137,7 +137,14 @@ half4 frag (unity_v2f_deferred i, UNITY_VPOS_TYPE screenPos : SV_Position) : SV_
 	}
 	else
 	{
+
+#ifdef USE_CUSTOM_FOR_STANDARD
+		float3 diffuseYCoCg = RGBToYCoCg(gbuffer0.rgb);
+		float3 specularYCoCg = RGBToYCoCg(gbuffer1.rgb);
+		CustomData data = CustomDataFromGbuffer(diffuseYCoCg, specularYCoCg, gbuffer0, gbuffer1, gbuffer2);
+#else
 		UnityStandardData data = UnityStandardDataFromGbuffer(gbuffer0, gbuffer1, gbuffer2);
+#endif
 
 		float3 eyeVec = normalize(worldPos - _WorldSpaceCameraPos);
 		half oneMinusReflectivity = 1 - SpecularStrength(data.specularColor);
@@ -170,9 +177,11 @@ half4 frag (unity_v2f_deferred i, UNITY_VPOS_TYPE screenPos : SV_Position) : SV_
 		ind.diffuse = 0;
 		ind.specular = env0;
 
+#ifdef USE_CUSTOM_FOR_STANDARD
+		half3 rgb = CUSTOM_BRDF(data.diffuseColor, data.shadowColor, data.specularColor, data.translucency, data.edgeLight, 1, oneMinusReflectivity, data.smoothness, data.normalWorld, -eyeVec, light, 0, ind).rgb;
+#else
 		half3 rgb = UNITY_BRDF_PBS(0, data.specularColor, oneMinusReflectivity, data.smoothness, data.normalWorld, -eyeVec, light, ind).rgb;
-		//half3 rgb = CUSTOM_BRDF(0, 0, data.specularColor, 0, 0, 1, oneMinusReflectivity, data.smoothness, data.normalWorld, -eyeVec, light, ind).rgb;
-
+#endif
 
 		// Calculate falloff value, so reflections on the edges of the probe would gradually blend to previous reflection.
 		// Also this ensures that pixels not located in the reflection probe AABB won't

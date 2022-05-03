@@ -97,10 +97,10 @@ Material:
     - _DetailAlbedoMapScale: 1
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
-    - _EdgeLight: 0.317
+    - _EdgeLight: 1
     - _EnvironmentReflections: 1
     - _GlossMapScale: 1
-    - _Glossiness: 0.759
+    - _Glossiness: 0.6
     - _GlossyReflections: 1
     - _Metallic: 0
     - _Mode: 0
@@ -121,7 +121,7 @@ Material:
     - __dirty: 1
     m_Colors:
     - _BaseColor: {r: 0.07946667, g: 0.2573723, b: 0.29799998, a: 1}
-    - _Color: {r: 0.4283552, g: 0.546, b: 0.325416, a: 1}
+    - _Color: {r: 0.17051888, g: 0.482, b: 0.3106854, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _MainColor: {r: 0.09417998, g: 0.26318124, b: 0.34, a: 1}
     - _SecondaryColor: {r: 0, g: 0, b: 0, a: 0}

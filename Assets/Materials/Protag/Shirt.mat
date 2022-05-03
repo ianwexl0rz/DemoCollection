@@ -106,7 +106,7 @@ Material:
     - _EdgeLight: 1
     - _EnvironmentReflections: 1
     - _GlossMapScale: 1
-    - _Glossiness: 0
+    - _Glossiness: 0.307
     - _GlossinessSource: 0
     - _GlossyReflections: 1
     - _Metallic: 0

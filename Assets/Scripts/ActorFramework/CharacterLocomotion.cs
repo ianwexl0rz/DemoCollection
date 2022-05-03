@@ -144,7 +144,7 @@ namespace ActorFramework
                 rb.centerOfMass = Mathf.Lerp(Motor.Capsule.height, 0, t) * Vector3.up;
 
                 var forward = _moveInputVector != Vector3.zero ? _moveInputVector : Vector3.Cross(Motor.CharacterRight, Vector3.up);
-                var targetRotation = Quaternion.LookRotation(_moveInputVector) * Quaternion.AngleAxis(_rollAngle, Vector3.right);
+                var targetRotation = Quaternion.LookRotation(forward) * Quaternion.AngleAxis(_rollAngle, Vector3.right);
                 var targetTorque = rb.rotation.TorqueTo(targetRotation, Time.fixedDeltaTime);
                 var torque = torquePID.Output(rb.angularVelocity, targetTorque, ref _torqueIntegral, ref _torqueError,
                     Time.fixedDeltaTime);

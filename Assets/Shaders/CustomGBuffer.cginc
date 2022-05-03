@@ -4,6 +4,7 @@
 #define CUSTOM_GBUFFER_INCLUDED
 
 #define CUSTOM_USE_YCOCG
+//#define USE_CUSTOM_FOR_STANDARD
 
 #include "RGB555.cginc"
 #include "YCoCG.cginc"
@@ -32,10 +33,10 @@ void CustomDataToGbuffer(CustomData data, out half4 outGBuffer0, out half4 outGB
     //outGBuffer0 = half4(data.diffuseColor.rg, data.specularColor.rg);
     //outGBuffer1 = half4(data.translucency, data.edgeLight, data.occlusion, data.smoothness);
 
-    // RT0: diffuse luma/chroma (rg), translucency (b), occlusion (a) - sRGB rendertarget
+    // RT0: diffuse luma/chroma (rg), edge light (b), occlusion (a) - sRGB rendertarget
     outGBuffer0 = half4(data.diffuseColor.rg, data.edgeLight, data.occlusion);
 
-    // RT1: spec/translucent luma/chroma (rg), edge light (b), smoothness (a) - sRGB rendertarget
+    // RT1: spec/translucent luma/chroma (rg), translucency (b), smoothness (a) - sRGB rendertarget
     outGBuffer1 = half4(data.specularColor.rg, data.translucency, data.smoothness);
 
     // RT2: normal (rgb), --unused, very low precision-- (a)
