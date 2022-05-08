@@ -100,9 +100,9 @@ Material:
     - _EdgeLight: 1
     - _EnvironmentReflections: 1
     - _GlossMapScale: 1
-    - _Glossiness: 0.6
+    - _Glossiness: 0.649
     - _GlossyReflections: 1
-    - _Metallic: 0
+    - _Metallic: 0.537
     - _Mode: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.02
@@ -114,18 +114,18 @@ Material:
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _Surface: 0
-    - _Translucency: 0
+    - _Translucency: 0.142
     - _UVSec: 0
     - _WorkflowMode: 1
     - _ZWrite: 1
     - __dirty: 1
     m_Colors:
     - _BaseColor: {r: 0.07946667, g: 0.2573723, b: 0.29799998, a: 1}
-    - _Color: {r: 0.17051888, g: 0.482, b: 0.3106854, a: 1}
+    - _Color: {r: 0.397, g: 0.002778988, b: 0.15620144, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _MainColor: {r: 0.09417998, g: 0.26318124, b: 0.34, a: 1}
     - _SecondaryColor: {r: 0, g: 0, b: 0, a: 0}
-    - _ShadowColor: {r: 0, g: 0.034091737, b: 0.6509804, a: 1}
+    - _ShadowColor: {r: 0.5176471, g: 0, b: 0.291663, a: 1}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
   m_BuildTextureStacks: []
 --- !u!114 &6423929982319365599

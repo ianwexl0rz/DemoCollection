@@ -230,6 +230,17 @@ inline FragmentCommonData MetallicSetup (float4 i_tex)
     return o;
 }
 
+float3x3 RotationAlign(float3 d, float3 z)
+{
+    const float3  v = cross(z, d);
+    const float c = dot(z, d);
+    const float k = 1.0f / (1.0f + c);
+
+    return float3x3(v.x*v.x*k + c,     v.y*v.x*k - v.z,    v.z*v.x*k + v.y,
+                    v.x*v.y*k + v.z,   v.y*v.y*k + c,      v.z*v.y*k - v.x,
+                    v.x*v.z*k - v.y,   v.y*v.z*k + v.x,    v.z*v.z*k + c   );
+}
+
 inline FragmentCommonData FragmentSetup (float4 i_tex, half3 i_eyeVec, half3 i_viewDirForParallax, half4 tangentToWorld[3], half3 i_posWorld)
 {
     i_tex = Parallax(i_tex, i_viewDirForParallax);
@@ -240,8 +251,16 @@ inline FragmentCommonData FragmentSetup (float4 i_tex, half3 i_eyeVec, half3 i_v
     #endif
 
     FragmentCommonData o = UNITY_SETUP_BRDF_INPUT (i_tex);
-    o.normalWorld = PerPixelWorldNormal(i_tex, tangentToWorld);
-    o.eyeVec = NormalizePerPixelNormal(i_eyeVec);
+    float3 normalWorld = PerPixelWorldNormal(i_tex, tangentToWorld);
+    float3 eyeVec = NormalizePerPixelNormal(i_eyeVec);
+
+    // IW: Bend edge normals
+    // normalWorld = mul(RotationAlign(half3(0,0,-1), eyeVec), normalWorld);
+    // normalWorld.z *= smoothstep(0.3, 0.5, normalWorld.z);
+    // normalWorld = mul(RotationAlign(eyeVec, half3(0,0,-1)), normalWorld);
+    
+    o.normalWorld = normalize(normalWorld);
+    o.eyeVec = eyeVec;
     o.posWorld = i_posWorld;
 
     // NOTE: shader relies on pre-multiply alpha-blend (_SrcBlend = One, _DstBlend = OneMinusSrcAlpha)

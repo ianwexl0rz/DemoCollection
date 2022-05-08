@@ -115,11 +115,13 @@ Material:
     - _EnvironmentReflections: 1
     - _Float0: 0.5
     - _GlossMapScale: 1
-    - _Glossiness: 0.721
+    - _Glossiness: 0.547
     - _GlossyReflections: 1
+    - _IrisScale: 0.41
     - _Metallic: 0
     - _Mode: 0
     - _NormalDistortion: 1
+    - _NormalIntensity: 1
     - _OcclusionStrength: 1
     - _Parallax: 0.02
     - _Power: 1
@@ -140,12 +142,13 @@ Material:
     - _UVSec: 0
     - _WorkflowMode: 1
     - _ZWrite: 1
-    - __dirty: 1
+    - __dirty: 0
     m_Colors:
     - _Albedo: {r: 1, g: 1, b: 1, a: 0}
     - _BaseColor: {r: 0.9063317, g: 0.9063317, b: 0.9063317, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _EyeColor: {r: 1, g: 0, b: 0, a: 0}
     - _Fresnel: {r: 0, g: 0, b: 0, a: 1}
     - _MainColor: {r: 1, g: 1, b: 1, a: 1}
     - _SecondaryColor: {r: 0, g: 0, b: 0, a: 0}

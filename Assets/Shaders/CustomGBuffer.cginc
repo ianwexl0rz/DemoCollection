@@ -4,7 +4,7 @@
 #define CUSTOM_GBUFFER_INCLUDED
 
 #define CUSTOM_USE_YCOCG
-//#define USE_CUSTOM_FOR_STANDARD
+#define USE_CUSTOM_FOR_STANDARD
 
 #include "RGB555.cginc"
 #include "YCoCG.cginc"
@@ -36,11 +36,33 @@ void CustomDataToGbuffer(CustomData data, out half4 outGBuffer0, out half4 outGB
     // RT0: diffuse luma/chroma (rg), edge light (b), occlusion (a) - sRGB rendertarget
     outGBuffer0 = half4(data.diffuseColor.rg, data.edgeLight, data.occlusion);
 
-    // RT1: spec/translucent luma/chroma (rg), translucency (b), smoothness (a) - sRGB rendertarget
+    // RT1: spec luma/chroma (rg), translucency (b), smoothness (a) - sRGB rendertarget
     outGBuffer1 = half4(data.specularColor.rg, data.translucency, data.smoothness);
 
     // RT2: normal (rgb), --unused, very low precision-- (a)
     outGBuffer2 = half4(data.normalWorld.rgb * 0.5f + 0.5f, data.normalWorld.a);
+}
+
+// This will encode CustomData into GBuffer
+void NewCustomDataToGbuffer(CustomData data, out half4 outGBuffer0, out half4 outGBuffer1, out half4 outGBuffer2)
+{
+    
+	// OLD FORMAT:
+	
+	half3 packedData;
+
+	half metalness;
+	half free1;
+	half free2;
+
+	// RT0: diffuse (rgb), occlusion (a) - sRGB rendertarget
+	outGBuffer0 = half4(data.diffuseColor, data.occlusion);
+
+	// RT1: specular (rgb), smoothness (a) - sRGB rendertarget
+	outGBuffer1 = half4(packedData, data.smoothness);
+
+	// RT2: normal (rgb), --unused, very low precision-- (a)
+	outGBuffer2 = half4(data.normalWorld.rgb * 0.5f + 0.5f, data.normalWorld.a);
 }
 
 //-----------------------------------------------------------------------------
@@ -50,7 +72,7 @@ CustomData CustomDataFromGbuffer(half3 diffuse, half3 spec, half4 inGBuffer0, ha
     CustomData data;
 
     data.diffuseColor = YCoCgToRGB(diffuse);
-    data.specularColor = inGBuffer1.b > 0 ? inGBuffer1.r : YCoCgToRGB(spec);
+    data.specularColor = inGBuffer1.b > 0 ? inGBuffer1.rrr : YCoCgToRGB(spec);
     
     data.edgeLight = inGBuffer0.b;
     data.occlusion = inGBuffer0.a;
@@ -82,7 +104,7 @@ void CustomDataApplyWeightToGbuffer(inout half4 inOutGBuffer0, inout half4 inOut
 float GetChroma(float2 a0, float2 a1, float2 a2, float2 a3, float2 a4)
 {
 	float4 lum = float4(a1.x, a2.x, a3.x, a4.x);
-	float4 w = 1.0 - step(30.0 / 255.0, abs(lum - a0.x));
+	float4 w = 1.0 - step(128.0 / 255.0, abs(lum - a0.x));
 
 	float W = w.x + w.y + w.z + w.w;
 

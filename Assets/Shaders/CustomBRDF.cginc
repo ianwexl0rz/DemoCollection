@@ -5,6 +5,29 @@ half InvLerp(half value, half a, half b)
     return (value - a) / (b - a);
 }
 
+float3x3 RotationAlign(float3 d, float3 z)
+{
+    const float3  v = cross(z, d);
+    const float c = dot(z, d);
+    const float k = 1.0f / (1.0f + c);
+
+    return float3x3(v.x*v.x*k + c,     v.y*v.x*k - v.z,    v.z*v.x*k + v.y,
+                    v.x*v.y*k + v.z,   v.y*v.y*k + c,      v.z*v.y*k - v.x,
+                    v.x*v.z*k - v.y,   v.y*v.z*k + v.x,    v.z*v.z*k + c   );
+}
+
+//smooth version of step
+float aaStep(float compValue, float gradient){
+    float halfChange = fwidth(gradient) / 2;
+    //base the range of the inverse lerp on the change over one pixel
+    float lowerEdge = compValue - halfChange;
+    float upperEdge = compValue + halfChange;
+    //do the inverse interpolation
+    float stepped = (gradient - lowerEdge) / (upperEdge - lowerEdge);
+    stepped = saturate(stepped);
+    return stepped;
+}
+
 // Main Physically Based BRDF
 // Derived from Disney work and based on Torrance-Sparrow micro-facet model
 //
@@ -23,7 +46,9 @@ half4 CUSTOM_BRDF (half3 diffColor, half3 shadowColor, half3 specColor, half3 tr
 
     half perceptualRoughness = SmoothnessToPerceptualRoughness (smoothness);
     half3 halfDir = Unity_SafeNormalize (float3(light.dir) + viewDir);
-    halfDir *= (1 + pow(perceptualRoughness, 4));
+
+    // IW: Extend the halfDir vector to flatten the specular falloff.
+    halfDir *= 1 + perceptualRoughness * 0.1;
 
 // NdotV should not be negative for visible pixels, but it can happen due to perspective projection and normal mapping
 // In this case normal should be modified to become valid (i.e facing camera) and not cause weird artifacts.
@@ -45,13 +70,14 @@ half4 CUSTOM_BRDF (half3 diffColor, half3 shadowColor, half3 specColor, half3 tr
     half nv = abs(dot(normal, viewDir));    // This abs allow to limit artifact
 #endif
 
-    half nl = saturate(dot(normal, light.dir));
+    half nlFull = dot(normal, light.dir);
+    half nl = saturate(nlFull);
     half nh = saturate(dot(normal, halfDir));
 
     half lv = saturate(dot(light.dir, viewDir));
     half lh = saturate(dot(light.dir, halfDir));
 
-    half diffuseTerm = DisneyDiffuse(nv, nl, lh, perceptualRoughness) * nl;
+    //half diffuseTerm = DisneyDiffuse(nv, nl, lh, perceptualRoughness) * nl;
     //half diffuseTerm = smoothstep(0, 0.1, nl);
     //shadows = smoothstep(0, 0.1, shadows);
 
@@ -93,20 +119,26 @@ half4 CUSTOM_BRDF (half3 diffColor, half3 shadowColor, half3 specColor, half3 tr
     // To provide true Lambert lighting, we need to be able to kill specular completely.
     specularTerm *= any(specColor) ? 1.0 : 0.0;
 
+    specularTerm *= smoothstep(0.5, 1, specularTerm) * 0.25;
+
     half grazingTerm = saturate(smoothness + (1-oneMinusReflectivity));
 
-    float atten = smoothstep(0, 0.25, diffuseTerm * shadows);
-    half3 color = diffColor * (gi.diffuse + light.color * atten)
-    + specularTerm * light.color * FresnelTerm(specColor, lh) * atten
+    //float diffuseTerm = smoothstep(-1.0/12.0, 1.0/6.0, nlFull);
+    float diffuseTerm = aaStep(0, nlFull) * smoothstep(-0.5, 0.5, nlFull);
+    float hardShadows = aaStep(1.0/3.0, shadows);
+    
+    //float atten = smoothstep(0.1, 0.2, nlFull) * shadows;
+    half3 color = diffColor * (gi.diffuse + light.color * diffuseTerm * hardShadows)
+    + specularTerm * light.color * FresnelTerm(specColor, lh) * shadows
     + surfaceReduction * gi.specular * FresnelLerp(specColor, grazingTerm, nv);
 
 #if defined (DIRECTIONAL)
     
     float distortion = 1;
     float power = 4;
-    float scale = 1;
+    float scale = 4;
     float fillShadows = 1;//saturate(1 - atten);
-    float transmission = saturate(dot(-normal, light.dir)) * shadows;
+    float transmission = saturate(dot(-normal, light.dir) * 0.5 + 0.5) * shadows;
     float3 ambient = transmission + lerp(0, fillShadows, pow(translucency, 8));
     
     //Source: https://colinbarrebrisebois.com/2011/03/07/gdc-2011-approximating-translucency-for-a-fast-cheap-and-convincing-subsurface-scattering-look/
@@ -116,8 +148,16 @@ half4 CUSTOM_BRDF (half3 diffColor, half3 shadowColor, half3 specColor, half3 tr
     
     color += saturate(shadowColor) * sss;
 
-    float edgeLight = saturate((nl - nv) * 4) * smoothstep(0.5, 0.4, nv);
-    edgeLight *= edgeLightStrength * specColor * 4 * light.color;
+    half3 edgeNormal = mul(RotationAlign(half3(0,0,1), viewDir), normal);
+    edgeNormal.z *= smoothstep(0.3, 0.5, edgeNormal.z);
+    edgeNormal = mul(RotationAlign(viewDir, half3(0,0,1)), edgeNormal);
+
+    half edgeNl = smoothstep(-0.8, 1, dot(edgeNormal, light.dir));
+    half edgeNv = saturate(dot(edgeNormal, viewDir));
+    
+    float edgeLight = (1-lv) * edgeNl * pow(1 - edgeNv, 12);
+    edgeLight *= aaStep(0.2, edgeLight);
+    edgeLight *= edgeLightStrength * 4 * light.color * specColor;
     color += edgeLight;
     
 #endif

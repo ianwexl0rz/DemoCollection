@@ -21,13 +21,13 @@ MonoBehaviour:
     value: {x: 78.15568, y: 94.76215}
   minLuminance:
     overrideState: 1
-    value: -2
+    value: -0.3
   maxLuminance:
     overrideState: 1
-    value: 1
+    value: 2.14
   keyValue:
-    overrideState: 1
-    value: 1
+    overrideState: 0
+    value: 0
   eyeAdaptation:
     overrideState: 1
     value: 0
@@ -84,6 +84,43 @@ MonoBehaviour:
   dirtIntensity:
     overrideState: 0
     value: 0
+--- !u!114 &-100774774907057083
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a34fa72bd4185749832024e9c8010bf, type: 3}
+  m_Name: ScreenSpaceReflections
+  m_EditorClassIdentifier: 
+  active: 0
+  enabled:
+    overrideState: 1
+    value: 1
+  preset:
+    overrideState: 0
+    value: 2
+  maximumIterationCount:
+    overrideState: 0
+    value: 16
+  resolution:
+    overrideState: 0
+    value: 0
+  thickness:
+    overrideState: 0
+    value: 8
+  maximumMarchDistance:
+    overrideState: 0
+    value: 100
+  distanceFade:
+    overrideState: 0
+    value: 0.5
+  vignette:
+    overrideState: 0
+    value: 0.5
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -102,6 +139,7 @@ MonoBehaviour:
   - {fileID: 1630425542034369217}
   - {fileID: -2490519438905267491}
   - {fileID: -3794031738706061622}
+  - {fileID: -100774774907057083}
 --- !u!114 &1630425542034369217
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -163,7 +201,7 @@ MonoBehaviour:
     overrideState: 0
     value: {r: 1, g: 1, b: 1, a: 1}
   hueShift:
-    overrideState: 0
+    overrideState: 1
     value: 0
   saturation:
     overrideState: 0
@@ -172,8 +210,8 @@ MonoBehaviour:
     overrideState: 0
     value: 0
   postExposure:
-    overrideState: 0
-    value: 0
+    overrideState: 1
+    value: 0.78
   contrast:
     overrideState: 0
     value: 0
@@ -206,13 +244,13 @@ MonoBehaviour:
     value: 100
   lift:
     overrideState: 1
-    value: {x: 1, y: 1, z: 1, w: -0.066889696}
+    value: {x: 1, y: 1, z: 1, w: -0.04372267}
   gamma:
     overrideState: 1
-    value: {x: 1, y: 1, z: 1, w: 0}
+    value: {x: 1, y: 1, z: 1, w: -0.17489071}
   gain:
     overrideState: 1
-    value: {x: 1, y: 1, z: 1, w: -0.03344484}
+    value: {x: 1, y: 1, z: 1, w: 0.11305419}
   masterCurve:
     overrideState: 0
     value:
@@ -1437,7 +1475,7 @@ MonoBehaviour:
     value: 0.5
   color:
     overrideState: 1
-    value: {r: 0, g: 0, b: 0, a: 1}
+    value: {r: 0.2881235, g: 0.11140566, b: 0.46226418, a: 1}
   ambientOnly:
     overrideState: 1
     value: 1

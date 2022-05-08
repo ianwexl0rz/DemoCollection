@@ -84,10 +84,10 @@ half4 CalculateLight (unity_v2f_deferred i, UNITY_VPOS_TYPE screenPos : SV_Posit
 		a3.b = c3.a == useCustom;
 		a4.b = c4.a == useCustom;
 
-		b1.b = b1.b == 0 && c1.a == useCustom;
-		b2.b = b2.b == 0 && c2.a == useCustom;
-		b3.b = b3.b == 0 && c3.a == useCustom;
-		b4.b = b4.b == 0 && c4.a == useCustom;
+		b1.b = c1.a == useCustom;
+		b2.b = c2.a == useCustom;
+		b3.b = c3.a == useCustom;
+		b4.b = c4.a == useCustom;
 		
 		float diffChroma = GetChromaWithType(gbuffer0.rgb, a1.rgb, a2.rgb, a3.rgb, a4.rgb);
 		float specChroma = GetChromaWithType(gbuffer1.rgb, b1.rgb, b2.rgb, b3.rgb, b4.rgb);
