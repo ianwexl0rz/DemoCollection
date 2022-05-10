@@ -34,12 +34,12 @@ namespace UnityEditor
 
             public static GUIContent albedoText = new GUIContent("Albedo", "Albedo (RGB) and Transparency (A)");
             public static GUIContent alphaCutoffText = new GUIContent("Alpha Cutoff", "Threshold for alpha cutoff");
-			public static GUIContent shadowText = new GUIContent("Shadow", "Shadow (RGB)");
+			public static GUIContent subsurfaceText = new GUIContent("Subsurface", "Subsurface (R)");
 			public static GUIContent specularMapText = new GUIContent("Specular", "Specular (RGB) and Smoothness (A)");
             public static GUIContent metallicMapText = new GUIContent("Metallic", "Metallic (R) and Smoothness (A)");
             public static GUIContent smoothnessText = new GUIContent("Smoothness", "Smoothness value");
             public static GUIContent smoothnessScaleText = new GUIContent("Smoothness", "Smoothness scale factor");
-			public static GUIContent translucencyText = new GUIContent("Translucency", "Translucency value");
+			public static GUIContent subsurfaceColorText = new GUIContent("Subsurface Color", "Subsurface Color");
 			public static GUIContent edgeLightText = new GUIContent("Edge Light", "Edge light value");
 			public static GUIContent smoothnessMapChannelText = new GUIContent("Source", "Smoothness texture and channel");
             public static GUIContent highlightsText = new GUIContent("Specular Highlights", "Specular Highlights");
@@ -65,8 +65,8 @@ namespace UnityEditor
         MaterialProperty albedoMap = null;
         MaterialProperty albedoColor = null;
         MaterialProperty alphaCutoff = null;
-		MaterialProperty shadowMap = null;
-		MaterialProperty shadowColor = null;
+		MaterialProperty subsurfaceMap = null;
+		MaterialProperty subsurfaceColor = null;
 		MaterialProperty specularMap = null;
         MaterialProperty specularColor = null;
         MaterialProperty metallicMap = null;
@@ -74,7 +74,7 @@ namespace UnityEditor
         MaterialProperty smoothness = null;
         MaterialProperty smoothnessScale = null;
         MaterialProperty smoothnessMapChannel = null;
-		MaterialProperty translucency = null;
+		MaterialProperty subsurface = null;
 		MaterialProperty edgeLight = null;
 		MaterialProperty highlights = null;
         MaterialProperty reflections = null;
@@ -103,8 +103,8 @@ namespace UnityEditor
             albedoMap = FindProperty("_MainTex", props);
             albedoColor = FindProperty("_Color", props);
             alphaCutoff = FindProperty("_Cutoff", props);
-			shadowMap = FindProperty("_ShadowTex", props);
-			shadowColor = FindProperty("_ShadowColor", props);
+			subsurfaceMap = FindProperty("_SubsurfaceTex", props); // IW
+			subsurfaceColor = FindProperty("_SubsurfaceColor", props); // IW
             specularMap = FindProperty("_SpecGlossMap", props, false);
             specularColor = FindProperty("_SpecColor", props, false);
             metallicMap = FindProperty("_MetallicGlossMap", props, false);
@@ -118,8 +118,8 @@ namespace UnityEditor
             smoothness = FindProperty("_Glossiness", props);
             smoothnessScale = FindProperty("_GlossMapScale", props, false);
             smoothnessMapChannel = FindProperty("_SmoothnessTextureChannel", props, false);
-			translucency = FindProperty("_Translucency", props, false);
-			edgeLight = FindProperty("_EdgeLight", props, false);
+			subsurface = FindProperty("_SubsurfaceScale", props, false); // IW
+			edgeLight = FindProperty("_EdgeLight", props, false); // IW
 			highlights = FindProperty("_SpecularHighlights", props, false);
             reflections = FindProperty("_GlossyReflections", props, false);
             bumpScale = FindProperty("_BumpScale", props);
@@ -169,10 +169,12 @@ namespace UnityEditor
                 GUILayout.Label(Styles.primaryMapsText, EditorStyles.boldLabel);
                 DoAlbedoArea(material);
                 DoSpecularMetallicArea();
+                DoSubsurfaceArea(); // IW
                 m_MaterialEditor.TexturePropertySingleLine(Styles.normalMapText, bumpMap, bumpMap.textureValue != null ? bumpScale : null);
                 m_MaterialEditor.TexturePropertySingleLine(Styles.heightMapText, heightMap, heightMap.textureValue != null ? heigtMapScale : null);
                 m_MaterialEditor.TexturePropertySingleLine(Styles.occlusionText, occlusionMap, occlusionMap.textureValue != null ? occlusionStrength : null);
                 m_MaterialEditor.TexturePropertySingleLine(Styles.detailMaskText, detailMask);
+                m_MaterialEditor.ShaderProperty(edgeLight, Styles.edgeLightText); //IW
                 DoEmissionArea(material);
                 EditorGUI.BeginChangeCheck();
                 m_MaterialEditor.TextureScaleOffsetProperty(albedoMap);
@@ -271,7 +273,6 @@ namespace UnityEditor
         void DoAlbedoArea(Material material)
         {
             m_MaterialEditor.TexturePropertySingleLine(Styles.albedoText, albedoMap, albedoColor);
-			m_MaterialEditor.TexturePropertySingleLine(Styles.shadowText, shadowMap, shadowColor);
 			if (((BlendMode)material.GetFloat("_Mode") == BlendMode.Cutout))
             {
                 m_MaterialEditor.ShaderProperty(alphaCutoff, Styles.alphaCutoffText.text, MaterialEditor.kMiniTextureFieldLabelIndentLevel + 1);
@@ -326,13 +327,17 @@ namespace UnityEditor
             ++indentation;
             if (smoothnessMapChannel != null)
                 m_MaterialEditor.ShaderProperty(smoothnessMapChannel, Styles.smoothnessMapChannelText, indentation);
+        }
 
-			// Insert Translucency
-			m_MaterialEditor.ShaderProperty(translucency, Styles.translucencyText, indentation);
+        // IW: Inject properties for custom pipeline.
+        void DoSubsurfaceArea()
+        {
+            m_MaterialEditor.TexturePropertySingleLine(Styles.subsurfaceText, subsurfaceMap, subsurface);
 
-			// Insert Edge Light
-			m_MaterialEditor.ShaderProperty(edgeLight, Styles.edgeLightText, indentation);
-		}
+            int indentation = 2;
+
+            m_MaterialEditor.ShaderProperty(subsurfaceColor, Styles.subsurfaceColorText, indentation);
+        }
 
         public static void SetupMaterialWithBlendMode(Material material, BlendMode blendMode)
         {

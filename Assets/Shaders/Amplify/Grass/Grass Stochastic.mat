@@ -223,7 +223,7 @@ Material:
     - _EnvironmentReflections: 1
     - _Falloff: 0.1
     - _GlossMapScale: 0
-    - _Glossiness: 0.333
+    - _Glossiness: 0.297
     - _GlossyReflections: 0
     - _Metallic: 0
     - _Mode: 0
@@ -261,7 +261,7 @@ Material:
     - _BumpMapColorSpaceVector2: {r: -0.77235466, g: 0.8299039, b: 0.022798775, a: 0}
     - _BumpMapColorSpaceVector3: {r: -0.013433847, g: -0.02415477, b: 0.424165, a: 0}
     - _BumpMapDXTScalers: {r: 0.762998, g: 0.8818904, b: 2.352584, a: 0}
-    - _Color: {r: 0.40232104, g: 0.4745098, b: 0.31981963, a: 1}
+    - _Color: {r: 0.5437778, g: 0.6666667, b: 0.29800004, a: 1}
     - _DetailAlbedoColorSpaceOrigin: {r: 0, g: 0, b: 0, a: 0}
     - _DetailAlbedoColorSpaceVector1: {r: 0, g: 0, b: 0, a: 0}
     - _DetailAlbedoColorSpaceVector2: {r: 0, g: 0, b: 0, a: 0}

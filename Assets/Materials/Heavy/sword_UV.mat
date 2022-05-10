@@ -92,12 +92,12 @@ Material:
     - _DetailAlbedoMapScale: 1
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
-    - _EdgeLight: 0.054
+    - _EdgeLight: 0
     - _EnvironmentReflections: 1
     - _GlossMapScale: 1
-    - _Glossiness: 0.526
+    - _Glossiness: 0.556
     - _GlossyReflections: 1
-    - _Metallic: 0.729
+    - _Metallic: 0.917
     - _Mode: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.02

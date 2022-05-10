@@ -26,11 +26,12 @@
 half4       _Color;
 half        _Cutoff;
 
-sampler2D   _ShadowTex;
-half4       _ShadowColor;
+sampler2D   _SubsurfaceTex;
+half        _SubsurfaceScale;
 
-half _Translucency;
-half _EdgeLight;
+half4       _SubsurfaceColor;
+
+half        _EdgeLight;
 
 sampler2D   _MainTex;
 float4      _MainTex_ST;
@@ -119,9 +120,10 @@ half3 Albedo(float4 texcoords)
     return albedo;
 }
 
-half3 Shadow(float4 texcoords)
+// IW: Encode shadow/SSS color.
+half3 Subsurface(float4 texcoords)
 {
-    half3 shadow = _ShadowColor.rgb * tex2D(_ShadowTex, texcoords.xy).rgb;
+    half3 shadow = _SubsurfaceScale * tex2D(_SubsurfaceTex, texcoords.xy).rgb;
     return shadow;
 }
 

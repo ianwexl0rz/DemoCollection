@@ -41,6 +41,38 @@ sampler2D _CameraGBufferTexture0;
 sampler2D _CameraGBufferTexture1;
 sampler2D _CameraGBufferTexture2;
 
+half2 SobelDepth(sampler2D tex, half centerPixel, half2 uv)
+{
+	half2 pixel = 1 / _ScreenParams;
+	half rightPixel = tex2D(tex, half2(uv.x + pixel.x, uv.y)).r;
+	half leftPixel = tex2D(tex, half2(uv.x - pixel.x, uv.y)).r;
+	half upPixel = tex2D(tex, half2(uv.x, uv.y + pixel.y)).r;
+	half downPixel = tex2D(tex, half2(uv.x, uv.y - pixel.y)).r;
+
+	// return abs(leftPixel - centerPixel) +
+	// 	   abs(rightPixel - centerPixel) +
+	// 	   abs(upPixel - centerPixel) +
+	// 	   abs(downPixel - centerPixel);
+
+	half leftDelta = leftPixel - centerPixel;
+	half rightDelta = centerPixel - rightPixel;
+	half upDelta = centerPixel - upPixel;
+	half downDelta = downPixel - centerPixel;
+	
+	half lowEdge = 0.0;
+	half highEdge = 0.001;
+	
+	half2 packedNormal = half2(smoothstep(lowEdge, highEdge, rightDelta) - smoothstep(lowEdge, highEdge, leftDelta),
+		   smoothstep(lowEdge, highEdge, upDelta) - smoothstep(lowEdge, highEdge, downDelta));
+
+	//half3 normal = half3(packedNormal.xy, 0);
+
+	//normal.z = sqrt(1 - packedNormal.x * packedNormal.x - packedNormal.y * packedNormal.y);
+
+	return packedNormal;
+	
+}
+
 half4 CalculateLight (unity_v2f_deferred i, UNITY_VPOS_TYPE screenPos : SV_Position)
 {
 	float3 wpos;
@@ -50,52 +82,19 @@ half4 CalculateLight (unity_v2f_deferred i, UNITY_VPOS_TYPE screenPos : SV_Posit
 	UNITY_INITIALIZE_OUTPUT(UnityLight, light);
 	CustomDeferredCalculateLightParams(i, wpos, uv, light.dir, atten, fadeDist, shadows);
 
-	light.color = _LightColor.rgb * atten;// *shadows;
+	light.color = _LightColor.rgb * atten;
 
 	// unpack Gbuffer
 	float4 gbuffer0 = tex2D (_CameraGBufferTexture0, uv);
 	float4 gbuffer1 = tex2D (_CameraGBufferTexture1, uv);
 	float4 gbuffer2 = tex2D (_CameraGBufferTexture2, uv);
 
-	half useCustom = 1.0 / 3.0;
+	//half2 sobel = SobelDepth(_CameraGBufferTexture1, gbuffer1.r, uv);
+	//gbuffer0.rg += sobel;
 	
-	if (gbuffer2.a == useCustom)
+	if (gbuffer2.a < 1)
 	{
-		half2 pixel = 1 / _ScreenParams;
-		bool evenPixel = fmod(screenPos.y, 2) == fmod(screenPos.x, 2);
-
-		float4 a1 = tex2D(_CameraGBufferTexture0, half2(uv.x + pixel.x, uv.y));
-		float4 a2 = tex2D(_CameraGBufferTexture0, half2(uv.x - pixel.x, uv.y));
-		float4 a3 = tex2D(_CameraGBufferTexture0, half2(uv.x, uv.y + pixel.y));
-		float4 a4 = tex2D(_CameraGBufferTexture0, half2(uv.x, uv.y - pixel.y));
-
-		float4 b1 = tex2D(_CameraGBufferTexture1, half2(uv.x + pixel.x, uv.y));
-		float4 b2 = tex2D(_CameraGBufferTexture1, half2(uv.x - pixel.x, uv.y));
-		float4 b3 = tex2D(_CameraGBufferTexture1, half2(uv.x, uv.y + pixel.y));
-		float4 b4 = tex2D(_CameraGBufferTexture1, half2(uv.x, uv.y - pixel.y));
-
-		float4 c1 = tex2D(_CameraGBufferTexture2, half2(uv.x + pixel.x, uv.y));
-		float4 c2 = tex2D(_CameraGBufferTexture2, half2(uv.x - pixel.x, uv.y));
-		float4 c3 = tex2D(_CameraGBufferTexture2, half2(uv.x, uv.y + pixel.y));
-		float4 c4 = tex2D(_CameraGBufferTexture2, half2(uv.x, uv.y - pixel.y));
-		
-		a1.b = c1.a == useCustom;
-		a2.b = c2.a == useCustom;
-		a3.b = c3.a == useCustom;
-		a4.b = c4.a == useCustom;
-
-		b1.b = c1.a == useCustom;
-		b2.b = c2.a == useCustom;
-		b3.b = c3.a == useCustom;
-		b4.b = c4.a == useCustom;
-		
-		float diffChroma = GetChromaWithType(gbuffer0.rgb, a1.rgb, a2.rgb, a3.rgb, a4.rgb);
-		float specChroma = GetChromaWithType(gbuffer1.rgb, b1.rgb, b2.rgb, b3.rgb, b4.rgb);
-
-		float3 diffuseYCoCg = float3(gbuffer0.r, lerp(float2(diffChroma, gbuffer0.g), float2(gbuffer0.g, diffChroma), evenPixel));
-		float3 specularYCoCg = float3(gbuffer1.r, lerp(float2(specChroma, gbuffer1.g), float2(gbuffer1.g, specChroma), evenPixel));
-
-		CustomData data = CustomDataFromGbuffer(diffuseYCoCg, specularYCoCg, gbuffer0, gbuffer1, gbuffer2);
+		CustomData data = DataFromPackedGbuffer(gbuffer0, gbuffer1, gbuffer2);
 		
 		float3 eyeVec = normalize(wpos - _WorldSpaceCameraPos);
 		half oneMinusReflectivity = 1 - SpecularStrength(data.specularColor);
@@ -113,15 +112,21 @@ half4 CalculateLight (unity_v2f_deferred i, UNITY_VPOS_TYPE screenPos : SV_Posit
 		light.color *= shadows;
 
 #ifdef USE_CUSTOM_FOR_STANDARD
-		float3 diffuseYCoCg = RGBToYCoCg(gbuffer0.rgb);
-		float3 specularYCoCg = RGBToYCoCg(gbuffer1.rgb);
-		CustomData data = CustomDataFromGbuffer(diffuseYCoCg, specularYCoCg, gbuffer0, gbuffer1, gbuffer2);
+		CustomData data = DataFromPackedGbuffer(gbuffer0, gbuffer1, gbuffer2);
+		half oneMinusReflectivity = 1 - SpecularStrength(data.specularColor);
 #else
+
+		half3 specColor;
+		half oneMinusReflectivity;
+		half3 diffColor = DiffuseAndSpecularFromMetallic (gbuffer0.rgb, gbuffer1.r, /*out*/ specColor, /*out*/ oneMinusReflectivity);
+
+		gbuffer0.rgb = diffColor;
+		gbuffer1.rgb = specColor;
+		
 		UnityStandardData data = UnityStandardDataFromGbuffer(gbuffer0, gbuffer1, gbuffer2);
 #endif
-
+		
 		float3 eyeVec = normalize(wpos - _WorldSpaceCameraPos);
-		half oneMinusReflectivity = 1 - SpecularStrength(data.specularColor);
 
 		UnityIndirect ind;
 		UNITY_INITIALIZE_OUTPUT(UnityIndirect, ind);

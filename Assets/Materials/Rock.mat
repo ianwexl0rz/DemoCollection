@@ -150,7 +150,7 @@ Material:
     - _ExtrusionPoint: 0
     - _Float0: 0
     - _GlossMapScale: 1
-    - _Glossiness: 0.512
+    - _Glossiness: 0.57
     - _GlossyReflections: 1
     - _HazeHAmp: 0
     - _HazeHFreq: 0

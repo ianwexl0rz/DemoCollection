@@ -85,6 +85,10 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _SubsurfaceTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _texcoord:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -149,9 +153,10 @@ Material:
     - _SpecSource: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
+    - _SubsurfaceScale: 0.557
     - _Surface: 0
     - _Thickness: 0.415
-    - _Translucency: 0.859
+    - _Translucency: 0.605
     - _UVSec: 0
     - _WorkflowMode: 1
     - _ZWrite: 1
@@ -159,15 +164,15 @@ Material:
     - _Albedo: {r: 0.865, g: 0.53802997, b: 0.37454498, a: 0}
     - _BaseColor: {r: 0.88699996, g: 0.5769806, b: 0.40474758, a: 1}
     - _BlueColor: {r: 0.08448491, g: 0.18074241, b: 0.2769999, a: 1}
-    - _Color: {r: 0.99215686, g: 0.68807733, b: 0.49905488, a: 1}
+    - _Color: {r: 0.92156863, g: 0.63630325, b: 0.45709804, a: 1}
     - _Color0: {r: 0.41509426, g: 0.064613715, b: 0.064613715, a: 0}
     - _Color1: {r: 0, g: 0.6079955, b: 1, a: 0}
     - _EmissionColor: {r: 0.106000006, g: 0, b: 0, a: 1}
     - _MainColor: {r: 0.9254902, g: 0.6784314, b: 0.5372549, a: 1}
     - _RedColor: {r: 0.5058824, g: 0.2757059, b: 0.24029414, a: 1}
     - _SSSColor: {r: 1, g: 0, b: 0, a: 0}
-    - _ShadowColor: {r: 0.4392157, g: 0.09424846, b: 0, a: 1}
+    - _ShadowColor: {r: 0.5660378, g: 0, b: 0, a: 1}
     - _SkinColor: {r: 0.872, g: 0.6371413, b: 0.519712, a: 0}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
-    - _SubsurfaceColor: {r: 0.475, g: 0, b: 0, a: 0}
+    - _SubsurfaceColor: {r: 0.872, g: 0, b: 0, a: 1}
   m_BuildTextureStacks: []

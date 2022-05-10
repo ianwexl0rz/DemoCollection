@@ -7,10 +7,9 @@ Shader "Custom/Cel Shaded"
 		_Color("Color", Color) = (0.5,0.5,0.5,1)
 		_MainTex("Albedo", 2D) = "white" {}
 
-		_ShadowColor("Shadow", Color) = (0,0,0,1)
-		_ShadowTex("Shadow", 2D) = "white" {}
-
-		_Translucency("Translucency", Range(0.0, 1.0)) = 0.0
+		_SubsurfaceTex("Subsurface", 2D) = "gray" {}
+		_SubsurfaceScale("Subsurface Scale", Range(0.0, 1.0)) = 0.0
+		_SubsurfaceColor("Subsurface Color", Color) = (0,0,0,1)
 
 		_EdgeLight("Edge Light", Range(0.0, 1.0)) = 0.0
 		

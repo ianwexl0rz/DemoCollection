@@ -3,8 +3,8 @@
 #ifndef CUSTOM_GBUFFER_INCLUDED
 #define CUSTOM_GBUFFER_INCLUDED
 
-#define CUSTOM_USE_YCOCG
-#define USE_CUSTOM_FOR_STANDARD
+//#define USE_INTERLACED_YCOCG
+//#define USE_CUSTOM_FOR_STANDARD
 
 #include "RGB555.cginc"
 #include "YCoCG.cginc"
@@ -18,74 +18,51 @@ struct CustomData
     half    occlusion;
 	half3   shadowColor;
     half3   specularColor;
+	half3   packedData;
     half    smoothness;
     half4   normalWorld;        // normal in world space
     half    translucency;
 	half    edgeLight;
+	half    depth;
 };
 
-//-----------------------------------------------------------------------------
 // This will encode CustomData into GBuffer
-void CustomDataToGbuffer(CustomData data, out half4 outGBuffer0, out half4 outGBuffer1, out half4 outGBuffer2)
+void PackedDataToGbuffer(CustomData data, out half4 outGBuffer0, out half4 outGBuffer1, out half4 outGBuffer2)
 {
-    
-    // OLD FORMAT:
-    //outGBuffer0 = half4(data.diffuseColor.rg, data.specularColor.rg);
-    //outGBuffer1 = half4(data.translucency, data.edgeLight, data.occlusion, data.smoothness);
-
-    // RT0: diffuse luma/chroma (rg), edge light (b), occlusion (a) - sRGB rendertarget
-    outGBuffer0 = half4(data.diffuseColor.rg, data.edgeLight, data.occlusion);
-
-    // RT1: spec luma/chroma (rg), translucency (b), smoothness (a) - sRGB rendertarget
-    outGBuffer1 = half4(data.specularColor.rg, data.translucency, data.smoothness);
-
-    // RT2: normal (rgb), --unused, very low precision-- (a)
-    outGBuffer2 = half4(data.normalWorld.rgb * 0.5f + 0.5f, data.normalWorld.a);
-}
-
-// This will encode CustomData into GBuffer
-void NewCustomDataToGbuffer(CustomData data, out half4 outGBuffer0, out half4 outGBuffer1, out half4 outGBuffer2)
-{
-    
-	// OLD FORMAT:
-	
-	half3 packedData;
-
-	half metalness;
-	half free1;
-	half free2;
-
 	// RT0: diffuse (rgb), occlusion (a) - sRGB rendertarget
 	outGBuffer0 = half4(data.diffuseColor, data.occlusion);
 
 	// RT1: specular (rgb), smoothness (a) - sRGB rendertarget
-	outGBuffer1 = half4(packedData, data.smoothness);
+	outGBuffer1 = half4(data.packedData, data.smoothness);
 
 	// RT2: normal (rgb), --unused, very low precision-- (a)
 	outGBuffer2 = half4(data.normalWorld.rgb * 0.5f + 0.5f, data.normalWorld.a);
 }
 
-//-----------------------------------------------------------------------------
-// This decode the Gbuffer in a UnityStandardData struct
-CustomData CustomDataFromGbuffer(half3 diffuse, half3 spec, half4 inGBuffer0, half4 inGBuffer1, half4 inGBuffer2)
+CustomData DataFromPackedGbuffer(half4 inGBuffer0, half4 inGBuffer1, half4 inGBuffer2)
 {
-    CustomData data;
+	CustomData data;
 
-    data.diffuseColor = YCoCgToRGB(diffuse);
-    data.specularColor = inGBuffer1.b > 0 ? inGBuffer1.rrr : YCoCgToRGB(spec);
-    
-    data.edgeLight = inGBuffer0.b;
-    data.occlusion = inGBuffer0.a;
+	half materialId = inGBuffer2.a * 3;
+	half metallic = materialId == 1 ? inGBuffer1.r : 0;
+	
+	half oneMinusReflectivity;
+	half3 specColor;
+	half3 diffColor = DiffuseAndSpecularFromMetallic (inGBuffer0.rgb, metallic, /*out*/ specColor, /*out*/ oneMinusReflectivity);
+	half3 unpackedData = DecodeR5G5B5(inGBuffer1.gb);
+	
+	data.diffuseColor = diffColor;
+	data.specularColor = specColor;
+	data.occlusion = inGBuffer0.a;
+	data.smoothness = inGBuffer1.a;
+	data.translucency = materialId == 2 ? inGBuffer1.r : 0;
+	data.shadowColor = materialId < 3 ? YCoCgToRGB(half3(0, unpackedData.rg)) : half3(0, 0, 0);
+	data.edgeLight = materialId < 3 ? unpackedData.b : 0;
+	data.normalWorld.rgb = normalize(inGBuffer2.rgb * 2 - 1);
 
-    data.translucency = inGBuffer1.b;
-    data.smoothness = inGBuffer1.a;
-
-    data.shadowColor = data.translucency > 0 ? YCoCgToRGB(half3(0, spec.gb)): half3(0, 0, 0);
-
-    data.normalWorld.rgb = normalize(inGBuffer2.rgb * 2 - 1);
-
-    return data;
+	return data;
 }
+
 //-----------------------------------------------------------------------------
 // In some cases like for terrain, the user want to apply a specific weight to the attribute
 // The function below is use for this

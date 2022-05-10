@@ -170,9 +170,14 @@ struct FragmentCommonData
     half3 diffColor, specColor, shadowColor;
     // Note: smoothness & oneMinusReflectivity for optimization purposes, mostly for DX9 SM2.0 level.
     // Most of the math is being done on these (1-x) values, and that saves a few precious ALU slots.
-    half translucency, edgeLight, oneMinusReflectivity, smoothness;
+    half oneMinusReflectivity, smoothness;
     half3 normalWorld, eyeVec, posWorld;
     half alpha;
+
+    // IW: Custom parameters.
+    half3 diffColorNoMetal;
+    half3 packedData;
+    half materialId;
 
 #if UNITY_STANDARD_SIMPLE
     half3 reflUVW;
@@ -195,16 +200,17 @@ inline FragmentCommonData SpecularSetup (float4 i_tex)
 
     half oneMinusReflectivity;
     half3 diffColor = EnergyConservationBetweenDiffuseAndSpecular (Albedo(i_tex), specColor, /*out*/ oneMinusReflectivity);
-    half3 shadowColor = Shadow(i_tex);
+    half3 shadowColor = _SubsurfaceColor;
 
     FragmentCommonData o = (FragmentCommonData)0;
     o.diffColor = diffColor;
-    o.specColor = specColor; 
-    o.shadowColor = shadowColor;
-    o.translucency = _Translucency;
-	o.edgeLight = _EdgeLight;
-    o.oneMinusReflectivity = oneMinusReflectivity;
+    o.specColor = specColor;
     o.smoothness = smoothness;
+
+    o.diffColorNoMetal = 0;
+    o.packedData = 0;
+    o.materialId = 3;
+    
     return o;
 }
 
@@ -217,16 +223,24 @@ inline FragmentCommonData MetallicSetup (float4 i_tex)
     half oneMinusReflectivity;
     half3 specColor;
     half3 diffColor = DiffuseAndSpecularFromMetallic (Albedo(i_tex), metallic, /*out*/ specColor, /*out*/ oneMinusReflectivity);
-	half3 shadowColor = Shadow(i_tex);
 
     FragmentCommonData o = (FragmentCommonData)0;
+    o.smoothness = smoothness;
+
+    // IW: Standard data for compatibility.
+    o.oneMinusReflectivity = oneMinusReflectivity;
     o.diffColor = diffColor;
     o.specColor = specColor;
-    o.shadowColor = shadowColor;
-    o.translucency = _Translucency;
-    o.edgeLight = _EdgeLight;
-    o.oneMinusReflectivity = oneMinusReflectivity;
-    o.smoothness = smoothness;
+
+    // IW: Custom data.
+    o.diffColorNoMetal = Albedo(i_tex);
+    o.materialId = _SubsurfaceScale > 0 ? 2 : 1;
+
+    half subsurface = Subsurface(i_tex);
+    half2 subsurfaceChroma = RGBToYCoCg(_SubsurfaceColor).gb;
+    float translucencyOrMetallic = subsurface > 0 ? subsurface : metallic;
+    o.packedData = half3(translucencyOrMetallic, EncodeR5G5B5(half3(subsurfaceChroma, _EdgeLight)));
+    
     return o;
 }
 
@@ -668,28 +682,14 @@ void fragDeferred (
 
     CustomData data;
 
-    #ifndef CUSTOM_USE_YCOCG
-        data.diffuseColor = s.diffColor;
-        data.specularColor  = s.specColor;
-    #else
-        bool evenPixel = fmod(screenPos.y, 2) == fmod(screenPos.x, 2);
-
-        float3 diff = RGBToYCoCg(s.diffColor);
-        float3 spec = RGBToYCoCg(s.specColor);
-        spec.gb = s.translucency == 0 ? spec.gb : RGBToYCoCg(s.shadowColor).gb;
-
-        data.diffuseColor = half3(evenPixel ? diff.rg : diff.rb, 0);
-        data.specularColor = half3(evenPixel ? spec.rg : spec.rb, 0);
-    #endif
-
+    data.diffuseColor   = s.diffColorNoMetal;
     data.occlusion      = occlusion;
     data.smoothness     = s.smoothness;
-    data.normalWorld    = half4(s.normalWorld, 1.0 / 3.0);
-    data.shadowColor    = s.shadowColor;
-    data.translucency   = s.translucency;
-    data.edgeLight      = s.edgeLight;
+    data.normalWorld    = half4(s.normalWorld, s.materialId / 3.0);
+    data.packedData     = s.packedData;
 
-    CustomDataToGbuffer(data, outGBuffer0, outGBuffer1, outGBuffer2);
+    // IW: Write custom data to gbuffer.
+    PackedDataToGbuffer(data, outGBuffer0, outGBuffer1, outGBuffer2);
 
     // Emissive lighting buffer
     outEmission = half4(emissiveColor, 1);

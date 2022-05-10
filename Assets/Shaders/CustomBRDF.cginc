@@ -123,23 +123,21 @@ half4 CUSTOM_BRDF (half3 diffColor, half3 shadowColor, half3 specColor, half3 tr
 
     half grazingTerm = saturate(smoothness + (1-oneMinusReflectivity));
 
-    //float diffuseTerm = smoothstep(-1.0/12.0, 1.0/6.0, nlFull);
-    float diffuseTerm = aaStep(0, nlFull) * smoothstep(-0.5, 0.5, nlFull);
-    float hardShadows = aaStep(1.0/3.0, shadows);
-    
-    //float atten = smoothstep(0.1, 0.2, nlFull) * shadows;
+    float diffuseTerm = aaStep(0, nlFull);// * smoothstep(-0.5, 0.5, nlFull);
+    float hardShadows = smoothstep(1.0/3.0, 1.5/2.0, shadows);
+
     half3 color = diffColor * (gi.diffuse + light.color * diffuseTerm * hardShadows)
-    + specularTerm * light.color * FresnelTerm(specColor, lh) * shadows
-    + surfaceReduction * gi.specular * FresnelLerp(specColor, grazingTerm, nv);
+                //+ shadowColor * (1 - saturate(gi.diffuse + light.color * diffuseTerm * hardShadows))
+                + specularTerm * light.color * FresnelTerm(specColor, lh) * hardShadows
+                + surfaceReduction * gi.specular * FresnelLerp(specColor, grazingTerm, nv);
 
 #if defined (DIRECTIONAL)
     
     float distortion = 1;
     float power = 4;
     float scale = 4;
-    float fillShadows = 1;//saturate(1 - atten);
-    float transmission = saturate(dot(-normal, light.dir) * 0.5 + 0.5) * shadows;
-    float3 ambient = transmission + lerp(0, fillShadows, pow(translucency, 8));
+    float transmission = saturate(dot(-normal, light.dir) * 0.5 + 0.5) * shadows;;
+    float3 ambient = transmission + lerp(shadows, 1, pow(translucency, 8));
     
     //Source: https://colinbarrebrisebois.com/2011/03/07/gdc-2011-approximating-translucency-for-a-fast-cheap-and-convincing-subsurface-scattering-look/
     float3 H = light.dir + normal * distortion;
@@ -147,20 +145,16 @@ half4 CUSTOM_BRDF (half3 diffColor, half3 shadowColor, half3 specColor, half3 tr
     float3 sss = light.color * (VdotH + ambient) * translucency;
     
     color += saturate(shadowColor) * sss;
+#endif
 
     half3 edgeNormal = mul(RotationAlign(half3(0,0,1), viewDir), normal);
     edgeNormal.z *= smoothstep(0.3, 0.5, edgeNormal.z);
     edgeNormal = mul(RotationAlign(viewDir, half3(0,0,1)), edgeNormal);
 
-    half edgeNl = smoothstep(-0.8, 1, dot(edgeNormal, light.dir));
-    half edgeNv = saturate(dot(edgeNormal, viewDir));
-    
-    float edgeLight = (1-lv) * edgeNl * pow(1 - edgeNv, 12);
-    edgeLight *= aaStep(0.2, edgeLight);
-    edgeLight *= edgeLightStrength * 4 * light.color * specColor;
-    color += edgeLight;
-    
-#endif
+    half edgeFresnel = pow(1 - saturate(dot(edgeNormal, viewDir)), 12);
+    half edgeMask = smoothstep(-0.5, 1, dot(edgeNormal, light.dir)) * (1-lv);
+    half edgeLight = aaStep(0.2, edgeFresnel) * edgeMask;
+    color += edgeLight * edgeLightStrength * 4 * light.color * specColor;
     
     return half4(color, 1);
 }
