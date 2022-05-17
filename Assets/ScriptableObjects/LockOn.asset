@@ -15,4 +15,5 @@ MonoBehaviour:
   lockOnIndicatorPrefab: {fileID: 4292395687642920480, guid: d5b38022add3beb45b6c94117cefc6bd,
     type: 3}
   range: 10
-  angleThreshold: 90
+  angleThreshold: 120
+  potentialDataProviders: []

@@ -1,0 +1,234 @@
+{
+  "version": 3,
+  "targets": {
+    ".NETFramework,Version=v4.8": {
+      "Microsoft.Xaml.Behaviors.Wpf/1.1.37": {
+        "type": "package",
+        "frameworkAssemblies": [
+          "PresentationCore",
+          "PresentationFramework",
+          "System",
+          "System.Core",
+          "System.XML",
+          "System.Xaml",
+          "WindowsBase"
+        ],
+        "compile": {
+          "lib/net45/Microsoft.Xaml.Behaviors.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Microsoft.Xaml.Behaviors.dll": {}
+        }
+      },
+      "Noesis.GUI.Extensions/3.0.12": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Xaml.Behaviors.Wpf": "1.1.37"
+        },
+        "compile": {
+          "lib/net45/Noesis.GUI.Extensions.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Noesis.GUI.Extensions.dll": {}
+        }
+      }
+    },
+    ".NETFramework,Version=v4.8/win": {
+      "Microsoft.Xaml.Behaviors.Wpf/1.1.37": {
+        "type": "package",
+        "frameworkAssemblies": [
+          "PresentationCore",
+          "PresentationFramework",
+          "System",
+          "System.Core",
+          "System.XML",
+          "System.Xaml",
+          "WindowsBase"
+        ],
+        "compile": {
+          "lib/net45/Microsoft.Xaml.Behaviors.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Microsoft.Xaml.Behaviors.dll": {}
+        }
+      },
+      "Noesis.GUI.Extensions/3.0.12": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Xaml.Behaviors.Wpf": "1.1.37"
+        },
+        "compile": {
+          "lib/net45/Noesis.GUI.Extensions.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Noesis.GUI.Extensions.dll": {}
+        }
+      }
+    },
+    ".NETFramework,Version=v4.8/win-x64": {
+      "Microsoft.Xaml.Behaviors.Wpf/1.1.37": {
+        "type": "package",
+        "frameworkAssemblies": [
+          "PresentationCore",
+          "PresentationFramework",
+          "System",
+          "System.Core",
+          "System.XML",
+          "System.Xaml",
+          "WindowsBase"
+        ],
+        "compile": {
+          "lib/net45/Microsoft.Xaml.Behaviors.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Microsoft.Xaml.Behaviors.dll": {}
+        }
+      },
+      "Noesis.GUI.Extensions/3.0.12": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Xaml.Behaviors.Wpf": "1.1.37"
+        },
+        "compile": {
+          "lib/net45/Noesis.GUI.Extensions.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Noesis.GUI.Extensions.dll": {}
+        }
+      }
+    },
+    ".NETFramework,Version=v4.8/win-x86": {
+      "Microsoft.Xaml.Behaviors.Wpf/1.1.37": {
+        "type": "package",
+        "frameworkAssemblies": [
+          "PresentationCore",
+          "PresentationFramework",
+          "System",
+          "System.Core",
+          "System.XML",
+          "System.Xaml",
+          "WindowsBase"
+        ],
+        "compile": {
+          "lib/net45/Microsoft.Xaml.Behaviors.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Microsoft.Xaml.Behaviors.dll": {}
+        }
+      },
+      "Noesis.GUI.Extensions/3.0.12": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Xaml.Behaviors.Wpf": "1.1.37"
+        },
+        "compile": {
+          "lib/net45/Noesis.GUI.Extensions.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Noesis.GUI.Extensions.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "Microsoft.Xaml.Behaviors.Wpf/1.1.37": {
+      "sha512": "TxH7g5I/4UzOHfs0GqD1W4evdl7DIHOQCr/KWc4G4BkgtsAhaHHXAW5JbKrkB7cqClN0JYOX6j9/4v4emCjFIA==",
+      "type": "package",
+      "path": "microsoft.xaml.behaviors.wpf/1.1.37",
+      "hasTools": true,
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/net45/Design/Microsoft.Xaml.Behaviors.Design.dll",
+        "lib/net45/Microsoft.Xaml.Behaviors.dll",
+        "lib/net45/Microsoft.Xaml.Behaviors.pdb",
+        "lib/net45/Microsoft.Xaml.Behaviors.xml",
+        "lib/net5.0-windows7.0/Design/Microsoft.Xaml.Behaviors.DesignTools.dll",
+        "lib/net5.0-windows7.0/Microsoft.Xaml.Behaviors.dll",
+        "lib/net5.0-windows7.0/Microsoft.Xaml.Behaviors.pdb",
+        "lib/net5.0-windows7.0/Microsoft.Xaml.Behaviors.xml",
+        "lib/netcoreapp3.1/Design/Microsoft.Xaml.Behaviors.DesignTools.dll",
+        "lib/netcoreapp3.1/Microsoft.Xaml.Behaviors.dll",
+        "lib/netcoreapp3.1/Microsoft.Xaml.Behaviors.pdb",
+        "lib/netcoreapp3.1/Microsoft.Xaml.Behaviors.xml",
+        "microsoft.xaml.behaviors.wpf.1.1.37.nupkg.sha512",
+        "microsoft.xaml.behaviors.wpf.nuspec",
+        "tools/Install.ps1"
+      ]
+    },
+    "Noesis.GUI.Extensions/3.0.12": {
+      "sha512": "Xc+uKIYmlJS1i9feJlwKfeko6YSxP+wt0jXRd4g4MLv808beR8Qp30UUTIqgbI93wrjAZRLDVzUjtR/Wn+K5Pw==",
+      "type": "package",
+      "path": "noesis.gui.extensions/3.0.12",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "Icon-256.png",
+        "LICENSE.txt",
+        "THIRD_PARTY.txt",
+        "lib/net45/Noesis.GUI.Extensions.dll",
+        "lib/net5.0-windows7.0/Noesis.GUI.Extensions.dll",
+        "lib/netcoreapp3.1/Noesis.GUI.Extensions.dll",
+        "noesis.gui.extensions.3.0.12.nupkg.sha512",
+        "noesis.gui.extensions.nuspec"
+      ]
+    }
+  },
+  "projectFileDependencyGroups": {
+    ".NETFramework,Version=v4.8": [
+      "Noesis.GUI.Extensions >= 3.0.*"
+    ]
+  },
+  "packageFolders": {
+    "C:\\Users\\ianwe\\.nuget\\packages\\": {}
+  },
+  "project": {
+    "version": "1.0.0",
+    "restore": {
+      "projectUniqueName": "C:\\Users\\ianwe\\Documents\\Projects\\DemoCollection\\DemoCollection-blend.csproj",
+      "projectName": "DemoCollection",
+      "projectPath": "C:\\Users\\ianwe\\Documents\\Projects\\DemoCollection\\DemoCollection-blend.csproj",
+      "packagesPath": "C:\\Users\\ianwe\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\ianwe\\Documents\\Projects\\DemoCollection\\Blend\\obj\\",
+      "projectStyle": "PackageReference",
+      "skipContentFileWrite": true,
+      "configFilePaths": [
+        "C:\\Users\\ianwe\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+      ],
+      "originalTargetFrameworks": [
+        "net48"
+      ],
+      "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+        "https://api.nuget.org/v3/index.json": {}
+      },
+      "frameworks": {
+        "net48": {
+          "projectReferences": {}
+        }
+      }
+    },
+    "frameworks": {
+      "net48": {
+        "dependencies": {
+          "Noesis.GUI.Extensions": {
+            "target": "Package",
+            "version": "[3.0.*, )"
+          }
+        }
+      }
+    },
+    "runtimes": {
+      "win": {
+        "#import": []
+      },
+      "win-x64": {
+        "#import": []
+      },
+      "win-x86": {
+        "#import": []
+      }
+    }
+  }
+}

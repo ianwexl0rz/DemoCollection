@@ -8,35 +8,36 @@ public class LockOnIndicator : MonoBehaviour
     [SerializeField] private Material inactiveMaterial = null;
     [SerializeField] private float indicatorHeightOffset = 0.15f;
 
-    private new Renderer renderer;
-    private bool lockedOn;
+    private new Renderer _renderer;
+    private bool _lockedOn;
 
     public void Init()
     {
-        renderer = transform.GetComponentInChildren<Renderer>();
-        renderer.sharedMaterial = inactiveMaterial;
+        _renderer = transform.GetComponentInChildren<Renderer>();
+        _renderer.sharedMaterial = inactiveMaterial;
+        _renderer.enabled = false;
     }
     
     public void UpdatePosition(bool lockedOn, ITrackable trackable, Vector3 camPos)
     {
         if(trackable == null)
         {
-            gameObject.SetActive(false);
+            //gameObject.SetActive(false);
             return;
         }
 		
-        if(!gameObject.activeSelf) gameObject.SetActive(true);
+        //if(!gameObject.activeSelf) gameObject.SetActive(true);
 
-        var indicatorPos = trackable.GetEyesPosition();
+        var indicatorPos = trackable.GetCenter();
         if(trackable is CharacterMotor character)
         {
             indicatorPos += (character.CapsuleCollider.height * 0.5f + indicatorHeightOffset) * Vector3.up;
         }
 
-        if(lockedOn != this.lockedOn)
+        if(lockedOn != this._lockedOn)
         {
-            renderer.sharedMaterial = lockedOn ? activeMaterial : inactiveMaterial;
-            this.lockedOn = lockedOn;
+            _renderer.sharedMaterial = lockedOn ? activeMaterial : inactiveMaterial;
+            this._lockedOn = lockedOn;
         }
 
         var t = transform;

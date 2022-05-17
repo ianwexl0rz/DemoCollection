@@ -1,5 +1,6 @@
 fileFormatVersion: 2
 guid: de1d956d35b5644b9be551a23a65f7b7
+importerOverride: Noesis.NoesisGUI.Editor::NoesisFontImporter
 TrueTypeFontImporter:
   externalObjects: {}
   serializedVersion: 4
@@ -8,7 +9,6 @@ TrueTypeFontImporter:
   characterSpacing: 0
   characterPadding: 1
   includeFontData: 1
-  fontName: JetBrains Mono
   fontNames:
   - JetBrains Mono
   fallbackFontReferences:

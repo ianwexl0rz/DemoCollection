@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections;
 using System.Linq;
 using ActorFramework;
+using DemoCollection;
 
 public class Actor : Entity, IDamageable
 {
@@ -41,7 +42,7 @@ public class Actor : Entity, IDamageable
 	public Timer HitReaction { get; private set; }
 
 	public Timer JumpAllowance { get; private set; }
-
+	
 	public override void Awake()
 	{
 		base.Awake();

@@ -1,4 +1,5 @@
 ﻿using ActorFramework;
+using DemoCollection;
 using UnityEngine;
 using Rewired;
 
@@ -23,13 +24,14 @@ public class PlayerController : ActorController
 		
 		actor.TrackedTarget = null;
 		actor.InputBuffer.Clear();
-		HealthBar.RegisterHealthComponent(actor.Health);
+		HudViewModel.RegisterActor(actor);
 	}
 
 	public override void Clean(Actor actor)
 	{
-		//if (actor is Character character) character.SetLockOnTarget(null);
-		HealthBar.UnregisterHealthComponent(actor.Health);
+		HudViewModel.UnregisterActor(actor);
+		actor.TrackedTarget = null;
+		FlushInputs();
 	}
 
 	public override void Tick(Actor actor, float deltaTime)
@@ -39,8 +41,6 @@ public class PlayerController : ActorController
 		
 		if(Player.GetButtonDown(PlayerAction.Attack))
 			actor.InputBuffer.Add(PlayerAction.Attack, 0.5f);
-		
-
 
 		if (_locomotion != null)
 		{
@@ -60,12 +60,8 @@ public class PlayerController : ActorController
 		}
 		else if (_legacyMotor != null)
 		{
-			// Run
-			if (actor.GetComponent<CharacterMotor>() is CharacterMotor motor)
-			{
-				motor.Move = CalculateMove(actor);
-				motor.Run = Player.GetButton(PlayerAction.Sprint);
-			}
+			_legacyMotor.Move = CalculateMove(actor);
+			_legacyMotor.Run = Player.GetButton(PlayerAction.Sprint);
 			
 			// Roll
 			if(Player.GetButtonDown(PlayerAction.Roll))
@@ -74,6 +70,20 @@ public class PlayerController : ActorController
 			// Jump
 			if(Player.GetButtonDown(PlayerAction.Jump))
 				actor.InputBuffer.Add(PlayerAction.Jump, 0.1f);
+		}
+	}
+
+	private void FlushInputs()
+	{
+		if (_locomotion != null)
+		{
+			var inputs = new CharacterInputs();
+			_locomotion.SetInputs(ref inputs);
+		}
+		else if (_legacyMotor != null)
+		{
+			_legacyMotor.Move = Vector3.zero;
+			_legacyMotor.Run = false;
 		}
 	}
 

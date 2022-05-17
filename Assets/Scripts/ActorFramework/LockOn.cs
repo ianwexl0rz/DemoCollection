@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using DemoCollection;
 using UnityEngine;
 
 [CreateAssetMenu]
@@ -78,6 +79,9 @@ public class LockOn : ScriptableObject
         // Update lock-on indicator position.
         lockOnIndicator.UpdatePosition(player.TrackedTarget != null, TrackableCandidate,
             mainCamera.transform.position);
+
+        var lockOnScreenPos = mainCamera.WorldToScreenPoint(lockOnIndicator.transform.position);
+        HudViewModel.Instance.SetLockOnIndicator(player.TrackedTarget != null, lockOnScreenPos);
     }
 
     private static ITrackable GetTrackableClosestToCenter(Dictionary<ITrackable, Vector2> potentialTargets)

@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "6SfM3qPs0qE6BKA357b/ppZFPTo7lQBIy9MIFcaxftJ9bjpRuIkrYfpIh7VlgGWZqD4DVOUf5BkpH4Ycu5/W0A==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\ianwe\\Documents\\Projects\\DemoCollection\\DemoCollection-blend.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\ianwe\\.nuget\\packages\\microsoft.xaml.behaviors.wpf\\1.1.37\\microsoft.xaml.behaviors.wpf.1.1.37.nupkg.sha512",
+    "C:\\Users\\ianwe\\.nuget\\packages\\noesis.gui.extensions\\3.0.12\\noesis.gui.extensions.3.0.12.nupkg.sha512"
+  ],
+  "logs": []
+}
