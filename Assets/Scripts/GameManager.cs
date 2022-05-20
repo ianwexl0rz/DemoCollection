@@ -1,36 +1,40 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using DemoCollection;
 using Rewired;
 
 public class GameManager : MonoBehaviour
 {
 	[SerializeField] private GameSettings gameSettings = null;
+	[SerializeField] private UIController uiController = null;
 
 	[Header("Game Modes")]
 	[SerializeField] private MainMode mainMode = new MainMode();
 	[SerializeField] private PauseMode pauseMode = new PauseMode();
 
-	private static GameManager instance;
-
-	public static GameManager I => instance ? instance : instance = FindObjectOfType<GameManager>();
+	private static GameManager _instance;
+	public static GameManager Instance => _instance;
 	
-    public static GameSettings Settings => I.gameSettings;
+    public static GameSettings Settings => _instance.gameSettings;
     
-    public static ThirdPersonCamera Camera => I.mainMode.MainCamera;
+    public static ThirdPersonCamera Camera => _instance.mainMode.MainCamera;
 
 	#region UNITY_METHODS
 	
 	private void Awake()
 	{
-		instance = this;
+		_instance = this;
 
 		Application.targetFrameRate = -1;
+		QualitySettings.vSyncCount = 0;
 		
 		// Cache reference to player.
 		var player = ReInput.players.GetPlayer(0);
 		PlayerController.RegisterPlayer(player);
 		GameMode.SetPlayer(player);
 		GameMode.RegisterModes(new List<GameMode> { mainMode, pauseMode });
+		
+		uiController.Init();
 
 		DontDestroyOnLoad(this);
 	}
@@ -42,7 +46,7 @@ public class GameManager : MonoBehaviour
 		// 2) load character status from room data
 
 		GameMode.SetMode<MainMode>();
-		Cursor.lockState = CursorLockMode.Locked;
+		//Cursor.lockState = CursorLockMode.Locked;
 	}
 
 	private void Update() => GameMode.Current?.Tick(Time.deltaTime);

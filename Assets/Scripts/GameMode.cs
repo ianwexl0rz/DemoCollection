@@ -39,7 +39,7 @@ public abstract class GameMode
 	public static void SetMode<T>(object context = null, Action callback = null) where T : GameMode
 	{
 		var newMode = modes.First(mode => mode is T);
-		GameManager.I.WaitForEndOfFrameThen(() => SetMode(newMode, context, callback));
+		GameManager.Instance.WaitForEndOfFrameThen(() => SetMode(newMode, context, callback));
 	}
 
 	private static void SetMode(GameMode value, object context, Action callback)

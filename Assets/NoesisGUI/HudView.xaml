@@ -6,28 +6,46 @@
              xmlns:local="clr-namespace:DemoCollection"
              xmlns:noesis="clr-namespace:NoesisGUIExtensions;assembly=Noesis.GUI.Extensions"
              mc:Ignorable="d" 
-             d:DesignHeight="1080" d:DesignWidth="1920">
-    <UserControl.DataContext>
-        <local:HudViewModel/>
-    </UserControl.DataContext>
+             d:DesignHeight="1080" d:DesignWidth="1920"
+             d:DataContext="{d:DesignInstance {x:Type local:ViewModel}, IsDesignTimeCreatable=True}">
 
     <Grid>
         <Grid.Resources>
             <BooleanToVisibilityConverter x:Key="BoolToVisConverter" />
         </Grid.Resources>
 
-        <ProgressBar x:Name="healthBar" Margin="32,32,64,0" BorderBrush="#BF000000" RenderTransformOrigin="0.5,0.5" Height="20" Width="512" HorizontalAlignment="Left" VerticalAlignment="Top" Background="#BF000000" Maximum="{Binding Health.Maximum}" Value="{Binding Health.Current}" BorderThickness="2,2,2,2">
+        <ProgressBar x:Name="healthBar"
+                     Margin="32,32,64,0"
+                     BorderBrush="#BF000000"
+                     RenderTransformOrigin="0.5,0.5"
+                     Height="20"
+                     Width="512"
+                     HorizontalAlignment="Left"
+                     VerticalAlignment="Top"
+                     Background="#BF000000"
+                     Maximum="{Binding HUD.Health.Maximum}"
+                     Value="{Binding HUD.Health.Current}"
+                     BorderThickness="2,2,2,2">
+            
             <ProgressBar.Foreground>
                 <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                     <GradientStop Color="Maroon" Offset="1"/>
                     <GradientStop Color="Red"/>
                 </LinearGradientBrush>
             </ProgressBar.Foreground>
+            
         </ProgressBar>
 
-
-
-        <Ellipse x:Name="reticle" HorizontalAlignment="Left" Height="48" VerticalAlignment="Top" Width="48" StrokeThickness="2" Margin="-24,-24,-24,-24" RenderTransformOrigin="0.5,0.5" Visibility="{Binding Path=HasTarget, Converter={StaticResource BoolToVisConverter} }">
+        <Ellipse x:Name="reticle"
+                 HorizontalAlignment="Left"
+                 Height="48"
+                 VerticalAlignment="Top"
+                 Width="48"
+                 StrokeThickness="2"
+                 Margin="-24,-24,-24,-24"
+                 RenderTransformOrigin="0.5,0.5"
+                 Visibility="{Binding HUD.HasTarget, Converter={StaticResource BoolToVisConverter}}">
+            
             <Ellipse.Fill>
                 <RadialGradientBrush>
                     <GradientStop Color="White" Offset="0.301"/>
@@ -40,7 +58,7 @@
                     <ScaleTransform/>
                     <SkewTransform/>
                     <RotateTransform/>
-                    <TranslateTransform X="{Binding TargetX}" Y="{Binding TargetY}"/>
+                    <TranslateTransform X="{Binding HUD.TargetX}" Y="{Binding HUD.TargetY}"/>
                 </TransformGroup>
             </Ellipse.RenderTransform>
         </Ellipse>

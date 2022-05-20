@@ -65,6 +65,7 @@ namespace ActorFramework
         private Vector3 _torqueIntegral;
         private Vector3 _torqueError;
         
+#if UNITY_EDITOR
         private void OnEnable()
         {
             AssemblyReloadEvents.beforeAssemblyReload += OnBeforeAssemblyReload;
@@ -76,6 +77,7 @@ namespace ActorFramework
             AssemblyReloadEvents.beforeAssemblyReload -= OnBeforeAssemblyReload;
             AssemblyReloadEvents.afterAssemblyReload -= OnAfterAssemblyReload;
         }
+#endif
 
         public void OnBeforeAssemblyReload()
         {

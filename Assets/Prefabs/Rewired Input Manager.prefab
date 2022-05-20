@@ -27,6 +27,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -53,7 +54,10 @@ MonoBehaviour:
       linux_primaryInputSource: 0
       windowsUWP_primaryInputSource: 0
       xboxOne_primaryInputSource: 0
+      gameCoreXboxOne_primaryInputSource: 0
+      gameCoreScarlett_primaryInputSource: 0
       ps4_primaryInputSource: 0
+      ps5_primaryInputSource: 0
       webGL_primaryInputSource: 0
       stadia_primaryInputSource: 0
       useXInput: 1
@@ -101,6 +105,9 @@ MonoBehaviour:
       platformVars_ps4:
         disableKeyboard: 0
         ignoreInputWhenAppNotInFocus: 1
+      platformVars_ps5:
+        disableKeyboard: 0
+        ignoreInputWhenAppNotInFocus: 1
       platformVars_psVita:
         disableKeyboard: 0
         ignoreInputWhenAppNotInFocus: 1
@@ -110,6 +117,14 @@ MonoBehaviour:
       platformVars_xboxOne:
         disableKeyboard: 0
         ignoreInputWhenAppNotInFocus: 1
+      platformVars_gameCoreXboxOne:
+        disableKeyboard: 0
+        ignoreInputWhenAppNotInFocus: 1
+        assignJoysticksByUserId: 0
+      platformVars_gameCoreScarlett:
+        disableKeyboard: 0
+        ignoreInputWhenAppNotInFocus: 1
+        assignJoysticksByUserId: 0
       platformVars_wii:
         disableKeyboard: 0
         ignoreInputWhenAppNotInFocus: 1
@@ -125,6 +140,8 @@ MonoBehaviour:
       platformVars_stadia:
         disableKeyboard: 0
         ignoreInputWhenAppNotInFocus: 1
+        useNativeKeyboard: 1
+        useNativeMouse: 1
       maxJoysticksPerPlayer: 1
       autoAssignJoysticks: 1
       assignJoysticksToPlayingPlayersOnly: 0

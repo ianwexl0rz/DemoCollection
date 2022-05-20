@@ -1,19 +1,23 @@
-﻿using ActorFramework;
+﻿using System;
+using ActorFramework;
 using DemoCollection;
+using DemoCollection.DataBinding;
 using UnityEngine;
 using Rewired;
 
 [CreateAssetMenu(fileName = "Player Controller KCC", menuName = "Actor/Controllers/Player Controller KCC")]
 public class PlayerController : ActorController
 {
-	public static PlayerController Instance;
+	public event Action<Actor> SetActor;
 	
-	public static Player Player { get; private set; }
+	public static PlayerController Instance;
 
-	public static void RegisterPlayer(Player player) => Player = player;
+	//public HUDBinding HUDBinding;
 
 	private CharacterLocomotion _locomotion;
 	private CharacterMotor _legacyMotor;
+	
+	public static Player Player { get; private set; }
 
 	public override void Init(Actor actor, object context = null)
 	{
@@ -24,12 +28,15 @@ public class PlayerController : ActorController
 		
 		actor.TrackedTarget = null;
 		actor.InputBuffer.Clear();
-		HudViewModel.RegisterActor(actor);
+		OnSetActor(actor);
 	}
+
+	private void OnSetActor(Actor actor) => SetActor?.Invoke(actor);
+
+	public static void RegisterPlayer(Player player) => Player = player;
 
 	public override void Clean(Actor actor)
 	{
-		HudViewModel.UnregisterActor(actor);
 		actor.TrackedTarget = null;
 		FlushInputs();
 	}

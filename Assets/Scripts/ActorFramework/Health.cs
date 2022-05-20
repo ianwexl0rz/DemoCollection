@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace ActorFramework
 {
-    public class Health : MonoBehaviour
+    public class Health : MonoBehaviour, INotifyPropertyChanged
     {
         public event Action<Health> OnChanged;
         public event Action OnDeath;
@@ -15,8 +15,31 @@ namespace ActorFramework
         [SerializeField] private int _current = 100;
         [SerializeField] private int _maximum = 100;
 
-        public int Current => _current;
-        public int Maximum => _maximum;
+        public int Current
+        {
+            get => _current;
+            set
+            {
+                if (_current != value)
+                {
+                    _current = value;
+                    OnPropertyChanged("Current");
+                }
+            }
+        }
+
+        public int Maximum
+        {
+            get => _maximum;
+            set
+            {
+                if (_maximum != value)
+                {
+                    _maximum = value;
+                    OnPropertyChanged("Maximum");
+                }
+            }
+        }
         
         public void RegisterCallbacks(IDamageable damageable) => OnDeath = damageable.Die;
 
@@ -32,7 +55,7 @@ namespace ActorFramework
             if (newHealth == _current) return;
 
             // Update health.
-            _current = newHealth;
+            Current = newHealth;
         
             // Do callback.
             OnChanged?.Invoke(this);
@@ -40,6 +63,14 @@ namespace ActorFramework
             // Destroy if health is zero.
             if (newHealth < Mathf.Epsilon)
                 OnDeath?.Invoke();
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

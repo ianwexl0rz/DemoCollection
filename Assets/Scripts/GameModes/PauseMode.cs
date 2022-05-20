@@ -1,4 +1,5 @@
 ﻿using System;
+using DemoCollection;
 using UnityEngine;
 
 [Serializable]
@@ -6,12 +7,11 @@ using UnityEngine;
  {
      public static event Action<bool> OnPauseGame = delegate { };
 
-     [SerializeField] private PauseMenu pauseMenu = null;
-
      public override void Init(object context, Action callback = null)
      {
          MainMode.SetPhysicsPaused(true);
-         pauseMenu.Show(true);
+         
+         UIController.SetActiveView(ViewState.Paused);
          OnPauseGame(true);
      }
  
@@ -31,7 +31,7 @@ using UnityEngine;
  
      public override void Clean()
      {
-         pauseMenu.Show(false);
+         UIController.SetActiveView(ViewState.HUD);
          OnPauseGame(false);
      }
  }

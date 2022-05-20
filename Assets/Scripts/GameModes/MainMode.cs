@@ -59,7 +59,7 @@ public class MainMode : GameMode
             if (playerActor != null) actorIndex = actorsInScene.IndexOf(playerActor);
 
             SetPlayer(playerActor, true);
-            Cursor.lockState = CursorLockMode.Locked;
+            //Cursor.lockState = CursorLockMode.Locked;
         }
 
         SetPhysicsPaused(cachedPhysicsPaused);

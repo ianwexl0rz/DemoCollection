@@ -8,7 +8,7 @@ public class LockOnIndicator : MonoBehaviour
     [SerializeField] private Material inactiveMaterial = null;
     [SerializeField] private float indicatorHeightOffset = 0.15f;
 
-    private new Renderer _renderer;
+    private Renderer _renderer;
     private bool _lockedOn;
 
     public void Init()

@@ -3,12 +3,12 @@
 namespace DemoCollection
 {
 	[Serializable]
-	public class RangePropertyViewModel : ViewModelBase
+	public class RangeProperty : ObservableObject
 	{
-		private int _current;
-		private int _maximum;
+		public int _current = 0;
+		public int _maximum = 100;
 
-		public RangePropertyViewModel(int current, int maximum)
+		public RangeProperty(int current, int maximum)
 		{
 			Current = current;
 			Maximum = maximum;

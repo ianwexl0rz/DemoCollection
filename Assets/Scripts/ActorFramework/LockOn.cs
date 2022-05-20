@@ -1,11 +1,29 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using DemoCollection;
+using DemoCollection.DataBinding;
 using UnityEngine;
 
 [CreateAssetMenu]
 public class LockOn : ScriptableObject
 {
+	public struct IndicatorData
+	{
+		public bool HasTarget;
+		public float TargetX;
+		public float TargetY;
+
+		public IndicatorData(bool enabled, Vector3 lockOnScreenPos)
+		{
+			HasTarget = enabled && lockOnScreenPos.z > 0;
+			TargetX = lockOnScreenPos.x;
+			TargetY = UnityEngine.Screen.height - lockOnScreenPos.y;
+		}
+	}
+
+	public static event Action<IndicatorData> SetIndicatorData;
+	
 	[Header("Lock On")]
 	[SerializeField] private LockOnIndicator lockOnIndicatorPrefab = null;
 	[SerializeField] private float range = 10f;
@@ -24,17 +42,7 @@ public class LockOn : ScriptableObject
 		_instance = this;
 		lockOnIndicator = Instantiate(lockOnIndicatorPrefab);
 		lockOnIndicator.Init();
-		//MainMode.OnSetPlayer += actor => _instance.SetFocusedTransform(actor.transform);
 	}
-
-	// public void SetFocusedTransform(Transform parent)
-	// {
-	// 	gameObject.SetActive(false);
-	// 	var t = transform;
-	// 	t.SetParent(parent);
-	// 	t.localPosition = Vector3.zero;
-	// 	gameObject.SetActive(true);
-	// }
     
 	private static Vector2 GetScreenPos(ITrackable trackable, Camera mainCamera)
     {
@@ -81,7 +89,7 @@ public class LockOn : ScriptableObject
             mainCamera.transform.position);
 
         var lockOnScreenPos = mainCamera.WorldToScreenPoint(lockOnIndicator.transform.position);
-        HudViewModel.Instance.SetLockOnIndicator(player.TrackedTarget != null, lockOnScreenPos);
+        SetIndicatorData?.Invoke(new IndicatorData(player.TrackedTarget != null, lockOnScreenPos));
     }
 
     private static ITrackable GetTrackableClosestToCenter(Dictionary<ITrackable, Vector2> potentialTargets)

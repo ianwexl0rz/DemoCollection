@@ -183,8 +183,8 @@ public class ThirdPersonCamera : MonoBehaviour
 
 			targetEulerAngles += new Vector3
 			(
-				lookInput.y * GameManager.Settings.lookSensitivityY * dt,
-				lookInput.x * GameManager.Settings.lookSensitivityX * dt
+				lookInput.y * GameManager.Settings.LookSensitivityY * dt,
+				lookInput.x * GameManager.Settings.LookSensitivityX * dt
 			);
 
 			if (autoTurn)

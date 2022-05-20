@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e38ee994e3ad154a956af979ad8bb06, type: 3}
   m_Name: PlayerController
   m_EditorClassIdentifier: 
-  keyTest: 119
+  HUDBinding: {fileID: 11400000, guid: 6729c9f7b5af6ad40bcf91e9dcdc2c7e, type: 2}

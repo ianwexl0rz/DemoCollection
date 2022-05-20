@@ -8,61 +8,10 @@ public class GameSettings : ScriptableObject
 	public float _lookSensitivityY = 150f;
 	
 	//TODO: Make "invert X/Y custom" editor vars and store value as +/-
-	public float lookSensitivityX
-	{
-		get
-		{
-			return _lookSensitivityX * (invertX ? -1 : 1);
-		}
-	}
+	public float LookSensitivityX => _lookSensitivityX * (InvertX ? -1 : 1);
 
-	public float lookSensitivityY
-	{
-		get
-		{
-			return _lookSensitivityY * (invertY ? 1 : -1);
-		}
-	}
+	public float LookSensitivityY => _lookSensitivityY * (InvertY ? 1 : -1);
 
-	[SerializeField] private bool invertX = true;
-	[SerializeField] private bool invertY = true;
-
-	public bool InvertY => invertY;
-	public bool InvertX => invertX;
-
-//	private static GameSettings _instance;
-//	public static GameSettings I
-//	{
-//		get
-//		{
-//			if(!_instance)
-//			{
-//				_instance = GameManager.I.gameSettings;
-//			}
-//			return _instance;
-//		}
-//	}
-
-//	public void TogglePaused()
-//	{
-//		switch (GameMode.current)
-//		{
-//			case MainGame mainMode:
-//				mainMode.TogglePaused();
-//				break;
-//			default:
-//				Debug.Log("TogglePaused is not implemented in this game mode!");
-//				break;
-//		}
-//	}
-
-	public void SetInvertX(bool value)
-	{
-		invertX = value;
-	}
-
-	public void SetInvertY(bool value)
-	{
-		invertY = value;
-	}
+	public bool InvertY;
+	public bool InvertX;
 }
