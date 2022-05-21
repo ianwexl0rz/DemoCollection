@@ -10,14 +10,10 @@ public class Actor : Entity, IDamageable
 {
 	private static readonly int DamageFlash = Shader.PropertyToID("_DamageFlash");
 
-	public event Action OnGetHit;
+	public event Action GetHit;
 	
-	public event Action OnHandleAbilityInput;
-
-	public event Action PostUpdateAnimation;
-
-	public event Action<float> OnHealthChanged = delegate {  };
-
+	public event Action<InputBuffer> ConsumeInput;
+	
 	[SerializeField] private ActorController controller;
 
 	private Health _health;
@@ -60,21 +56,16 @@ public class Actor : Entity, IDamageable
 			HitReaction = new Timer(0f, () => InputEnabled = false, () => InputEnabled = true,true),
 			JumpAllowance = new Timer()
 		});
+
+		SetPaused += SetAnimatorPaused;
 	}
 
-	protected override void UpdatePhysics(float deltaTime)
+	protected override void OnDestroy()
 	{
-		base.UpdatePhysics(deltaTime);
-		if (InputEnabled) OnHandleAbilityInput?.Invoke();
+		base.OnDestroy();
+		SetPaused -= SetAnimatorPaused;
 	}
 
-	protected override void UpdateAnimation(float deltaTime)
-	{
-		base.UpdateAnimation(deltaTime);
-
-		PostUpdateAnimation?.Invoke();
-	}
-	
 	private IEnumerator DoDamageFlash(float duration)
 	{
 		var time = 0f;
@@ -101,16 +92,22 @@ public class Actor : Entity, IDamageable
 		}
 	}
 
-	public override void Tick(float deltaTime)
+	public override void OnTick(float deltaTime)
 	{
-		base.Tick(deltaTime);
+		base.OnTick(deltaTime);
 		if (controller) controller.Tick(this, deltaTime);
 		InputBuffer.Tick(deltaTime);
 		_actorTimerGroup.Tick(deltaTime);
 		IsVisible = _renderers.Any(r => r != null && r.isVisible);
 	}
+	
+	public override void OnFixedTick(float deltaTime)
+	{
+		base.OnFixedTick(deltaTime);
+		if (InputEnabled) ConsumeInput?.Invoke(InputBuffer);
+	}
 
-	protected override void OnPauseEntity(bool value)
+	private void SetAnimatorPaused(bool value)
 	{
 		if(Animator != null) Animator.SetPaused(value);
 	}
@@ -130,15 +127,9 @@ public class Actor : Entity, IDamageable
 	
 	public Vector3 GetTrackedTargetDirection() => (TrackedTarget.GetEyesPosition() - GetEyesPosition()).WithY(0f).normalized;
 
-	public void Die()
-	{
-		this.WaitForEndOfFrameThen(() => Destroy(gameObject));
-	}
+	public void Die() => this.WaitForEndOfFrameThen(() => Destroy(gameObject));
 
-	public bool TryConsumeAction(int actionId)
-	{
-		return InputBuffer.ConsumeAction(actionId);
-	}
+	//public bool TryConsumeAction(int actionId) => InputBuffer.TryConsumeAction(actionId);
 
 	public override void ApplyHit(Entity instigator, Vector3 point, Vector3 direction, AttackData attackData)
 	{
@@ -155,6 +146,8 @@ public class Actor : Entity, IDamageable
 		var duration = Mathf.Max(HitReaction.Duration - HitReaction.Current, attackData.stun);
 		HitReaction.Reset(duration);
 		
-		OnGetHit?.Invoke();
+		GetHit?.Invoke();
 	}
+
+	private void OnGetHit() => GetHit?.Invoke();
 }

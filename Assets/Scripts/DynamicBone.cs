@@ -28,13 +28,23 @@ public class DynamicBone : Entity
 	private Vector3 torqueIntegral;
 	private Vector3 torqueError;
 
-	public void Start()
+	protected override void Start()
     {
-		CreateJoint();
+	    parentEntity.AddSubEntity(this);
+	    CreateJoint();
 	    CreateCollider();
 	    Rigidbody.maxAngularVelocity = 20f;
 	    cacheRotation = referenceBone.rotation;
+	    LateTick += SyncWithReferenceBone;
+	    FixedTick += Simulate;
     }
+
+	protected override void OnDestroy()
+	{
+		parentEntity.RemoveSubEntity(this);
+		LateTick -= SyncWithReferenceBone;
+		FixedTick -= Simulate;
+	}
 
 #if UNITY_EDITOR
 	private void OnValidate()
@@ -97,16 +107,6 @@ public class DynamicBone : Entity
 		joint.anchor = Vector3.zero;
 	}
 
-	protected override void OnEnable()
-	{
-		parentEntity.AddSubEntity(this);
-	}
-
-	protected override void OnDisable()
-	{
-		parentEntity.RemoveSubEntity(this);
-	}
-
 	private Vector3 GetDirectionFromInt(int dir)
 	{
 		return dir == 0 ? Vector3.right :
@@ -114,10 +114,8 @@ public class DynamicBone : Entity
 			Vector3.forward;
 	}
 
-	protected override void UpdatePhysics(float deltaTime)
+	private void Simulate(float deltaTime)
 	{
-		base.UpdatePhysics(deltaTime);
-
 		var targetRotation = isRoot ? cacheRotation : parentEntity.Rigidbody.rotation * cacheRotation;
 		var axis = GetDirectionFromInt(capsule.direction);
 
@@ -146,7 +144,7 @@ public class DynamicBone : Entity
 	}
 #endif
 
-	protected override void UpdateAnimation(float deltaTime)
+	private void SyncWithReferenceBone(float deltaTime)
 	{
 		cacheRotation = isRoot ? referenceBone.rotation : referenceBone.localRotation;
 		if (syncReferenceBone) referenceBone.rotation = transform.rotation;

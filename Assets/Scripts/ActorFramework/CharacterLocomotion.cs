@@ -44,7 +44,9 @@ namespace ActorFramework
         [Header("Misc")]
         public Vector3 Gravity = new Vector3(0, -30f, 0);
         public Transform MeshRoot;
-        
+
+        private Actor _actor;
+        private bool _cachedMotorEnabled;
         private Vector3 _moveInputVector;
         private Vector3 _lookInputVector;
         private bool _shouldRun;
@@ -77,7 +79,6 @@ namespace ActorFramework
             AssemblyReloadEvents.beforeAssemblyReload -= OnBeforeAssemblyReload;
             AssemblyReloadEvents.afterAssemblyReload -= OnAfterAssemblyReload;
         }
-#endif
 
         public void OnBeforeAssemblyReload()
         {
@@ -87,10 +88,33 @@ namespace ActorFramework
         {
             Motor.CharacterController = this;
         }
+  #endif
         
         private void Start()
         {
             Motor.CharacterController = this;
+
+            _actor = GetComponent<Actor>();
+            _actor.SetPaused += SetMotorPaused;
+        }
+
+        private void OnDestroy()
+        {
+            _actor.SetPaused -= SetMotorPaused;
+        }
+
+
+        private void SetMotorPaused(bool paused)
+        {
+            if (paused)
+            {
+                _cachedMotorEnabled = Motor.enabled;
+                if (Motor.enabled) Motor.enabled = false;
+            }
+            else if (_cachedMotorEnabled)
+            {
+                Motor.enabled = true;
+            }
         }
 
         public void SetInputs(ref CharacterInputs inputs)
@@ -137,6 +161,9 @@ namespace ActorFramework
             
             while (_rollAngle < 360f)
             {
+                while (MainMode.PhysicsPaused)
+                    yield return null;
+                
                 yield return new WaitForFixedUpdate();
                 
                 _rollRequested = false;

@@ -8,23 +8,17 @@
              d:DesignHeight="1080" d:DesignWidth="1920 "
              d:DataContext="{d:DesignInstance {x:Type local:ViewModel}, IsDesignTimeCreatable=True}">
 
-    <Border Margin="240,135,240,135" Background="#BF000000" CornerRadius="32,32,32,32">
+    <Border Margin="320,180,320,180" Background="#E5000000" CornerRadius="32,32,32,32">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="100"/>
                 <RowDefinition/>
                 <RowDefinition Height="100"/>
             </Grid.RowDefinitions>
-            <TextBlock x:Name="header" TextWrapping="Wrap" Text="Paused" FontFamily="Bahnschrift SemiLight" TextAlignment="Center" FontSize="48" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-            <TextBlock x:Name="footer" TextWrapping="Wrap" Text="Press Start to resume." HorizontalAlignment="Center" VerticalAlignment="Center" FontFamily="Bahnschrift SemiLight" TextAlignment="Center" FontSize="32" Foreground="White" Grid.Row="2"/>
-            <Border Grid.Row="1">
-                <Border.Background>
-                    <LinearGradientBrush EndPoint="1,1" StartPoint="0,0">
-                        <GradientStop Color="#FF002648" Offset="1"/>
-                        <GradientStop Color="#FF33458C" Offset="0"/>
-                    </LinearGradientBrush>
-                </Border.Background>
-                <StackPanel Margin="200,0,200,0">
+            <TextBlock x:Name="header" TextWrapping="Wrap" FontFamily="Quicksand" TextAlignment="Center" FontSize="48" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="Normal" Text="PAUSED"/>
+            <TextBlock x:Name="footer" TextWrapping="Wrap" Text="Press Start to resume." HorizontalAlignment="Center" VerticalAlignment="Center" FontFamily="Quicksand" TextAlignment="Center" FontSize="32" Foreground="White" Grid.Row="2"/>
+            <Border Grid.Row="1" Background="#FF304670">
+                <StackPanel VerticalAlignment="Stretch" RenderTransformOrigin="0.5,0.5" Margin="0,200,0,0">
                     <StackPanel.Resources>
                         <Style TargetType="{x:Type Border}">
                             <Setter Property="Margin" Value="0,16,0,16"/>
@@ -39,6 +33,14 @@
                             </Setter>
                         </Style>
                     </StackPanel.Resources>
+                    <StackPanel.RenderTransform>
+                        <TransformGroup>
+                            <ScaleTransform ScaleX="1.5" ScaleY="1.5"/>
+                            <SkewTransform/>
+                            <RotateTransform/>
+                            <TranslateTransform/>
+                        </TransformGroup>
+                    </StackPanel.RenderTransform>
                     <Border>
                         <ToggleButton x:Name="InvertX" Content="Invert Look Horizontal"
                                 Style="{DynamicResource Style.ToggleSwitch}"
@@ -47,17 +49,24 @@
                                 HorizontalContentAlignment="Right"
                                 Height="32"
                                 Width="398"
-                                Command="{Binding PauseViewModel.SetLookInvertX}" IsChecked="{Binding PauseViewModel.InvertX}"/>
+                                Command="{Binding PauseViewModel.SetLookInvertX}" IsChecked="{Binding PauseViewModel.InvertX}" FontFamily="Quicksand">
+                            <ToggleButton.Effect>
+                                <DropShadowEffect/>
+                            </ToggleButton.Effect>
+                        </ToggleButton>
                     </Border>
                     <Border>
                         <ToggleButton x:Name="InvertY" Content="Invert Look Vertical"
                                 Style="{DynamicResource Style.ToggleSwitch}"
                                 FocusVisualStyle="{DynamicResource MyFocusVisual}"
                                 FontSize="24"
-                                HorizontalContentAlignment="Right"
                                 Height="32"
                                 Width="398"
-                                Command="{Binding PauseViewModel.SetLookInvertY}" IsChecked="{Binding PauseViewModel.InvertY}"/>
+                                Command="{Binding PauseViewModel.SetLookInvertY}" IsChecked="{Binding PauseViewModel.InvertY}" FontFamily="Quicksand" HorizontalContentAlignment="Right">
+                            <ToggleButton.Effect>
+                                <DropShadowEffect/>
+                            </ToggleButton.Effect>
+                        </ToggleButton>
 
                     </Border>
                 </StackPanel>

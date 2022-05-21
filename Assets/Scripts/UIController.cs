@@ -42,6 +42,20 @@ namespace DemoCollection
                 }
             }
         }
+        
+        // private object _activeView;
+        // public object ActiveView
+        // {
+        //     get => _activeView;
+        //     private set
+        //     {
+        //         if (_activeView != value)
+        //         {
+        //             _activeView = value;
+        //             OnPropertyChanged("ActiveView");
+        //         }
+        //     }
+        // }
 
         public void Init()
         {

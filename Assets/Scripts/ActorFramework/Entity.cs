@@ -23,9 +23,12 @@ public struct RigidbodyState
 
 public class Entity : MonoBehaviour
 {
-	public event Action<float> OnUpdateAnimation;
+	public event Action<float> LateTick;
 	
-	public event Action<float> OnUpdatePhysics;
+	public event Action<float> FixedTick;
+	
+	public event Action<bool> SetPaused;
+
 
 	private RigidbodyState _savedState;
 	private List<Entity> _subEntities = new List<Entity>();
@@ -34,15 +37,15 @@ public class Entity : MonoBehaviour
 	
 	public bool IsPaused { get; private set; }
 	
-	protected virtual void OnEnable()
+	protected virtual void Start()
 	{
 		MainMode.AddEntity(this);
 	}
 
-	protected virtual void OnDisable()
+	protected virtual void OnDestroy()
 	{
 		MainMode.RemoveEntity(this);
-		if(IsPaused) { SetPaused(false); }
+		if(IsPaused) { OnSetPaused(false); }
 	}
 
 	public virtual void Awake()
@@ -50,55 +53,37 @@ public class Entity : MonoBehaviour
 		Rigidbody = GetComponentInChildren<Rigidbody>();
 	}
 
-	public virtual void Tick(float deltaTime)
+	public virtual void OnTick(float deltaTime)
 	{
 	}
 
-	public virtual void LateTick(float deltaTime)
+	public virtual void OnLateTick(float deltaTime)
 	{
 		if (IsPaused) { return; }
 
-		UpdateAnimation(deltaTime);
+		LateTick?.Invoke(deltaTime);
 
 		foreach (var entity in _subEntities)
-			entity.LateTick(deltaTime);
+			entity.OnLateTick(deltaTime);
 	}
 
-	public virtual void FixedTick(float deltaTime)
+	public virtual void OnFixedTick(float deltaTime)
 	{
 		if (IsPaused) { return; }
 
-		UpdatePhysics(deltaTime);
+		FixedTick?.Invoke(deltaTime);
 
 		foreach (var entity in _subEntities)
-			entity.FixedTick(deltaTime);
+			entity.OnFixedTick(deltaTime);
 	}
 
-	protected virtual void UpdateAnimation(float deltaTime) => OnUpdateAnimation?.Invoke(deltaTime);
-	protected virtual void UpdatePhysics(float deltaTime) => OnUpdatePhysics?.Invoke(deltaTime);
-
-	protected virtual void OnPauseEntity(bool value)
+	public void OnSetPaused(bool value)
 	{
-	}
-
-	public void AddSubEntity(Entity entity) => _subEntities.Add(entity);
-
-	public void RemoveSubEntity(Entity entity) => _subEntities.Remove(entity);
-
-	public void SetPaused(bool value)
-	{
-		if (IsPaused == value)
-		{
-			return;
-		}
+		if (IsPaused == value) return;
 
 		IsPaused = value;
 
-		// TODO: Animator and KCC should subscribe to OnPause event
-		var animator = GetComponent<Animator>();
-		if (animator) animator.speed = value ? 0 : 1;
-
-		// TODO: Move rigidbody handling to "PhysicsEntity" child class
+		// TODO: Move rigidbody handling to "PhysicsMover" component
 		if (Rigidbody != null)
 		{
 			if (value)
@@ -107,13 +92,8 @@ public class Entity : MonoBehaviour
 				Rigidbody.isKinematic = true;
 				Rigidbody.velocity = Vector3.zero;
 				Rigidbody.angularVelocity = Vector3.zero;
-
-				// Account for interpolation
-				// TODO: Set rigidbody position between current transform position and previous transform position
-				// depending on sub-frame collision. Also set animator.Simulate() to that time.
-				var t = transform;
-				Rigidbody.position = t.position;
-				Rigidbody.rotation = t.rotation;
+				Rigidbody.position = transform.position;
+				Rigidbody.rotation = transform.rotation;
 				Rigidbody.Sleep();
 			}
 			else
@@ -122,8 +102,10 @@ public class Entity : MonoBehaviour
 				Rigidbody.RestoreState(_savedState);
 			}
 		}
+		
+		SetPaused?.Invoke(value);
 
-		foreach (var entity in _subEntities) entity.SetPaused(value);
+		foreach (var entity in _subEntities) entity.OnSetPaused(value);
 	}
 
 	public virtual void ApplyHit(Entity instigator, Vector3 point, Vector3 direction, AttackData attackData)
@@ -132,4 +114,8 @@ public class Entity : MonoBehaviour
 		Rigidbody.AddForceAtPosition(velocity, point, ForceMode.Impulse);
 		//Rigidbody.AddForce(velocity, ForceMode.Impulse);
 	}
+	
+	public void AddSubEntity(Entity entity) => _subEntities.Add(entity);
+
+	public void RemoveSubEntity(Entity entity) => _subEntities.Remove(entity);
 }

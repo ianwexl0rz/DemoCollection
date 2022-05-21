@@ -8,7 +8,7 @@ public class InputBuffer : List<KeyValuePair<int, float>>
 		Add(new KeyValuePair<int, float>(actionId, valid));
 	}
 
-	public bool ConsumeAction(int actionId)
+	public bool TryConsumeAction(int actionId)
 	{
 		var index = FindLastIndex(input => input.Key == actionId);
 		var hasAction = index >= 0;

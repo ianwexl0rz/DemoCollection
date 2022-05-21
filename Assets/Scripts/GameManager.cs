@@ -5,6 +5,7 @@ using Rewired;
 
 public class GameManager : MonoBehaviour
 {
+	[SerializeField] private Actor playerActor = null;
 	[SerializeField] private GameSettings gameSettings = null;
 	[SerializeField] private UIController uiController = null;
 
@@ -34,6 +35,7 @@ public class GameManager : MonoBehaviour
 		GameMode.SetPlayer(player);
 		GameMode.RegisterModes(new List<GameMode> { mainMode, pauseMode });
 		
+		mainMode.Init();
 		uiController.Init();
 
 		DontDestroyOnLoad(this);
@@ -45,7 +47,7 @@ public class GameManager : MonoBehaviour
 		// 1) can take advantage of object pooling
 		// 2) load character status from room data
 
-		GameMode.SetMode<MainMode>();
+		GameMode.SetMode<MainMode>(playerActor);
 		//Cursor.lockState = CursorLockMode.Locked;
 	}
 

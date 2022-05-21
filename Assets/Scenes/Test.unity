@@ -3860,10 +3860,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1becd0f639d85a64b9bb05c9283f9a5d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerActor: {fileID: 7146709310387142405}
   gameSettings: {fileID: 11400000, guid: 491122bfc34e6724c90d93067bb4cc0d, type: 2}
   uiController: {fileID: 2130144784}
   mainMode:
-    playerActor: {fileID: 7146709310387142405}
     gameCamera: {fileID: 198612201}
     lockOn: {fileID: 11400000, guid: 507620f70343fc94c826011c3ad03caa, type: 2}
     playerBrain: {fileID: 11400000, guid: 197438d32256b794faf42212dfaf46b5, type: 2}

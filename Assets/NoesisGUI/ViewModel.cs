@@ -36,6 +36,13 @@ namespace DemoCollection
 			private set => SetProperty(ref _state, value);
 		}
 
+		//private object _activeView;
+		//public object ActiveView
+		//{
+		//	get => _activeView;
+		//	private set => SetProperty(ref _activeView, value);
+		//}
+
 		private HudView _hudView;
 		private PauseView _pauseView;
 
@@ -43,6 +50,8 @@ namespace DemoCollection
 		{
 			HUD = new HUD();
 			PauseViewModel = new PauseViewModel();
+
+			//ActiveView = HUD;
 
 			HudViewCommand = new DelegateCommand(OnHud);
 			PauseViewCommand = new DelegateCommand(OnPause);

@@ -60,8 +60,9 @@ public class CharacterMotor : MonoBehaviour
 	{
 		_actor = GetComponent<Actor>();
 		_actor.Rigidbody.maxAngularVelocity = MaxAngularVelocity;
-		_actor.OnUpdateAnimation += UpdateAnimation;
-		_actor.OnUpdatePhysics += UpdatePhysics;
+		_actor.LateTick += UpdateAnimation;
+		_actor.FixedTick += UpdatePhysics;
+		_actor.ConsumeInput += HandleInput;
 
 		CapsuleCollider = GetComponent<CapsuleCollider>();
 
@@ -141,17 +142,6 @@ public class CharacterMotor : MonoBehaviour
 		// 	ref planarVelocityError, deltaTime);
 		// rb.AddForce(acc, ForceMode.Acceleration);
 		// groundVelocity = rb.velocity.WithY(0);
-		
-		// Jump.
-		if (_remainingJumps > 0 && _actor.TryConsumeAction(PlayerAction.Jump))
-		{
-			_jumping = true;
-			_remainingJumps--;
-
-			var jumpVelocity = Mathf.Sqrt(2 * -Physics.gravity.y * gravityScale * jumpHeight);
-			_actor.Rigidbody.velocity = _groundVelocity.WithY(jumpVelocity);
-		}
-		
 
 		// Get the point directly below the center of the capsule, using its current rotation.
 		var length = hitBoxCollider.height * 0.5f + groundCheckHeight;
@@ -207,18 +197,31 @@ public class CharacterMotor : MonoBehaviour
 			_actor.Rigidbody.velocity = _groundVelocity.WithY(_actor.Rigidbody.velocity.y) + Physics.gravity * (gravityScale * Time.fixedDeltaTime);
 		}
 
-		// Roll.
-		if (_rollAngle > 0f && _rollAngle < 360f || _actor.TryConsumeAction(PlayerAction.Roll))
-		{
-			_rollAngle += rollSpeed * Time.fixedDeltaTime;
-			if (_rollAngle >= 360f) _rollAngle = 0f;
-		}
-
 		// Handle rotation.
 		var targetRotation = GetTargetRotation();
 		var targetTorque = _actor.Rigidbody.rotation.TorqueTo(targetRotation, deltaTime);
 		var torque = torquePID.Output(_actor.Rigidbody.angularVelocity, targetTorque, ref _torqueIntegral, ref _torqueError, deltaTime);
 		_actor.Rigidbody.AddTorque(torque, ForceMode.Acceleration);
+	}
+
+	private void HandleInput(InputBuffer inputBuffer)
+	{
+		// Jump.
+		if (_remainingJumps > 0 && inputBuffer.TryConsumeAction(PlayerAction.Jump))
+		{
+			_jumping = true;
+			_remainingJumps--;
+
+			var jumpVelocity = Mathf.Sqrt(2 * -Physics.gravity.y * gravityScale * jumpHeight);
+			_actor.Rigidbody.velocity = _groundVelocity.WithY(jumpVelocity);
+		}
+		
+		// Roll.
+		if (_rollAngle > 0f && _rollAngle < 360f || inputBuffer.TryConsumeAction(PlayerAction.Roll))
+		{
+			_rollAngle += rollSpeed * Time.fixedDeltaTime;
+			if (_rollAngle >= 360f) _rollAngle = 0f;
+		}
 	}
 
 	private Quaternion GetTargetRotation()

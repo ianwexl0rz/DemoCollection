@@ -17,12 +17,15 @@
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
     </Grid.Resources>
 
-    <local:HudView x:Name="HudView"/>
+
+    <Grid>
+        <local:HudView x:Name="HudView"/>
+    </Grid>
 
     <Viewbox Stretch="Uniform">
         <Grid Height="1080" Width="1920">
 
-            <Grid>
+            <Grid x:Name="ViewContainer">
                 <local:PauseView x:Name="PauseView"/>
             </Grid>
 

@@ -24,9 +24,9 @@ public class MeleeWeaponUser : MonoBehaviour
 	private void Awake()
 	{
 		Actor = GetComponent<Actor>();
-		Actor.OnHandleAbilityInput += HandleInput;
-		Actor.PostUpdateAnimation += ProcessAttackAnimation;
-		Actor.OnGetHit += HandleGetHit;
+		Actor.ConsumeInput += HandleInput;
+		Actor.LateTick += ProcessAttackAnimation;
+		Actor.GetHit += HandleGetHit;
 
 		if (defaultWeaponPrefab != null)
 			EquipWeapon(defaultWeaponPrefab);
@@ -44,9 +44,9 @@ public class MeleeWeaponUser : MonoBehaviour
 		_weapon.RegisterUser(this);
 	}
 
-	private void HandleInput()
+	private void HandleInput(InputBuffer inputBuffer)
 	{
-		if (!_isAttacking && Actor.TryConsumeAction(PlayerAction.Attack))
+		if (!_isAttacking && inputBuffer.TryConsumeAction(PlayerAction.Attack))
 		{
 			_isAttacking = true;
 			Actor.InputEnabled = false;
@@ -65,7 +65,7 @@ public class MeleeWeaponUser : MonoBehaviour
 		_weapon.NewHit(WeaponBone, animEvent.stringParameter);
 	}
 	
-	private void ProcessAttackAnimation()
+	private void ProcessAttackAnimation(float deltaTime)
 	{
 		if (!_hasActiveHit) return;
 		_weapon.CheckHits(WeaponBone, weaponBoneUp, distThreshold);

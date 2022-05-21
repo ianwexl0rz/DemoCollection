@@ -22,7 +22,7 @@ public abstract class GameMode
 	
 	public abstract class Context { }
     
-	public abstract void Init(object context, Action callback = null);
+	public abstract void Init(object context = null, Action callback = null);
 
 	public abstract void Tick(float deltaTime);
 
