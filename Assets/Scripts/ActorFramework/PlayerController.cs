@@ -134,7 +134,10 @@ public class PlayerController : ActorController
 		{
 			// If we were not locked on, try to assign target...
 			var candidate = LockOn.TrackableCandidate;
-			if (candidate != null) actor.TrackedTarget = candidate;
+			if (candidate != null)
+			{
+				actor.TrackedTarget = candidate;
+			}
 			else
 			{
 				// Recenter the camera if there is no viable target.

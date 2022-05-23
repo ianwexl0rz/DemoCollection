@@ -31,10 +31,18 @@ namespace DemoCollection
 			get => _health;
 			set => SetProperty(ref _health, value);
 		}
-		
+
+		private RangeProperty _enemyHealth;
+		public RangeProperty EnemyHealth
+		{
+			get => _enemyHealth;
+			set => SetProperty(ref _enemyHealth, value);
+		}
+
 		public HUD()
 		{
 			Health = new RangeProperty(100, 100);
+			EnemyHealth = new RangeProperty(100, 100);
 			HasTarget = true;
 			TargetX = 960;
 			TargetY = 540;

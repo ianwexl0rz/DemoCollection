@@ -2,7 +2,9 @@
 using UnityEngine;
 
 public interface ITrackable
-{ 
+{
+	public event Action Destroyed;
+
 	Vector3 GetEyesPosition();
 
 	Vector3 GetGroundPosition();

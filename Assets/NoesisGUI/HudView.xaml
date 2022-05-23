@@ -9,58 +9,53 @@
              d:DesignHeight="1080" d:DesignWidth="1920"
              d:DataContext="{d:DesignInstance {x:Type local:ViewModel}, IsDesignTimeCreatable=True}">
 
+    <noesis:Xaml.Dependencies>
+        <noesis:Dependency Source="HealthBarUserControl.xaml"/>
+    </noesis:Xaml.Dependencies>
+
     <Grid>
         <Grid.Resources>
             <BooleanToVisibilityConverter x:Key="BoolToVisConverter" />
         </Grid.Resources>
 
-        <ProgressBar x:Name="healthBar"
-                     Margin="32,32,64,0"
-                     BorderBrush="#BF000000"
-                     RenderTransformOrigin="0.5,0.5"
-                     Height="20"
-                     Width="512"
-                     HorizontalAlignment="Left"
-                     VerticalAlignment="Top"
-                     Background="#BF000000"
-                     Maximum="{Binding HUD.Health.Maximum}"
-                     Value="{Binding HUD.Health.Current}"
-                     BorderThickness="2,2,2,2">
-            
-            <ProgressBar.Foreground>
-                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                    <GradientStop Color="Maroon" Offset="1"/>
-                    <GradientStop Color="Red"/>
-                </LinearGradientBrush>
-            </ProgressBar.Foreground>
-            
-        </ProgressBar>
+        <Grid>
+            <local:HealthBarUserControl
+                Current="{Binding HUD.Health.Current}"
+                Maximum="{Binding HUD.Health.Maximum}"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Margin="32,32,0,0"/>
+        </Grid>
 
-        <Ellipse x:Name="reticle"
-                 HorizontalAlignment="Left"
-                 Height="48"
-                 VerticalAlignment="Top"
-                 Width="48"
-                 StrokeThickness="2"
-                 Margin="-24,-24,-24,-24"
-                 RenderTransformOrigin="0.5,0.5"
-                 Visibility="{Binding HUD.HasTarget, Converter={StaticResource BoolToVisConverter}}">
-            
-            <Ellipse.Fill>
-                <RadialGradientBrush>
-                    <GradientStop Color="White" Offset="0.301"/>
-                    <GradientStop Color="#00155368" Offset="0.772"/>
-                    <GradientStop Color="#2693E3FF" Offset="0.409"/>
-                </RadialGradientBrush>
-            </Ellipse.Fill>
-            <Ellipse.RenderTransform>
-                <TransformGroup>
-                    <ScaleTransform/>
-                    <SkewTransform/>
-                    <RotateTransform/>
-                    <TranslateTransform X="{Binding HUD.TargetX}" Y="{Binding HUD.TargetY}"/>
-                </TransformGroup>
-            </Ellipse.RenderTransform>
-        </Ellipse>
+
+        <Canvas x:Name="reticle"
+            HorizontalAlignment="Left"
+            Height="48"
+            VerticalAlignment="Top"
+            Width="48"
+            Margin="-24,-24,-24,-24"
+            RenderTransformOrigin="0.5,0.5"
+            Visibility="{Binding HUD.HasTarget, Converter={StaticResource BoolToVisConverter}}">
+
+            <Viewbox Width="128" Margin="24,0,0,0" Canvas.Left="-64" Canvas.Top="-24" Stretch="Fill" Height="10">
+            <local:HealthBarUserControl
+                Current="{Binding HUD.EnemyHealth.Current}"
+                Maximum="{Binding HUD.EnemyHealth.Maximum}"/>
+            </Viewbox>
+
+            <Ellipse Width="48" Height="48" >
+                <Ellipse.Fill>
+                    <RadialGradientBrush>
+                        <GradientStop Color="White" Offset="0.301"/>
+                        <GradientStop Color="#00155368" Offset="0.772"/>
+                        <GradientStop Color="#2693E3FF" Offset="0.409"/>
+                    </RadialGradientBrush>
+                </Ellipse.Fill>
+            </Ellipse>
+
+            <Canvas.RenderTransform>
+                <TranslateTransform X="{Binding HUD.TargetX}" Y="{Binding HUD.TargetY}"/>
+            </Canvas.RenderTransform>
+        </Canvas>
     </Grid>
 </UserControl>

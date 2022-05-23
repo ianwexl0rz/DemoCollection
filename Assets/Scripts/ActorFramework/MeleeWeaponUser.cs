@@ -26,7 +26,7 @@ public class MeleeWeaponUser : MonoBehaviour
 		Actor = GetComponent<Actor>();
 		Actor.ConsumeInput += HandleInput;
 		Actor.LateTick += ProcessAttackAnimation;
-		Actor.GetHit += HandleGetHit;
+		Actor.GetHit += OnGetHit;
 
 		if (defaultWeaponPrefab != null)
 			EquipWeapon(defaultWeaponPrefab);
@@ -54,8 +54,9 @@ public class MeleeWeaponUser : MonoBehaviour
 		}
 	}
 
-	private void HandleGetHit()
+	private void OnGetHit(CombatEvent combatEvent)
 	{
+		// TODO: Check if incoming attack should interrupt.
 		_isAttacking = false;
 	}
 

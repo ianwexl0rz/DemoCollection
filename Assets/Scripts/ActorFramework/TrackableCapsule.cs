@@ -6,6 +6,8 @@ namespace ActorFramework
 {
     public class TrackableCapsule : MonoBehaviour, ITrackable
     {
+        public event Action Destroyed;
+
         private CapsuleCollider _capsuleCollider;
         private Renderer[] _renderers;
 
@@ -14,6 +16,8 @@ namespace ActorFramework
             _capsuleCollider = GetComponent<CapsuleCollider>();
             _renderers = GetComponentsInChildren<Renderer>();
         }
+        
+        private void OnDestroy() => Destroyed?.Invoke();
 
         public Vector3 GetEyesPosition()
         {

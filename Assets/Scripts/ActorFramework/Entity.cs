@@ -23,6 +23,8 @@ public struct RigidbodyState
 
 public class Entity : MonoBehaviour
 {
+	public event Action<CombatEvent> GetHit;
+
 	public event Action<float> LateTick;
 	
 	public event Action<float> FixedTick;
@@ -108,12 +110,17 @@ public class Entity : MonoBehaviour
 		foreach (var entity in _subEntities) entity.OnSetPaused(value);
 	}
 
-	public virtual void ApplyHit(Entity instigator, Vector3 point, Vector3 direction, AttackData attackData)
+	public virtual void ApplyHit(CombatEvent combatEvent)
 	{
+		var (instigator, target, point, direction, attackData) = combatEvent;
 		var velocity = direction * (attackData.knockback / Time.fixedDeltaTime);
 		Rigidbody.AddForceAtPosition(velocity, point, ForceMode.Impulse);
 		//Rigidbody.AddForce(velocity, ForceMode.Impulse);
+		
+		GetHit?.Invoke(combatEvent);
 	}
+
+	public void DestroySelf() => Destroy(gameObject);
 	
 	public void AddSubEntity(Entity entity) => _subEntities.Add(entity);
 

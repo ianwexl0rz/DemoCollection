@@ -78,8 +78,8 @@ public class MainMode : GameMode
         Time.timeScale = player.GetButton(PlayerAction.SlowMo) ? 0.01f : 1f;
 
         // (Debug) Adjust health.
-        if (Input.GetKeyDown(KeyCode.RightBracket)) _playerActor.Health.TakeDamage(-5);
-        if (Input.GetKeyDown(KeyCode.LeftBracket)) _playerActor.Health.TakeDamage(5);
+        if (Input.GetKeyDown(KeyCode.RightBracket)) _playerActor.Health.ApplyChange(5);
+        if (Input.GetKeyDown(KeyCode.LeftBracket)) _playerActor.Health.ApplyChange(-5);
 
         foreach (var entity in _entities) entity.OnTick(Time.deltaTime);
     }
@@ -95,7 +95,7 @@ public class MainMode : GameMode
         if (GameManager.Settings.InvertX) lookInput.x *= -1; // TODO: Setting should be cached.
         //if (GameManager.Settings.InvertY) lookInput.y *= -1; // TODO: Setting should be cached.
 
-        if (!_physicsPaused) LockOn.UpdateLockOn(_playerActor, _mainCamera, lookInput);
+        if (!_physicsPaused) LockOn.UpdateLockOn(_mainCamera, lookInput);
         ResolveCombatEvents();
 
         // Pause game if requested.
@@ -137,6 +137,7 @@ public class MainMode : GameMode
         _playerActor = newPlayer;
         _playerActor.SetController(playerBrain); // Set the active player to use Player Brain
         gameCamera.SetFollowTarget(_playerActor.GetComponent<ITrackable>(), immediate); // Set the camera to follow the active player
+        LockOn.SetPlayerActor(_playerActor);
     }
     
     public static void AddCombatEvent(CombatEvent combatEvent) => _combatEvents.Add(combatEvent);
@@ -146,7 +147,7 @@ public class MainMode : GameMode
         foreach (var combatEvent in _combatEvents)
         {
             var (instigator, target, point, direction, attackData) = combatEvent;
-            target.ApplyHit(instigator, point, direction, attackData);
+            target.ApplyHit(combatEvent);
             _hitPause = HitPause(Time.fixedDeltaTime * attackData.hitPause);
 
             if (GetHitSpark(target, out var hitSpark)) Object.Instantiate(hitSpark, point, Quaternion.identity);

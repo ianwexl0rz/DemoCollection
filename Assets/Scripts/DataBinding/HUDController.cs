@@ -42,13 +42,33 @@ namespace DemoCollection.DataBinding
             private set => SetProperty(ref _health, value);
         }
         
+        [NonSerialized]
+        private Health _enemyHealth;
+        public Health EnemyHealth
+        {
+            get => _enemyHealth;
+            private set => SetProperty(ref _enemyHealth, value);
+        }
+        
         public void Init()
         {
             playerController.SetActor += RegisterActor;
             LockOn.SetIndicatorData += SetLockOnIndicator;
+            LockOn.TargetChanged += RegisterTarget;
         }
 
         private void RegisterActor(Actor actor) => Health = actor.Health;
+
+        private void RegisterTarget(ITrackable trackable)
+        {
+            if (trackable == null) return;
+            
+            var enemyHealth = ((UnityEngine.Component)trackable).GetComponent<Health>();
+            if (enemyHealth != null)
+            {
+                EnemyHealth = enemyHealth;
+            }
+        }
 
         private void SetLockOnIndicator(LockOn.IndicatorData indicatorData)
         {

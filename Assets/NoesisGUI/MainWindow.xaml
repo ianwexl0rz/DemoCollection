@@ -13,27 +13,17 @@
         <noesis:Dependency Source="PauseView.xaml"/>
     </noesis:Xaml.Dependencies>
 
-    <Grid.Resources>
-        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
-    </Grid.Resources>
-
-
-    <Grid>
-        <local:HudView x:Name="HudView"/>
-    </Grid>
+    <local:HudView x:Name="HudView"/>
 
     <Viewbox Stretch="Uniform">
         <Grid Height="1080" Width="1920">
 
-            <Grid x:Name="ViewContainer">
-                <local:PauseView x:Name="PauseView"/>
-            </Grid>
+            <local:PauseView x:Name="PauseView"/>
 
             <Grid x:Name="Debug" HorizontalAlignment="Left" Height="241" VerticalAlignment="Bottom" Visibility="Hidden">
                 <Button Content="Show Pause Menu" HorizontalAlignment="Left" VerticalAlignment="Bottom" Height="108" Width="299" Command="{Binding PauseViewCommand}"/>
                 <Button Content="Show HUD" HorizontalAlignment="Left" Margin="0,0,0,133" VerticalAlignment="Bottom" Height="108" Width="299" Command="{Binding HudViewCommand}"/>
             </Grid>
-
         </Grid>
     </Viewbox>
 

@@ -5,28 +5,28 @@ using System;
 [Serializable]
 public struct CombatEvent
 {
-	public Entity instigator;
-	public Entity target;
-	public Vector3 point;
-	public Vector3 direction;
-	public AttackData attackData;
+	public Entity Instigator;
+	public Entity Target;
+	public Vector3 Point;
+	public Vector3 Direction;
+	public AttackData AttackData;
 
 	public CombatEvent(Entity instigator, Entity target, Vector3 point, Vector3 direction, AttackData attackData)
 	{
-		this.instigator = instigator;
-		this.target = target;
-		this.point = point;
-		this.direction = direction;
-		this.attackData = attackData;
+		Instigator = instigator;
+		Target = target;
+		Point = point;
+		Direction = direction;
+		AttackData = attackData;
 	}
 	
 	public void Deconstruct(out Entity instigator, out Entity target, out Vector3 point, out Vector3 direction, out AttackData attackData)
 	{
-		instigator = this.instigator;
-		target = this.target;
-		point = this.point;
-		direction = this.direction;
-		attackData = this.attackData;
+		instigator = Instigator;
+		target = Target;
+		point = Point;
+		direction = Direction;
+		attackData = AttackData;
 	}
 }
 

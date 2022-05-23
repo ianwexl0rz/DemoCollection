@@ -1,0 +1,30 @@
+﻿<UserControl x:Class="DemoCollection.HealthBarUserControl"
+             x:Name="HealthBar"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:DemoCollection"
+             mc:Ignorable="d" 
+             d:DesignHeight="20" d:DesignWidth="512">
+
+    <Grid DataContext="{Binding ElementName=HealthBar}">
+        <ProgressBar BorderBrush="#BF000000"
+                     RenderTransformOrigin="0.5,0.5"
+                     Height="20"
+                     Width="512"
+                     Background="#BF000000"
+                     Maximum="{Binding Path=Maximum}"
+                     Value="{Binding Path=Current}"
+                     BorderThickness="2,2,2,2">
+
+            <ProgressBar.Foreground>
+                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                    <GradientStop Color="Maroon" Offset="1"/>
+                    <GradientStop Color="Red"/>
+                </LinearGradientBrush>
+            </ProgressBar.Foreground>
+
+        </ProgressBar>
+    </Grid>
+</UserControl>

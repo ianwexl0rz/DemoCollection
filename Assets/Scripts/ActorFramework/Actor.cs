@@ -10,7 +10,7 @@ public class Actor : Entity, IDamageable
 {
 	private static readonly int DamageFlash = Shader.PropertyToID("_DamageFlash");
 
-	public event Action GetHit;
+
 	
 	public event Action<InputBuffer> ConsumeInput;
 	
@@ -27,13 +27,35 @@ public class Actor : Entity, IDamageable
 
 	public bool IsVisible { get; set; }
 
-	public ITrackable TrackedTarget { get; set; }
+	public ITrackable TrackedTarget
+	{
+		get => _trackedTarget;
+		set
+		{
+			if (_trackedTarget == value) return;
 
+			if (_trackedTarget != null)
+			{
+				_trackedTarget.Destroyed -= ReleaseTarget;
+			}
+			
+			_trackedTarget = value;
+
+			if (_trackedTarget != null)
+			{
+				_trackedTarget.Destroyed += ReleaseTarget;
+			}
+			
+			LockOn.OnTargetChanged(_trackedTarget);
+		}
+	}
+	
 	public Health Health => _health;
 
 	public float MaxHealth { get; set; }
 
 	public readonly InputBuffer InputBuffer = new InputBuffer();
+	private ITrackable _trackedTarget;
 
 	public Timer HitReaction { get; private set; }
 
@@ -44,9 +66,7 @@ public class Actor : Entity, IDamageable
 		base.Awake();
 		Animator = GetComponent<Animator>();
 		_health = GetComponent<Health>();
-		_health.RegisterCallbacks(this);
-
-		InputEnabled = true;
+		_health.Depleted += Die;
 
 		_renderers = GetComponentsInChildren<Renderer>();
 
@@ -56,7 +76,10 @@ public class Actor : Entity, IDamageable
 			HitReaction = new Timer(0f, () => InputEnabled = false, () => InputEnabled = true,true),
 			JumpAllowance = new Timer()
 		});
+		
+		InputEnabled = true;
 
+		GetHit += OnGetHit;
 		SetPaused += SetAnimatorPaused;
 	}
 
@@ -95,6 +118,13 @@ public class Actor : Entity, IDamageable
 	public override void OnTick(float deltaTime)
 	{
 		base.OnTick(deltaTime);
+
+		// TODO: Tracked objects should unset themselves on destroy.
+		if (TrackedTarget == null && !ReferenceEquals(TrackedTarget, null))
+		{
+			TrackedTarget = null;
+		}
+		
 		if (controller) controller.Tick(this, deltaTime);
 		InputBuffer.Tick(deltaTime);
 		_actorTimerGroup.Tick(deltaTime);
@@ -129,15 +159,9 @@ public class Actor : Entity, IDamageable
 
 	public void Die() => this.WaitForEndOfFrameThen(() => Destroy(gameObject));
 
-	//public bool TryConsumeAction(int actionId) => InputBuffer.TryConsumeAction(actionId);
-
-	public override void ApplyHit(Entity instigator, Vector3 point, Vector3 direction, AttackData attackData)
+	private void OnGetHit(CombatEvent combatEvent)
 	{
-		// Apply knockback.
-		base.ApplyHit(instigator, point, direction, attackData);
-
-		// Apply damage.
-		_health.TakeDamage((int)attackData.damage);
+		var attackData = combatEvent.AttackData;
 
 		// Do damage flash.
 		this.OverrideCoroutine(ref _damageFlash, DoDamageFlash(0.2f));
@@ -145,9 +169,7 @@ public class Actor : Entity, IDamageable
 		// TODO: Get reaction type from AttackData 
 		var duration = Mathf.Max(HitReaction.Duration - HitReaction.Current, attackData.stun);
 		HitReaction.Reset(duration);
-		
-		GetHit?.Invoke();
 	}
-
-	private void OnGetHit() => GetHit?.Invoke();
+	
+	private void ReleaseTarget() => TrackedTarget = null;
 }
