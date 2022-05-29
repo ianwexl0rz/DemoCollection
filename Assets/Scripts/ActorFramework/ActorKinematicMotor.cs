@@ -16,7 +16,7 @@ namespace ActorFramework
         public bool IsInHitStun;
     }
     
-    public class CharacterLocomotion : MonoBehaviour, ICharacterController
+    public class ActorKinematicMotor : MonoBehaviour, ICharacterController
     {
         public event Action<AnimatedMotorProperties> OnAnimatedPropertiesChanged;
 
@@ -66,6 +66,7 @@ namespace ActorFramework
         [SerializeField] private PID3 torquePID = null;
         private Vector3 _torqueIntegral;
         private Vector3 _torqueError;
+        private EntityPhysics _entityPhysics;
         
 #if UNITY_EDITOR
         private void OnEnable()
@@ -93,7 +94,7 @@ namespace ActorFramework
         private void Start()
         {
             Motor.CharacterController = this;
-
+            _entityPhysics = GetComponent<EntityPhysics>();
             _actor = GetComponent<Actor>();
             _actor.SetPaused += SetMotorPaused;
         }
@@ -155,6 +156,7 @@ namespace ActorFramework
         private IEnumerator Roll()
         {
             Motor.enabled = false;
+            _entityPhysics.enabled = true;
             var rb = GetComponent<Rigidbody>();
             rb.maxAngularVelocity = 50f;
             rb.isKinematic = false;
@@ -185,6 +187,7 @@ namespace ActorFramework
             _rollAngle = 0f;
             _rbVelocity = rb.velocity;
             _justSwitchedFromRigidbody = true;
+            _entityPhysics.enabled = false;
             Motor.enabled = true;
             Motor.SetPosition(rb.position);
             Motor.SetRotation(rb.rotation);

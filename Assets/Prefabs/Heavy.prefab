@@ -56,6 +56,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1253701821}
   - component: {fileID: 1253701825}
+  - component: {fileID: 1139655720}
   - component: {fileID: 1253701822}
   m_Layer: 11
   m_Name: HairProxyLeft (1)
@@ -95,6 +96,18 @@ Rigidbody:
   m_Interpolate: 1
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &1139655720
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1253701820}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9fa782213740dac45822d87e30826a82, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &1253701822
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -108,7 +121,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isRoot: 0
-  parentEntity: {fileID: 8882326872047087935}
+  parentEntity: {fileID: 685667844}
   referenceBone: {fileID: 5595153552641103744}
   syncReferenceBone: 1
   radius: 0.07
@@ -131,6 +144,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1999456050}
   - component: {fileID: 1999456054}
+  - component: {fileID: 1804424379}
   - component: {fileID: 1999456051}
   m_Layer: 11
   m_Name: HairProxyRight (1)
@@ -170,6 +184,18 @@ Rigidbody:
   m_Interpolate: 1
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &1804424379
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1999456049}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9fa782213740dac45822d87e30826a82, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &1999456051
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -183,7 +209,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isRoot: 0
-  parentEntity: {fileID: 6781527663585609985}
+  parentEntity: {fileID: 838739746}
   referenceBone: {fileID: 5595153552641103746}
   syncReferenceBone: 1
   radius: 0.07
@@ -289,7 +315,7 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
+  m_KeepAnimatorControllerStateOnDisable: 1
 --- !u!114 &4193483838583071648
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -303,6 +329,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   controller: {fileID: 0}
+  <TrackingRange>k__BackingField: 10
+  _trackedTarget: {fileID: 0}
 --- !u!114 &1306851918
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -389,8 +417,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b542462a5c324b839af5971dae578305, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Current: 100
-  Max: 100
+  _current: 100
+  _maximum: 100
+  OnDepleted:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &1600557156720074942
 GameObject:
   m_ObjectHideFlags: 0
@@ -401,6 +432,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5996545614688356412}
   - component: {fileID: 1039754794781664665}
+  - component: {fileID: 685667844}
   - component: {fileID: 8882326872047087935}
   m_Layer: 11
   m_Name: HairProxyLeft
@@ -441,6 +473,18 @@ Rigidbody:
   m_Interpolate: 1
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &685667844
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1600557156720074942}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9fa782213740dac45822d87e30826a82, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &8882326872047087935
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -477,6 +521,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2423467273746816177}
   - component: {fileID: 2130202361274945709}
+  - component: {fileID: 838739746}
   - component: {fileID: 6781527663585609985}
   m_Layer: 11
   m_Name: HairProxyRight
@@ -517,6 +562,18 @@ Rigidbody:
   m_Interpolate: 1
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &838739746
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8168000052666290430}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9fa782213740dac45822d87e30826a82, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &6781527663585609985
 MonoBehaviour:
   m_ObjectHideFlags: 0

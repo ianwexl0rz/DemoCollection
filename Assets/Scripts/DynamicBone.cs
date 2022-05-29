@@ -1,7 +1,8 @@
-﻿using UnityEngine;
+﻿using ActorFramework;
+using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
-public class DynamicBone : Entity
+public class DynamicBone : EntityPhysics
 {
 	[SerializeField] private bool isRoot = false;
 	[SerializeField] private Entity parentEntity = null;
@@ -22,28 +23,30 @@ public class DynamicBone : Entity
 	[SerializeField] private Vector3 stiffnessPerAxis = Vector3.one;
 	[SerializeField] private PID3 torquePID = null;
 
-	private ConfigurableJoint joint;
-	private CapsuleCollider capsule;
-	private Quaternion cacheRotation;
-	private Vector3 torqueIntegral;
-	private Vector3 torqueError;
+	private ConfigurableJoint _joint;
+	private CapsuleCollider _capsule;
+	private Quaternion _cacheRotation;
+	private Vector3 _torqueIntegral;
+	private Vector3 _torqueError;
+	private EntityPhysics _parentPhysicsMover;
 
-	protected override void Start()
+	private void Start()
     {
-	    parentEntity.AddSubEntity(this);
+	    parentEntity.AddSubEntity(Entity);
+	    _parentPhysicsMover = parentEntity.GetComponent<EntityPhysics>();
 	    CreateJoint();
 	    CreateCollider();
 	    Rigidbody.maxAngularVelocity = 20f;
-	    cacheRotation = referenceBone.rotation;
-	    LateTick += SyncWithReferenceBone;
-	    FixedTick += Simulate;
+	    _cacheRotation = referenceBone.rotation;
+	    Entity.LateTick += SyncReferenceBone;
+	    Entity.FixedTick += Simulate;
     }
 
-	protected override void OnDestroy()
+	private void OnDestroy()
 	{
-		parentEntity.RemoveSubEntity(this);
-		LateTick -= SyncWithReferenceBone;
-		FixedTick -= Simulate;
+		parentEntity.RemoveSubEntity(Entity);
+		Entity.LateTick -= SyncReferenceBone;
+		Entity.FixedTick -= Simulate;
 	}
 
 #if UNITY_EDITOR
@@ -78,33 +81,33 @@ public class DynamicBone : Entity
 				}
 			}
 		}
-		else if (capsule != null)
+		else if (_capsule != null)
 		{
-			capsule.radius = radius;
+			_capsule.radius = radius;
 			if (referenceBone.transform.childCount > 0)
-				capsule.height = height + radius * 2;
+				_capsule.height = height + radius * 2;
 		}
 	}
 #endif
 
 	private void CreateCollider()
 	{
-		capsule = gameObject.AddComponent<CapsuleCollider>();
-		capsule.direction = direction;
-		capsule.center = center;
-		capsule.radius = radius;
-		capsule.height = height + radius * 2;
+		_capsule = gameObject.AddComponent<CapsuleCollider>();
+		_capsule.direction = direction;
+		_capsule.center = center;
+		_capsule.radius = radius;
+		_capsule.height = height + radius * 2;
 	}
 
 	private void CreateJoint()
 	{
-		joint = gameObject.AddComponent<ConfigurableJoint>();
-		joint.connectedBody = parentEntity.Rigidbody;
-		joint.autoConfigureConnectedAnchor = false;
-		joint.xMotion = ConfigurableJointMotion.Locked;
-		joint.yMotion = ConfigurableJointMotion.Locked;
-		joint.zMotion = ConfigurableJointMotion.Locked;
-		joint.anchor = Vector3.zero;
+		_joint = gameObject.AddComponent<ConfigurableJoint>();
+		_joint.connectedBody = _parentPhysicsMover.Rigidbody;
+		_joint.autoConfigureConnectedAnchor = false;
+		_joint.xMotion = ConfigurableJointMotion.Locked;
+		_joint.yMotion = ConfigurableJointMotion.Locked;
+		_joint.zMotion = ConfigurableJointMotion.Locked;
+		_joint.anchor = Vector3.zero;
 	}
 
 	private Vector3 GetDirectionFromInt(int dir)
@@ -116,18 +119,24 @@ public class DynamicBone : Entity
 
 	private void Simulate(float deltaTime)
 	{
-		var targetRotation = isRoot ? cacheRotation : parentEntity.Rigidbody.rotation * cacheRotation;
-		var axis = GetDirectionFromInt(capsule.direction);
+		var targetRotation = isRoot ? _cacheRotation : _parentPhysicsMover.Rigidbody.rotation * _cacheRotation;
+		var axis = GetDirectionFromInt(_capsule.direction);
 
-		joint.connectedAnchor = isRoot ? parentEntity.transform.InverseTransformPoint(referenceBone.position) : referenceBone.localPosition;
-		Rigidbody.centerOfMass = capsule.center - axis * (capsule.height * (centerOfMass - 0.5f));
+		_joint.connectedAnchor = isRoot ? parentEntity.transform.InverseTransformPoint(referenceBone.position) : referenceBone.localPosition;
+		Rigidbody.centerOfMass = _capsule.center - axis * (_capsule.height * (centerOfMass - 0.5f));
 
 		Rigidbody.AddForce(windDirection * windInfluence, ForceMode.Acceleration);
 		var targetTorque = Rigidbody.rotation.TorqueTo(targetRotation, deltaTime);
-		var torque = torquePID.Output(Rigidbody.angularVelocity, targetTorque, ref torqueIntegral, ref torqueError, deltaTime);
+		var torque = torquePID.Output(Rigidbody.angularVelocity, targetTorque, ref _torqueIntegral, ref _torqueError, deltaTime);
 		Rigidbody.AddTorque(Vector3.Scale(torque, stiffnessPerAxis), ForceMode.Acceleration);
 	}
-	
+
+	private void SyncReferenceBone(float deltaTime)
+	{
+		_cacheRotation = isRoot ? referenceBone.rotation : referenceBone.localRotation;
+		if (syncReferenceBone) referenceBone.rotation = transform.rotation;
+	}
+
 #if UNITY_EDITOR
 	private void OnDrawGizmosSelected()
 	{
@@ -143,10 +152,4 @@ public class DynamicBone : Entity
 		Gizmos.DrawSphere(transform.TransformPoint(Rigidbody.centerOfMass), 0.05f);
 	}
 #endif
-
-	private void SyncWithReferenceBone(float deltaTime)
-	{
-		cacheRotation = isRoot ? referenceBone.rotation : referenceBone.localRotation;
-		if (syncReferenceBone) referenceBone.rotation = transform.rotation;
-	}
 }

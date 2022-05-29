@@ -22,9 +22,9 @@ public class AIController : ActorController
 {
 	public List<AIConditionalBehaviorGroup> behaviorGroups = new List<AIConditionalBehaviorGroup>();
 
-	public override void Init(Actor actor, object context = null)
+	public override void Possess(Actor actor, object context = null)
 	{
-		if(context is ITrackable trackable)
+		if(context is Trackable trackable)
 			actor.TrackedTarget = trackable;
 	}
 
@@ -61,7 +61,7 @@ public class AIController : ActorController
 	{
 		if(actor.TrackedTarget == null) { return false; }
 
-		var vector = (actor.TrackedTarget.GetEyesPosition() - actor.GetEyesPosition()).WithY(0f);
+		var vector = (actor.TrackedTarget.GetEyesPosition() - actor.Trackable.GetEyesPosition()).WithY(0f);
 		return vector.magnitude <= threshold;
 	}
 }

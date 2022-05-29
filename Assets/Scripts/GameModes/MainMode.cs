@@ -15,7 +15,6 @@ public class MainMode : GameMode
     private static bool _physicsPaused;
     
     [SerializeField] private ThirdPersonCamera gameCamera = null;
-    [SerializeField] private LockOn lockOn = null;
 
     [Header("Actor Controllers")]
     [SerializeField] private ActorController playerBrain = null;
@@ -46,7 +45,6 @@ public class MainMode : GameMode
             _actorsInScene = new List<Actor>(Object.FindObjectsOfType<Actor>());
             _mainCamera = gameCamera.GetComponent<Camera>();
             gameCamera.Init();
-            lockOn.Init();
         }
 
         if (context is Actor actor)
@@ -87,15 +85,7 @@ public class MainMode : GameMode
     public override void LateTick(float deltaTime)
     {
         foreach (var entity in _entities) entity.OnLateTick(deltaTime);
-
-        var lookInput = player.GetAxis2D(PlayerAction.LookHorizontal, PlayerAction.LookVertical);
-
-        gameCamera.UpdatePositionAndRotation(lookInput, _playerActor.TrackedTarget);
         
-        if (GameManager.Settings.InvertX) lookInput.x *= -1; // TODO: Setting should be cached.
-        //if (GameManager.Settings.InvertY) lookInput.y *= -1; // TODO: Setting should be cached.
-
-        if (!_physicsPaused) LockOn.UpdateLockOn(_mainCamera, lookInput);
         ResolveCombatEvents();
 
         // Pause game if requested.
@@ -131,12 +121,17 @@ public class MainMode : GameMode
         if (_playerActor != null)
         {
             // Set the old active player to use Follower Brain
-            _playerActor.SetController(followerBrain, newPlayer.GetComponent<ITrackable>());
+            _playerActor.SetController(followerBrain, newPlayer.GetComponent<Trackable>());
         }
 
         _playerActor = newPlayer;
-        _playerActor.SetController(playerBrain); // Set the active player to use Player Brain
-        gameCamera.SetFollowTarget(_playerActor.GetComponent<ITrackable>(), immediate); // Set the camera to follow the active player
+        _playerActor.SetController(playerBrain, new PlayerControllerContext()
+        {
+            MainCamera = _mainCamera,
+            GameCamera = gameCamera
+        });
+        
+        gameCamera.SetFollowTarget(_playerActor.GetComponent<Trackable>(), immediate); // Set the camera to follow the active player
         LockOn.SetPlayerActor(_playerActor);
     }
     
@@ -147,7 +142,7 @@ public class MainMode : GameMode
         foreach (var combatEvent in _combatEvents)
         {
             var (instigator, target, point, direction, attackData) = combatEvent;
-            target.ApplyHit(combatEvent);
+            target.OnGetHit(combatEvent);
             _hitPause = HitPause(Time.fixedDeltaTime * attackData.hitPause);
 
             if (GetHitSpark(target, out var hitSpark)) Object.Instantiate(hitSpark, point, Quaternion.identity);

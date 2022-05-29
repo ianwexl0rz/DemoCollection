@@ -4,7 +4,7 @@ using ActorFramework;
 using UnityEngine;
 
 [RequireComponent(typeof(Actor))]
-public class CharacterMotor : MonoBehaviour
+public class ActorPhysicalMotor : EntityPhysics
 {
 	private const float MaxAngularVelocity = 50f;
 	public event Action<AnimatedMotorProperties> OnAnimatedPropertiesChanged;
@@ -58,10 +58,10 @@ public class CharacterMotor : MonoBehaviour
 
 	private void Start()
 	{
-		_actor = GetComponent<Actor>();
-		_actor.Rigidbody.maxAngularVelocity = MaxAngularVelocity;
-		_actor.LateTick += UpdateAnimation;
-		_actor.FixedTick += UpdatePhysics;
+		_actor = Entity as Actor;
+		Rigidbody.maxAngularVelocity = MaxAngularVelocity;
+		Entity.LateTick += UpdateAnimation;
+		Entity.FixedTick += UpdatePhysics;
 		_actor.ConsumeInput += HandleInput;
 
 		CapsuleCollider = GetComponent<CapsuleCollider>();
@@ -73,15 +73,15 @@ public class CharacterMotor : MonoBehaviour
 #if UNITY_EDITOR
 	private void OnValidate()
 	{
-		if (_actor == null || _actor.Rigidbody == null) return;
-		_actor.Rigidbody.maxAngularVelocity = MaxAngularVelocity;
+		if (_actor == null || Rigidbody == null) return;
+		Rigidbody.maxAngularVelocity = MaxAngularVelocity;
 	}
 
 	private void OnDrawGizmosSelected()
 	{
-		if (_actor == null || _actor.Rigidbody == null) return;
+		if (_actor == null || Rigidbody == null) return;
 		Gizmos.color = Color.blue;
-		Gizmos.DrawSphere(_actor.Rigidbody.worldCenterOfMass, 0.1f);
+		Gizmos.DrawSphere(Rigidbody.worldCenterOfMass, 0.1f);
 	}
 #endif
 
@@ -92,7 +92,7 @@ public class CharacterMotor : MonoBehaviour
 		// Stop angular velocity if animation has root motion.
 		if (_actor.Animator.applyRootMotion)
 		{
-			_actor.Rigidbody.angularVelocity = Vector3.zero;
+			Rigidbody.angularVelocity = Vector3.zero;
 			return;
 		}
 
@@ -100,11 +100,11 @@ public class CharacterMotor : MonoBehaviour
 		{
 			// Invert ground normal rotation to get unbiased ground velocity
 			var groundRotation = Quaternion.LookRotation(Vector3.forward, _groundNormal);
-			desiredVelocity = Quaternion.Inverse(groundRotation) * _actor.Rigidbody.velocity;
+			desiredVelocity = Quaternion.Inverse(groundRotation) * Rigidbody.velocity;
 		}
 		else
 		{
-			desiredVelocity = _actor.Rigidbody.velocity.WithY(0f);
+			desiredVelocity = Rigidbody.velocity.WithY(0f);
 		}
 
 		if (_actor.InputEnabled)
@@ -162,16 +162,16 @@ public class CharacterMotor : MonoBehaviour
 			var finalVelocity = Quaternion.LookRotation(Vector3.forward, _groundNormal) * _groundVelocity;
 			
 			// Set center of mass to the point on the capsule directly below the center.
-			_actor.Rigidbody.centerOfMass = transform.InverseTransformPoint(_groundCheckPoint);
+			Rigidbody.centerOfMass = transform.InverseTransformPoint(_groundCheckPoint);
 
 			// Apply force slightly above the center of mass to make the actor lean with acceleration.
-			var offset = _actor.Rigidbody.worldCenterOfMass + Vector3.up * (leanFactor * _groundVelocity.magnitude / runSpeed);
-			var deltaVelocity = finalVelocity - _actor.Rigidbody.velocity;
-			_actor.Rigidbody.AddForceAtPosition(deltaVelocity, offset, ForceMode.VelocityChange);
+			var offset = Rigidbody.worldCenterOfMass + Vector3.up * (leanFactor * _groundVelocity.magnitude / runSpeed);
+			var deltaVelocity = finalVelocity - Rigidbody.velocity;
+			Rigidbody.AddForceAtPosition(deltaVelocity, offset, ForceMode.VelocityChange);
 			
 			// Snap to ground.
-			var groundOffset = _actor.Rigidbody.position - _groundCheckPoint;
-			_actor.Rigidbody.MovePosition(_actor.Rigidbody.position.WithY(_groundPoint.y + groundOffset.y));
+			var groundOffset = Rigidbody.position - _groundCheckPoint;
+			Rigidbody.MovePosition(Rigidbody.position.WithY(_groundPoint.y + groundOffset.y));
 		}
 		else
 		{
@@ -179,7 +179,7 @@ public class CharacterMotor : MonoBehaviour
 			if (wasGrounded) _actor.JumpAllowance.Reset(Time.fixedDeltaTime * 4);
 			
 			// Set center of mass to the center while airborne.
-			_actor.Rigidbody.centerOfMass = CapsuleCollider.center;
+			Rigidbody.centerOfMass = CapsuleCollider.center;
 
 			if (!_actor.JumpAllowance.InProgress)
 			{
@@ -191,17 +191,17 @@ public class CharacterMotor : MonoBehaviour
 			}
 
 			// We passed the peak of the jump
-			if (_jumping && _actor.Rigidbody.velocity.y <= 0f) _jumping = false;
+			if (_jumping && Rigidbody.velocity.y <= 0f) _jumping = false;
 
 			// Set new velocity.
-			_actor.Rigidbody.velocity = _groundVelocity.WithY(_actor.Rigidbody.velocity.y) + Physics.gravity * (gravityScale * Time.fixedDeltaTime);
+			Rigidbody.velocity = _groundVelocity.WithY(Rigidbody.velocity.y) + Physics.gravity * (gravityScale * Time.fixedDeltaTime);
 		}
 
 		// Handle rotation.
 		var targetRotation = GetTargetRotation();
-		var targetTorque = _actor.Rigidbody.rotation.TorqueTo(targetRotation, deltaTime);
-		var torque = torquePID.Output(_actor.Rigidbody.angularVelocity, targetTorque, ref _torqueIntegral, ref _torqueError, deltaTime);
-		_actor.Rigidbody.AddTorque(torque, ForceMode.Acceleration);
+		var targetTorque = Rigidbody.rotation.TorqueTo(targetRotation, deltaTime);
+		var torque = torquePID.Output(Rigidbody.angularVelocity, targetTorque, ref _torqueIntegral, ref _torqueError, deltaTime);
+		Rigidbody.AddTorque(torque, ForceMode.Acceleration);
 	}
 
 	private void HandleInput(InputBuffer inputBuffer)
@@ -213,7 +213,7 @@ public class CharacterMotor : MonoBehaviour
 			_remainingJumps--;
 
 			var jumpVelocity = Mathf.Sqrt(2 * -Physics.gravity.y * gravityScale * jumpHeight);
-			_actor.Rigidbody.velocity = _groundVelocity.WithY(jumpVelocity);
+			Rigidbody.velocity = _groundVelocity.WithY(jumpVelocity);
 		}
 		
 		// Roll.
@@ -254,7 +254,7 @@ public class CharacterMotor : MonoBehaviour
 		{
 			MoveSpeedNormalized = _actor.IsPaused ? 0f : _groundVelocity.magnitude / runSpeed,
 			IsGrounded = _isGrounded,
-			DirectionY = Mathf.Clamp01(Mathf.InverseLerp(1f, -1f, _actor.Rigidbody.velocity.y)),
+			DirectionY = Mathf.Clamp01(Mathf.InverseLerp(1f, -1f, Rigidbody.velocity.y)),
 			VelocityX = Vector3.Dot(_groundVelocity, transform.right) / runSpeed,
 			VelocityZ = Vector3.Dot(_groundVelocity, transform.forward) / runSpeed,
 			IsHitReacting = _actor.HitReaction.InProgress
@@ -322,7 +322,7 @@ public class CharacterMotor : MonoBehaviour
 		if (!_isGrounded)
 		{
 			// Become grounded ONLY if the distance to ground is less than projected fall distance
-			var projectedFallDistance = (-_actor.Rigidbody.velocity.y - Physics.gravity.y * gravityScale) * Time.fixedDeltaTime;
+			var projectedFallDistance = (-Rigidbody.velocity.y - Physics.gravity.y * gravityScale) * Time.fixedDeltaTime;
 			if (averageDistance > projectedFallDistance) { return false; }
 		}
 

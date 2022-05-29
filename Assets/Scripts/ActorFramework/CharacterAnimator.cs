@@ -29,10 +29,10 @@ namespace ActorFramework
         private void Awake()
         {
             _animator = GetComponent<Animator>();
-            var motor = GetComponent<CharacterMotor>();
+            var motor = GetComponent<ActorPhysicalMotor>();
             if (motor != null) motor.OnAnimatedPropertiesChanged += SetParameters;
             
-            var locomotion = GetComponent<CharacterLocomotion>();
+            var locomotion = GetComponent<ActorKinematicMotor>();
             if (locomotion != null) locomotion.OnAnimatedPropertiesChanged += SetParameters;
         }
 

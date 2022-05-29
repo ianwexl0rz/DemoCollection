@@ -98,7 +98,7 @@ public class MeleeWeapon : MonoBehaviour
 				var hitDirection = Vector3.Slerp(directionAtOrigin, directionAtEnd, t);
 				var combatEvent = new CombatEvent(_user.Actor, entity, hit.point, hitDirection, _currentAttackData);
 
-				MainMode.AddCombatEvent(combatEvent);
+				_user.OnHitSomething(combatEvent);
 			}
 
 			_hitGameObjects.Add(go);

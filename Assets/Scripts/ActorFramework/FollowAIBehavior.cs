@@ -12,9 +12,9 @@ public class FollowAIBehavior : AIBehavior
 	{
 		if(actor == null || actor.Equals(null) || actor.TrackedTarget == null || actor.TrackedTarget.Equals(null)) { return; }
 
-		var toTarget = (actor.TrackedTarget.GetEyesPosition() - actor.GetEyesPosition()).WithY(0f);
+		var toTarget = (actor.TrackedTarget.GetEyesPosition() - actor.Trackable.GetEyesPosition()).WithY(0f);
 
-		if(!(actor.GetComponent<CharacterMotor>() is CharacterMotor motor)) return;
+		if(!(actor.GetComponent<ActorPhysicalMotor>() is ActorPhysicalMotor motor)) return;
 
 		
 		if(motor.Move == Vector3.zero)

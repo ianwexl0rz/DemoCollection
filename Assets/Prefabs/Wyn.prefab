@@ -810,7 +810,7 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
+  m_KeepAnimatorControllerStateOnDisable: 1
 --- !u!114 &114104967303299580
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -845,6 +845,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   controller: {fileID: 0}
+  <TrackingRange>k__BackingField: 10
+  _trackedTarget: {fileID: 0}
 --- !u!114 &1060932921
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -931,8 +933,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b542462a5c324b839af5971dae578305, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Current: 100
-  Max: 100
+  _current: 100
+  _maximum: 100
+  OnDepleted:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &1901694637806216
 GameObject:
   m_ObjectHideFlags: 0

@@ -12,35 +12,32 @@ using Noesis;
 
 namespace DemoCollection
 {
-    public class UIController : MonoBehaviour, INotifyPropertyChanged
+    public class UIController : ObservableMonobehaviour
     {
         private static UIController _instance;
 
-        [SerializeField] private HUDController hudController = null;
-        [SerializeField] private PauseMenuController pauseMenuController = null;
+        [SerializeField] private PlayerController playerController = null;
+        [SerializeField] private GameSettings gameSettings;
+
+        [SerializeField] private HudBinding hudBinding = null;
+        
+        [SerializeField] private PauseMenuBinding pauseMenuBinding = null;
         
         private FrameworkElement _hudView;
         private FrameworkElement _pauseView;
 
-        public HUDController HUD => hudController;
-
-        public PauseMenuController PauseViewModel => pauseMenuController;
+        public HudBinding HUD => hudBinding;
+        public PauseMenuBinding PauseViewModel => pauseMenuBinding;
         
         public DelegateCommand HudViewCommand { get; private set; }
         public DelegateCommand PauseViewCommand { get; private set; }
+        
         
         private ViewState _state;
         public ViewState State
         {
             get => _state;
-            private set
-            {
-                if (_state != value)
-                {
-                    _state = value;
-                    OnPropertyChanged("State");
-                }
-            }
+            private set => SetProperty(ref _state, value);
         }
         
         // private object _activeView;
@@ -60,7 +57,9 @@ namespace DemoCollection
         public void Init()
         {
             _instance = this;
-            HUD.Init();
+            
+            hudBinding = new HudBinding(playerController);
+            pauseMenuBinding = new PauseMenuBinding(gameSettings);
 
             HudViewCommand = new DelegateCommand(OnHud);
             PauseViewCommand = new DelegateCommand(OnPause);
@@ -105,15 +104,5 @@ namespace DemoCollection
             else if (state == ViewState.Paused)
                 PauseViewCommand.Execute(null);
         }
-
-        #region INotifyPropertyChanged
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        [NotifyPropertyChangedInvocator]
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-        #endregion
     }
 }

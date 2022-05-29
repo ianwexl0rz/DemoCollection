@@ -1,29 +1,31 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace DemoCollection.DataBinding
 {
-    [CreateAssetMenu (menuName = "Noesis/Pause Menu Controller", fileName = "Pause Menu Controller")]
-    public class PauseMenuController : ObservableScriptableObject
+    [Serializable]
+    public class PauseMenuBinding : ObservableObject
     {
-        [SerializeField] private GameSettings gameSettings;
+        private GameSettings _gameSettings;
 
         public bool InvertX
         {
-            get => gameSettings.InvertX;
-            set => SetProperty(ref gameSettings.InvertX, value);
+            get => _gameSettings.InvertX;
+            set => SetProperty(ref _gameSettings.InvertX, value);
         }
         
         public bool InvertY
         {
-            get => gameSettings.InvertY;
-            set => SetProperty(ref gameSettings.InvertY, value);
+            get => _gameSettings.InvertY;
+            set => SetProperty(ref _gameSettings.InvertY, value);
         }
 
         public DelegateCommand SetLookInvertX { get; private set; }
         public DelegateCommand SetLookInvertY { get; private set; }
         
-        public void Init()
+        public PauseMenuBinding(GameSettings gameSettings)
         {
+            _gameSettings = gameSettings;
             SetLookInvertX = new DelegateCommand(OnSetLookInvertX);
             SetLookInvertY = new DelegateCommand(OnSetLookInvertY);
         }

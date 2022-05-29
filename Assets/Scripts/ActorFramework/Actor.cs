@@ -6,57 +6,43 @@ using System.Linq;
 using ActorFramework;
 using DemoCollection;
 
-public class Actor : Entity, IDamageable
+public class Actor : Entity, IDamageable, ITracker
 {
 	private static readonly int DamageFlash = Shader.PropertyToID("_DamageFlash");
 
-
-	
 	public event Action<InputBuffer> ConsumeInput;
-	
+	public event Action<PlayerController> PossessedByPlayer;
+	public event Action<PlayerController> ReleasedByPlayer;
+
 	[SerializeField] private ActorController controller;
 
-	private Health _health;
 	private Renderer[] _renderers;
 	private Coroutine _damageFlash;
 	private TimerGroup _actorTimerGroup;
+	
+	//public Trackable Trackable { get; private set; }
 
 	public Animator Animator { get; private set; }
 
 	public bool InputEnabled { get; set; }
+	
+	[field: SerializeField] public float TrackingRange { get; set; } = 10f;
 
-	public bool IsVisible { get; set; }
-
-	public ITrackable TrackedTarget
+	[SerializeField] private Trackable _trackedTarget;
+	public Trackable TrackedTarget
 	{
 		get => _trackedTarget;
 		set
 		{
 			if (_trackedTarget == value) return;
-
-			if (_trackedTarget != null)
-			{
-				_trackedTarget.Destroyed -= ReleaseTarget;
-			}
-			
 			_trackedTarget = value;
-
-			if (_trackedTarget != null)
-			{
-				_trackedTarget.Destroyed += ReleaseTarget;
-			}
-			
 			LockOn.OnTargetChanged(_trackedTarget);
 		}
 	}
-	
-	public Health Health => _health;
 
-	public float MaxHealth { get; set; }
+	public Health Health { get; private set; }
 
 	public readonly InputBuffer InputBuffer = new InputBuffer();
-	private ITrackable _trackedTarget;
-
 	public Timer HitReaction { get; private set; }
 
 	public Timer JumpAllowance { get; private set; }
@@ -65,10 +51,11 @@ public class Actor : Entity, IDamageable
 	{
 		base.Awake();
 		Animator = GetComponent<Animator>();
-		_health = GetComponent<Health>();
-		_health.Depleted += Die;
+		Health = GetComponent<Health>();
+		Health.Depleted += Die;
 
 		_renderers = GetComponentsInChildren<Renderer>();
+		//Trackable = GetComponent<Trackable>();
 
 		_actorTimerGroup = new TimerGroup();
 		_actorTimerGroup.AddRange( new Timer[]
@@ -79,7 +66,7 @@ public class Actor : Entity, IDamageable
 		
 		InputEnabled = true;
 
-		GetHit += OnGetHit;
+		GetHit += HandleGetHit;
 		SetPaused += SetAnimatorPaused;
 	}
 
@@ -119,16 +106,21 @@ public class Actor : Entity, IDamageable
 	{
 		base.OnTick(deltaTime);
 
-		// TODO: Tracked objects should unset themselves on destroy.
-		if (TrackedTarget == null && !ReferenceEquals(TrackedTarget, null))
-		{
-			TrackedTarget = null;
-		}
+		// // TODO: Tracked objects should unset themselves on destroy.
+		// if (TrackedTarget == null && !ReferenceEquals(TrackedTarget, null))
+		// {
+		// 	TrackedTarget = null;
+		// }
 		
 		if (controller) controller.Tick(this, deltaTime);
 		InputBuffer.Tick(deltaTime);
 		_actorTimerGroup.Tick(deltaTime);
-		IsVisible = _renderers.Any(r => r != null && r.isVisible);
+	}
+
+	public override void OnLateTick(float deltaTime)
+	{
+		base.OnLateTick(deltaTime);
+		if (controller) controller.LateTick(this, deltaTime);
 	}
 	
 	public override void OnFixedTick(float deltaTime)
@@ -137,29 +129,25 @@ public class Actor : Entity, IDamageable
 		if (InputEnabled) ConsumeInput?.Invoke(InputBuffer);
 	}
 
-	private void SetAnimatorPaused(bool value)
+	private void SetAnimatorPaused(bool paused)
 	{
-		if(Animator != null) Animator.SetPaused(value);
+		if(Animator) Animator.enabled = !paused;
 	}
 	
 	public void SetController(ActorController newController, object context = null)
 	{
 		if (controller != null)
-			controller.Clean(this);
-			
-		newController.Init(this, context);
+			controller.Release(this);
+
+		newController.Possess(this, context);
 		controller = newController;
 	}
 
-	public virtual Vector3 GetEyesPosition() => transform.position;
-
-	public virtual Vector3 GetGroundPosition() => transform.position;
-	
-	public Vector3 GetTrackedTargetDirection() => (TrackedTarget.GetEyesPosition() - GetEyesPosition()).WithY(0f).normalized;
+	public Vector3 GetTrackedTargetDirection() => (TrackedTarget.GetEyesPosition() - Trackable.GetEyesPosition()).WithY(0f).normalized;
 
 	public void Die() => this.WaitForEndOfFrameThen(() => Destroy(gameObject));
 
-	private void OnGetHit(CombatEvent combatEvent)
+	private void HandleGetHit(CombatEvent combatEvent)
 	{
 		var attackData = combatEvent.AttackData;
 
@@ -172,4 +160,8 @@ public class Actor : Entity, IDamageable
 	}
 	
 	private void ReleaseTarget() => TrackedTarget = null;
+
+	public void OnPossessedByPlayer(PlayerController playerController) => PossessedByPlayer?.Invoke(playerController);
+
+	public void OnReleasedByPlayer(PlayerController playerController) => ReleasedByPlayer?.Invoke(playerController);
 }

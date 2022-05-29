@@ -73,7 +73,7 @@ public static class MonoBehaviourExtensions
 		animator.speed = value ? 0f : 1f;
 	}
 
-	public static void RestoreState(this Rigidbody rb, RigidbodyState rigidbodyState)
+	public static void RestoreState(this Rigidbody rb, ActorFramework.RigidbodyState rigidbodyState)
 	{
 		//Debug.Log("Restored " + rb.gameObject.name + " to velocity: "  + rigidbodyState.velocity.magnitude);
 

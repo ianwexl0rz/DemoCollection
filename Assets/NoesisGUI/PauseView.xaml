@@ -49,7 +49,7 @@
                                 HorizontalContentAlignment="Right"
                                 Height="32"
                                 Width="398"
-                                Command="{Binding PauseViewModel.SetLookInvertX}" IsChecked="{Binding PauseViewModel.InvertX}" FontFamily="Quicksand">
+                                Command="{Binding PauseViewModel.SetLookInvertX}" IsChecked="{Binding PauseViewModel.InvertX, Mode=OneWay}" FontFamily="Quicksand">
                             <ToggleButton.Effect>
                                 <DropShadowEffect/>
                             </ToggleButton.Effect>
@@ -62,7 +62,7 @@
                                 FontSize="24"
                                 Height="32"
                                 Width="398"
-                                Command="{Binding PauseViewModel.SetLookInvertY}" IsChecked="{Binding PauseViewModel.InvertY}" FontFamily="Quicksand" HorizontalContentAlignment="Right">
+                                Command="{Binding PauseViewModel.SetLookInvertY}" IsChecked="{Binding PauseViewModel.InvertY, Mode=OneWay}" FontFamily="Quicksand" HorizontalContentAlignment="Right">
                             <ToggleButton.Effect>
                                 <DropShadowEffect/>
                             </ToggleButton.Effect>

@@ -23,7 +23,7 @@ public class ThirdPersonCamera : MonoBehaviour
 	public float towardCameraDragScale = 0.2f;
 	public float overheadDragScale = 0.4f;
 	
-	private ITrackable player = null;
+	private Trackable player = null;
 	private bool autoTurn;
 	private bool lockedOn;
 	private float focalHeight = 0f;
@@ -42,7 +42,7 @@ public class ThirdPersonCamera : MonoBehaviour
 
 	public void SetTargetEulerAngles(Vector3 euler) => targetEulerAngles = euler;
 
-	public void SetFollowTarget(ITrackable newFollowTarget, bool immediate)
+	public void SetFollowTarget(Trackable newFollowTarget, bool immediate)
 	{
 		player = newFollowTarget;
 		blendToPlayer = BlendToPlayer(immediate ? 0 : unlockTime);
@@ -108,7 +108,7 @@ public class ThirdPersonCamera : MonoBehaviour
 		transitionToLockOnMode = TransitionToLockOnMode(lockTime);
 	}
 	
-	public void UpdatePositionAndRotation(Vector2 lookInput, ITrackable trackedTarget)
+	public void UpdatePositionAndRotation(Vector2 lookInput, Trackable trackedTarget)
 	{
 		if (player == null || !isEnabled) return;
 

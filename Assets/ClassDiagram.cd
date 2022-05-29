@@ -1,0 +1,1401 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="GameManager" Collapsed="true">
+    <Position X="3.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BAQOAAAAAiAAAAAAAAAAIAAAAAAAAABAwAIAAAAAAEA=</HashCode>
+      <FileName>Assets\Scripts\GameManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="KinematicCharacterController.KCCSettings" Collapsed="true">
+    <Position X="27.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACAAAAAAAAAAAAQAAAAAAQAAAAIAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\KinematicCharacterController\Core\KCCSettings.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="KinematicCharacterController.KinematicCharacterMotor" Collapsed="true">
+    <Position X="29.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>hiqy2VNqToKm5a8ANa2QlsZFQCYELn0KtloWiPXFCeg=</HashCode>
+      <FileName>Assets\KinematicCharacterController\Core\KinematicCharacterMotor.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="KinematicCharacterController.KinematicCharacterSystem" Collapsed="true">
+    <Position X="31" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAEAgAKQgAAEAgQAABJJAAABAAAAAAIiAABAgAIAEA=</HashCode>
+      <FileName>Assets\KinematicCharacterController\Core\KinematicCharacterSystem.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="KinematicCharacterController.PhysicsMover" Collapsed="true">
+    <Position X="32.75" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAICEEAAAAEABABgjAUEAAQBAAAAAggIkgAIAEAECEg=</HashCode>
+      <FileName>Assets\KinematicCharacterController\Core\PhysicsMover.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="KinematicCharacterController.ReadOnlyAttribute" Collapsed="true">
+    <Position X="27.5" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\KinematicCharacterController\Core\ReadOnlyAttribute.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="KinematicCharacterController.Examples.ExampleCharacterCamera" Collapsed="true">
+    <Position X="18.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACBAGBAAAABICxABEAAcVgAAAAACBIEAGAyCBBQEE=</HashCode>
+      <FileName>Assets\KinematicCharacterController\ExampleCharacter\Scripts\ExampleCharacterCamera.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="KinematicCharacterController.Examples.ExampleCharacterController" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="20.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEAWCAIQYIIYsBQYECFACAVABMAkAEggFCBiAoIRwEA=</HashCode>
+      <FileName>Assets\KinematicCharacterController\ExampleCharacter\Scripts\ExampleCharacterController.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="KinematicCharacterController.Examples.ExamplePlayer" Collapsed="true">
+    <Position X="24" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEQAAAAAACAAAAAAAAAAIAAAAQAAAQgEAAAACAABCAA=</HashCode>
+      <FileName>Assets\KinematicCharacterController\ExampleCharacter\Scripts\ExamplePlayer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="KinematicCharacterController.Examples.ExampleAIController" Collapsed="true">
+    <Position X="17" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAAAAAAABAAAAAABAABAABQAAAAAAAgA=</HashCode>
+      <FileName>Assets\KinematicCharacterController\Examples\Scripts\ExampleAIController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="KinematicCharacterController.Examples.ExampleMovingPlatform" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="22.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAaAABACAQACAAAAAEAAAEAAAAAABAAAAAAAAAkEA=</HashCode>
+      <FileName>Assets\KinematicCharacterController\Examples\Scripts\ExampleMovingPlatform.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="KinematicCharacterController.Examples.FrameratePanel" Collapsed="true">
+    <Position X="25.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQEAAAAEgAAAAAAAABEAABSEAAAEAGAAAEAAMEwAAA=</HashCode>
+      <FileName>Assets\KinematicCharacterController\Examples\Scripts\FrameratePanel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="KinematicCharacterController.Examples.FrameratePanelEditor" Collapsed="true">
+    <Position X="27.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAQAAAAAAAAEAACAAAAAAAAAAAAAAAAAAACAA=</HashCode>
+      <FileName>Assets\KinematicCharacterController\Examples\Scripts\FrameratePanel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="KinematicCharacterController.Examples.PlanetManager" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="17" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IDAAAAAQACAAAABAAAAAAQAEAFAAAAAAAAAQAEAAIAA=</HashCode>
+      <FileName>Assets\KinematicCharacterController\Examples\Scripts\PlanetManager.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="KinematicCharacterController.Examples.PlayableMover" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="18.75" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAACBAAACAAAAAAAQAAAAAFAAAAAAAAAAAAAAAAAAg=</HashCode>
+      <FileName>Assets\KinematicCharacterController\Examples\Scripts\PlayableMover.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="KinematicCharacterController.Examples.PrefabLauncher" Collapsed="true">
+    <Position X="22.25" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAA=</HashCode>
+      <FileName>Assets\KinematicCharacterController\Examples\Scripts\PrefabLauncher.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="KinematicCharacterController.Examples.StressTestManager" Collapsed="true">
+    <Position X="32.75" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AARCAAAAECAAAAgACAEAAwCQAACABAAAAQAAAAAAAgA=</HashCode>
+      <FileName>Assets\KinematicCharacterController\Examples\Scripts\StressTestManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="KinematicCharacterController.Examples.Teleporter" Collapsed="true">
+    <Position X="15.25" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAACAAAAAAAoAAAAAAAAAQAAAAAAAAAA=</HashCode>
+      <FileName>Assets\KinematicCharacterController\Examples\Scripts\Teleporter.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BuildManager" Collapsed="true">
+    <Position X="25.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAQEA=</HashCode>
+      <FileName>Assets\KinematicCharacterController\Examples\Scripts\BuildManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MinValueAttribute" Collapsed="true">
+    <Position X="15.25" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\PropertyAttributes\MinValueAttribute.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Actor" Collapsed="true">
+    <Position X="5.5" Y="12" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ASABCShIAAAAWAMgAAQAAQAAkJABCAAAgAAAAgQACGA=</HashCode>
+      <FileName>Assets\Scripts\ActorFramework\Actor.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="ActorController">
+    <Position X="9.25" Y="19.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAQAA=</HashCode>
+      <FileName>Assets\Scripts\ActorFramework\ActorController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AIBehavior" Collapsed="true">
+    <Position X="11.75" Y="10.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA=</HashCode>
+      <FileName>Assets\Scripts\ActorFramework\AIBehavior.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AIConditionalBehaviorGroup" Collapsed="true">
+    <Position X="15.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAIAAAAAAAAAAAAAAAAgAAAAAACAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\ActorFramework\AIController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AIController">
+    <Position X="11" Y="22" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAEAAAACAAAAAAAAAAAAAAAAAAgAAAAAACAAAAQAA=</HashCode>
+      <FileName>Assets\Scripts\ActorFramework\AIController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AttackAIBehavior" Collapsed="true">
+    <Position X="10.5" Y="12" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA=</HashCode>
+      <FileName>Assets\Scripts\ActorFramework\AttackAIBehavior.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AttackBehaviour" Collapsed="true">
+    <Position X="17" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAQAAAAAAAAAAAAYAAAAAAAAAAAIEAAAA=</HashCode>
+      <FileName>Assets\Scripts\ActorFramework\AttackBehaviour.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AttackTimer" Collapsed="true">
+    <Position X="20.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\ActorFramework\AttackDataSet.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AttackDataSet" Collapsed="true">
+    <Position X="18.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAIAA=</HashCode>
+      <FileName>Assets\Scripts\ActorFramework\AttackDataSet.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CharacterMotor" Collapsed="true">
+    <Position X="31" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEARCIGAYOIkgAMAAocAIIQgAQcAGAaAFBBAAAACQAI=</HashCode>
+      <FileName>Assets\Scripts\ActorFramework\CharacterMotor.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Entity" Collapsed="true">
+    <Position X="6.75" Y="10.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AABBAEAAACISAAIAAAAAAAACACAFCCAAAAAgAAACCEA=</HashCode>
+      <FileName>Assets\Scripts\ActorFramework\Entity.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FollowAIBehavior" Collapsed="true">
+    <Position X="12.75" Y="12" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAACIAAAAAAAAAAAAAAAAAQAA=</HashCode>
+      <FileName>Assets\Scripts\ActorFramework\FollowAIBehavior.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="InputBuffer" Collapsed="true">
+    <Position X="18.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAQAA=</HashCode>
+      <FileName>Assets\Scripts\ActorFramework\InputBuffer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="LockOn">
+    <Position X="6.5" Y="27.75" Width="2.75" />
+    <NestedTypes>
+      <Struct Name="LockOn.IndicatorData" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Assets\Scripts\ActorFramework\LockOn.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Struct>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AICEAgQAAAAEyAAAIAAAAgAQAAoAAEIAAAACAGBEAAA=</HashCode>
+      <FileName>Assets\Scripts\ActorFramework\LockOn.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="PotentialTargets" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="MeleeWeapon" Collapsed="true">
+    <Position X="20.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAEAAAAAABAQAEAAFIAIABABABAAIAAAAAAAAAAEAI=</HashCode>
+      <FileName>Assets\Scripts\ActorFramework\MeleeWeapon.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MeleeWeaponUser" Collapsed="true">
+    <Position X="22.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAAFAAiABAAgwAEAEAAABAIACIAAAAAAAAAAEBAAAEA=</HashCode>
+      <FileName>Assets\Scripts\ActorFramework\MeleeWeaponUser.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PlayerController">
+    <Position X="7" Y="22" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAEAgAGCQABAAAAAAAAEAAAAgAQAASIQAAQAA=</HashCode>
+      <FileName>Assets\Scripts\ActorFramework\PlayerController.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Tracking" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Timer" Collapsed="true">
+    <Position X="18.75" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAABCBAAAAACCABIAAAIAAABAAAAAABBAQAA=</HashCode>
+      <FileName>Assets\Scripts\ActorFramework\Timer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TimerGroup" Collapsed="true">
+    <Position X="20.5" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA=</HashCode>
+      <FileName>Assets\Scripts\ActorFramework\TimerGroup.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WeaponTrail" Collapsed="true">
+    <Position X="27.5" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEAAAAAAAAAAAAAAAAQAAAAAkAEAAIAAAAAAgACIAEA=</HashCode>
+      <FileName>Assets\Scripts\ActorFramework\WeaponTrail.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BlurCommandBuffer" Collapsed="true">
+    <Position X="22.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACBAACACAIAAAAAAEAAgABAACAAQAAAAACAAAAAEA=</HashCode>
+      <FileName>Assets\Scripts\Camera\BlurCommandBuffer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BlurImageEffect" Collapsed="true">
+    <Position X="24" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGAAAAAQABAAAA=</HashCode>
+      <FileName>Assets\Scripts\Camera\BlurImageEffect.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="InvertCameraProjection" Collapsed="true">
+    <Position X="22.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAABABgAAAAAAAAAAEAAAAKAAAAAAAAAACEAAAAAGA=</HashCode>
+      <FileName>Assets\Scripts\Camera\InvertCameraProjection.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ThirdPersonCamera" Collapsed="true">
+    <Position X="17" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CACBAABhYAAABQAACBAA4AAAREQAIKwBAAGyAAACggA=</HashCode>
+      <FileName>Assets\Scripts\Camera\ThirdPersonCamera.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DrawCloudsExample" Collapsed="true">
+    <Position X="15.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AASAAAAABgAQAAAAAAgAACAAAAAAAAAQABAABAAABEA=</HashCode>
+      <FileName>Assets\Scripts\DrawCloudsExample.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DynamicBone" Collapsed="true">
+    <Position X="7.75" Y="12" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACgBAAAQCCIgsAQCIQkBCIQSAAABAAAAAAACAAEAAAA=</HashCode>
+      <FileName>Assets\Scripts\DynamicBone.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GameMode" Collapsed="true">
+    <Position X="2" Y="15.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AABAAEAAAAAAAhAAAACAAAAAQAAIAAABAQACAAAAQAA=</HashCode>
+      <FileName>Assets\Scripts\GameMode.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MainMode">
+    <Position X="3" Y="17" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AABEAEIAAAAIAFYAAgABAAELAAIgGAAAgJACABAgxAA=</HashCode>
+      <FileName>Assets\Scripts\GameModes\MainMode.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="playerBrain" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="PauseMode" Collapsed="true">
+    <Position X="0.75" Y="17" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AABAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAACAQAA=</HashCode>
+      <FileName>Assets\Scripts\GameModes\PauseMode.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GameSettings" Collapsed="true">
+    <Position X="29.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAABEAAAAAABgABgAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\GameSettings.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="JumpFloodOutlineRenderer" Collapsed="true">
+    <Position X="24" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>wEAUAMAAAAFAAgAEMAEBBChAAABQEAAIIAAAAQAFiAA=</HashCode>
+      <FileName>Assets\Scripts\JumpFloodOutlineRenderer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="JumpFloodOutlineRendererEditor" Collapsed="true">
+    <Position X="25.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\JumpFloodOutlineRenderer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="LookWithEyes" Collapsed="true">
+    <Position X="15.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAIAAAAAAAAAAAAAIAAQQABAgAAAAQAAAoAAA=</HashCode>
+      <FileName>Assets\Scripts\LookWithEyes.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="UnityBoolEvent" Collapsed="true">
+    <Position X="25.75" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\MenuSystem\MenuItems\ToggleMenuItem.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ParticleSystemLightDriver" Collapsed="true">
+    <Position X="29.25" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CEQBAAAAAAAABAQACAAAAAAAAAIAIAAAAAAAEAAAAEA=</HashCode>
+      <FileName>Assets\Scripts\ParticleSystemLightDriver.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PlayerAction" Collapsed="true">
+    <Position X="20.5" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQAhAAAAQgAQAAAAACAgCEAAAIgACgAACAAAQAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\PlayerAction.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ProximityEffector" Collapsed="true">
+    <Position X="24" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAACYAAQAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\ProximityEffector.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ResourcePool" Collapsed="true">
+    <Position X="31" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAAAAAAAAAAAAAAAIACAAAAAgAAAAAAAAAAIBAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\ResourcePool.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Trackable">
+    <Position X="11.25" Y="28.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AACBgAAAAAACEAAAAgAAAABAIAIAAAEEAAAAAgAACMA=</HashCode>
+      <FileName>Assets\Scripts\Trackable.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GizmosEx" Collapsed="true">
+    <Position X="31" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Utility\GizmosEx.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Interpolation" Collapsed="true">
+    <Position X="20.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAIAAAAAAAAAgAAAAAAAAAAgkAAAAABAAA=</HashCode>
+      <FileName>Assets\Scripts\Utility\Interpolation.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MathUtility" Collapsed="true">
+    <Position X="18.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAIAAAQAAAAAAAAAAAAAAgAAAAAIAAAAAAAAAEA=</HashCode>
+      <FileName>Assets\Scripts\Utility\MathUtility.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MeshExtensions" Collapsed="true">
+    <Position X="32.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAABAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Utility\MeshExtensions.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MonoBehaviourExtensions" Collapsed="true">
+    <Position X="17" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BIgAAAAAAEAAAIAgAAAgAAACAAAAAgAAAAAAAAAIAAE=</HashCode>
+      <FileName>Assets\Scripts\Utility\MonoBehaviourExtensions.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PID3" Collapsed="true">
+    <Position X="15.25" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAIAAAAAAAAAAAAAAQIAAAAAAAAAAAAAAAAAAAAgAA=</HashCode>
+      <FileName>Assets\Scripts\Utility\PID3.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="QuaternionEx" Collapsed="true">
+    <Position X="25.75" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAABAAAAAAAAAAAAAAAAAAABAAAAAAAEAkQgAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Utility\QuaternionEx.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="RendererExtensions" Collapsed="true">
+    <Position X="29.25" Y="8.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Utility\RendererExtensions.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="KinematicCharacterController.Walkthrough.PlayerCameraCharacterSetup.MyCharacterController" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="24" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAECAIAQCAAgAAQAAAACAEAAAAAAAAgAAAAAAABgAA=</HashCode>
+      <FileName>Assets\KinematicCharacterController\Walkthrough\1- Player Camera Character Setup\Scripts\MyCharacterController.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="KinematicCharacterController.Walkthrough.PlayerCameraCharacterSetup.MyPlayer" Collapsed="true">
+    <Position X="25.75" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAACgAAAAAAAEAIABAAAAAAQAAAAAAAAAACAA=</HashCode>
+      <FileName>Assets\KinematicCharacterController\Walkthrough\1- Player Camera Character Setup\Scripts\MyPlayer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="KinematicCharacterController.Walkthrough.MultipleMovementStates.MyCharacterController" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="29.25" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAWCAIRaKI4kAA4ECGACAVQAMAggEAgFCBCAoARwAA=</HashCode>
+      <FileName>Assets\KinematicCharacterController\Walkthrough\10- Multiple movement states setup\Scripts\MyCharacterController.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="KinematicCharacterController.Walkthrough.MultipleMovementStates.MyPlayer" Collapsed="true">
+    <Position X="18.75" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEQAAAAAACgAAAAAAAEAIAAAAQAAAQgEAAAACAAACAA=</HashCode>
+      <FileName>Assets\KinematicCharacterController\Walkthrough\10- Multiple movement states setup\Scripts\MyPlayer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="KinematicCharacterController.Walkthrough.ChargingState.MyCharacterController" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="27.5" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAWCAYRaKI4kAA4ECGACAVQAMAggUAgFCBCAqARwIA=</HashCode>
+      <FileName>Assets\KinematicCharacterController\Walkthrough\11- Charging state\Scripts\MyCharacterController.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="KinematicCharacterController.Walkthrough.ChargingState.MyPlayer" Collapsed="true">
+    <Position X="32.75" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEQAAAAAACgAAAAAAAEAIAAAAQAAAQgEAAAACAAACAA=</HashCode>
+      <FileName>Assets\KinematicCharacterController\Walkthrough\11- Charging state\Scripts\MyPlayer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="KinematicCharacterController.Walkthrough.NoClipState.MyCharacterController" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="25.75" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAWCAIRaaI4kAA4ECGACAVQAMAggGAgFCBCAoARwAA=</HashCode>
+      <FileName>Assets\KinematicCharacterController\Walkthrough\12- NoClip state\Scripts\MyCharacterController.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="KinematicCharacterController.Walkthrough.NoClipState.MyPlayer" Collapsed="true">
+    <Position X="20.5" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEQAAAAAACgAAAAAAAEAIAAAAQAAAQgEAAAACAAACAA=</HashCode>
+      <FileName>Assets\KinematicCharacterController\Walkthrough\12- NoClip state\Scripts\MyPlayer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="KinematicCharacterController.Walkthrough.SwimmingState.MyCharacterController" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="22.25" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAWCAIV6aI4kAA4ECGACAVQAMAggMAgFKBCAoARxAA=</HashCode>
+      <FileName>Assets\KinematicCharacterController\Walkthrough\13- Swimming state\Scripts\MyCharacterController.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="KinematicCharacterController.Walkthrough.SwimmingState.MyPlayer" Collapsed="true">
+    <Position X="22.25" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEQAAAAAACgAAAAAAAEAIAAAAQAAAQgEAAAACAAACAA=</HashCode>
+      <FileName>Assets\KinematicCharacterController\Walkthrough\13- Swimming state\Scripts\MyPlayer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="KinematicCharacterController.Walkthrough.ClimbingLadders.MyCharacterController" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="31" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAWCQIRaKI+lAA4MKGACAVwAMEggEggFCFCAsARwQQ=</HashCode>
+      <FileName>Assets\KinematicCharacterController\Walkthrough\14- Climbing Ladders\Scripts\MyCharacterController.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="KinematicCharacterController.Walkthrough.ClimbingLadders.MyLadder" Collapsed="true">
+    <Position X="31" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CCAEAAAAQAAAAAAAAAAAAEAAAAAAAACAAIAAAAAAAAA=</HashCode>
+      <FileName>Assets\KinematicCharacterController\Walkthrough\14- Climbing Ladders\Scripts\MyLadder.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="KinematicCharacterController.Walkthrough.ClimbingLadders.MyPlayer" Collapsed="true">
+    <Position X="15.25" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEQAAAAAACgAAAAAAAEAIAAAAQAAAQgEAAAACAAACAA=</HashCode>
+      <FileName>Assets\KinematicCharacterController\Walkthrough\14- Climbing Ladders\Scripts\MyPlayer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="KinematicCharacterController.Walkthrough.RootMotionExample.MyCharacterController" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="18.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQMCAIAQKIIkAAYACAACAFAAcIAJEAgACCEAAARoAA=</HashCode>
+      <FileName>Assets\KinematicCharacterController\Walkthrough\15- Root motion example\Scripts\MyCharacterController.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="KinematicCharacterController.Walkthrough.RootMotionExample.MyPlayer" Collapsed="true">
+    <Position X="17" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEQAAAAAACgAAAAAAAEAIAAAAQAAAQgEAAAACAAACAA=</HashCode>
+      <FileName>Assets\KinematicCharacterController\Walkthrough\15- Root motion example\Scripts\MyPlayer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="KinematicCharacterController.Walkthrough.FramePerfectRotation.MyCharacterController" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="22.25" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAECAIAQKIIkAAcACAACAFAAEAAAEAgACAAAAERgIA=</HashCode>
+      <FileName>Assets\KinematicCharacterController\Walkthrough\16- FramePerfect Rotation\Scripts\MyCharacterController.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="KinematicCharacterController.Walkthrough.FramePerfectRotation.MyPlayer" Collapsed="true">
+    <Position X="20.5" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEQAAAAAACgAAAAAAAEAIAAAAQAAAQgEAAAACAAACAA=</HashCode>
+      <FileName>Assets\KinematicCharacterController\Walkthrough\16- FramePerfect Rotation\Scripts\MyPlayer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="KinematicCharacterController.Walkthrough.BasicMovement.MyCharacterController" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="20.5" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAECAIAQKIIkAAYACAACAFAAEAAAEQgACAAAAARgAA=</HashCode>
+      <FileName>Assets\KinematicCharacterController\Walkthrough\2- Basic Movement and Gravity\Scripts\MyCharacterController.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="KinematicCharacterController.Walkthrough.BasicMovement.MyPlayer" Collapsed="true">
+    <Position X="24" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEQAAAAAACgAAAAAAAEAIAAAAQAAAQgEAAAACAAACAA=</HashCode>
+      <FileName>Assets\KinematicCharacterController\Walkthrough\2- Basic Movement and Gravity\Scripts\MyPlayer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="KinematicCharacterController.Walkthrough.SimpleJumping.MyCharacterController" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="24" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAWCAIRYKIIkAAYACAACAFAAEAAAEAgBCBCAgARgAA=</HashCode>
+      <FileName>Assets\KinematicCharacterController\Walkthrough\3- Jumping\Scripts\a- Simple Jumping\MyCharacterController.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="KinematicCharacterController.Walkthrough.SimpleJumping.MyPlayer" Collapsed="true">
+    <Position X="31" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEQAAAAAACgAAAAAAAEAIAAAAQAAAQgEAAAACAAACAA=</HashCode>
+      <FileName>Assets\KinematicCharacterController\Walkthrough\3- Jumping\Scripts\a- Simple Jumping\MyPlayer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="KinematicCharacterController.Walkthrough.DoubleJumping.MyCharacterController" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="25.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAWCAIRYKIokAAYACAACAFQAEAAAEAgBCBCAgARgAA=</HashCode>
+      <FileName>Assets\KinematicCharacterController\Walkthrough\3- Jumping\Scripts\b- Double Jumping\MyCharacterController.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="KinematicCharacterController.Walkthrough.DoubleJumping.MyPlayer" Collapsed="true">
+    <Position X="27.5" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEQAAAAAACgAAAAAAAEAIAAAAQAAAQgEAAAACAAACAA=</HashCode>
+      <FileName>Assets\KinematicCharacterController\Walkthrough\3- Jumping\Scripts\b- Double Jumping\MyPlayer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="KinematicCharacterController.Walkthrough.WallJumping.MyCharacterController" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="20.5" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAWCAIRaKIokAA4ACAACAFQAEAAgEAgBCBCAgARgAA=</HashCode>
+      <FileName>Assets\KinematicCharacterController\Walkthrough\3- Jumping\Scripts\c- Wall Jumping\MyCharacterController.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="KinematicCharacterController.Walkthrough.WallJumping.MyPlayer" Collapsed="true">
+    <Position X="25.75" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEQAAAAAACgAAAAAAAEAIAAAAQAAAQgEAAAACAAACAA=</HashCode>
+      <FileName>Assets\KinematicCharacterController\Walkthrough\3- Jumping\Scripts\c- Wall Jumping\MyPlayer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="KinematicCharacterController.Walkthrough.LandingLeavingGround.MyCharacterController" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="29.25" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAWCAIRaKIokAA4ACAACAFQBEAAgEggBCBCAgARgAA=</HashCode>
+      <FileName>Assets\KinematicCharacterController\Walkthrough\4- Landing and leaving ground\Scripts\MyCharacterController.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="KinematicCharacterController.Walkthrough.LandingLeavingGround.MyPlayer" Collapsed="true">
+    <Position X="24" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEQAAAAAACgAAAAAAAEAIAAAAQAAAQgEAAAACAAACAA=</HashCode>
+      <FileName>Assets\KinematicCharacterController\Walkthrough\4- Landing and leaving ground\Scripts\MyPlayer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="KinematicCharacterController.Walkthrough.AddingImpulses.MyCharacterController" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="27.5" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAWCAIRaKIokAA4ACEACAFQAEAAgEAgBCBCAgARgAA=</HashCode>
+      <FileName>Assets\KinematicCharacterController\Walkthrough\5- Adding velocities and impulses\Scripts\MyCharacterController.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="KinematicCharacterController.Walkthrough.AddingImpulses.MyPlayer" Collapsed="true">
+    <Position X="22.25" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEQAAAAAACgAAAAAAAEAIAAAAQAAAQgEAAAACAAACAA=</HashCode>
+      <FileName>Assets\KinematicCharacterController\Walkthrough\5- Adding velocities and impulses\Scripts\MyPlayer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="KinematicCharacterController.Walkthrough.Crouching.MyCharacterController" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="32.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAWCAIRaKI4kAA4ACEACAFQAEAggEAgFCBCAgARgAA=</HashCode>
+      <FileName>Assets\KinematicCharacterController\Walkthrough\6- Crouching\Scripts\MyCharacterController.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="KinematicCharacterController.Walkthrough.Crouching.MyPlayer" Collapsed="true">
+    <Position X="29.25" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEQAAAAAACgAAAAAAAEAIAAAAQAAAQgEAAAACAAACAA=</HashCode>
+      <FileName>Assets\KinematicCharacterController\Walkthrough\6- Crouching\Scripts\MyPlayer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="KinematicCharacterController.Walkthrough.OrientingArbitraryDirection.MyCharacterController" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="15.25" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAWCAIRaKI4kAA4ACEACAFQAEAggEAgFCBCAgARgAA=</HashCode>
+      <FileName>Assets\KinematicCharacterController\Walkthrough\7- Orienting towards arbitrary up direction\Scripts\MyCharacterController.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="KinematicCharacterController.Walkthrough.OrientingArbitraryDirection.MyPlayer" Collapsed="true">
+    <Position X="18.75" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEQAAAAAACgAAAAAAAEAIAAAAQAAAQgEAAAACAAACAA=</HashCode>
+      <FileName>Assets\KinematicCharacterController\Walkthrough\7- Orienting towards arbitrary up direction\Scripts\MyPlayer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="KinematicCharacterController.Walkthrough.MovingPlatform.MyCharacterController" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="17" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAWCAIRaKI4kAA4ACEACAFQAEAggEAgFCBCAgARgAA=</HashCode>
+      <FileName>Assets\KinematicCharacterController\Walkthrough\8- Creating a moving platform\Scripts\MyCharacterController.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="KinematicCharacterController.Walkthrough.MovingPlatform.MyMovingPlatform" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="32.75" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAACBAAACAAAAAAAQAAAAAEAAAAAAAAAAAAAAAAAAg=</HashCode>
+      <FileName>Assets\KinematicCharacterController\Walkthrough\8- Creating a moving platform\Scripts\MyMovingPlatform.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="KinematicCharacterController.Walkthrough.MovingPlatform.MyPlayer" Collapsed="true">
+    <Position X="17" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEQAAAAAACgAAAAAAAEAIAAAAQAAAQgEAAAACAAACAA=</HashCode>
+      <FileName>Assets\KinematicCharacterController\Walkthrough\8- Creating a moving platform\Scripts\MyPlayer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="KinematicCharacterController.Walkthrough.CollisionFiltering.MyCharacterController" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="18.75" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAWCAIRaKI4kAA4ACEACAVQAEAggEAgFCBCAgARgAA=</HashCode>
+      <FileName>Assets\KinematicCharacterController\Walkthrough\9- Custom collision filtering\Scripts\MyCharacterController.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="KinematicCharacterController.Walkthrough.CollisionFiltering.MyPlayer" Collapsed="true">
+    <Position X="15.25" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEQAAAAAACgAAAAAAAEAIAAAAQAAAQgEAAAACAAACAA=</HashCode>
+      <FileName>Assets\KinematicCharacterController\Walkthrough\9- Custom collision filtering\Scripts\MyPlayer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DemoCollection.DelegateCommand" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="32.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAQEACAAQEAECAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\NoesisGUI\DelegateCommand.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="DemoCollection.HealthBarUserControl" Collapsed="true">
+    <Position X="15.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAAAAAAAAAAAAAAAAACAAAACAEAAAAAABAAAAAAAAAA=</HashCode>
+      <FileName>Assets\NoesisGUI\HealthBarUserControl.xaml.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DemoCollection.HudView" Collapsed="true">
+    <Position X="17" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\NoesisGUI\HudView.xaml.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DemoCollection.MainWindow" Collapsed="true">
+    <Position X="17" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAACAAAAAAAACAAAAAAAAAA=</HashCode>
+      <FileName>Assets\NoesisGUI\MainWindow.xaml.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DemoCollection.ObservableObject" Collapsed="true">
+    <Position X="4" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAIAAAAAAAgAEAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\NoesisGUI\ObservableObject.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="DemoCollection.PauseView" Collapsed="true">
+    <Position X="31" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\NoesisGUI\PauseView.xaml.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DemoCollection.RangeProperty" Collapsed="true">
+    <Position X="0.75" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAIBAAAAAA=</HashCode>
+      <FileName>Assets\NoesisGUI\RangeProperty.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DemoCollection.HUD" Collapsed="true">
+    <Position X="3" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAACIAAAEEEAAAAAAAAKIAwAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\NoesisGUI\ViewModel\HUD.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DemoCollection.PauseViewModel" Collapsed="true">
+    <Position X="5.25" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAACAAQAAAAAAACAAAABgAAAAAAAAQAAgAAAAAAE=</HashCode>
+      <FileName>Assets\NoesisGUI\ViewModel\PauseViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DemoCollection.ViewModel" Collapsed="true">
+    <Position X="7.5" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAAAAAAAAAAAAAAAAAJACABCACAAAGAACAAABBAAAAA=</HashCode>
+      <FileName>Assets\NoesisGUI\ViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DemoCollection.UIController" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="24" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAAEAAAAAAAAAAAAIAJACABCgCAAAGAECAICBBEAAAA=</HashCode>
+      <FileName>Assets\Scripts\UIController.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="ActorFramework.CharacterAnimator" Collapsed="true">
+    <Position X="27.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>KAAAAAQAAAAAABAAAAAAAAAAAAAAEAAAIAAAAAAECEA=</HashCode>
+      <FileName>Assets\Scripts\ActorFramework\CharacterAnimator.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ActorFramework.CharacterLocomotion" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="29.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAXiAIRYCIokAAYEiIACAVEEEAAkFIoBSBDAgARiAQ=</HashCode>
+      <FileName>Assets\Scripts\ActorFramework\CharacterLocomotion.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="ActorFramework.Health" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="32.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAABAAgAAAAAAAAAoACAAACAiAAAAAAAAAAIFAAAAEA=</HashCode>
+      <FileName>Assets\Scripts\ActorFramework\Health.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="ActorFramework.TrackableCapsule" Collapsed="true">
+    <Position X="10.5" Y="34.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAEAAAAAAAAABAIAAAAEAAAAAAAgAACGA=</HashCode>
+      <FileName>Assets\Scripts\ActorFramework\TrackableCapsule.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ActorFramework.TrackableSphere" Collapsed="true">
+    <Position X="12.75" Y="34.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAgEAAAAAAAAABAIAAAAAAAAAAAEgAQCOA=</HashCode>
+      <FileName>Assets\Scripts\ActorFramework\TrackableSphere.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DemoCollection.DataBinding.HUDController" Collapsed="true">
+    <Position X="8.5" Y="9" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAICIAAAEEEAABAAAAAKICwAAAAAAAIAABCAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\DataBinding\HUDController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DemoCollection.DataBinding.ObservableScriptableObject" Collapsed="true">
+    <Position X="9.75" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAIAAAAAAAgAEAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\DataBinding\ObservableScriptableObject.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="DemoCollection.DataBinding.PauseMenuController" Collapsed="true">
+    <Position X="10.75" Y="9" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAACAAQAAAAAAAAAAAABgAAAAAAAAQAAiAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\DataBinding\PauseMenuController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MenuSystem.ButtonMenuItemDisplay" Collapsed="true">
+    <Position X="0.75" Y="9" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAACAAAAABAAAQAAAAAAAAAAAAAgAAAAAIAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\MenuSystem\ButtonMenuItemDisplay.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MenuSystem.MenuItemColors" Collapsed="true">
+    <Position X="27.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAgAAAAA=</HashCode>
+      <FileName>Assets\Scripts\MenuSystem\Menu.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MenuSystem.Menu" Collapsed="true">
+    <Position X="24" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQACAAAABAAAAAAAAAAAAAAAAAAAABBAAAAAAAQCAA=</HashCode>
+      <FileName>Assets\Scripts\MenuSystem\Menu.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MenuSystem.MenuItemConfig" Collapsed="true">
+    <Position X="29.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAQAAAAAAAAACAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\MenuSystem\MenuGroup.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MenuSystem.MenuGroup" Collapsed="true">
+    <Position X="25.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\MenuSystem\MenuGroup.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MenuSystem.MenuGroupDisplay" Collapsed="true">
+    <Position X="0.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAEAQAAAAAAAAAAAgAAAgAAAAggBAAAAAACAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\MenuSystem\MenuGroupDisplay.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MenuSystem.MenuItemDisplay" Collapsed="true">
+    <Position X="3" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAQAAAAAAAAAAAAAgAACAAIAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\MenuSystem\MenuItemDisplay.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MenuSystem.ButtonMenuItem" Collapsed="true">
+    <Position X="6.75" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\MenuSystem\MenuItems\ButtonMenuItem.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MenuSystem.MenuItem" Collapsed="true">
+    <Position X="9" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgA=</HashCode>
+      <FileName>Assets\Scripts\MenuSystem\MenuItems\MenuItem.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MenuSystem.Option" Collapsed="true">
+    <Position X="27.5" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAABAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\MenuSystem\MenuItems\SelectorMenuItem.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MenuSystem.SelectorMenuItem" Collapsed="true">
+    <Position X="9" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAEAAAAAACAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\MenuSystem\MenuItems\SelectorMenuItem.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MenuSystem.ToggleMenuItem" Collapsed="true">
+    <Position X="11.25" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\MenuSystem\MenuItems\ToggleMenuItem.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MenuSystem.MenuSkin" Collapsed="true">
+    <Position X="31" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAAAAIAAAAIAAAAAAAAAACAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\MenuSystem\MenuSkin.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MenuSystem.SelectorMenuItemDisplay" Collapsed="true">
+    <Position X="3" Y="9" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAACAAEAAAAAARAAAAAAAAAAAAAgACAAAIAAAAABAAA=</HashCode>
+      <FileName>Assets\Scripts\MenuSystem\SelectorMenuItemDisplay.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MenuSystem.ToggleMenuItemDisplay" Collapsed="true">
+    <Position X="5.25" Y="9" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAACAAEAAAAAAQQAAAAAgAAAAAAgACAAAIAAAAAAAgA=</HashCode>
+      <FileName>Assets\Scripts\MenuSystem\ToggleMenuItemDisplay.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MenuSystem.VerticalMenuGroupDisplay" Collapsed="true">
+    <Position X="0.5" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\MenuSystem\VerticalMenuGroupDisplay.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Utility.TransformExtensions" Collapsed="true">
+    <Position X="22.25" Y="9.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Utility\TransformExtensions.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Struct Name="KinematicCharacterController.KinematicCharacterMotorState" Collapsed="true">
+    <Position X="29.25" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AgAAAAAAAAAAAKAgAIAAAAAAAAAAAAACAAgQCAAAAAA=</HashCode>
+      <FileName>Assets\KinematicCharacterController\Core\KinematicCharacterMotor.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="KinematicCharacterController.OverlapResult" Collapsed="true">
+    <Position X="32.75" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAQAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\KinematicCharacterController\Core\KinematicCharacterMotor.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="KinematicCharacterController.CharacterGroundingReport" Collapsed="true">
+    <Position X="20.5" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAACAAAAAACACACAAAAAAAQCAAgAAAAAAAAAAAEA=</HashCode>
+      <FileName>Assets\KinematicCharacterController\Core\KinematicCharacterMotor.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="KinematicCharacterController.CharacterTransientGroundingReport" Collapsed="true">
+    <Position X="24" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAACAAAAAACACAAAAAAAAAQCAAgAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\KinematicCharacterController\Core\KinematicCharacterMotor.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="KinematicCharacterController.HitStabilityReport" Collapsed="true">
+    <Position X="27.5" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAMAIQACAAAACUAgIACBAAAAQAAA=</HashCode>
+      <FileName>Assets\KinematicCharacterController\Core\KinematicCharacterMotor.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="KinematicCharacterController.RigidbodyProjectionHit" Collapsed="true">
+    <Position X="29.25" Y="12.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAABBAAIAAAAAAAAAAAAAIACAA=</HashCode>
+      <FileName>Assets\KinematicCharacterController\Core\KinematicCharacterMotor.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="KinematicCharacterController.PhysicsMoverState" Collapsed="true">
+    <Position X="15.25" Y="11.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAIAgAAAAAAABAAAAAAAAAAAAAAAEAAA=</HashCode>
+      <FileName>Assets\KinematicCharacterController\Core\PhysicsMover.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="KinematicCharacterController.Examples.PlayerCharacterInputs" Collapsed="true">
+    <Position X="25.75" Y="12.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAABAAAAAAABAAAAAEAEAQAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\KinematicCharacterController\ExampleCharacter\Scripts\ExampleCharacterController.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="KinematicCharacterController.Examples.AICharacterInputs" Collapsed="true">
+    <Position X="15.25" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAACAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\KinematicCharacterController\ExampleCharacter\Scripts\ExampleCharacterController.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="CombatEvent" Collapsed="true">
+    <Position X="25.75" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAgAAAACAAgCAAAAAAAAAAAAAAAAAAAII=</HashCode>
+      <FileName>Assets\Scripts\ActorFramework\AttackDataSet.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="AttackData" Collapsed="true">
+    <Position X="18.75" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAggAAAAAAAAAAACAAEAAAAAAAAAAAAQAA=</HashCode>
+      <FileName>Assets\Scripts\ActorFramework\AttackDataSet.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="RigidbodyState" Collapsed="true">
+    <Position X="31" Y="12.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAAAACAIAAAAAAAAQAAAAQAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\ActorFramework\Entity.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="KinematicCharacterController.Walkthrough.MultipleMovementStates.PlayerCharacterInputs" Collapsed="true">
+    <Position X="24" Y="12.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAABAAAAAAABAAAAAEAEAQAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\KinematicCharacterController\Walkthrough\10- Multiple movement states setup\Scripts\MyCharacterController.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="KinematicCharacterController.Walkthrough.ChargingState.PlayerCharacterInputs" Collapsed="true">
+    <Position X="22.25" Y="12.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAABAAAAAAABACAAAEAEAQAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\KinematicCharacterController\Walkthrough\11- Charging state\Scripts\MyCharacterController.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="KinematicCharacterController.Walkthrough.NoClipState.PlayerCharacterInputs" Collapsed="true">
+    <Position X="20.5" Y="12.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQQAAAABAAAAIAABAAAAAEAEAQCAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\KinematicCharacterController\Walkthrough\12- NoClip state\Scripts\MyCharacterController.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="KinematicCharacterController.Walkthrough.SwimmingState.PlayerCharacterInputs" Collapsed="true">
+    <Position X="27.5" Y="12.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQQAAAABAAAAAAABAAAAAEAEAQCAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\KinematicCharacterController\Walkthrough\13- Swimming state\Scripts\MyCharacterController.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="KinematicCharacterController.Walkthrough.ClimbingLadders.PlayerCharacterInputs" Collapsed="true">
+    <Position X="18.75" Y="12.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAABAAAAAAABQAAAAEAEAQAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\KinematicCharacterController\Walkthrough\14- Climbing Ladders\Scripts\MyCharacterController.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="KinematicCharacterController.Walkthrough.RootMotionExample.PlayerCharacterInputs" Collapsed="true">
+    <Position X="17" Y="12.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAABAAAAAAAEAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\KinematicCharacterController\Walkthrough\15- Root motion example\Scripts\MyCharacterController.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="KinematicCharacterController.Walkthrough.FramePerfectRotation.PlayerCharacterInputs" Collapsed="true">
+    <Position X="15.25" Y="12.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAABAAAAAAABAAAAAAAEAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\KinematicCharacterController\Walkthrough\16- FramePerfect Rotation\Scripts\MyCharacterController.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="KinematicCharacterController.Walkthrough.BasicMovement.PlayerCharacterInputs" Collapsed="true">
+    <Position X="32.75" Y="11.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAABAAAAAAABAAAAAAAEAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\KinematicCharacterController\Walkthrough\2- Basic Movement and Gravity\Scripts\MyCharacterController.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="KinematicCharacterController.Walkthrough.SimpleJumping.PlayerCharacterInputs" Collapsed="true">
+    <Position X="31" Y="11.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAABAAAAAAABAAAAAAAEAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\KinematicCharacterController\Walkthrough\3- Jumping\Scripts\a- Simple Jumping\MyCharacterController.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="KinematicCharacterController.Walkthrough.DoubleJumping.PlayerCharacterInputs" Collapsed="true">
+    <Position X="29.25" Y="11.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAABAAAAAAABAAAAAAAEAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\KinematicCharacterController\Walkthrough\3- Jumping\Scripts\b- Double Jumping\MyCharacterController.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="KinematicCharacterController.Walkthrough.WallJumping.PlayerCharacterInputs" Collapsed="true">
+    <Position X="27.5" Y="11.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAABAAAAAAABAAAAAAAEAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\KinematicCharacterController\Walkthrough\3- Jumping\Scripts\c- Wall Jumping\MyCharacterController.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="KinematicCharacterController.Walkthrough.LandingLeavingGround.PlayerCharacterInputs" Collapsed="true">
+    <Position X="25.75" Y="11.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAABAAAAAAABAAAAAAAEAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\KinematicCharacterController\Walkthrough\4- Landing and leaving ground\Scripts\MyCharacterController.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="KinematicCharacterController.Walkthrough.AddingImpulses.PlayerCharacterInputs" Collapsed="true">
+    <Position X="24" Y="11.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAABAAAAAAABAAAAAAAEAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\KinematicCharacterController\Walkthrough\5- Adding velocities and impulses\Scripts\MyCharacterController.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="KinematicCharacterController.Walkthrough.Crouching.PlayerCharacterInputs" Collapsed="true">
+    <Position X="22.25" Y="11.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAABAAAAAAABAAAAAEAEAQAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\KinematicCharacterController\Walkthrough\6- Crouching\Scripts\MyCharacterController.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="KinematicCharacterController.Walkthrough.OrientingArbitraryDirection.PlayerCharacterInputs" Collapsed="true">
+    <Position X="20.5" Y="11.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAABAAAAAAABAAAAAEAEAQAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\KinematicCharacterController\Walkthrough\7- Orienting towards arbitrary up direction\Scripts\MyCharacterController.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="KinematicCharacterController.Walkthrough.MovingPlatform.PlayerCharacterInputs" Collapsed="true">
+    <Position X="18.75" Y="11.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAABAAAAAAABAAAAAEAEAQAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\KinematicCharacterController\Walkthrough\8- Creating a moving platform\Scripts\MyCharacterController.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="KinematicCharacterController.Walkthrough.MovingPlatform.MyMovingPlatformState" Collapsed="true">
+    <Position X="31" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\KinematicCharacterController\Walkthrough\8- Creating a moving platform\Scripts\MyMovingPlatform.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="KinematicCharacterController.Walkthrough.CollisionFiltering.PlayerCharacterInputs" Collapsed="true">
+    <Position X="17" Y="11.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAABAAAAAAABAAAAAEAEAQAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\KinematicCharacterController\Walkthrough\9- Custom collision filtering\Scripts\MyCharacterController.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="ActorFramework.AnimatedMotorProperties" Collapsed="true">
+    <Position X="17" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAACABEAAg=</HashCode>
+      <FileName>Assets\Scripts\ActorFramework\CharacterAnimator.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="ActorFramework.CharacterInputs" Collapsed="true">
+    <Position X="22.25" Y="10.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAQAAAAIIAARAAAAAAAAAAAAAAAAAAAAAAAAAAAAAI=</HashCode>
+      <FileName>Assets\Scripts\ActorFramework\CharacterLocomotion.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Interface Name="KinematicCharacterController.ICharacterController" Collapsed="true">
+    <Position X="15.25" Y="14" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAECAAAQAAAgAAQAAAACAEAAAAAAAAgAAAAAAABgAA=</HashCode>
+      <FileName>Assets\KinematicCharacterController\Core\ICharacterController.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="KinematicCharacterController.IMoverController" Collapsed="true">
+    <Position X="18.75" Y="14" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\KinematicCharacterController\Core\IMoverController.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="IDamageable" Collapsed="true">
+    <Position X="17" Y="14" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAACAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\ActorFramework\IDamageable.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="ITracker" Collapsed="true">
+    <Position X="20.5" Y="14" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Trackable.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Enum Name="KinematicCharacterController.RigidbodyInteractionType" Collapsed="true">
+    <Position X="18.75" Y="15.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>Assets\KinematicCharacterController\Core\KinematicCharacterMotor.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="KinematicCharacterController.StepHandlingMethod" Collapsed="true">
+    <Position X="20.5" Y="15.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAABAAAAAAAAIAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>Assets\KinematicCharacterController\Core\KinematicCharacterMotor.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="KinematicCharacterController.MovementSweepState" Collapsed="true">
+    <Position X="15.25" Y="15.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAIAAAACAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAQ=</HashCode>
+      <FileName>Assets\KinematicCharacterController\Core\KinematicCharacterMotor.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="KinematicCharacterController.Examples.CharacterState" Collapsed="true">
+    <Position X="20.5" Y="15" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\KinematicCharacterController\ExampleCharacter\Scripts\ExampleCharacterController.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="KinematicCharacterController.Examples.OrientationMethod" Collapsed="true">
+    <Position X="17" Y="15.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAACAAAAA=</HashCode>
+      <FileName>Assets\KinematicCharacterController\ExampleCharacter\Scripts\ExampleCharacterController.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="KinematicCharacterController.Examples.BonusOrientationMethod" Collapsed="true">
+    <Position X="18.75" Y="15" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAABAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>Assets\KinematicCharacterController\ExampleCharacter\Scripts\ExampleCharacterController.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="AIBehaviorCondition" Collapsed="true">
+    <Position X="15.25" Y="15" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAgAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\ActorFramework\AIController.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="AttackType" Collapsed="true">
+    <Position X="17" Y="15" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>Assets\Scripts\ActorFramework\AttackDataSet.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="KinematicCharacterController.Walkthrough.MultipleMovementStates.CharacterState" Collapsed="true">
+    <Position X="22.25" Y="15" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\KinematicCharacterController\Walkthrough\10- Multiple movement states setup\Scripts\MyCharacterController.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="KinematicCharacterController.Walkthrough.ChargingState.CharacterState" Collapsed="true">
+    <Position X="24" Y="15" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\KinematicCharacterController\Walkthrough\11- Charging state\Scripts\MyCharacterController.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="KinematicCharacterController.Walkthrough.NoClipState.CharacterState" Collapsed="true">
+    <Position X="25.75" Y="15" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAQAAAAAAAA=</HashCode>
+      <FileName>Assets\KinematicCharacterController\Walkthrough\12- NoClip state\Scripts\MyCharacterController.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="KinematicCharacterController.Walkthrough.SwimmingState.CharacterState" Collapsed="true">
+    <Position X="27.5" Y="15" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAIAAACAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\KinematicCharacterController\Walkthrough\13- Swimming state\Scripts\MyCharacterController.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="KinematicCharacterController.Walkthrough.ClimbingLadders.CharacterState" Collapsed="true">
+    <Position X="29.25" Y="15" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAoAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\KinematicCharacterController\Walkthrough\14- Climbing Ladders\Scripts\MyCharacterController.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="KinematicCharacterController.Walkthrough.ClimbingLadders.ClimbingState" Collapsed="true">
+    <Position X="31" Y="15" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAAAAAAAAAAQAAAAgAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\KinematicCharacterController\Walkthrough\14- Climbing Ladders\Scripts\MyCharacterController.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="DemoCollection.ViewState" Collapsed="true">
+    <Position X="22.25" Y="15.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\NoesisGUI\ViewModel.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="MenuSystem.MenuInput" Collapsed="true">
+    <Position X="32.75" Y="15" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAACACAAQAAAAI=</HashCode>
+      <FileName>Assets\Scripts\MenuSystem\Menu.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

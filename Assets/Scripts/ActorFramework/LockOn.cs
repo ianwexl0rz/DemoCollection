@@ -5,77 +5,51 @@ using DemoCollection;
 using DemoCollection.DataBinding;
 using UnityEngine;
 
-[CreateAssetMenu]
-public class LockOn : ScriptableObject
+[Serializable]
+public class LockOn
 {
-	public struct IndicatorData
-	{
-		public bool HasTarget;
-		public float TargetX;
-		public float TargetY;
-
-		public IndicatorData(bool enabled, Vector3 lockOnScreenPos)
-		{
-			HasTarget = enabled && lockOnScreenPos.z > 0;
-			TargetX = lockOnScreenPos.x;
-			TargetY = UnityEngine.Screen.height - lockOnScreenPos.y;
-		}
-	}
-
-	public static event Action<ITrackable> TargetChanged;
+	public static event Action<Trackable> TargetChanged;
 	
-	public static event Action<IndicatorData> SetIndicatorData;
-	
-	[Header("Lock On")]
-	[SerializeField] private LockOnIndicator lockOnIndicatorPrefab = null;
-	[SerializeField] private float range = 10f;
-	[SerializeField] private float angleThreshold = 90f;
+	public static event Action<Trackable> SetIndicatorData;
 
-	private static LockOnIndicator _lockOnIndicator;
+	[field: SerializeField] public float Range { get; private set; } = 10f;
+	[field: SerializeField] public float AngleThreshold { get; private set; } = 90f;
+	
+	[field: SerializeField] public List<Trackable> Trackables { get; private set; }
+
 	private static bool _lookInputStale;
 	private static LockOn _instance;
 	private static Actor _playerActor;
-
-	[SerializeField] private List<GameObject> potentialDataProviders = new List<GameObject>();
 	
-	public static ITrackable TrackableCandidate { get; private set; }
+	public static Trackable TrackableCandidate { get; private set; }
 
 	public void Init()
 	{
 		_instance = this;
-		_lockOnIndicator = Instantiate(lockOnIndicatorPrefab);
-		_lockOnIndicator.Init();
+		Trackables = new List<Trackable>();
 	}
-    
-	private static Vector2 GetScreenPos(ITrackable trackable, Camera mainCamera)
-    {
-        return (Vector2) mainCamera.WorldToScreenPoint(trackable.GetEyesPosition()) - new Vector2(mainCamera.pixelWidth, mainCamera.pixelHeight) * 0.5f;
-    }
 
     public static void UpdateLockOn(Camera mainCamera, Vector2 lookInput)
     {
-	    // TODO: Potential targets should add or remove themselves on Tick.
+	    var potentialTargets = _instance.Trackables
+		    .Where(trackable => trackable.InRangeOfPlayer)
+	        .Where(trackable => trackable.OnScreen)
+	        .ToDictionary(trackable => trackable, trackable => (Vector2)trackable.ScreenPos - mainCamera.pixelRect.size * 0.5f);
 
-        var potentialTargets = Physics.OverlapSphere(_playerActor.transform.position, _instance.range)
-	        .Select(collider => collider.GetComponent<ITrackable>())
-	        .Except(new []{_playerActor.GetComponent<ITrackable>(), _playerActor.TrackedTarget, null})
-	        .Where(trackable => trackable.IsVisible())
-            .ToDictionary(trackable => trackable, trackable => GetScreenPos(trackable, mainCamera));
-        
-        if (_playerActor.TrackedTarget == null)
+        var currentTarget = _playerActor.TrackedTarget;
+        if (currentTarget == null)
         {
             TrackableCandidate = GetTrackableClosestToCenter(potentialTargets);
             _lookInputStale = true;
         }
         else
         {
-	        TrackableCandidate = _playerActor.TrackedTarget;
+	        TrackableCandidate = currentTarget;
 	        
 	        if (_lookInputStale && lookInput.Equals(Vector2.zero)) _lookInputStale = false;
             if (!_lookInputStale && lookInput.sqrMagnitude > 0)
             {
-                var halfScreenPixels = new Vector2(mainCamera.pixelWidth, mainCamera.pixelHeight) * 0.5f;
-                var currentTargetScreenPos = (Vector2) mainCamera.WorldToScreenPoint(_playerActor.TrackedTarget.GetEyesPosition()) - halfScreenPixels;
+                var currentTargetScreenPos = (Vector2)currentTarget.ScreenPos - mainCamera.pixelRect.size * 0.5f;
                 var newTarget = GetTrackableClosestToVector(potentialTargets, lookInput, currentTargetScreenPos);
                 if (!ReferenceEquals(newTarget, null))
                 {
@@ -88,19 +62,18 @@ public class LockOn : ScriptableObject
         }
 
         // Update lock-on indicator position.
-        _lockOnIndicator.UpdatePosition(_playerActor.TrackedTarget != null, TrackableCandidate,
-            mainCamera.transform.position);
+        // _lockOnIndicator.UpdatePosition(_playerActor.TrackedTarget != null, TrackableCandidate,
+        //     mainCamera.transform.position);
 
-        var lockOnScreenPos = mainCamera.WorldToScreenPoint(_lockOnIndicator.transform.position);
-        SetIndicatorData?.Invoke(new IndicatorData(_playerActor.TrackedTarget != null, lockOnScreenPos));
+        SetIndicatorData?.Invoke(currentTarget);
     }
 
-    private static ITrackable GetTrackableClosestToCenter(Dictionary<ITrackable, Vector2> potentialTargets)
+    private static Trackable GetTrackableClosestToCenter(Dictionary<Trackable, Vector2> potentialTargets)
 	{
 		if (potentialTargets.Count == 0)
 			return null;
 
-		ITrackable bestTrackable = null;
+		Trackable bestTrackable = null;
 		var bestDistance = Mathf.Infinity;
 
 		foreach (var screenPosByTarget in potentialTargets)
@@ -115,9 +88,9 @@ public class LockOn : ScriptableObject
 		return bestTrackable;
 	}
 
-	private static ITrackable GetTrackableClosestToVector(Dictionary<ITrackable, Vector2> potentialTargets, Vector2 lookInput, Vector2 currentTargetScreenPos)
+	private static Trackable GetTrackableClosestToVector(Dictionary<Trackable, Vector2> potentialTargets, Vector2 lookInput, Vector2 currentTargetScreenPos)
 	{
-		ITrackable bestTrackable = null;
+		Trackable bestTrackable = null;
 		var smallestAngle = Mathf.Infinity;
 
 		foreach(var screenPosByTarget in potentialTargets)
@@ -129,16 +102,21 @@ public class LockOn : ScriptableObject
 			smallestAngle = angle;
 		}
 		
-		return smallestAngle <= _instance.angleThreshold ? bestTrackable : null;
+		return smallestAngle <= _instance.AngleThreshold ? bestTrackable : null;
+	}
+	
+	public void OnSetCanBeTracked(Trackable trackable, bool value)
+	{
+		if (value) Trackables.Add(trackable);
+		else Trackables.Remove(trackable);
 	}
 
-	public static void OnTargetChanged(ITrackable newTarget)
-	{
-		TargetChanged?.Invoke(newTarget);
-	}
+	public static void OnTargetChanged(Trackable newTarget) => TargetChanged?.Invoke(newTarget);
 
-	public static void SetPlayerActor(Actor playerActor)
+	public static void SetPlayerActor(Actor playerActor) => _playerActor = playerActor;
+
+	public void RequestRefreshTrackables(Actor playerActor, Camera mainCamera)
 	{
-		_playerActor = playerActor;
+		foreach (var trackable in Trackables) trackable.CheckProximityToPlayer(playerActor, mainCamera);
 	}
 }

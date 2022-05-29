@@ -8,6 +8,7 @@ using UnityEngine.Serialization;
 public class MeleeWeaponUser : MonoBehaviour
 {
 	private static readonly int Attack = Animator.StringToHash("lightAttack");
+	public event Action<CombatEvent> HitSomething;
 
 	[FormerlySerializedAs("weaponBone")] public Transform WeaponBone = null;
 	[SerializeField] private Vector3 weaponBoneUp = Vector3.up;
@@ -26,12 +27,48 @@ public class MeleeWeaponUser : MonoBehaviour
 		Actor = GetComponent<Actor>();
 		Actor.ConsumeInput += HandleInput;
 		Actor.LateTick += ProcessAttackAnimation;
-		Actor.GetHit += OnGetHit;
+		Actor.GetHit += HandleGetHit;
+		Actor.PossessedByPlayer += StartAttributingHitsToPlayer;
+		Actor.ReleasedByPlayer -= StopAttributingHitsToPlayer;
 
 		if (defaultWeaponPrefab != null)
 			EquipWeapon(defaultWeaponPrefab);
 	}
 
+	public void StartAttributingHitsToPlayer(PlayerController playerController)
+	{
+		HitSomething += playerController.AddTargetToRecentlyHitList;
+	}
+	
+	public void StopAttributingHitsToPlayer(PlayerController playerController)
+	{
+		HitSomething -= playerController.AddTargetToRecentlyHitList;
+	}
+
+	public void NewHit(AnimationEvent animEvent)
+	{
+		_hasActiveHit = true;
+		_weapon.NewHit(WeaponBone, animEvent.stringParameter);
+	}
+
+	public void EndHit()
+	{
+		_hasActiveHit = false;
+		_weapon.EndHit();
+	}
+
+	public void CancelOK()
+	{
+		 _isAttacking = false;
+		 Actor.InputEnabled = true;
+	}
+
+	public void OnHitSomething(CombatEvent combatEvent)
+	{
+		HitSomething?.Invoke(combatEvent);
+		MainMode.AddCombatEvent(combatEvent);
+	}
+	
 	private void EquipWeapon(MeleeWeapon weaponPrefab)
 	{
 		for (var i = WeaponBone.childCount; i-- > 0;)
@@ -53,34 +90,16 @@ public class MeleeWeaponUser : MonoBehaviour
 			if(Actor.Animator) Actor.Animator.SetTrigger(Attack);
 		}
 	}
-
-	private void OnGetHit(CombatEvent combatEvent)
-	{
-		// TODO: Check if incoming attack should interrupt.
-		_isAttacking = false;
-	}
-
-	public void NewHit(AnimationEvent animEvent)
-	{
-		_hasActiveHit = true;
-		_weapon.NewHit(WeaponBone, animEvent.stringParameter);
-	}
 	
 	private void ProcessAttackAnimation(float deltaTime)
 	{
 		if (!_hasActiveHit) return;
 		_weapon.CheckHits(WeaponBone, weaponBoneUp, distThreshold);
 	}
-
-	public void EndHit()
+	
+	private void HandleGetHit(CombatEvent combatEvent)
 	{
-		_hasActiveHit = false;
-		_weapon.EndHit();
-	}
-
-	public void CancelOK()
-	{
-		 _isAttacking = false;
-		 Actor.InputEnabled = true;
+		// TODO: Check if incoming attack should interrupt.
+		_isAttacking = false;
 	}
 }
