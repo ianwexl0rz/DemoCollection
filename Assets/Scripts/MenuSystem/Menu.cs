@@ -30,7 +30,7 @@ namespace MenuSystem
 
 		private void OnEnable()
 		{
-			player = PlayerController.Player;
+			player = ReInput.players.GetPlayer(0);
 			menuGroups = GetComponentsInChildren<MenuGroupDisplay>(true);
 
 			foreach(var group in menuGroups)

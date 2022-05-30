@@ -8,11 +8,11 @@ public class FollowAIBehavior : AIBehavior
 	public float startRunDistance = 6f;
 	public float stopRunDistance = 4f;
 
-	public override void Tick(Actor actor)
+	public override void Tick(ActorController controller, Actor actor)
 	{
-		if(actor == null || actor.Equals(null) || actor.TrackedTarget == null || actor.TrackedTarget.Equals(null)) { return; }
+		if(actor == null || actor.Equals(null) || controller.TrackedTarget == null || controller.TrackedTarget.Equals(null)) { return; }
 
-		var toTarget = (actor.TrackedTarget.GetEyesPosition() - actor.Trackable.GetEyesPosition()).WithY(0f);
+		var toTarget = (controller.TrackedTarget.GetEyesPosition() - actor.Trackable.GetEyesPosition()).WithY(0f);
 
 		if(!(actor.GetComponent<ActorPhysicalMotor>() is ActorPhysicalMotor motor)) return;
 

@@ -9,6 +9,7 @@ using Rewired;
 
 public class PlayerControllerContext
 {
+	public Player Player;
 	public Camera MainCamera;
 	public ThirdPersonCamera GameCamera;
 }
@@ -16,69 +17,69 @@ public class PlayerControllerContext
 [CreateAssetMenu(fileName = "Player Controller KCC", menuName = "Actor/Controllers/Player Controller KCC")]
 public class PlayerController : ActorController
 {
-	public static event Action<Actor> PossessedActor;
-	public static event Action<Actor> ReleasedActor;
-	public static event Action ChangedRecentlyHitList;
-	
-	[NonSerialized] public static PlayerController Instance;
+	public static List<Trackable> PotentialTargets { get; private set; } = new List<Trackable>();
+
+	public event Action<Actor> PossessedActor;
+	public event Action<Actor> ReleasedActor;
+	public event Action ChangedRecentlyHitList;
+	public event Action<Trackable> RequestUpdateReticle;
 
 	[field: SerializeField] public float ShowHealthOnHitDuration { get; private set; } = 1f;
-	[field: SerializeField] public LockOn Tracking { get; private set; }
+	[field: SerializeField] public float LockOnRange { get; private set; } = 10f;
+	[field: SerializeField] public float ChangeTargetAngleTolerance { get; private set; } = 90f;
+	public Dictionary<Trackable, float> RecentlyHit { get; private set; } = new Dictionary<Trackable, float>();
 
-	public Dictionary<Trackable, float> RecentlyHit { get; private set; }
-
-
+	private Player _player;
 	private Camera _mainCamera;
 	private ThirdPersonCamera _gameCamera;
 	private ActorKinematicMotor _locomotion;
 	private ActorPhysicalMotor _legacyMotor;
-	
-	public static Player Player { get; private set; }
+	private Trackable _trackableCandidate;
+	private bool _lookInputStale;
 
+	public void Init(PlayerControllerContext context)
+	{
+		_player = context.Player;
+		_mainCamera = context.MainCamera;
+		_gameCamera = context.GameCamera;
+	}
+	
 	public override void Possess(Actor actor, object context = null)
 	{
-		if (Instance == null)
-		{
-			Instance = this;
-			Tracking.Init();
-			RecentlyHit = new Dictionary<Trackable, float>();
-		}
-
-		if (context is PlayerControllerContext playerControllerContext)
-		{
-			_mainCamera = playerControllerContext.MainCamera;
-			_gameCamera = playerControllerContext.GameCamera;
-		}
-
 		_locomotion = actor.GetComponent<ActorKinematicMotor>();
 		_legacyMotor = actor.GetComponent<ActorPhysicalMotor>();
-		
-		actor.TrackedTarget = null;
-		actor.InputBuffer.Clear();
-		
+
+		RecentlyHit.Remove(actor.Trackable);
+
 		PossessedActor?.Invoke(actor);
 		actor.OnPossessedByPlayer(this);
 	}
-
-	public static void RegisterPlayer(Player player) => Player = player;
 
 	public override void Release(Actor actor)
 	{
 		ReleasedActor?.Invoke(actor);
 		actor.OnReleasedByPlayer(this);
-		actor.TrackedTarget = null;
-		FlushInputs();
+		actor.InputBuffer.Clear();
+		TrackedTarget = null;
+
+		if (_locomotion != null)
+		{
+			var inputs = new CharacterInputs();
+			_locomotion.SetInputs(ref inputs);
+		}
+		else if (_legacyMotor != null)
+		{
+			_legacyMotor.Move = Vector3.zero;
+			_legacyMotor.Run = false;
+		}
 	}
 
 	public override void Tick(Actor actor, float deltaTime)
 	{
-		Tracking.RequestRefreshTrackables(actor, _mainCamera);
-		UpdateRecentlyHitList();
-		
-		if(Player.GetButtonDown(PlayerAction.LockOn)) 
+		if(_player.GetButtonDown(PlayerAction.LockOn)) 
 			HandleLockOnInput(actor);
 		
-		if(Player.GetButtonDown(PlayerAction.Attack))
+		if(_player.GetButtonDown(PlayerAction.Attack))
 			actor.InputBuffer.Add(PlayerAction.Attack, 0.5f);
 
 		if (_locomotion != null)
@@ -89,9 +90,9 @@ public class PlayerController : ActorController
 			{
 				Move = move,
 				Look = CalculateLook(actor, move),
-				Run = Player.GetButton(PlayerAction.Sprint),
-				BeginJump = Player.GetButtonDown(PlayerAction.Jump),
-				BeginRoll = Player.GetButtonDown(PlayerAction.Roll),
+				Run = _player.GetButton(PlayerAction.Sprint),
+				BeginJump = _player.GetButtonDown(PlayerAction.Jump),
+				BeginRoll = _player.GetButtonDown(PlayerAction.Roll),
 				IsInHitStun = actor.HitReaction.InProgress
 			};
 
@@ -100,27 +101,28 @@ public class PlayerController : ActorController
 		else if (_legacyMotor != null)
 		{
 			_legacyMotor.Move = CalculateMove(actor);
-			_legacyMotor.Run = Player.GetButton(PlayerAction.Sprint);
+			_legacyMotor.Run = _player.GetButton(PlayerAction.Sprint);
 			
 			// Roll
-			if(Player.GetButtonDown(PlayerAction.Roll))
+			if(_player.GetButtonDown(PlayerAction.Roll))
 				actor.InputBuffer.Add(PlayerAction.Roll, 0.1f);
 
 			// Jump
-			if(Player.GetButtonDown(PlayerAction.Jump))
+			if(_player.GetButtonDown(PlayerAction.Jump))
 				actor.InputBuffer.Add(PlayerAction.Jump, 0.1f);
 		}
 	}
 
 	public override void LateTick(Actor actor, float deltaTime)
 	{
-		var lookInput = Player.GetAxis2D(
+		var lookInput = _player.GetAxis2D(
 			PlayerAction.LookHorizontal * (GameManager.Settings.InvertX ? -1 : 1), 
 			PlayerAction.LookVertical);
 
-		_gameCamera.UpdatePositionAndRotation(lookInput, actor.TrackedTarget);
+		_gameCamera.UpdatePositionAndRotation(lookInput, TrackedTarget);
 
-		LockOn.UpdateLockOn(_mainCamera, lookInput);
+		UpdateRecentlyHitList();
+		UpdateLockOn(actor, lookInput, ChangeTargetAngleTolerance);
 	}
 
 	public void AddTargetToRecentlyHitList(CombatEvent combatEvent)
@@ -151,35 +153,21 @@ public class PlayerController : ActorController
 		if (toRemove.Count > 0) ChangedRecentlyHitList?.Invoke();
 	}
 
-	private void FlushInputs()
-	{
-		if (_locomotion != null)
-		{
-			var inputs = new CharacterInputs();
-			_locomotion.SetInputs(ref inputs);
-		}
-		else if (_legacyMotor != null)
-		{
-			_legacyMotor.Move = Vector3.zero;
-			_legacyMotor.Run = false;
-		}
-	}
-
-	private static Vector3 CalculateLook(Actor actor, Vector3 move)
+	private Vector3 CalculateLook(Actor actor, Vector3 move)
 	{
 		if (!actor.InputEnabled) return actor.transform.forward;
 		
-		return actor.TrackedTarget == null ? move : actor.GetTrackedTargetDirection();
+		return TrackedTarget ? actor.DirectionToTrackable(TrackedTarget) : move;
 	}
 
-	private static Vector3 CalculateMove(Actor actor)
+	private Vector3 CalculateMove(Actor actor)
 	{
 		if (!actor.InputEnabled) return Vector3.zero;
 		
 		var move = new Vector3
 		{
-			x = Player.GetAxis(PlayerAction.MoveHorizontal),
-			z = Player.GetAxis(PlayerAction.MoveVertical)
+			x = _player.GetAxis(PlayerAction.MoveHorizontal),
+			z = _player.GetAxis(PlayerAction.MoveVertical)
 		};
 		
 		var deadZone = GameManager.Settings.deadZone;
@@ -196,18 +184,18 @@ public class PlayerController : ActorController
 
 	private void HandleLockOnInput(Actor actor)
 	{
-		if (actor.TrackedTarget != null)
+		if (TrackedTarget != null)
 		{
 			// If we were locked on, break lock...
-			actor.TrackedTarget = null;
+			TrackedTarget = null;
 		}
 		else
 		{
 			// If we were not locked on, try to assign target...
-			var candidate = LockOn.TrackableCandidate;
+			var candidate = _trackableCandidate;
 			if (candidate != null)
 			{
-				actor.TrackedTarget = candidate;
+				TrackedTarget = candidate;
 			}
 			else
 			{
@@ -217,5 +205,77 @@ public class PlayerController : ActorController
 				GameManager.Camera.SetTargetEulerAngles(lookRotation.eulerAngles);
 			}
 		}
+	}
+	
+	public void UpdateLockOn(Actor actor, Vector2 lookInput, float angleTolerance)
+	{
+		foreach (var trackable in PotentialTargets)
+		{
+			trackable.RefreshTrackableData(actor, _mainCamera, LockOnRange);
+		}
+		
+		if (TrackedTarget == null)
+		{
+			_trackableCandidate = GetTrackableClosestToCenter(_mainCamera);
+			_lookInputStale = true;
+		}
+		else
+		{
+			_trackableCandidate = null;
+	        
+			if (_lookInputStale && lookInput.Equals(Vector2.zero)) _lookInputStale = false;
+			if (!_lookInputStale && lookInput.sqrMagnitude > 0)
+			{
+				var newTarget = GetTrackableClosestToVector(lookInput, TrackedTarget, angleTolerance);
+				if (!ReferenceEquals(newTarget, null))
+				{
+					TrackedTarget = newTarget;
+					_lookInputStale = true;
+				}
+			}
+		}
+
+		RequestUpdateReticle?.Invoke(TrackedTarget);
+	}
+
+	public static Trackable GetTrackableClosestToCenter(Camera mainCamera)
+	{
+		if (PotentialTargets.Count == 0) return null;
+
+		Trackable bestTrackable = null;
+		var bestDistance = Mathf.Infinity;
+
+		foreach (var trackable in PotentialTargets)
+		{
+			if (!trackable.OnScreen) continue;
+		    
+			var distanceFromCenter = Vector2.Distance(trackable.ScreenPos, mainCamera.pixelRect.size * 0.5f);
+			if (distanceFromCenter >= bestDistance) continue;
+			
+			bestTrackable = trackable;
+			bestDistance = distanceFromCenter;
+		}
+
+		return bestTrackable;
+	}
+	
+	public static Trackable GetTrackableClosestToVector(Vector2 lookInput, Trackable currentTarget, float angleTolerance)
+	{
+		Trackable bestTrackable = null;
+		var smallestAngle = Mathf.Infinity;
+
+		foreach(var trackable in PotentialTargets)
+		{
+			if (trackable == currentTarget || !trackable.OnScreen) continue;
+			
+			var fromCurrentTarget = (Vector2)(trackable.ScreenPos - currentTarget.ScreenPos);
+			var angle = Vector2.Angle(lookInput.normalized, fromCurrentTarget.normalized);
+			if (angle >= smallestAngle) continue;
+
+			bestTrackable = trackable;
+			smallestAngle = angle;
+		}
+		
+		return smallestAngle <= angleTolerance ? bestTrackable : null;
 	}
 }

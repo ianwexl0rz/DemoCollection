@@ -3,9 +3,9 @@
 [CreateAssetMenu(fileName = "Follow", menuName = "Actor/AI Behaviors/Attack")]
 class AttackAIBehavior : AIBehavior
 {
-	public override void Tick(Actor actor)
+	public override void Tick(ActorController controller, Actor actor)
 	{
-		if(actor.TrackedTarget != null)
+		if(controller.TrackedTarget != null)
 			actor.InputBuffer.Add(PlayerAction.Attack, 0.02f);
 	}
 }

@@ -6,6 +6,7 @@ using Rewired;
 public class GameManager : MonoBehaviour
 {
 	[SerializeField] private Actor playerActor = null;
+	[SerializeField] private PlayerController playerController = null;
 	[SerializeField] private GameSettings gameSettings = null;
 	[SerializeField] private UIController uiController = null;
 
@@ -18,11 +19,9 @@ public class GameManager : MonoBehaviour
 	
     public static GameSettings Settings => _instance.gameSettings;
     
-    public static ThirdPersonCamera Camera => _instance.mainMode.MainCamera;
+    public static ThirdPersonCamera Camera => _instance.mainMode.GameCamera;
 
-	#region UNITY_METHODS
-	
-	private void Awake()
+    private void Awake()
 	{
 		_instance = this;
 
@@ -31,11 +30,17 @@ public class GameManager : MonoBehaviour
 		
 		// Cache reference to player.
 		var player = ReInput.players.GetPlayer(0);
-		PlayerController.RegisterPlayer(player);
+
 		GameMode.SetPlayer(player);
 		GameMode.RegisterModes(new List<GameMode> { mainMode, pauseMode });
 		
 		mainMode.Init();
+		playerController.Init(new PlayerControllerContext
+		{
+			Player = player,
+			MainCamera = mainMode.MainCamera,
+			GameCamera = mainMode.GameCamera
+		});
 		uiController.Init();
 
 		DontDestroyOnLoad(this);
@@ -56,12 +61,4 @@ public class GameManager : MonoBehaviour
 	private void FixedUpdate() => GameMode.Current?.FixedTick(Time.fixedDeltaTime);
 
 	private void LateUpdate() => GameMode.Current?.LateTick(Time.deltaTime);
-	
-	#endregion
-
-	#region PUBLIC_METHODS
-	#endregion
-
-	#region PRIVATE_METHODS
-	#endregion
 }

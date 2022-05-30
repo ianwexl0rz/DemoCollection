@@ -25,7 +25,7 @@ public class AIController : ActorController
 	public override void Possess(Actor actor, object context = null)
 	{
 		if(context is Trackable trackable)
-			actor.TrackedTarget = trackable;
+			TrackedTarget = trackable;
 	}
 
 	public override void Tick(Actor actor, float deltaTime)
@@ -38,7 +38,7 @@ public class AIController : ActorController
 		{
 			if(EvaluateCondition(actor, group.condition, group.threshold))
 			{
-				group.behaviors.ForEach(behavior => behavior.Tick(actor));
+				group.behaviors.ForEach(behavior => behavior.Tick(this, actor));
 			}
 		}
 	}
@@ -59,9 +59,9 @@ public class AIController : ActorController
 
 	private bool ProximityCheck(Actor actor, float threshold)
 	{
-		if(actor.TrackedTarget == null) { return false; }
+		if(TrackedTarget == null) { return false; }
 
-		var vector = (actor.TrackedTarget.GetEyesPosition() - actor.Trackable.GetEyesPosition()).WithY(0f);
+		var vector = (TrackedTarget.GetEyesPosition() - actor.Trackable.GetEyesPosition()).WithY(0f);
 		return vector.magnitude <= threshold;
 	}
 }

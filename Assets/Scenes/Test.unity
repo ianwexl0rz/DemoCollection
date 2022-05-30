@@ -2968,9 +2968,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 546dad0c080b4a1cae5293c15039faa1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _inRangeOfPlayer: 0
-  onScreen: 0
-  screenPos: {x: 0, y: 0, z: 0}
   health: {fileID: 0}
 --- !u!114 &1172742408
 MonoBehaviour:
@@ -4031,6 +4028,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerActor: {fileID: 539957562}
+  playerController: {fileID: 11400000, guid: 197438d32256b794faf42212dfaf46b5, type: 2}
   gameSettings: {fileID: 11400000, guid: 491122bfc34e6724c90d93067bb4cc0d, type: 2}
   uiController: {fileID: 2130144784}
   mainMode:
@@ -5263,8 +5261,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerController: {fileID: 11400000, guid: 197438d32256b794faf42212dfaf46b5, type: 2}
   gameSettings: {fileID: 11400000, guid: 491122bfc34e6724c90d93067bb4cc0d, type: 2}
-  hudBinding:
-    _npcHealthBars: []
 --- !u!1001 &318265425313762267
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -6,7 +6,7 @@ using System.Linq;
 using ActorFramework;
 using DemoCollection;
 
-public class Actor : Entity, IDamageable, ITracker
+public class Actor : Entity, IDamageable
 {
 	private static readonly int DamageFlash = Shader.PropertyToID("_DamageFlash");
 
@@ -28,17 +28,17 @@ public class Actor : Entity, IDamageable, ITracker
 	
 	[field: SerializeField] public float TrackingRange { get; set; } = 10f;
 
-	[SerializeField] private Trackable _trackedTarget;
-	public Trackable TrackedTarget
-	{
-		get => _trackedTarget;
-		set
-		{
-			if (_trackedTarget == value) return;
-			_trackedTarget = value;
-			LockOn.OnTargetChanged(_trackedTarget);
-		}
-	}
+	// [SerializeField] private Trackable _trackedTarget;
+	// public Trackable TrackedTarget
+	// {
+	// 	get => _trackedTarget;
+	// 	set
+	// 	{
+	// 		if (_trackedTarget == value) return;
+	// 		_trackedTarget = value;
+	// 		PlayerController.OnTargetChanged(_trackedTarget);
+	// 	}
+	// }
 
 	public Health Health { get; private set; }
 
@@ -46,7 +46,13 @@ public class Actor : Entity, IDamageable, ITracker
 	public Timer HitReaction { get; private set; }
 
 	public Timer JumpAllowance { get; private set; }
-	
+
+	public ActorController Controller
+	{
+		get => controller;
+		private set => controller = value;
+	}
+
 	public override void Awake()
 	{
 		base.Awake();
@@ -112,7 +118,7 @@ public class Actor : Entity, IDamageable, ITracker
 		// 	TrackedTarget = null;
 		// }
 		
-		if (controller) controller.Tick(this, deltaTime);
+		if (Controller) Controller.Tick(this, deltaTime);
 		InputBuffer.Tick(deltaTime);
 		_actorTimerGroup.Tick(deltaTime);
 	}
@@ -120,7 +126,7 @@ public class Actor : Entity, IDamageable, ITracker
 	public override void OnLateTick(float deltaTime)
 	{
 		base.OnLateTick(deltaTime);
-		if (controller) controller.LateTick(this, deltaTime);
+		if (Controller) Controller.LateTick(this, deltaTime);
 	}
 	
 	public override void OnFixedTick(float deltaTime)
@@ -136,14 +142,14 @@ public class Actor : Entity, IDamageable, ITracker
 	
 	public void SetController(ActorController newController, object context = null)
 	{
-		if (controller != null)
-			controller.Release(this);
+		if (Controller != null)
+			Controller.Release(this);
 
 		newController.Possess(this, context);
-		controller = newController;
+		Controller = newController;
 	}
 
-	public Vector3 GetTrackedTargetDirection() => (TrackedTarget.GetEyesPosition() - Trackable.GetEyesPosition()).WithY(0f).normalized;
+	public Vector3 DirectionToTrackable(Trackable trackable) => (trackable.GetEyesPosition() - Trackable.GetEyesPosition()).WithY(0f).normalized;
 
 	public void Die() => this.WaitForEndOfFrameThen(() => Destroy(gameObject));
 
@@ -159,8 +165,6 @@ public class Actor : Entity, IDamageable, ITracker
 		HitReaction.Reset(duration);
 	}
 	
-	private void ReleaseTarget() => TrackedTarget = null;
-
 	public void OnPossessedByPlayer(PlayerController playerController) => PossessedByPlayer?.Invoke(playerController);
 
 	public void OnReleasedByPlayer(PlayerController playerController) => ReleasedByPlayer?.Invoke(playerController);

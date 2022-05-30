@@ -27,10 +27,12 @@ public class MainMode : GameMode
     private Actor _playerActor = null;
     private int _actorIndex;
     private List<Actor> _actorsInScene;
-    private Camera _mainCamera;
+    
+    public Camera MainCamera { get; private set; }
+
     [NonSerialized] private bool _cachedPhysicsPaused;
 
-    public ThirdPersonCamera MainCamera => gameCamera;
+    public ThirdPersonCamera GameCamera => gameCamera;
 
     public static void AddEntity(Entity entity) => _entities.Add(entity);
     public static void RemoveEntity(Entity entity) => _entities.Remove(entity);
@@ -43,7 +45,7 @@ public class MainMode : GameMode
             _entities = new List<Entity>();
             _combatEvents = new List<CombatEvent>();
             _actorsInScene = new List<Actor>(Object.FindObjectsOfType<Actor>());
-            _mainCamera = gameCamera.GetComponent<Camera>();
+            MainCamera = gameCamera.GetComponent<Camera>();
             gameCamera.Init();
         }
 
@@ -125,14 +127,8 @@ public class MainMode : GameMode
         }
 
         _playerActor = newPlayer;
-        _playerActor.SetController(playerBrain, new PlayerControllerContext()
-        {
-            MainCamera = _mainCamera,
-            GameCamera = gameCamera
-        });
-        
+        _playerActor.SetController(playerBrain);
         gameCamera.SetFollowTarget(_playerActor.GetComponent<Trackable>(), immediate); // Set the camera to follow the active player
-        LockOn.SetPlayerActor(_playerActor);
     }
     
     public static void AddCombatEvent(CombatEvent combatEvent) => _combatEvents.Add(combatEvent);

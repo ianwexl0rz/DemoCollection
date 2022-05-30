@@ -232,9 +232,10 @@ public class ActorPhysicalMotor : EntityPhysics
 		var validLookInput = _isGrounded && Move.normalized != Vector3.zero && _actor.InputEnabled && !_actor.HitReaction.InProgress;
 		if (validLookInput) _lookDirection = Move.normalized;
 
-		if (!ReferenceEquals(_actor.TrackedTarget, null))
+		var trackedTarget = _actor.Controller ? _actor.Controller.TrackedTarget : null;
+		if (trackedTarget)
 		{
-			var lockOnOrientation = Quaternion.LookRotation(_actor.GetTrackedTargetDirection());
+			var lockOnOrientation = Quaternion.LookRotation(_actor.DirectionToTrackable(trackedTarget));
 			_desiredRotation = Quaternion.RotateTowards(_desiredRotation, lockOnOrientation, maxTurnRate);
 
 			if (_rollAngle > 0 && _groundVelocity.magnitude >= minSpeed)
