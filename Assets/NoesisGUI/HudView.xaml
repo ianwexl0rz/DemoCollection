@@ -16,19 +16,15 @@
     <Grid>
         <Grid.Resources>
             <BooleanToVisibilityConverter x:Key="BoolToVisConverter" />
-
             <DataTemplate x:Key="Trackable" DataType="{x:Type local:TrackableViewModel}">
                 <Canvas VerticalAlignment="Top" HorizontalAlignment="Left">
-                    <Viewbox Width="128"
-                                    Stretch="Fill"
-                                    Height="10"
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5" Margin="-64,-64,0,0">
-                        <local:HealthBarUserControl
-                                Current="{Binding Health.Current}"
-                                Maximum="{Binding Health.Maximum}"/>
-                    </Viewbox>
-
+                    <local:HealthBarUserControl
+                        Width="128"
+                        Height="10"
+                        Margin="-64,-64,0,0"
+                        Current="{Binding Health.Current}"
+                        Maximum="{Binding Health.Maximum}"
+                        SnapsToDevicePixels="True"/>
                     <Canvas.RenderTransform>
                         <TranslateTransform X="{Binding ScreenPosX}" Y="{Binding ScreenPosY}"/>
                     </Canvas.RenderTransform>
@@ -37,12 +33,13 @@
         </Grid.Resources>
 
         <local:HealthBarUserControl x:Name="playerHealth"
+            Width="512"
+            Height="16"
             Current="{Binding HUD.Health.Current}"
             Maximum="{Binding HUD.Health.Maximum}"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
-            Margin="32,32,0,0"/>
-
+            Margin="32,24,0,0"/>
 
         <Canvas x:Name="trackingUI"
             HorizontalAlignment="Left"
@@ -52,14 +49,6 @@
             Margin="-24,-24,-24,-24"
             RenderTransformOrigin="0.5,0.5"
             Visibility="{Binding HUD.HasTarget, Converter={StaticResource BoolToVisConverter}}">
-
-            <!-->
-            <Viewbox Width="128" Margin="24,0,0,0" Canvas.Left="-64" Canvas.Top="-24" Stretch="Fill" Height="10">
-                <local:HealthBarUserControl x:Name="trackedEnemyHealth"
-                    Current="{Binding HUD.EnemyHealth.Current}"
-                    Maximum="{Binding HUD.EnemyHealth.Maximum}"/>
-            </Viewbox>
-            <!-->
 
             <Ellipse x:Name="reticle" Width="48" Height="48" >
                 <Ellipse.Fill>

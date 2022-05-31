@@ -5,8 +5,12 @@ namespace DemoCollection
 	[Serializable]
 	public class RangeProperty : ObservableObject
 	{
-		public int _current = 0;
+		public int _current = 100;
 		public int _maximum = 100;
+
+		public RangeProperty()
+		{
+		}
 
 		public RangeProperty(int current, int maximum)
 		{

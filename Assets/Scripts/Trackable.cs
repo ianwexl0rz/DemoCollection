@@ -70,6 +70,7 @@ public class Trackable : ObservableMonobehaviour
 		else
 		{
 			var screenPos = mainCamera.WorldToScreenPoint(GetCenter());
+			screenPos = new Vector3(Mathf.Round(screenPos.x), Mathf.Round(screenPos.y), screenPos.z);
 			_trackingData = new TrackingData
 			{
 				ScreenPos = screenPos,

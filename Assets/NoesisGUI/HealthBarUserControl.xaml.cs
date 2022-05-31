@@ -17,7 +17,7 @@ namespace DemoCollection
 		#region Dependency Properties
 		public static readonly DependencyProperty CurrentProperty =
 			DependencyProperty.Register("Current", typeof(int),
-			typeof(HealthBarUserControl), new PropertyMetadata(default));
+			typeof(HealthBarUserControl), new PropertyMetadata(100));
 
 		public int Current
 		{
@@ -27,7 +27,7 @@ namespace DemoCollection
 
 		public static readonly DependencyProperty MaximumProperty =
 			DependencyProperty.Register("Maximum", typeof(int),
-			typeof(HealthBarUserControl), new PropertyMetadata(default));
+			typeof(HealthBarUserControl), new PropertyMetadata(100));
 
 		public int Maximum
 		{

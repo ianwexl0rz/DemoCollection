@@ -6,25 +6,28 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:DemoCollection"
              mc:Ignorable="d" 
-             d:DesignHeight="20" d:DesignWidth="512"
-             d:DataContext="{d:DesignInstance {x:Type local:ViewModel}, IsDesignTimeCreatable=True}">
-
-    <UserControl.Resources>
-        <LinearGradientBrush x:Key="HealthBarFill" EndPoint="0.5,1" StartPoint="0.5,0">
-            <GradientStop Offset="1" Color="Maroon"/>
-            <GradientStop Offset="0" Color="Red"/>
-        </LinearGradientBrush>
-    </UserControl.Resources>
+             d:DesignHeight="16" d:DesignWidth="512"
+             d:DataContext="{d:DesignInstance {x:Type local:RangeProperty}, IsDesignTimeCreatable=True}">
 
     <Grid DataContext="{Binding ElementName=HealthBar}">
-        <ProgressBar Foreground="{DynamicResource HealthBarFill}"
-                     BorderBrush="#BF000000"
-                     RenderTransformOrigin="0.5,0.5"
-                     Height="20"
-                     Width="512"
-                     Background="#BF000000"
-                     Maximum="{Binding Path=Maximum}"
-                     Value="{Binding Path=Current}"
-                     BorderThickness="2,2,2,2"/>
+        <Grid.Resources>
+            <LinearGradientBrush x:Key="HealthBarGradientFill" EndPoint="0.5,1" StartPoint="0.5,0">
+                <GradientStop Offset="1" Color="Maroon"/>
+                <GradientStop Offset="0" Color="Red"/>
+            </LinearGradientBrush>
+        </Grid.Resources>
+
+        <Border Background="#BF000000"
+                Padding="2,2,2,2">
+            <Viewbox Stretch="Fill">
+                <Border Width="{Binding Path=Maximum}"
+                        Height="20">
+                    <Rectangle Fill="{StaticResource HealthBarGradientFill}"
+                           Width="{Binding Path=Current}"
+                           HorizontalAlignment="Left">
+                    </Rectangle>
+                </Border>
+            </Viewbox>
+        </Border>
     </Grid>
 </UserControl>
