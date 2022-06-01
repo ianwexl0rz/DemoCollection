@@ -225,7 +225,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   controller: {fileID: 0}
   <TrackingRange>k__BackingField: 10
-  _trackedTarget: {fileID: 0}
 --- !u!114 &7708959242255476582
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -239,7 +238,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Motor: {fileID: 2851184503474934860}
-  MaxStableMoveSpeed: 4
+  MaxStableWalkSpeed: 4
+  MaxStableMoveSpeed: 6
   StableMovementSharpness: 15
   OrientationSharpness: 10
   MaxAirMoveSpeed: 4
@@ -339,9 +339,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a3171578f584018a111747f168f7c59, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _inRangeOfPlayer: 0
-  onScreen: 0
-  screenPos: {x: 0, y: 0, z: 0}
   health: {fileID: 0}
 --- !u!114 &1062690882150740264
 MonoBehaviour:

@@ -258,9 +258,9 @@ MonoBehaviour:
       _userAssignable: 1
       _categoryId: 0
     - _id: 3
-      _name: Roll
+      _name: Evade
       _type: 1
-      _descriptiveName: Roll
+      _descriptiveName: Evade
       _positiveDescriptiveName: 
       _negativeDescriptiveName: 
       _behaviorId: 0
@@ -320,15 +320,6 @@ MonoBehaviour:
       _behaviorId: 0
       _userAssignable: 1
       _categoryId: 0
-    - _id: 10
-      _name: Sprint
-      _type: 1
-      _descriptiveName: Sprint
-      _positiveDescriptiveName: 
-      _negativeDescriptiveName: 
-      _behaviorId: 0
-      _userAssignable: 1
-      _categoryId: 0
     - _id: 11
       _name: Jump
       _type: 1
@@ -383,7 +374,7 @@ MonoBehaviour:
     actionCategoryMap:
       list:
       - categoryId: 0
-        actionIds: 000000000100000002000000030000000400000005000000060000000a0000000b0000000e0000000700000008000000090000000c0000000d0000000f000000
+        actionIds: 000000000100000002000000030000000400000005000000060000000b0000000e0000000700000008000000090000000c0000000d0000000f000000
     inputBehaviors:
     - _id: 0
       _name: Default
@@ -400,9 +391,9 @@ MonoBehaviour:
       _mouseOtherAxisSensitivity: 1
       _customControllerAxisSensitivity: 1
       _buttonDoublePressSpeed: 0.3
-      _buttonShortPressTime: 0.25
-      _buttonShortPressExpiresIn: 0
-      _buttonLongPressTime: 1
+      _buttonShortPressTime: 0
+      _buttonShortPressExpiresIn: 0.25
+      _buttonLongPressTime: 0.25
       _buttonLongPressExpiresIn: 0
       _buttonDeadZone: 0.5
       _buttonDownBuffer: 0
@@ -562,7 +553,7 @@ MonoBehaviour:
         _modifierKey2: 0
         _modifierKey3: 0
       - _actionCategoryId: 0
-        _actionId: 2
+        _actionId: -1
         _elementType: 1
         _elementIdentifierId: 7
         _axisRange: 0
@@ -617,7 +608,7 @@ MonoBehaviour:
         _modifierKey2: 0
         _modifierKey3: 0
       - _actionCategoryId: 0
-        _actionId: 14
+        _actionId: 2
         _elementType: 1
         _elementIdentifierId: 12
         _axisRange: 0
@@ -628,7 +619,7 @@ MonoBehaviour:
         _modifierKey2: 0
         _modifierKey3: 0
       - _actionCategoryId: 0
-        _actionId: 10
+        _actionId: -1
         _elementType: 0
         _elementIdentifierId: 13
         _axisRange: 0

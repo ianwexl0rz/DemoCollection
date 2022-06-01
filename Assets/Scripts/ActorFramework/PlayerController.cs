@@ -85,14 +85,16 @@ public class PlayerController : ActorController
 		if (_locomotion != null)
 		{
 			var move = CalculateMove(actor);
+			var shouldRun = _player.GetButtonLongPress(PlayerAction.Evade);
+			var look = CalculateLook(actor, move, shouldRun);
 
 			var inputs = new CharacterInputs()
 			{
 				Move = move,
-				Look = CalculateLook(actor, move),
-				Run = _player.GetButton(PlayerAction.Sprint),
+				Look = look,
+				Run = shouldRun,
+				BeginRoll = _player.GetButtonShortPressUp(PlayerAction.Evade),
 				BeginJump = _player.GetButtonDown(PlayerAction.Jump),
-				BeginRoll = _player.GetButtonDown(PlayerAction.Roll),
 				IsInHitStun = actor.HitReaction.InProgress
 			};
 
@@ -101,11 +103,11 @@ public class PlayerController : ActorController
 		else if (_legacyMotor != null)
 		{
 			_legacyMotor.Move = CalculateMove(actor);
-			_legacyMotor.Run = _player.GetButton(PlayerAction.Sprint);
+			_legacyMotor.Run = _player.GetButtonLongPress(PlayerAction.Evade);
 			
 			// Roll
-			if(_player.GetButtonDown(PlayerAction.Roll))
-				actor.InputBuffer.Add(PlayerAction.Roll, 0.1f);
+			if(_player.GetButtonShortPressUp(PlayerAction.Evade))
+				actor.InputBuffer.Add(PlayerAction.Evade, 0.25f);
 
 			// Jump
 			if(_player.GetButtonDown(PlayerAction.Jump))
@@ -153,11 +155,11 @@ public class PlayerController : ActorController
 		if (toRemove.Count > 0) ChangedRecentlyHitList?.Invoke();
 	}
 
-	private Vector3 CalculateLook(Actor actor, Vector3 move)
+	private Vector3 CalculateLook(Actor actor, Vector3 move, bool shouldRun)
 	{
 		if (!actor.InputEnabled) return actor.transform.forward;
 		
-		return TrackedTarget ? actor.DirectionToTrackable(TrackedTarget) : move;
+		return TrackedTarget && !shouldRun ? actor.DirectionToTrackable(TrackedTarget) : move;
 	}
 
 	private Vector3 CalculateMove(Actor actor)

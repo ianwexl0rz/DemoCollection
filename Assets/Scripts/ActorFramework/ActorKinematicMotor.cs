@@ -23,7 +23,8 @@ namespace ActorFramework
         public KinematicCharacterMotor Motor;
 
         [Header("Stable Movement")]
-        public float MaxStableMoveSpeed = 10f;
+        public float WalkSpeed = 3f;
+        public float RunSpeed = 5f;
         public float StableMovementSharpness = 15;
         public float OrientationSharpness = 10;
 
@@ -139,17 +140,15 @@ namespace ActorFramework
 
         public void UpdateRotation(ref Quaternion currentRotation, float deltaTime)
         {
-            var upwards = -Gravity.normalized;
-            
-            if ((_lookInputVector != Vector3.zero || Motor.CharacterUp != upwards) && OrientationSharpness > 0f)
+            if (_lookInputVector != Vector3.zero && OrientationSharpness > 0f)
             {
-                var forward = Vector3.Cross(Motor.CharacterRight, upwards);
+                var forward = Vector3.Cross(Motor.CharacterRight, -Gravity.normalized);
 
                 // Smoothly interpolate from current to target look direction
                 var smoothedLookInputDirection = Vector3.Slerp(forward, _lookInputVector, 1 - Mathf.Exp(-OrientationSharpness * deltaTime)).normalized;
 
                 // Set the current rotation (which will be used by the KinematicCharacterMotor)
-                currentRotation = Quaternion.LookRotation(smoothedLookInputDirection, upwards);
+                currentRotation = Quaternion.LookRotation(smoothedLookInputDirection, -Gravity);
             }
         }
 
@@ -180,7 +179,7 @@ namespace ActorFramework
                 var torque = torquePID.Output(rb.angularVelocity, targetTorque, ref _torqueIntegral, ref _torqueError,
                     Time.fixedDeltaTime);
                 rb.AddTorque(torque, ForceMode.Acceleration);
-                rb.velocity = (forward * MaxStableMoveSpeed).WithY(rb.velocity.y);
+                rb.velocity = (forward * RunSpeed).WithY(rb.velocity.y);
             }
             
             rb.isKinematic = true;
@@ -208,10 +207,11 @@ namespace ActorFramework
                 currentVelocity = Motor.GetDirectionTangentToSurface(currentVelocity, Motor.GroundingStatus.GroundNormal) * currentVelocity.magnitude;
 
                 // Calculate target velocity
-                // var inputRight = Vector3.Cross(_moveInputVector, Motor.CharacterUp);
                 var inputRight = Vector3.Cross(_moveInputVector, Vector3.up);
-                var reorientedInput = Vector3.Cross(Motor.GroundingStatus.GroundNormal, inputRight).normalized * _moveInputVector.magnitude;
-                targetMovementVelocity = reorientedInput * MaxStableMoveSpeed;
+                var targetDirection = Vector3.Cross(Motor.GroundingStatus.GroundNormal, inputRight).normalized;
+                var targetSpeed = _shouldRun ? RunSpeed : WalkSpeed;
+                
+                targetMovementVelocity = targetDirection * targetSpeed;
 
                 // Smooth movement Velocity
                 currentVelocity = Vector3.Lerp(currentVelocity, targetMovementVelocity, 1 - Mathf.Exp(-StableMovementSharpness * deltaTime));
@@ -312,11 +312,11 @@ namespace ActorFramework
             
             var input = new AnimatedMotorProperties()
             {
-                MoveSpeedNormalized = Motor.BaseVelocity.magnitude / MaxStableMoveSpeed,
+                MoveSpeedNormalized = Motor.BaseVelocity.magnitude / RunSpeed,
                 IsGrounded = Motor.GroundingStatus.FoundAnyGround,
                 DirectionY = Mathf.Clamp01(Mathf.InverseLerp(1f, -1f, Motor.Velocity.y)),
-                VelocityX = Vector3.Dot(Motor.BaseVelocity, Motor.CharacterRight) / MaxStableMoveSpeed,
-                VelocityZ = Vector3.Dot(Motor.BaseVelocity, Motor.CharacterForward) / MaxStableMoveSpeed,
+                VelocityX = Vector3.Dot(Motor.BaseVelocity, Motor.CharacterRight) / RunSpeed,
+                VelocityZ = Vector3.Dot(Motor.BaseVelocity, Motor.CharacterForward) / RunSpeed,
                 IsHitReacting = _isHitReacting
             };
 

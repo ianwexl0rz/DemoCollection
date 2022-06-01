@@ -217,7 +217,7 @@ public class ActorPhysicalMotor : EntityPhysics
 		}
 		
 		// Roll.
-		if (_rollAngle > 0f && _rollAngle < 360f || inputBuffer.TryConsumeAction(PlayerAction.Roll))
+		if (_rollAngle > 0f && _rollAngle < 360f || inputBuffer.TryConsumeAction(PlayerAction.Evade))
 		{
 			_rollAngle += rollSpeed * Time.fixedDeltaTime;
 			if (_rollAngle >= 360f) _rollAngle = 0f;
@@ -233,7 +233,7 @@ public class ActorPhysicalMotor : EntityPhysics
 		if (validLookInput) _lookDirection = Move.normalized;
 
 		var trackedTarget = _actor.Controller ? _actor.Controller.TrackedTarget : null;
-		if (trackedTarget)
+		if (trackedTarget && !Run)
 		{
 			var lockOnOrientation = Quaternion.LookRotation(_actor.DirectionToTrackable(trackedTarget));
 			_desiredRotation = Quaternion.RotateTowards(_desiredRotation, lockOnOrientation, maxTurnRate);
