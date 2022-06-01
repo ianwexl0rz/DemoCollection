@@ -38,7 +38,7 @@ namespace DemoCollection.DataBinding
             playerController.PossessedActor += RegisterActor;
             playerController.TargetChanged += RegisterTarget;
             playerController.ChangedRecentlyHitList += UpdateVisibleHealthBars;
-            playerController.RequestUpdateReticle += ChangedLockOnIndicator;
+            playerController.RequestUpdateReticle += UpdateReticle;
         }
 
         private void RegisterActor(Actor actor)
@@ -61,7 +61,7 @@ namespace DemoCollection.DataBinding
             OnPropertyChanged("RecentlyHit");
         }
 
-        private void ChangedLockOnIndicator(Trackable trackable)
+        private void UpdateReticle(Trackable trackable)
         {
             OnPropertyChanged("HasTarget");
             OnPropertyChanged("TargetX");

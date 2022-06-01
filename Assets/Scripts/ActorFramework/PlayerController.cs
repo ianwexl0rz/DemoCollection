@@ -20,7 +20,6 @@ public class PlayerController : ActorController
 	public static List<Trackable> PotentialTargets { get; private set; } = new List<Trackable>();
 
 	public event Action<Actor> PossessedActor;
-	public event Action<Actor> ReleasedActor;
 	public event Action ChangedRecentlyHitList;
 	public event Action<Trackable> RequestUpdateReticle;
 
@@ -32,10 +31,14 @@ public class PlayerController : ActorController
 	private Player _player;
 	private Camera _mainCamera;
 	private ThirdPersonCamera _gameCamera;
-	private ActorKinematicMotor _locomotion;
-	private ActorPhysicalMotor _legacyMotor;
 	private Trackable _trackableCandidate;
 	private bool _lookInputStale;
+	private Vector3 _facingDirection;
+	
+	// Cached actor components
+	private ActorKinematicMotor _locomotion;
+	private ActorPhysicalMotor _legacyMotor;
+	private MeleeWeaponUser _meleeWeaponUser;
 
 	public void Init(PlayerControllerContext context)
 	{
@@ -48,19 +51,21 @@ public class PlayerController : ActorController
 	{
 		_locomotion = actor.GetComponent<ActorKinematicMotor>();
 		_legacyMotor = actor.GetComponent<ActorPhysicalMotor>();
+		_meleeWeaponUser = actor.GetComponent<MeleeWeaponUser>();
+
+		if (_meleeWeaponUser) _meleeWeaponUser.RegisterPlayerCallbacks(this);
 
 		RecentlyHit.Remove(actor.Trackable);
-
 		PossessedActor?.Invoke(actor);
-		actor.OnPossessedByPlayer(this);
 	}
 
 	public override void Release(Actor actor)
 	{
-		ReleasedActor?.Invoke(actor);
-		actor.OnReleasedByPlayer(this);
 		actor.InputBuffer.Clear();
 		TrackedTarget = null;
+		_facingDirection = Vector3.zero;
+
+		if (_meleeWeaponUser) _meleeWeaponUser.UnregisterPlayerCallbacks(this);
 
 		if (_locomotion != null)
 		{
@@ -82,17 +87,16 @@ public class PlayerController : ActorController
 		if(_player.GetButtonDown(PlayerAction.Attack))
 			actor.InputBuffer.Add(PlayerAction.Attack, 0.5f);
 
+		var isRunning = _player.GetButtonLongPress(PlayerAction.Evade);
+		CalculateMoveAndOrientation(actor, isRunning, out var move);
+
 		if (_locomotion != null)
 		{
-			var move = CalculateMove(actor);
-			var shouldRun = _player.GetButtonLongPress(PlayerAction.Evade);
-			var look = CalculateLook(actor, move, shouldRun);
-
 			var inputs = new CharacterInputs()
 			{
 				Move = move,
-				Look = look,
-				Run = shouldRun,
+				Look = _facingDirection,
+				Run = isRunning,
 				BeginRoll = _player.GetButtonShortPressUp(PlayerAction.Evade),
 				BeginJump = _player.GetButtonDown(PlayerAction.Jump),
 				IsInHitStun = actor.HitReaction.InProgress
@@ -102,8 +106,8 @@ public class PlayerController : ActorController
 		}
 		else if (_legacyMotor != null)
 		{
-			_legacyMotor.Move = CalculateMove(actor);
-			_legacyMotor.Run = _player.GetButtonLongPress(PlayerAction.Evade);
+			_legacyMotor.Move = move;
+			_legacyMotor.Run = isRunning;
 			
 			// Roll
 			if(_player.GetButtonShortPressUp(PlayerAction.Evade))
@@ -155,34 +159,42 @@ public class PlayerController : ActorController
 		if (toRemove.Count > 0) ChangedRecentlyHitList?.Invoke();
 	}
 
-	private Vector3 CalculateLook(Actor actor, Vector3 move, bool shouldRun)
+	public void SetOrientationOnAttack(Actor actor)
 	{
-		if (!actor.InputEnabled) return actor.transform.forward;
-		
-		return TrackedTarget && !shouldRun ? actor.DirectionToTrackable(TrackedTarget) : move;
-	}
-
-	private Vector3 CalculateMove(Actor actor)
-	{
-		if (!actor.InputEnabled) return Vector3.zero;
-		
-		var move = new Vector3
+		if (TrackedTarget)
 		{
-			x = _player.GetAxis(PlayerAction.MoveHorizontal),
-			z = _player.GetAxis(PlayerAction.MoveVertical)
-		};
-		
-		var deadZone = GameManager.Settings.deadZone;
-
-		// Early out if move input is less than the dead zone.
-		if(move.magnitude < deadZone) return Vector3.zero;
-
-		// Remap the input so the range is [0-1] accounting for the dead zone.
-		move = move.normalized * Mathf.InverseLerp(deadZone, 1, move.magnitude);
-
-		// Orient the input relative to the camera.
-		return GameManager.Camera.YawRotation * move;
+			_facingDirection = actor.DirectionToTrackable(TrackedTarget);
+		}
+		else
+		{
+			var move = CalculateMove();
+			if (move != Vector3.zero) _facingDirection = move.normalized;
+		}
 	}
+
+	private void CalculateMoveAndOrientation(Actor actor, bool isRunning, out Vector3 move)
+	{
+		if (actor.InputEnabled)
+		{
+			move = CalculateMove();
+
+			if (TrackedTarget && !isRunning)
+			{
+				_facingDirection = actor.DirectionToTrackable(TrackedTarget);
+			}
+			else if (move != Vector3.zero)
+			{
+				_facingDirection = move.normalized;
+			}
+		}
+		else move = Vector3.zero;
+	}
+	
+	private Vector3 CalculateMove() => GameManager.Camera.YawRotation * new Vector3
+	{
+		x = _player.GetAxis(PlayerAction.MoveHorizontal),
+		z = _player.GetAxis(PlayerAction.MoveVertical)
+	};
 
 	private void HandleLockOnInput(Actor actor)
 	{

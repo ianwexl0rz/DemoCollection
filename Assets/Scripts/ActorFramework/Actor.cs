@@ -11,34 +11,16 @@ public class Actor : Entity, IDamageable
 	private static readonly int DamageFlash = Shader.PropertyToID("_DamageFlash");
 
 	public event Action<InputBuffer> ConsumeInput;
-	public event Action<PlayerController> PossessedByPlayer;
-	public event Action<PlayerController> ReleasedByPlayer;
 
 	[SerializeField] private ActorController controller;
 
 	private Renderer[] _renderers;
 	private Coroutine _damageFlash;
 	private TimerGroup _actorTimerGroup;
-	
-	//public Trackable Trackable { get; private set; }
 
 	public Animator Animator { get; private set; }
 
 	public bool InputEnabled { get; set; }
-	
-	[field: SerializeField] public float TrackingRange { get; set; } = 10f;
-
-	// [SerializeField] private Trackable _trackedTarget;
-	// public Trackable TrackedTarget
-	// {
-	// 	get => _trackedTarget;
-	// 	set
-	// 	{
-	// 		if (_trackedTarget == value) return;
-	// 		_trackedTarget = value;
-	// 		PlayerController.OnTargetChanged(_trackedTarget);
-	// 	}
-	// }
 
 	public Health Health { get; private set; }
 
@@ -61,7 +43,6 @@ public class Actor : Entity, IDamageable
 		Health.Depleted += Die;
 
 		_renderers = GetComponentsInChildren<Renderer>();
-		//Trackable = GetComponent<Trackable>();
 
 		_actorTimerGroup = new TimerGroup();
 		_actorTimerGroup.AddRange( new Timer[]
@@ -112,12 +93,6 @@ public class Actor : Entity, IDamageable
 	{
 		base.OnTick(deltaTime);
 
-		// // TODO: Tracked objects should unset themselves on destroy.
-		// if (TrackedTarget == null && !ReferenceEquals(TrackedTarget, null))
-		// {
-		// 	TrackedTarget = null;
-		// }
-		
 		if (Controller) Controller.Tick(this, deltaTime);
 		InputBuffer.Tick(deltaTime);
 		_actorTimerGroup.Tick(deltaTime);
@@ -164,8 +139,4 @@ public class Actor : Entity, IDamageable
 		var duration = Mathf.Max(HitReaction.Duration - HitReaction.Current, attackData.stun);
 		HitReaction.Reset(duration);
 	}
-	
-	public void OnPossessedByPlayer(PlayerController playerController) => PossessedByPlayer?.Invoke(playerController);
-
-	public void OnReleasedByPlayer(PlayerController playerController) => ReleasedByPlayer?.Invoke(playerController);
 }

@@ -224,7 +224,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   controller: {fileID: 0}
-  <TrackingRange>k__BackingField: 10
 --- !u!114 &7708959242255476582
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -238,10 +237,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Motor: {fileID: 2851184503474934860}
-  MaxStableWalkSpeed: 4
-  MaxStableMoveSpeed: 6
+  WalkSpeed: 3
+  RunSpeed: 5
   StableMovementSharpness: 15
-  OrientationSharpness: 10
+  OrientationSharpness: 15
+  AttackOrientationSharpness: 20
   MaxAirMoveSpeed: 4
   AirAccelerationSpeed: 5
   Drag: 0.05
@@ -364,7 +364,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5753867373692666485}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5411299ba2064b23872df71c0ece6489, type: 3}
   m_Name: 

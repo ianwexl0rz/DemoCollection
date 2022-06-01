@@ -26,7 +26,8 @@ namespace ActorFramework
         public float WalkSpeed = 3f;
         public float RunSpeed = 5f;
         public float StableMovementSharpness = 15;
-        public float OrientationSharpness = 10;
+        public float OrientationSharpness = 15;
+        public float AttackOrientationSharpness = 50;
 
         [Header("Air Movement")]
         public float MaxAirMoveSpeed = 10f;
@@ -68,30 +69,7 @@ namespace ActorFramework
         private Vector3 _torqueIntegral;
         private Vector3 _torqueError;
         private EntityPhysics _entityPhysics;
-        
-#if UNITY_EDITOR
-        private void OnEnable()
-        {
-            AssemblyReloadEvents.beforeAssemblyReload += OnBeforeAssemblyReload;
-            AssemblyReloadEvents.afterAssemblyReload += OnAfterAssemblyReload;
-        }
 
-        private void OnDisable()
-        {
-            AssemblyReloadEvents.beforeAssemblyReload -= OnBeforeAssemblyReload;
-            AssemblyReloadEvents.afterAssemblyReload -= OnAfterAssemblyReload;
-        }
-
-        public void OnBeforeAssemblyReload()
-        {
-        }
-
-        public void OnAfterAssemblyReload()
-        {
-            Motor.CharacterController = this;
-        }
-  #endif
-        
         private void Start()
         {
             Motor.CharacterController = this;
@@ -104,7 +82,6 @@ namespace ActorFramework
         {
             _actor.SetPaused -= SetMotorPaused;
         }
-
 
         private void SetMotorPaused(bool paused)
         {
@@ -125,11 +102,8 @@ namespace ActorFramework
             _lookInputVector = inputs.Look;
             _shouldRun = inputs.Run;
             
-            if (inputs.BeginRoll)
-            {
-                _rollRequested = true;
-            }
-            
+            if (inputs.BeginRoll) _rollRequested = true;
+
             // Jumping input
             if (inputs.BeginJump)
             {
@@ -140,12 +114,14 @@ namespace ActorFramework
 
         public void UpdateRotation(ref Quaternion currentRotation, float deltaTime)
         {
-            if (_lookInputVector != Vector3.zero && OrientationSharpness > 0f)
+            var sharpness = _actor.InputEnabled ? OrientationSharpness : AttackOrientationSharpness;
+            
+            if (_lookInputVector != Vector3.zero && sharpness > 0f)
             {
                 var forward = Vector3.Cross(Motor.CharacterRight, -Gravity.normalized);
 
                 // Smoothly interpolate from current to target look direction
-                var smoothedLookInputDirection = Vector3.Slerp(forward, _lookInputVector, 1 - Mathf.Exp(-OrientationSharpness * deltaTime)).normalized;
+                var smoothedLookInputDirection = Vector3.Slerp(forward, _lookInputVector, 1 - Mathf.Exp(-sharpness * deltaTime)).normalized;
 
                 // Set the current rotation (which will be used by the KinematicCharacterMotor)
                 currentRotation = Quaternion.LookRotation(smoothedLookInputDirection, -Gravity);

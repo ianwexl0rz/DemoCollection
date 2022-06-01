@@ -8,7 +8,9 @@ using UnityEngine.Serialization;
 public class MeleeWeaponUser : MonoBehaviour
 {
 	private static readonly int Attack = Animator.StringToHash("lightAttack");
-	public event Action<CombatEvent> HitSomething;
+
+	private event Action<Actor> BeginAttack;
+	private event Action<CombatEvent> HitSomething;
 
 	[FormerlySerializedAs("weaponBone")] public Transform WeaponBone = null;
 	[SerializeField] private Vector3 weaponBoneUp = Vector3.up;
@@ -28,23 +30,28 @@ public class MeleeWeaponUser : MonoBehaviour
 		Actor.ConsumeInput += HandleInput;
 		Actor.LateTick += ProcessAttackAnimation;
 		Actor.GetHit += HandleGetHit;
-		Actor.PossessedByPlayer += StartAttributingHitsToPlayer;
-		Actor.ReleasedByPlayer -= StopAttributingHitsToPlayer;
 
 		if (defaultWeaponPrefab != null)
 			EquipWeapon(defaultWeaponPrefab);
 	}
 
-	public void StartAttributingHitsToPlayer(PlayerController playerController)
+	public void RegisterPlayerCallbacks(PlayerController playerController)
 	{
+		BeginAttack += playerController.SetOrientationOnAttack;
 		HitSomething += playerController.AddTargetToRecentlyHitList;
 	}
 	
-	public void StopAttributingHitsToPlayer(PlayerController playerController)
+	public void UnregisterPlayerCallbacks(PlayerController playerController)
 	{
+		BeginAttack -= playerController.SetOrientationOnAttack;
 		HitSomething -= playerController.AddTargetToRecentlyHitList;
 	}
 
+	public void NewAttack()
+	{
+		BeginAttack?.Invoke(Actor);
+	}
+	
 	public void NewHit(AnimationEvent animEvent)
 	{
 		_hasActiveHit = true;
