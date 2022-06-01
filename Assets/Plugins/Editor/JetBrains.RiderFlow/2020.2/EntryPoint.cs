@@ -16,7 +16,7 @@ namespace JetBrains.RiderFlow.Since2020_2
             SearchEverywhereWindow.Settings = SearchWindowSettings.instance;
             RecentFilesCacheController.Cache = RecentFilesCache.instance;
             ProgressManagerOwner.ProgressManager = new ProgressManager();
-            UnityEditorUtils.ExecuteOnceOnUpdateCall(OnEnable);
+            OnEnable();
         }
         
         protected static void OnEnable()
