@@ -13,7 +13,5 @@ MonoBehaviour:
   m_Name: PlayerController
   m_EditorClassIdentifier: 
   <ShowHealthOnHitDuration>k__BackingField: 1
-  <Tracking>k__BackingField:
-    <Range>k__BackingField: 10
-    <AngleThreshold>k__BackingField: 90
-    <TrackablesInRange>k__BackingField: []
+  <LockOnRange>k__BackingField: 20
+  <ChangeTargetAngleTolerance>k__BackingField: 90

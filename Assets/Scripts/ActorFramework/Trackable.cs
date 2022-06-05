@@ -27,6 +27,17 @@ public class Trackable : ObservableMonobehaviour
 
 	private Entity _owner;
 	private TrackingData _trackingData;
+	private TrackingData TrackingData
+	{
+		get => _trackingData;
+		set
+		{
+			_trackingData = value;
+			OnPropertyChanged("ScreenPosX");
+			OnPropertyChanged("ScreenPosY");
+			OnPropertyChanged("OnScreen");
+		}
+	}
 
 	public bool OnScreen => _trackingData.OnScreen;
 	
@@ -54,6 +65,7 @@ public class Trackable : ObservableMonobehaviour
 
 	protected virtual void Awake()
 	{
+		
 		_owner = GetComponent<Entity>();
 		Health = _owner.GetComponent<Health>();
 		PlayerController.PotentialTargets.Add(this);
@@ -61,25 +73,22 @@ public class Trackable : ObservableMonobehaviour
 
 	protected void OnDestroy() => PlayerController.PotentialTargets.Remove(this);
 
-	public void RefreshTrackableData(Entity playerEntity, Camera mainCamera, float range)
+	public void SetTrackableData(bool validTarget, Camera mainCamera)
 	{
-		if (_owner == playerEntity || Vector3.Distance(playerEntity.transform.position, _owner.transform.position) > range)
+		if (!validTarget)
 		{
-			_trackingData = TrackingData.Empty;
+			TrackingData = TrackingData.Empty;
 		}
 		else
 		{
 			var screenPos = mainCamera.WorldToScreenPoint(GetCenter());
 			screenPos = new Vector3(Mathf.Round(screenPos.x), Mathf.Round(screenPos.y), screenPos.z);
-			_trackingData = new TrackingData
+			TrackingData = new TrackingData
 			{
 				ScreenPos = screenPos,
 				OnScreen = screenPos.z > 0 && mainCamera.pixelRect.Contains(screenPos),
 			};
 		}
-		OnPropertyChanged("ScreenPosX");
-		OnPropertyChanged("ScreenPosY");
-		OnPropertyChanged("OnScreen");
 	}
 }
 	

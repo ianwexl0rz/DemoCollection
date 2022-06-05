@@ -225,7 +225,15 @@ public class PlayerController : ActorController
 	{
 		foreach (var trackable in PotentialTargets)
 		{
-			trackable.RefreshTrackableData(actor, _mainCamera, LockOnRange);
+			var isValid = actor.transform != trackable.transform &&
+				Vector3.Distance(actor.transform.position, trackable.transform.position) < LockOnRange;
+			
+			if (!isValid && TrackedTarget == trackable)
+			{
+				TrackedTarget = null;
+			}
+
+			trackable.SetTrackableData(isValid, _mainCamera);
 		}
 		
 		if (TrackedTarget == null)
