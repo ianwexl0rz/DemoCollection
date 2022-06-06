@@ -51,7 +51,7 @@ namespace ActorFramework
         private bool _cachedMotorEnabled;
         private Vector3 _moveInputVector;
         private Vector3 _lookInputVector;
-        private bool _shouldRun;
+        public bool IsRunning { get; private set; }
         private bool _shouldBeginJump;
         private bool _shouldBeginAttack;
         private bool _rollRequested = false;
@@ -100,7 +100,7 @@ namespace ActorFramework
         {
             _moveInputVector = inputs.Move;
             _lookInputVector = inputs.Look;
-            _shouldRun = inputs.Run;
+            IsRunning = inputs.Run;
             
             if (inputs.BeginRoll) _rollRequested = true;
 
@@ -185,7 +185,7 @@ namespace ActorFramework
                 // Calculate target velocity
                 var inputRight = Vector3.Cross(_moveInputVector, Vector3.up);
                 var targetDirection = Vector3.Cross(Motor.GroundingStatus.GroundNormal, inputRight).normalized;
-                var targetSpeed = _shouldRun ? RunSpeed : WalkSpeed;
+                var targetSpeed = IsRunning ? RunSpeed : WalkSpeed;
                 
                 targetMovementVelocity = targetDirection * targetSpeed;
 
