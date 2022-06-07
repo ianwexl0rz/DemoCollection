@@ -16,8 +16,18 @@ public class MeleeWeapon : MonoBehaviour
 	private AttackData _currentAttackData;
 	private List<GameObject> _hitGameObjects;
 
-	public void RegisterUser(MeleeWeaponUser user) => _user = user;
-	
+	public void RegisterUser(MeleeWeaponUser user, out AttackDataSet attackDataSet)
+	{
+		_user = user;
+		attackDataSet = this.attackDataSet;
+	}
+
+	public void NewAttack(string attackName)
+	{
+		_currentAttackData = attackDataSet.GetAttackData(attackName);
+		_user.Actor.Stamina.SpendStamina(_currentAttackData.staminaCost);
+	}
+
 	public void NewHit(Transform weaponRoot, string attackName)
 	{
 		_hitGameObjects = new List<GameObject>();

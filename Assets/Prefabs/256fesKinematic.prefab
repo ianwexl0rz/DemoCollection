@@ -138,6 +138,7 @@ GameObject:
   - component: {fileID: 5245734874792728583}
   - component: {fileID: 1062690882150740264}
   - component: {fileID: 2013524281105729838}
+  - component: {fileID: 1016318070244864864}
   m_Layer: 8
   m_Name: 256fesKinematic
   m_TagString: Untagged
@@ -369,6 +370,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5411299ba2064b23872df71c0ece6489, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1016318070244864864
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5753867373692666485}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 42cd8d6b837f421588d1721583c158f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _current: 80
+  _maximum: 80
+  OnDepleted:
+    m_PersistentCalls:
+      m_Calls: []
+  regenRate: 20
+  runningBurnRate: 10
+  minRestTime: 1
 --- !u!1 &5755385097082612441
 GameObject:
   m_ObjectHideFlags: 0

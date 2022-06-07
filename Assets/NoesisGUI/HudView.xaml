@@ -15,31 +15,54 @@
 
     <Grid>
         <Grid.Resources>
+            <LinearGradientBrush x:Key="HealthBarGradientFill" EndPoint="0.5,1" StartPoint="0.5,0">
+                <GradientStop Offset="1" Color="Maroon"/>
+                <GradientStop Offset="0" Color="Red"/>
+            </LinearGradientBrush>
+            <LinearGradientBrush x:Key="StaminaBarGradientFill" EndPoint="0.5,1" StartPoint="0.5,0">
+                <GradientStop Offset="1" Color="#FF004000"/>
+                <GradientStop Offset="0" Color="#FF00C000"/>
+            </LinearGradientBrush>
             <BooleanToVisibilityConverter x:Key="BoolToVisConverter" />
             <DataTemplate x:Key="Trackable" DataType="{x:Type local:TrackableViewModel}">
                 <Canvas VerticalAlignment="Top" HorizontalAlignment="Left">
                     <local:HealthBarUserControl
-                        Width="128"
+                        BarLength="128"
                         Height="10"
                         Margin="-64,-64,0,0"
+                        Fill="{StaticResource HealthBarGradientFill}"
                         Current="{Binding Health.Current}"
                         Maximum="{Binding Health.Maximum}"
-                        SnapsToDevicePixels="True"/>
+                        Echo="{Binding Health.Echo}"/>
                     <Canvas.RenderTransform>
                         <TranslateTransform X="{Binding ScreenPosX}" Y="{Binding ScreenPosY}"/>
                     </Canvas.RenderTransform>
                 </Canvas>
             </DataTemplate>
+            <local:ScaleConverter x:Key="ScaleConverter"/>
         </Grid.Resources>
 
         <local:HealthBarUserControl x:Name="playerHealth"
-            Width="512"
+            BarLength="{Binding HUD.Health.Maximum, ConverterParameter=4, Converter={StaticResource ScaleConverter}, FallbackValue=0}"
             Height="16"
+            Fill="{StaticResource HealthBarGradientFill}"
             Current="{Binding HUD.Health.Current}"
             Maximum="{Binding HUD.Health.Maximum}"
+            Echo="{Binding HUD.Health.Echo}"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
             Margin="32,24,0,0"/>
+
+        <local:HealthBarUserControl x:Name="playerStamina"
+            BarLength="{Binding HUD.Stamina.Maximum, ConverterParameter=4, Converter={StaticResource ScaleConverter}, FallbackValue=0}"
+            Height="16"
+            Fill="{StaticResource StaminaBarGradientFill}"
+            Current="{Binding HUD.Stamina.Current}"
+            Maximum="{Binding HUD.Stamina.Maximum}"
+            Echo="{Binding HUD.Stamina.Echo}"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            Margin="32,48,0,0"/>
 
         <Canvas x:Name="trackingUI"
             HorizontalAlignment="Left"

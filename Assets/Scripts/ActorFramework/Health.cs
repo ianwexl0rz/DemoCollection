@@ -9,75 +9,28 @@ using UnityEngine.Events;
 namespace ActorFramework
 {
     [RequireComponent(typeof(Entity))]
-    public class Health : MonoBehaviour, INotifyPropertyChanged
+    public class Health : EntityResource
     {
-        public event Action Depleted;
-
-        [SerializeField] private int _current = 100;
-        [SerializeField] private int _maximum = 100;
-        [SerializeField] private UnityEvent OnDepleted = new UnityEvent();
-
-        private Entity _entity;
-
-        public int Current
+        private void OnEnable()
         {
-            get => _current;
-            set { if (_current != value) { _current = value; OnPropertyChanged("Current"); } }
+            Entity.GetHit += HandleGetHit;
         }
 
-        public int Maximum
+        private void OnDisable()
         {
-            get => _maximum;
-            set { if (_maximum != value) { _maximum = value; OnPropertyChanged("Maximum"); } }
+            Entity.GetHit -= HandleGetHit;
         }
 
-        private void Awake()
-        {
-            _entity = GetComponent<Entity>();
-            _entity.GetHit += OnGetHit;
-        }
-
-        private void OnDestroy()
-        {
-            _entity.GetHit -= OnGetHit;
-        }
-
-        public void ApplyChange(int delta)
-        {
-            // Calculate new health (un-clamped so we can do "overkill" events, etc.)
-            var newValue = _current + delta;
-
-            // Clamp new health.
-            newValue = Mathf.Clamp(newValue, 0, _maximum);
-        
-            // Early out if no change...
-            if (newValue == _current) return;
-
-            // Update health.
-            Current = newValue;
-        
-            // Destroy if health is zero.
-            if (newValue < Mathf.Epsilon)
-            {
-                Depleted?.Invoke();
-                OnDepleted.Invoke();
-            }
-        }
-
-        public void OnGetHit(CombatEvent combatEvent)
+        public void HandleGetHit(CombatEvent combatEvent)
         {
             var damage = (int)combatEvent.AttackData.damage;
+            TakeDamage(damage);
+        }
+
+        public void TakeDamage(int damage)
+        {
+            SetEcho();
             ApplyChange(-damage);
         }
-
-        #region INotifyPropertyChanged
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        [NotifyPropertyChangedInvocator]
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-        #endregion
     }
 }

@@ -9,8 +9,8 @@ using UnityEngine;
 
      public override void Init(object context, Action callback = null)
      {
+         Time.timeScale = 0;
          MainMode.SetPhysicsPaused(true);
-         
          UIController.SetActiveView(ViewState.Paused);
          OnPauseGame(true);
      }
@@ -31,6 +31,7 @@ using UnityEngine;
  
      public override void Clean()
      {
+         Time.timeScale = 1;
          UIController.SetActiveView(ViewState.HUD);
          OnPauseGame(false);
      }

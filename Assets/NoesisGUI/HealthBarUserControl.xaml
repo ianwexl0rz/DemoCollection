@@ -9,24 +9,43 @@
              d:DesignHeight="16" d:DesignWidth="512"
              d:DataContext="{d:DesignInstance {x:Type local:RangeProperty}, IsDesignTimeCreatable=True}">
 
-    <Grid DataContext="{Binding ElementName=HealthBar}">
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <local:ScaleConverter x:Key="ScaleConverter"/>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <Grid DataContext="{Binding ElementName=HealthBar}"
+          Width="{Binding BarLength}">
+
         <Grid.Resources>
             <LinearGradientBrush x:Key="HealthBarGradientFill" EndPoint="0.5,1" StartPoint="0.5,0">
                 <GradientStop Offset="1" Color="Maroon"/>
                 <GradientStop Offset="0" Color="Red"/>
+            </LinearGradientBrush>
+            <LinearGradientBrush x:Key="StaminaBarGradientFill" EndPoint="0.5,1" StartPoint="0.5,0">
+                <GradientStop Offset="1" Color="Green"/>
+                <GradientStop Offset="0" Color="Lime"/>
+            </LinearGradientBrush>
+            <LinearGradientBrush x:Key="EchoBarGradientFill" EndPoint="0.5,1" StartPoint="0.5,0">
+                <GradientStop Offset="1" Color="Olive"/>
+                <GradientStop Offset="0" Color="Yellow"/>
             </LinearGradientBrush>
         </Grid.Resources>
 
         <Border Background="#BF000000"
                 Padding="2,2,2,2">
             <Viewbox Stretch="Fill">
-                <Border Width="{Binding Path=Maximum}"
+                <Grid Width="{Binding Maximum}"
                         Height="20">
-                    <Rectangle Fill="{StaticResource HealthBarGradientFill}"
-                           Width="{Binding Path=Current}"
-                           HorizontalAlignment="Left">
-                    </Rectangle>
-                </Border>
+                    <Rectangle Fill="{StaticResource EchoBarGradientFill}"
+                           Width="{Binding Echo}"
+                           HorizontalAlignment="Left"/>
+                    <Rectangle Fill="{Binding Fill}"
+                           Width="{Binding Current}"
+                           HorizontalAlignment="Left"/>
+                </Grid>
             </Viewbox>
         </Border>
     </Grid>

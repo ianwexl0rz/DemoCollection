@@ -140,6 +140,12 @@ public class DynamicBone : EntityPhysics
 #if UNITY_EDITOR
 	private void OnDrawGizmosSelected()
 	{
+		// var refPos = transform.TransformPoint(center);
+		// var refRot = referenceBone.rotation * Quaternion.FromToRotation(Vector3.up, GetDirectionFromInt(direction));
+		//
+		// Gizmos.color = Color.blue;
+		// GizmosEx.DrawWireCapsule(refPos, refRot, radius, height + radius * 2);
+		
 		var pos = transform.TransformPoint(center);
 		var rot = transform.rotation * Quaternion.FromToRotation(Vector3.up, GetDirectionFromInt(direction));
 

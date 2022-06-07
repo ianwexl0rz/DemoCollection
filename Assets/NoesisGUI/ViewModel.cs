@@ -50,6 +50,13 @@ namespace DemoCollection
 			get => _health;
 			set => SetProperty(ref _health, value);
 		}
+		
+		private RangeProperty _stamina;
+		public RangeProperty Stamina
+		{
+			get => _stamina;
+			set => SetProperty(ref _stamina, value);
+		}
 
 		private RangeProperty _enemyHealth;
 
@@ -70,6 +77,7 @@ namespace DemoCollection
 		public HudViewModel()
 		{
 			Health = new RangeProperty(100, 100);
+			Stamina = new RangeProperty(80, 80);
 			EnemyHealth = new RangeProperty(100, 100);
 			HasTarget = true;
 			TargetX = 960;

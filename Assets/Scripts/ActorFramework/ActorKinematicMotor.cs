@@ -194,8 +194,10 @@ namespace ActorFramework
                 
                 if (_rollRequested)
                 {
-                    StartCoroutine(Roll());
-                    return;
+                    Debug.Log("Roll!");
+                    _rollRequested = false;
+                    //StartCoroutine(Roll());
+                    //return;
                 }
             }
             else

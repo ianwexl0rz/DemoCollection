@@ -28,6 +28,13 @@ namespace DemoCollection.DataBinding
             get => _health;
             private set => SetProperty(ref _health, value);
         }
+        
+        private Stamina _stamina;
+        public Stamina Stamina
+        {
+            get => _stamina;
+            private set => SetProperty(ref _stamina, value);
+        }
 
         public List<Trackable> RecentlyHit => _npcHealthBars;
 
@@ -44,6 +51,7 @@ namespace DemoCollection.DataBinding
         private void RegisterActor(Actor actor)
         {
             Health = actor.Health;
+            Stamina = actor.Stamina;
             UpdateVisibleHealthBars();
         }
 

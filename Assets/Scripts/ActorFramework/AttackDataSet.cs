@@ -34,7 +34,8 @@ public struct CombatEvent
 public struct AttackData
 {
 	public string name;
-	public float damage;
+	public int damage;
+	public int staminaCost;
 	public int hitPause;
 	public float knockback;
 	public float stun;

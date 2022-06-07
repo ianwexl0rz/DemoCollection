@@ -5,6 +5,7 @@ using Noesis;
 using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 #endif
 
 namespace DemoCollection
@@ -14,7 +15,7 @@ namespace DemoCollection
 	/// </summary>
 	public partial class HealthBarUserControl : UserControl
 	{
-		#region Dependency Properties
+#region Dependency Properties
 		public static readonly DependencyProperty CurrentProperty =
 			DependencyProperty.Register("Current", typeof(int),
 			typeof(HealthBarUserControl), new PropertyMetadata(100));
@@ -34,7 +35,37 @@ namespace DemoCollection
 			get { return (int)GetValue(MaximumProperty); }
 			set { SetValue(MaximumProperty, value); }
 		}
-		#endregion
+
+		public static readonly DependencyProperty EchoProperty =
+		DependencyProperty.Register("Echo", typeof(float),
+		typeof(HealthBarUserControl), new PropertyMetadata(100f));
+
+		public float Echo
+		{
+			get { return (float)GetValue(EchoProperty); }
+			set { SetValue(EchoProperty, value); }
+		}
+
+		public static readonly DependencyProperty BarLengthProperty =
+		DependencyProperty.Register("BarLength", typeof(int),
+		typeof(HealthBarUserControl), new PropertyMetadata(100));
+
+		public int BarLength
+		{
+			get { return (int)GetValue(BarLengthProperty); }
+			set { SetValue(BarLengthProperty, value); }
+		}
+
+		public static readonly DependencyProperty FillProperty =
+		DependencyProperty.Register("Fill", typeof(LinearGradientBrush),
+		typeof(HealthBarUserControl), new PropertyMetadata(default));
+
+		public int Fill
+		{
+			get { return (int)GetValue(FillProperty); }
+			set { SetValue(FillProperty, value); }
+		}
+#endregion
 
 		public HealthBarUserControl()
 		{

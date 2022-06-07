@@ -78,8 +78,8 @@ public class MainMode : GameMode
         Time.timeScale = player.GetButton(PlayerAction.SlowMo) ? 0.01f : 1f;
 
         // (Debug) Adjust health.
-        if (Input.GetKeyDown(KeyCode.RightBracket)) _playerActor.Health.ApplyChange(5);
-        if (Input.GetKeyDown(KeyCode.LeftBracket)) _playerActor.Health.ApplyChange(-5);
+        if (Input.GetKeyDown(KeyCode.RightBracket)) _playerActor.Health.TakeDamage(-5);
+        if (Input.GetKeyDown(KeyCode.LeftBracket)) _playerActor.Health.TakeDamage(5);
 
         foreach (var entity in _entities) entity.OnTick(Time.deltaTime);
     }
@@ -137,11 +137,13 @@ public class MainMode : GameMode
     {
         foreach (var combatEvent in _combatEvents)
         {
-            var (instigator, target, point, direction, attackData) = combatEvent;
-            target.OnGetHit(combatEvent);
-            _hitPause = HitPause(Time.fixedDeltaTime * attackData.hitPause);
+            combatEvent.Target.OnGetHit(combatEvent);
+            _hitPause = HitPause(Time.fixedDeltaTime * combatEvent.AttackData.hitPause);
 
-            if (GetHitSpark(target, out var hitSpark)) Object.Instantiate(hitSpark, point, Quaternion.identity);
+            if (GetHitSpark(combatEvent.Target, out var hitSpark))
+            {
+                Object.Instantiate(hitSpark, combatEvent.Point, Quaternion.identity);
+            }
         }
 
         _combatEvents.Clear();

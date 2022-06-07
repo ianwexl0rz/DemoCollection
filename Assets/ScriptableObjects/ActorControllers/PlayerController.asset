@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e38ee994e3ad154a956af979ad8bb06, type: 3}
   m_Name: PlayerController
   m_EditorClassIdentifier: 
-  <ShowHealthOnHitDuration>k__BackingField: 1
+  <ShowHealthOnHitDuration>k__BackingField: 2
   <LockOnRange>k__BackingField: 20
   <ChangeTargetAngleTolerance>k__BackingField: 90

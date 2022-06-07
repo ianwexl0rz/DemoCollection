@@ -23,6 +23,7 @@ public class Actor : Entity, IDamageable
 	public bool InputEnabled { get; set; }
 
 	public Health Health { get; private set; }
+	public Stamina Stamina { get; private set; }
 
 	public readonly InputBuffer InputBuffer = new InputBuffer();
 	public Timer HitReaction { get; private set; }
@@ -40,6 +41,7 @@ public class Actor : Entity, IDamageable
 		base.Awake();
 		Animator = GetComponent<Animator>();
 		Health = GetComponent<Health>();
+		Stamina = GetComponent<Stamina>();
 		Health.Depleted += Die;
 
 		_renderers = GetComponentsInChildren<Renderer>();

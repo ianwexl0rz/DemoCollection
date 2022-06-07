@@ -66,9 +66,8 @@ namespace ActorFramework
 
         private void HandleGetHit(CombatEvent combatEvent)
         {
-            var (instigator, target, point, direction, attackData) = combatEvent;
-            var velocity = direction * (attackData.knockback / Time.fixedDeltaTime);
-            Rigidbody.AddForceAtPosition(velocity, point, ForceMode.Impulse);
+            var velocity = combatEvent.Direction * (combatEvent.AttackData.knockback / Time.fixedDeltaTime);
+            Rigidbody.AddForceAtPosition(velocity, combatEvent.Point, ForceMode.Impulse);
         }
     }
 }

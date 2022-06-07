@@ -24,6 +24,8 @@ public class MeleeWeaponUser : MonoBehaviour
 	private bool _isAttacking;
 	private bool _hasActiveHit;
 
+	private AttackDataSet _attackDataSet;
+
 	private void Awake()
 	{
 		Actor = GetComponent<Actor>();
@@ -47,8 +49,9 @@ public class MeleeWeaponUser : MonoBehaviour
 		HitSomething -= playerController.AddTargetToRecentlyHitList;
 	}
 
-	public void NewAttack()
+	public void NewAttack(AnimationEvent animEvent)
 	{
+		_weapon.NewAttack(animEvent.stringParameter);
 		BeginAttack?.Invoke(Actor);
 	}
 	
@@ -85,12 +88,21 @@ public class MeleeWeaponUser : MonoBehaviour
 
 		_weapon = Instantiate(weaponPrefab, WeaponBone);
 		_weapon.transform.localRotation = Quaternion.LookRotation(weaponBoneForward, weaponBoneUp);
-		_weapon.RegisterUser(this);
+		_weapon.RegisterUser(this, out _attackDataSet);
+	}
+
+	private bool HasRequiredStamina(int actionId, out int staminaCost)
+	{
+		var attackData = _attackDataSet.GetAttackData("lightAttack");
+		staminaCost = attackData.staminaCost;
+		return staminaCost <= Actor.Stamina.Current;
 	}
 
 	private void HandleInput(InputBuffer inputBuffer)
 	{
-		if (!_isAttacking && inputBuffer.TryConsumeAction(PlayerAction.Attack))
+		if (!_isAttacking &&
+		    HasRequiredStamina(PlayerAction.Attack, out var staminaCost) &&
+		    inputBuffer.TryConsumeAction(PlayerAction.Attack))
 		{
 			_isAttacking = true;
 			Actor.InputEnabled = false;
