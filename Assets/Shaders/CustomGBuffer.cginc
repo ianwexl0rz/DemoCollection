@@ -4,7 +4,7 @@
 #define CUSTOM_GBUFFER_INCLUDED
 
 //#define USE_INTERLACED_YCOCG
-//#define USE_CUSTOM_FOR_STANDARD
+#define USE_CUSTOM_FOR_STANDARD
 
 #include "RGB555.cginc"
 #include "YCoCG.cginc"
