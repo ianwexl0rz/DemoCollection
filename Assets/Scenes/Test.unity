@@ -1000,7 +1000,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 42cd8d6b837f421588d1721583c158f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _echo: 100
   _current: 100
   _maximum: 100
   OnDepleted:
@@ -2779,7 +2778,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b542462a5c324b839af5971dae578305, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _echo: 100
   _current: 10
   _maximum: 10
   OnDepleted:
@@ -4266,7 +4264,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1849219369495232, guid: 1447690b66c3cbd4390ad0df5ef89106, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4260966739980654, guid: 1447690b66c3cbd4390ad0df5ef89106, type: 3}
       propertyPath: m_RootOrder
@@ -4506,6 +4504,32 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8ebc8f13d4ece2249af29d95b7985203, type: 3}
+--- !u!1 &2021222031 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1849219369495232, guid: 1447690b66c3cbd4390ad0df5ef89106,
+    type: 3}
+  m_PrefabInstance: {fileID: 1733283990}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2021222043
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2021222031}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 42cd8d6b837f421588d1721583c158f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _current: 80
+  _maximum: 80
+  OnDepleted:
+    m_PersistentCalls:
+      m_Calls: []
+  regenRate: 20
+  runningBurnRate: 10
+  minRestTime: 1
 --- !u!1 &2062407898
 GameObject:
   m_ObjectHideFlags: 0
@@ -5392,7 +5416,7 @@ PrefabInstance:
     - target: {fileID: 3597098652501029816, guid: 5f7c5aa04d6b2474584a0224c7c97924,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3597098652501029817, guid: 5f7c5aa04d6b2474584a0224c7c97924,
         type: 3}

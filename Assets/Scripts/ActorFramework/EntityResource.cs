@@ -45,7 +45,6 @@ namespace ActorFramework
         protected virtual void Awake()
         {
             Entity = GetComponent<Entity>();
-            _echo = _current;
         }
 
         protected void SetEcho()

@@ -48,7 +48,7 @@ half4 CUSTOM_BRDF (half3 diffColor, half3 shadowColor, half3 specColor, half3 tr
     half3 halfDir = Unity_SafeNormalize (float3(light.dir) + viewDir);
 
     // IW: Extend the halfDir vector to flatten the specular falloff.
-    halfDir *= 1 + perceptualRoughness * 0.1;
+    halfDir *= 1 + perceptualRoughness * 0.02;
 
 // NdotV should not be negative for visible pixels, but it can happen due to perspective projection and normal mapping
 // In this case normal should be modified to become valid (i.e facing camera) and not cause weird artifacts.
@@ -123,7 +123,8 @@ half4 CUSTOM_BRDF (half3 diffColor, half3 shadowColor, half3 specColor, half3 tr
 
     half grazingTerm = saturate(smoothness + (1-oneMinusReflectivity));
 
-    float diffuseTerm = aaStep(0, nlFull);// * smoothstep(-0.5, 0.5, nlFull);
+    float diffuseTerm = smoothstep(0, 1/6.0, nlFull);
+    //float diffuseTerm = aaStep(0, nlFull);// * smoothstep(-0.5, 0.5, nlFull);
     float hardShadows = smoothstep(1.0/3.0, 1.5/2.0, shadows);
 
     half3 color = diffColor * (gi.diffuse + light.color * diffuseTerm * hardShadows)

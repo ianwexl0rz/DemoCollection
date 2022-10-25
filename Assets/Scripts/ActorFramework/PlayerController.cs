@@ -25,15 +25,15 @@ public class PlayerController : ActorController
 
 	[field: SerializeField] public float ShowHealthOnHitDuration { get; private set; } = 1f;
 	[field: SerializeField] public float LockOnRange { get; private set; } = 10f;
-	[field: SerializeField] public float ChangeTargetAngleTolerance { get; private set; } = 90f;
+	[field: SerializeField] public float ChangeTargetAngleLimit { get; private set; } = 90f;
 	public Dictionary<Trackable, float> RecentlyHit { get; private set; } = new Dictionary<Trackable, float>();
 
 	private Player _player;
 	private Camera _mainCamera;
 	private ThirdPersonCamera _gameCamera;
 	private Trackable _trackableCandidate;
-	private bool _lookInputStale;
 	private Vector3 _facingDirection;
+	private Vector2 _lookInput;
 	
 	// Cached actor components
 	private ActorKinematicMotor _locomotion;
@@ -121,14 +121,31 @@ public class PlayerController : ActorController
 
 	public override void LateTick(Actor actor, float deltaTime)
 	{
-		var lookInput = _player.GetAxis2D(
+		var wasNeutral = _lookInput == Vector2.zero;
+		
+		_lookInput = _player.GetAxis2D(
 			PlayerAction.LookHorizontal * (GameManager.Settings.InvertX ? -1 : 1), 
 			PlayerAction.LookVertical);
 
-		_gameCamera.UpdatePositionAndRotation(lookInput, TrackedTarget);
+		_gameCamera.UpdatePositionAndRotation(_lookInput, TrackedTarget);
 
 		UpdateRecentlyHitList();
-		UpdateLockOn(actor, lookInput, ChangeTargetAngleTolerance);
+		UpdatePotentialTargets(actor);
+		UpdateTrackingReticle(wasNeutral && _lookInput != Vector2.zero);
+	}
+
+	private void UpdateTrackingReticle(bool freshInput)
+	{
+		_trackableCandidate = TrackedTarget ? null : GetTrackableClosestToCenter(_mainCamera);
+
+		if (TrackedTarget && freshInput &&
+		    GetTrackableClosestToVector(_lookInput, TrackedTarget, ChangeTargetAngleLimit) is Trackable newTarget &&
+		    !ReferenceEquals(newTarget, null))
+		{
+			TrackedTarget = newTarget;
+		}
+
+		RequestUpdateReticle?.Invoke(TrackedTarget);
 	}
 
 	public void AddTargetToRecentlyHitList(CombatEvent combatEvent)
@@ -220,44 +237,18 @@ public class PlayerController : ActorController
 			}
 		}
 	}
-	
-	public void UpdateLockOn(Actor actor, Vector2 lookInput, float angleTolerance)
+
+	private void UpdatePotentialTargets(Actor actor)
 	{
 		foreach (var trackable in PotentialTargets)
 		{
 			var isValid = actor.transform != trackable.transform &&
-				Vector3.Distance(actor.transform.position, trackable.transform.position) < LockOnRange;
-			
-			if (!isValid && TrackedTarget == trackable)
-			{
-				TrackedTarget = null;
-			}
+			              Vector3.Distance(actor.transform.position, trackable.transform.position) < LockOnRange;
+
+			if (!isValid && TrackedTarget == trackable) TrackedTarget = null;
 
 			trackable.SetTrackableData(isValid, _mainCamera);
 		}
-		
-		if (TrackedTarget == null)
-		{
-			_trackableCandidate = GetTrackableClosestToCenter(_mainCamera);
-			_lookInputStale = true;
-		}
-		else
-		{
-			_trackableCandidate = null;
-	        
-			if (_lookInputStale && lookInput.Equals(Vector2.zero)) _lookInputStale = false;
-			if (!_lookInputStale && lookInput.sqrMagnitude > 0)
-			{
-				var newTarget = GetTrackableClosestToVector(lookInput, TrackedTarget, angleTolerance);
-				if (!ReferenceEquals(newTarget, null))
-				{
-					TrackedTarget = newTarget;
-					_lookInputStale = true;
-				}
-			}
-		}
-
-		RequestUpdateReticle?.Invoke(TrackedTarget);
 	}
 
 	public static Trackable GetTrackableClosestToCenter(Camera mainCamera)
