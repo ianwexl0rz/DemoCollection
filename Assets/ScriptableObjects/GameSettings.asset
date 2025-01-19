@@ -15,5 +15,5 @@ MonoBehaviour:
   deadZone: 0
   _lookSensitivityX: 300
   _lookSensitivityY: 150
-  InvertY: 1
   InvertX: 0
+  InvertY: 0

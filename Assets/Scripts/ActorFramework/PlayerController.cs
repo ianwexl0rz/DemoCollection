@@ -54,9 +54,9 @@ public class PlayerController : ActorController
 		_meleeWeaponUser = actor.GetComponent<MeleeWeaponUser>();
 
 		if (_meleeWeaponUser) _meleeWeaponUser.RegisterPlayerCallbacks(this);
-
-		RecentlyHit.Remove(actor.Trackable);
+		if (actor.Trackable) RecentlyHit.Remove(actor.Trackable);
 		PossessedActor?.Invoke(actor);
+		HealthBar.RegisterHealthComponent( actor.Health );
 	}
 
 	public override void Release(Actor actor)
@@ -64,6 +64,7 @@ public class PlayerController : ActorController
 		actor.InputBuffer.Clear();
 		TrackedTarget = null;
 		_facingDirection = Vector3.zero;
+		HealthBar.UnregisterHealthComponent( actor.Health );
 
 		if (_meleeWeaponUser) _meleeWeaponUser.UnregisterPlayerCallbacks(this);
 
@@ -124,9 +125,9 @@ public class PlayerController : ActorController
 		var wasNeutral = _lookInput == Vector2.zero;
 		
 		_lookInput = _player.GetAxis2D(
-			PlayerAction.LookHorizontal * (GameManager.Settings.InvertX ? -1 : 1), 
+			PlayerAction.LookHorizontal, 
 			PlayerAction.LookVertical);
-
+		
 		_gameCamera.UpdatePositionAndRotation(_lookInput, TrackedTarget);
 
 		UpdateRecentlyHitList();

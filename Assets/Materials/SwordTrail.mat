@@ -12,6 +12,7 @@ Material:
   m_ValidKeywords:
   - _ALPHABLEND_ON
   - _COLORADDSUBDIFF_ON
+  - _EMISSION
   m_InvalidKeywords:
   - _FLIPBOOKBLENDING_OFF
   - _SURFACE_TYPE_TRANSPARENT
@@ -24,7 +25,7 @@ Material:
   disabledShaderPasses:
   - DepthOnly
   - SHADOWCASTER
-  - ALWAYS
+  - GRABPASS
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -104,7 +105,7 @@ Material:
     - _DistortionStrengthScaled: 0.1
     - _DstBlend: 10
     - _EdgeLight: 0
-    - _EmissionEnabled: 0
+    - _EmissionEnabled: 1
     - _FlipbookBlending: 0
     - _FlipbookMode: 0
     - _GlossMapScale: 1
@@ -138,9 +139,9 @@ Material:
     - _BaseColor: {r: 0, g: 0, b: 0, a: 1}
     - _BaseColorAddSubDiff: {r: 1, g: 0, b: 0, a: 0}
     - _CameraFadeParams: {r: 0, g: Infinity, b: 0, a: 0}
-    - _Color: {r: 0, g: 0, b: 0, a: 1}
+    - _Color: {r: 0, g: 0, b: 0, a: 0.49803922}
     - _ColorAddSubDiff: {r: 1, g: 0, b: 0, a: 0}
-    - _EmissionColor: {r: 0.7412454, g: 2.8445935, b: 5.215357, a: 1}
+    - _EmissionColor: {r: 0.4392157, g: 1.6470588, b: 2.9960785, a: 1}
     - _ShadowColor: {r: 0, g: 0, b: 0, a: 1}
     - _SoftParticleFadeParams: {r: 0, g: 0, b: 0, a: 0}
     - _TreeInstanceColor: {r: 1, g: 1, b: 1, a: 1}

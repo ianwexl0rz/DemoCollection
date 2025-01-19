@@ -16,7 +16,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 11400000, guid: 491122bfc34e6724c90d93067bb4cc0d, type: 2}
-        m_MethodName: TogglePaused
+        m_TargetAssemblyTypeName: GameSettings, Assembly-CSharp
+        m_MethodName: Resume
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

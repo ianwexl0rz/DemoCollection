@@ -10,7 +10,8 @@ namespace ActorFramework
     {
         private const float EchoLifespan = 0.5f;
         private const float EchoResetRate = 0.5f;
-        
+
+        public event Action<int, int> OnValueChanged;
         public event Action Depleted;
 
         [SerializeField] private int _current = 100;
@@ -42,6 +43,11 @@ namespace ActorFramework
             set { if (_maximum != value) { _maximum = value; OnPropertyChanged("Maximum"); } }
         }
 
+        // public void OnValueChanged(int newValue)
+        // {
+        //     
+        // }
+        
         protected virtual void Awake()
         {
             Entity = GetComponent<Entity>();
@@ -96,7 +102,9 @@ namespace ActorFramework
 
             // Update health.
             Current = newValue;
-        
+            
+            OnValueChanged?.Invoke(Current, Maximum);
+            
             // Destroy if health is zero.
             if (newValue < Mathf.Epsilon)
             {

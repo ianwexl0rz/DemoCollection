@@ -235,9 +235,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 754749456272013972}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fceb465e664314b43a4292b02c8d13fe, type: 3}
+  m_Script: {fileID: 11500000, guid: 2c3f9d4cf88fc43de885a7794f6780be, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  healthBarFill: {fileID: 754749457291000049}
 --- !u!1 &754749457291000050
 GameObject:
   m_ObjectHideFlags: 0
@@ -423,7 +424,6 @@ GameObject:
   - component: {fileID: 421814448427433545}
   - component: {fileID: 4259331212666234407}
   - component: {fileID: 2343982516976963638}
-  - component: {fileID: 8117614019120737473}
   m_Layer: 5
   m_Name: PauseOverlay
   m_TagString: Untagged
@@ -490,18 +490,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &8117614019120737473
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4011193366535654976}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 801b962d04380fd48911a9f659db6571, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &4922776698326184303
 GameObject:
   m_ObjectHideFlags: 0
@@ -1131,9 +1119,9 @@ RectTransform:
   m_Father: {fileID: 7312439346930664973}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 600, y: -371}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 600, y: 0}
   m_SizeDelta: {x: 1200, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1676038396850882703

@@ -12,6 +12,11 @@ public class GameSettings : ScriptableObject
 
 	public float LookSensitivityY => _lookSensitivityY * (InvertY ? 1 : -1);
 
-	public bool InvertY;
 	public bool InvertX;
+	public bool InvertY;
+
+	public void SetInvertX(bool value) => InvertX = value;
+	public void SetInvertY(bool value) => InvertY = value;
+
+	public void Resume() => GameMode.SetMode<MainMode>();
 }

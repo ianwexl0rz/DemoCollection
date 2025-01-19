@@ -96,7 +96,7 @@ public class ActorPhysicalMotor : EntityPhysics
 			return;
 		}
 
-		if (_isGrounded)
+		if (_isGrounded && !_actor.HitReaction.InProgress)
 		{
 			// Invert ground normal rotation to get unbiased ground velocity
 			var groundRotation = Quaternion.LookRotation(Vector3.forward, _groundNormal);
@@ -120,7 +120,7 @@ public class ActorPhysicalMotor : EntityPhysics
 			speed = Mathf.Max(desiredVelocity.magnitude - friction * deltaTime, 0f);
 		}
 
-		if (_isGrounded)
+		if (_isGrounded && !_actor.HitReaction.InProgress)
 		{
 			// Speed is only variable when NOT sprinting.
 			//var normalSpeed = Mathf.Max(minSpeed, walkSpeed * move.sqrMagnitude);
@@ -128,8 +128,8 @@ public class ActorPhysicalMotor : EntityPhysics
 			var targetSpeed = shouldRun ? runSpeed : walkSpeed;
 
 			// Slower while walking backwards...
-			//var dot = Vector3.Dot(desiredVelocity, transform.forward);
-			//targetSpeed = Mathf.Lerp(targetSpeed, targetSpeed * 0.5f, -dot);
+			var dot = Vector3.Dot(desiredVelocity, transform.forward);
+			targetSpeed = Mathf.Lerp(targetSpeed, targetSpeed * 0.5f, -dot);
 			speed = Mathf.Min(speed, targetSpeed);
 		}
 

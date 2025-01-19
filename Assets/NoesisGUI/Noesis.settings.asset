@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Noesis.settings
   m_EditorClassIdentifier: 
   licenseName: Ian Wexler
-  licenseKey: O62Dd0Pmg3emKivpAULd4NzwwJLEgvNLpqtwkepblgWj28z0
+  licenseKey: 
   applicationResources: {fileID: -8414808784256213763, guid: 194d3927bb416084c8a2f0cb7cb1ab58,
     type: 3}
   applicationResourcesHash:
@@ -32,6 +32,7 @@ MonoBehaviour:
   offscreenMaxSurfaces: 0
   linearRendering: 0
   previewEnabled: 1
+  reloadEnabled: 1
   generalLogLevel: 2
   bindingLogLevel: 2
   AppStarting:
@@ -118,4 +119,4 @@ MonoBehaviour:
   Wait:
     Texture: {fileID: 0}
     HotSpot: {x: 0, y: 0}
-  version: 3.1.4
+  version: 3.2.0

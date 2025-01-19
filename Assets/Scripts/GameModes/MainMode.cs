@@ -49,10 +49,17 @@ public class MainMode : GameMode
             gameCamera.Init();
         }
 
-        if (context is Actor actor)
+        if (context is Actor actorIn)
         {
-            _actorIndex = _actorsInScene.IndexOf(actor);
-            SetPlayer(actor, true);
+            _actorIndex = _actorsInScene.IndexOf(actorIn);
+            SetPlayer(actorIn, true);
+            
+            // Init NPCs
+            foreach (var actor in _actorsInScene)
+            {
+                if (actor != _playerActor)
+                    actor.SetController( followerBrain, _playerActor.GetComponent<Trackable>() );
+            }
         }
 
         SetPhysicsPaused(_cachedPhysicsPaused);
@@ -138,6 +145,8 @@ public class MainMode : GameMode
         foreach (var combatEvent in _combatEvents)
         {
             combatEvent.Target.OnGetHit(combatEvent);
+            
+            // TODO: Only apply hitpause to the Instigator and Target
             _hitPause = HitPause(Time.fixedDeltaTime * combatEvent.AttackData.hitPause);
 
             if (GetHitSpark(combatEvent.Target, out var hitSpark))
@@ -158,7 +167,9 @@ public class MainMode : GameMode
     
     private static IEnumerator HitPause(float duration)
     {
-        yield return new WaitForEndOfFrame();
+        // HACK: Wait two physics updates to ensure knockback is applied first
+        yield return new WaitForFixedUpdate();
+        yield return new WaitForFixedUpdate();
         SetPhysicsPaused(true);
 
         while (duration > 0)

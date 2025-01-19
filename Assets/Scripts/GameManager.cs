@@ -35,12 +35,14 @@ public class GameManager : MonoBehaviour
 		GameMode.RegisterModes(new List<GameMode> { mainMode, pauseMode });
 		
 		mainMode.Init();
-		playerController.Init(new PlayerControllerContext
+
+		var context = new PlayerControllerContext
 		{
 			Player = player,
 			MainCamera = mainMode.MainCamera,
 			GameCamera = mainMode.GameCamera
-		});
+		};
+		playerController.Init(context);
 		uiController.Init();
 
 		DontDestroyOnLoad(this);

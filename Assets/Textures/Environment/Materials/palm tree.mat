@@ -106,7 +106,7 @@ Material:
     - _SpecularHighlights: 1
     - _SquashAmount: 1
     - _SrcBlend: 1
-    - _SubsurfaceScale: 0
+    - _SubsurfaceScale: 0.154
     - _Translucency: 1
     - _UVSec: 0
     - _WindQuality: 0

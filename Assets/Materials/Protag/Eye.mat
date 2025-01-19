@@ -111,7 +111,7 @@ Material:
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
-    - _IrisScale: 1.27
+    - _IrisScale: 1.5
     - _Metallic: 0
     - _NormalIntensity: -4
     - _OcclusionStrength: 1

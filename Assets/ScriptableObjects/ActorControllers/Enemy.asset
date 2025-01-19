@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Enemy
   m_EditorClassIdentifier: 
   behaviorGroups:
-  - condition: 2
-    threshold: 1.5
+  - condition: 1
+    threshold: 4
     behaviors:
     - {fileID: 11400000, guid: 54875ae1de4fc02458ea4db3b360535c, type: 2}
   - condition: 1

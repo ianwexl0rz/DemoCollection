@@ -23,7 +23,7 @@ namespace ActorFramework
 
         public void HandleGetHit(CombatEvent combatEvent)
         {
-            var damage = (int)combatEvent.AttackData.damage;
+            var damage = combatEvent.AttackData.damage;
             TakeDamage(damage);
         }
 

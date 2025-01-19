@@ -9,6 +9,7 @@ using DemoCollection.DataBinding;
 using JetBrains.Annotations;
 using UnityEngine;
 using Noesis;
+using Cursor = UnityEngine.Cursor;
 
 namespace DemoCollection
 {
@@ -18,6 +19,8 @@ namespace DemoCollection
 
         [SerializeField] private PlayerController playerController = null;
         [SerializeField] private GameSettings gameSettings;
+        [SerializeField] private GameObject pauseOverlay;
+        [SerializeField] private bool noesisEnabled;
 
         [SerializeField] private HudBinding hudBinding = null;
         
@@ -63,6 +66,11 @@ namespace DemoCollection
 
             HudViewCommand = new DelegateCommand(OnHud);
             PauseViewCommand = new DelegateCommand(OnPause);
+
+            if (!noesisEnabled)
+            {
+                _instance.OnHud(null);
+            }
         }
         
         public static void OnInitialized(FrameworkElement root, out object dataContext)
@@ -81,15 +89,35 @@ namespace DemoCollection
         
         private void OnHud(object param)
         {
-            _pauseView.Visibility = Visibility.Hidden;
-            _hudView.Visibility = Visibility.Visible;
+            if (noesisEnabled)
+            {
+                _pauseView.Visibility = Visibility.Hidden;
+                _hudView.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                pauseOverlay.SetActive(false);
+            }
+
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
             State = ViewState.HUD;
         }
 
         private void OnPause(object param)
         {
-            _pauseView.Visibility = Visibility.Visible;
-            _hudView.Visibility = Visibility.Hidden;
+            if (noesisEnabled)
+            {
+                _pauseView.Visibility = Visibility.Visible;
+                _hudView.Visibility = Visibility.Hidden;
+            }
+            else
+            {
+                pauseOverlay.SetActive(true);
+            }
+            
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
             State = ViewState.Paused;
         }
 
@@ -98,7 +126,7 @@ namespace DemoCollection
             if (State == state)
                 return;
 			
-            else if (state == ViewState.HUD)
+            if (state == ViewState.HUD)
                 HudViewCommand.Execute(null);
 
             else if (state == ViewState.Paused)

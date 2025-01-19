@@ -66,7 +66,13 @@ namespace ActorFramework
 
         private void HandleGetHit(CombatEvent combatEvent)
         {
-            var velocity = combatEvent.Direction * (combatEvent.AttackData.knockback / Time.fixedDeltaTime);
+            // TODO: Use precise knockback when ragdolling on death
+            var preciseKnockback = false;
+            var knockbackDir = preciseKnockback
+                ? combatEvent.Direction
+                : Vector3.Normalize(Rigidbody.position - combatEvent.Instigator.transform.position);
+
+            var velocity = knockbackDir * (combatEvent.AttackData.knockback / Time.fixedDeltaTime);
             Rigidbody.AddForceAtPosition(velocity, combatEvent.Point, ForceMode.Impulse);
         }
     }
