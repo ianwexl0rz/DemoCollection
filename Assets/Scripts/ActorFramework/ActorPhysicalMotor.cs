@@ -53,6 +53,7 @@ public class ActorPhysicalMotor : EntityPhysics
 	public Vector3 Move { get; set; }
 	
 	public bool Run { get; set; }
+	public bool IsRunning { get; private set; }
 	
 	public CapsuleCollider CapsuleCollider { get; private set; }
 
@@ -124,7 +125,7 @@ public class ActorPhysicalMotor : EntityPhysics
 		{
 			// Speed is only variable when NOT sprinting.
 			//var normalSpeed = Mathf.Max(minSpeed, walkSpeed * move.sqrMagnitude);
-			var shouldRun = Run && _rollAngle < Mathf.Epsilon;
+			var shouldRun = Run && _rollAngle < Mathf.Epsilon && _actor.Stamina.Current > 0;
 			var targetSpeed = shouldRun ? runSpeed : walkSpeed;
 
 			// Slower while walking backwards...
@@ -155,6 +156,9 @@ public class ActorPhysicalMotor : EntityPhysics
 
 		if (_isGrounded)
 		{
+			// Considered running if moving closer to runSpeed than walkSpeed
+			IsRunning = _groundVelocity.magnitude > (walkSpeed + runSpeed) * 0.5f;
+			
 			// Reset remaining jumps if we just landed.
 			if (!wasGrounded) _remainingJumps = jumpCount;
 
@@ -217,8 +221,14 @@ public class ActorPhysicalMotor : EntityPhysics
 		}
 		
 		// Roll.
-		if (_rollAngle > 0f && _rollAngle < 360f || inputBuffer.TryConsumeAction(PlayerAction.Evade))
+		var continueRoll = _rollAngle > 0f && _rollAngle < 360f;
+		if (continueRoll || (inputBuffer.TryConsumeAction(PlayerAction.Evade) && _actor.Stamina.Current > 10))
 		{
+			if (!continueRoll)
+			{
+				// New roll
+				_actor.Stamina.SpendStamina(10);
+			}
 			_rollAngle += rollSpeed * Time.fixedDeltaTime;
 			if (_rollAngle >= 360f) _rollAngle = 0f;
 		}

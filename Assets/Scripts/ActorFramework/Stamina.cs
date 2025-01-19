@@ -10,6 +10,7 @@ namespace ActorFramework
         [SerializeField] private float minRestTime;
 
         private ActorKinematicMotor _motor;
+        private ActorPhysicalMotor _physicsMotor;
         private float _accumulator;
         private float _staminaLastSpentTime;
 
@@ -17,6 +18,7 @@ namespace ActorFramework
         {
             base.Awake();
             _motor = Entity.GetComponent<ActorKinematicMotor>();
+            _physicsMotor = Entity.GetComponent<ActorPhysicalMotor>();
         }
 
         private void OnEnable()
@@ -31,22 +33,21 @@ namespace ActorFramework
 
         private void UpdateStamina(float deltaTime)
         {
-            if (!_motor) return;
-            
-            if (_motor.IsRunning)
+            if ((_motor && _motor.IsRunning) ||
+                (_physicsMotor && _physicsMotor.IsRunning))
             {
                 _staminaLastSpentTime = Time.time;
-                _accumulator += (float)runningBurnRate * deltaTime;
+                _accumulator += runningBurnRate * deltaTime;
                 ApplyChange(-Mathf.FloorToInt(_accumulator));
-                _accumulator = _accumulator % 1;
+                _accumulator %= 1.0f;
             }
             else if (Current < Maximum && Time.time >= _staminaLastSpentTime + minRestTime)
             {
-                _accumulator += (float)regenRate * deltaTime;
+                _accumulator += regenRate * deltaTime;
                 ApplyChange(Mathf.FloorToInt(_accumulator));
-                _accumulator = _accumulator % 1;
+                _accumulator %= 1.0f;
             }
-            else if (_accumulator != 0)
+            else
             {
                 _accumulator = 0;
             }

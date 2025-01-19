@@ -15,7 +15,7 @@ MonoBehaviour:
   _attacks:
   - name: lightAttack
     damage: 5
-    staminaCost: 10
+    staminaCost: 5
     hitPause: 6
     knockback: 4
     stun: 0.25

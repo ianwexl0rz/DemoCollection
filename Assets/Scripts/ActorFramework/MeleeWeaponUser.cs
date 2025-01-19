@@ -106,6 +106,7 @@ public class MeleeWeaponUser : MonoBehaviour
 		{
 			_isAttacking = true;
 			Actor.InputEnabled = false;
+			Actor.Stamina.SpendStamina(staminaCost);
 			if(Actor.Animator) Actor.Animator.SetTrigger(Attack);
 		}
 	}

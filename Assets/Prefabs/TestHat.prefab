@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 6322755660125841589}
   - component: {fileID: 6322755660125841593}
   - component: {fileID: 6322755660125841594}
+  - component: {fileID: 1475524156}
   m_Layer: 11
   m_Name: GameObject
   m_TagString: Untagged
@@ -25,14 +26,15 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6322755660125841588}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: 0.1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6322755660712043125}
   m_Father: {fileID: 6322755661515130142}
   m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!54 &6322755660125841593
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -65,17 +67,28 @@ MonoBehaviour:
   parentEntity: {fileID: 0}
   referenceBone: {fileID: 6322755661256335229}
   syncReferenceBone: 0
-  radius: 0.07
-  height: 0.17
+  radius: 0.025
+  height: 0.1
   direction: 1
-  flip: 1
-  center: {x: 0, y: 0.085, z: 0}
+  flip: 0
+  center: {x: 0, y: 0.05, z: 0}
   windDirection: {x: 0, y: 1, z: 0}
   windInfluence: 0
   centerOfMass: 0.25
   stiffnessPerAxis: {x: 1, y: 1, z: 1}
-  rotationPidConfig: {fileID: 11400000, guid: 9d23314fd1492584da56ef25598ab232, type: 2}
-  anglePidConfig: {fileID: 11400000, guid: c29f48e699ec26445a33657059edbdf3, type: 2}
+  torquePID: {fileID: 11400000, guid: 00ed0bd437019a34dbf27b4bd064959e, type: 2}
+--- !u!114 &1475524156
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6322755660125841588}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9fa782213740dac45822d87e30826a82, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &6322755660712043124
 GameObject:
   m_ObjectHideFlags: 0
@@ -87,6 +100,7 @@ GameObject:
   - component: {fileID: 6322755660712043125}
   - component: {fileID: 6322755660712043129}
   - component: {fileID: 6322755660712043130}
+  - component: {fileID: 1582970687}
   m_Layer: 11
   m_Name: GameObject (1)
   m_TagString: Untagged
@@ -102,8 +116,9 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6322755660712043124}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 8.881784e-16, y: 0.17000002, z: 0}
+  m_LocalPosition: {x: 8.881784e-16, y: 0.1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6322755661533670436}
   m_Father: {fileID: 6322755660125841589}
@@ -138,20 +153,31 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isRoot: 0
-  parentEntity: {fileID: 6322755660125841594}
+  parentEntity: {fileID: 1475524156}
   referenceBone: {fileID: 6322755662073874457}
   syncReferenceBone: 0
-  radius: 0.07
-  height: 0.217
+  radius: 0.025
+  height: 0.1
   direction: 1
   flip: 0
-  center: {x: 0, y: 0.1085, z: 0}
+  center: {x: 0, y: 0.05, z: 0}
   windDirection: {x: 0, y: 1, z: 0}
   windInfluence: 0
   centerOfMass: 0.25
   stiffnessPerAxis: {x: 1, y: 1, z: 1}
-  rotationPidConfig: {fileID: 11400000, guid: 9d23314fd1492584da56ef25598ab232, type: 2}
-  anglePidConfig: {fileID: 11400000, guid: c29f48e699ec26445a33657059edbdf3, type: 2}
+  torquePID: {fileID: 11400000, guid: 00ed0bd437019a34dbf27b4bd064959e, type: 2}
+--- !u!114 &1582970687
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6322755660712043124}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9fa782213740dac45822d87e30826a82, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &6322755661138930745
 GameObject:
   m_ObjectHideFlags: 0
@@ -176,8 +202,9 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6322755661138930745}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.217, z: 0}
+  m_LocalPosition: {x: 0, y: 0.1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6322755662073874457}
   m_RootOrder: 0
@@ -205,14 +232,15 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6322755661256335228}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: 0.1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6322755662073874457}
   m_Father: {fileID: 6322755661515130142}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!1 &6322755661515130137
 GameObject:
   m_ObjectHideFlags: 0
@@ -236,9 +264,10 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6322755661515130137}
-  m_LocalRotation: {x: -0, y: -0, z: 0.000000042146848, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0.79900026, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6322755661256335229}
   - {fileID: 6322755660125841589}
@@ -256,6 +285,7 @@ GameObject:
   - component: {fileID: 6322755661533670436}
   - component: {fileID: 6322755661533670440}
   - component: {fileID: 6322755661533670443}
+  - component: {fileID: 1555739495}
   m_Layer: 11
   m_Name: GameObject (2)
   m_TagString: Untagged
@@ -271,8 +301,9 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6322755661533670439}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -4.440892e-15, y: 0.21699995, z: 0}
+  m_LocalPosition: {x: -4.440892e-15, y: 0.1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6322755660712043125}
   m_RootOrder: 0
@@ -306,20 +337,31 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isRoot: 0
-  parentEntity: {fileID: 6322755660712043130}
+  parentEntity: {fileID: 1582970687}
   referenceBone: {fileID: 6322755661138930750}
   syncReferenceBone: 0
-  radius: 0.07
-  height: 0.217
+  radius: 0.025
+  height: 0.1
   direction: 1
   flip: 0
-  center: {x: 0, y: 0.1085, z: 0}
+  center: {x: 0, y: 0.05, z: 0}
   windDirection: {x: 0, y: 1, z: 0}
   windInfluence: 0
   centerOfMass: 0.25
   stiffnessPerAxis: {x: 1, y: 1, z: 1}
-  rotationPidConfig: {fileID: 11400000, guid: 9d23314fd1492584da56ef25598ab232, type: 2}
-  anglePidConfig: {fileID: 11400000, guid: c29f48e699ec26445a33657059edbdf3, type: 2}
+  torquePID: {fileID: 11400000, guid: 00ed0bd437019a34dbf27b4bd064959e, type: 2}
+--- !u!114 &1555739495
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6322755661533670439}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9fa782213740dac45822d87e30826a82, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &6322755662073874456
 GameObject:
   m_ObjectHideFlags: 0
@@ -344,8 +386,9 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6322755662073874456}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.17, z: 0}
+  m_LocalPosition: {x: 0, y: 0.1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6322755661138930750}
   m_Father: {fileID: 6322755661256335229}

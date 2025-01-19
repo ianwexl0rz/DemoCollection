@@ -56,7 +56,7 @@ public class PlayerController : ActorController
 		if (_meleeWeaponUser) _meleeWeaponUser.RegisterPlayerCallbacks(this);
 		if (actor.Trackable) RecentlyHit.Remove(actor.Trackable);
 		PossessedActor?.Invoke(actor);
-		HealthBar.RegisterHealthComponent( actor.Health );
+		UIController.RegisterPlayer(actor.Health, actor.Stamina);
 	}
 
 	public override void Release(Actor actor)
@@ -64,7 +64,7 @@ public class PlayerController : ActorController
 		actor.InputBuffer.Clear();
 		TrackedTarget = null;
 		_facingDirection = Vector3.zero;
-		HealthBar.UnregisterHealthComponent( actor.Health );
+		UIController.UnregisterPlayer(actor.Health, actor.Stamina);
 
 		if (_meleeWeaponUser) _meleeWeaponUser.UnregisterPlayerCallbacks(this);
 

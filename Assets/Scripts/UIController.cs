@@ -25,6 +25,25 @@ namespace DemoCollection
         [SerializeField] private HudBinding hudBinding = null;
         
         [SerializeField] private PauseMenuBinding pauseMenuBinding = null;
+
+        [Header("HUD")]
+        [SerializeField] private HealthBar playerHealth = null;
+        [SerializeField] private HealthBar playerStamina = null;
+
+        public static HealthBar PlayerHealth => _instance.playerHealth;
+        public static HealthBar PlayerStamina => _instance.playerStamina;
+
+        public static void RegisterPlayer(EntityResource health, EntityResource stamina)
+        {
+            _instance.playerHealth.RegisterHealthComponent(health);
+            _instance.playerStamina.RegisterHealthComponent(stamina);
+        }
+        
+        public static void UnregisterPlayer(EntityResource health, EntityResource stamina)
+        {
+            _instance.playerHealth.UnregisterHealthComponent(health);
+            _instance.playerStamina.UnregisterHealthComponent(stamina);
+        }
         
         private FrameworkElement _hudView;
         private FrameworkElement _pauseView;
