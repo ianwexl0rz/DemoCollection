@@ -94,6 +94,10 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _SubsurfaceTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _ThirdTex:
         m_Texture: {fileID: 2800000, guid: c3512c25766a40245ac94c6b1722d76e, type: 3}
         m_Scale: {x: 1, y: 1}
@@ -130,7 +134,7 @@ Material:
     - _EdgeLight: 1
     - _EnvironmentReflections: 1
     - _GlossMapScale: 1
-    - _Glossiness: 0.522
+    - _Glossiness: 0.5
     - _GlossyReflections: 1
     - _Metallic: 0
     - _Mode: 0
@@ -144,6 +148,7 @@ Material:
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
+    - _SubsurfaceScale: 0.444
     - _Surface: 0
     - _TransAmbient: 0.74
     - _TransDirect: 0.9
@@ -158,7 +163,7 @@ Material:
     m_Colors:
     - _BColor: {r: 0.03390588, g: 0.24042355, b: 0.262, a: 0}
     - _BaseColor: {r: 0.7607843, g: 0.57254905, b: 0.40392157, a: 0}
-    - _Color: {r: 0.99215686, g: 0.6392157, b: 0.49019608, a: 1}
+    - _Color: {r: 0.879, g: 0.59386533, b: 0.42983103, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _Fresnel: {r: 0, g: 0, b: 0, a: 1}
     - _GColor: {r: 0.157132, g: 0.18659863, b: 0.241, a: 0}
@@ -166,4 +171,5 @@ Material:
     - _SSSColor: {r: 1, g: 0, b: 0, a: 0}
     - _ShadowColor: {r: 0.36900002, g: 0, b: 0, a: 1}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
+    - _SubsurfaceColor: {r: 1, g: 0.04746878, b: 0, a: 1}
   m_BuildTextureStacks: []

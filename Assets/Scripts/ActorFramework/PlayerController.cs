@@ -108,6 +108,7 @@ public class PlayerController : ActorController
 		else if (_legacyMotor != null)
 		{
 			_legacyMotor.Move = move;
+			_legacyMotor.Facing = _facingDirection;
 			_legacyMotor.Run = isRunning;
 			
 			// Roll

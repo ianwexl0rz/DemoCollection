@@ -49,6 +49,7 @@ GameObject:
   - component: {fileID: 5455417119612974578}
   - component: {fileID: 5523151079513506425}
   - component: {fileID: 1537068579254803253}
+  - component: {fileID: 735988774879202123}
   m_Layer: 8
   m_Name: 256fes
   m_TagString: Untagged
@@ -106,7 +107,7 @@ CapsuleCollider:
   m_Center: {x: 0, y: 0.875, z: 0}
 --- !u!95 &5698680696155516962
 Animator:
-  serializedVersion: 4
+  serializedVersion: 5
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -123,7 +124,8 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 0
   m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!114 &-2076662725767434592
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -210,6 +212,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a3171578f584018a111747f168f7c59, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  health: {fileID: 0}
 --- !u!114 &1537068579254803253
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -222,8 +225,31 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b542462a5c324b839af5971dae578305, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Current: 100
-  Max: 100
+  _current: 100
+  _maximum: 100
+  OnDepleted:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &735988774879202123
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5454812784484718603}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 42cd8d6b837f421588d1721583c158f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _current: 80
+  _maximum: 80
+  OnDepleted:
+    m_PersistentCalls:
+      m_Calls: []
+  regenRate: 20
+  runningBurnRate: 10
+  minRestTime: 1
 --- !u!1 &5455417118671401127
 GameObject:
   m_ObjectHideFlags: 0

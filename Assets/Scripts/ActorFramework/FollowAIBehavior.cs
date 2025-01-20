@@ -49,6 +49,7 @@ public class FollowAIBehavior : AIBehavior
 				if (toTarget.magnitude > startDistance)
 				{
 					physicalMotor.Move = toTarget.normalized;
+					physicalMotor.Facing = toTarget.normalized;
 				}
 			}
 			else if (toTarget.magnitude > stopDistance)
@@ -65,6 +66,7 @@ public class FollowAIBehavior : AIBehavior
 				}
 
 				physicalMotor.Move = toTarget.normalized;
+				physicalMotor.Facing = toTarget.normalized;
 			}
 			else
 			{

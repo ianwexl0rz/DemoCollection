@@ -51,6 +51,7 @@ public class ActorPhysicalMotor : EntityPhysics
 	private Quaternion _desiredRotation;
 	
 	public Vector3 Move { get; set; }
+	public Vector3 Facing { get; set; }
 	
 	public bool Run { get; set; }
 	public bool IsRunning { get; private set; }
@@ -67,7 +68,8 @@ public class ActorPhysicalMotor : EntityPhysics
 
 		CapsuleCollider = GetComponent<CapsuleCollider>();
 
-		_desiredRotation = Quaternion.LookRotation(transform.forward);
+		_lookDirection = transform.forward;
+		_desiredRotation = Quaternion.LookRotation(_lookDirection);
 		_remainingJumps = jumpCount;
 	}
 
@@ -200,7 +202,7 @@ public class ActorPhysicalMotor : EntityPhysics
 			// Set new velocity.
 			Rigidbody.velocity = _groundVelocity.WithY(Rigidbody.velocity.y) + Physics.gravity * (gravityScale * Time.fixedDeltaTime);
 		}
-
+		
 		// Handle rotation.
 		var targetRotation = GetTargetRotation();
 		var targetTorque = Rigidbody.rotation.TorqueTo(targetRotation, deltaTime);
@@ -239,8 +241,11 @@ public class ActorPhysicalMotor : EntityPhysics
 		var maxTurnRate = _isGrounded && _rollAngle < Mathf.Epsilon ? maxTurnGround : maxTurnAir;
 		var rollAxis = Vector3.right;
 
-		var validLookInput = _isGrounded && Move.normalized != Vector3.zero && _actor.InputEnabled && !_actor.HitReaction.InProgress;
-		if (validLookInput) _lookDirection = Move.normalized;
+		var validLookInput = _isGrounded && Facing.normalized != Vector3.zero && !_actor.HitReaction.InProgress;
+		if (validLookInput)
+		{
+			_lookDirection = Facing.normalized;
+		}
 
 		var trackedTarget = _actor.Controller ? _actor.Controller.TrackedTarget : null;
 		if (trackedTarget && !Run)
