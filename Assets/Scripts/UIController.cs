@@ -27,22 +27,22 @@ namespace DemoCollection
         [SerializeField] private PauseMenuBinding pauseMenuBinding = null;
 
         [Header("HUD")]
-        [SerializeField] private HealthBar playerHealth = null;
-        [SerializeField] private HealthBar playerStamina = null;
+        [SerializeField] private ResourceBar playerHealth = null;
+        [SerializeField] private ResourceBar playerStamina = null;
 
-        public static HealthBar PlayerHealth => _instance.playerHealth;
-        public static HealthBar PlayerStamina => _instance.playerStamina;
+        public static ResourceBar PlayerHealth => _instance.playerHealth;
+        public static ResourceBar PlayerStamina => _instance.playerStamina;
 
-        public static void RegisterPlayer(EntityResource health, EntityResource stamina)
+        public void RegisterPlayer(Actor actor)
         {
-            _instance.playerHealth.RegisterHealthComponent(health);
-            _instance.playerStamina.RegisterHealthComponent(stamina);
+            playerHealth.RegisterResource(actor.Health);
+            playerStamina.RegisterResource(actor.Stamina);
         }
         
-        public static void UnregisterPlayer(EntityResource health, EntityResource stamina)
+        public void UnregisterPlayer(Actor actor)
         {
-            _instance.playerHealth.UnregisterHealthComponent(health);
-            _instance.playerStamina.UnregisterHealthComponent(stamina);
+            playerHealth.UnregisterResource(actor.Health);
+            playerStamina.UnregisterResource(actor.Stamina);
         }
         
         private FrameworkElement _hudView;
@@ -86,6 +86,9 @@ namespace DemoCollection
             HudViewCommand = new DelegateCommand(OnHud);
             PauseViewCommand = new DelegateCommand(OnPause);
 
+            playerController.OnPossessActor += RegisterPlayer;
+            playerController.OnReleaseActor += UnregisterPlayer;
+            
             if (!noesisEnabled)
             {
                 _instance.OnHud(null);

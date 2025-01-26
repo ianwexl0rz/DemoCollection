@@ -42,7 +42,7 @@ namespace DemoCollection.DataBinding
         {
             _recentlyHit = playerController.RecentlyHit;
             
-            playerController.PossessedActor += RegisterActor;
+            playerController.OnPossessActor += RegisterActor;
             playerController.TargetChanged += RegisterTarget;
             playerController.ChangedRecentlyHitList += UpdateVisibleHealthBars;
             playerController.RequestUpdateReticle += UpdateReticle;

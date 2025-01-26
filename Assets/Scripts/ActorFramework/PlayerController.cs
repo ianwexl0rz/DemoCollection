@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using ActorFramework;
-using DemoCollection;
-using DemoCollection.DataBinding;
 using UnityEngine;
 using Rewired;
 
@@ -17,16 +14,17 @@ public class PlayerControllerContext
 [CreateAssetMenu(fileName = "Player Controller KCC", menuName = "Actor/Controllers/Player Controller KCC")]
 public class PlayerController : ActorController
 {
-	public static List<Trackable> PotentialTargets { get; private set; } = new List<Trackable>();
+	public static List<Trackable> PotentialTargets { get; } = new();
 
-	public event Action<Actor> PossessedActor;
+	public event Action<Actor> OnPossessActor;
+	public event Action<Actor> OnReleaseActor;
 	public event Action ChangedRecentlyHitList;
 	public event Action<Trackable> RequestUpdateReticle;
 
 	[field: SerializeField] public float ShowHealthOnHitDuration { get; private set; } = 1f;
 	[field: SerializeField] public float LockOnRange { get; private set; } = 10f;
 	[field: SerializeField] public float ChangeTargetAngleLimit { get; private set; } = 90f;
-	public Dictionary<Trackable, float> RecentlyHit { get; private set; } = new Dictionary<Trackable, float>();
+	public Dictionary<Trackable, float> RecentlyHit { get; } = new();
 
 	private Player _player;
 	private Camera _mainCamera;
@@ -55,8 +53,7 @@ public class PlayerController : ActorController
 
 		if (_meleeWeaponUser) _meleeWeaponUser.RegisterPlayerCallbacks(this);
 		if (actor.Trackable) RecentlyHit.Remove(actor.Trackable);
-		PossessedActor?.Invoke(actor);
-		UIController.RegisterPlayer(actor.Health, actor.Stamina);
+		OnPossessActor?.Invoke(actor);
 	}
 
 	public override void Release(Actor actor)
@@ -64,7 +61,7 @@ public class PlayerController : ActorController
 		actor.InputBuffer.Clear();
 		TrackedTarget = null;
 		_facingDirection = Vector3.zero;
-		UIController.UnregisterPlayer(actor.Health, actor.Stamina);
+		OnReleaseActor?.Invoke(actor);
 
 		if (_meleeWeaponUser) _meleeWeaponUser.UnregisterPlayerCallbacks(this);
 
