@@ -1,8 +1,10 @@
 ﻿using JetBrains.RiderFlow.Core.Launchers;
+using JetBrains.RiderFlow.Core.Logging;
 using JetBrains.RiderFlow.Core.ReEditor.Notifications;
 using JetBrains.RiderFlow.Core.Services.Caches.RecentFiles;
 using JetBrains.RiderFlow.Core.UI.SearchEverywhere;
 using JetBrains.RiderFlow.Core.Utils;
+using JetBrains.RiderFlow.Since2020_2.EnhancedHierarchyIntegration;
 using UnityEditor;
 
 namespace JetBrains.RiderFlow.Since2020_2
@@ -13,12 +15,19 @@ namespace JetBrains.RiderFlow.Since2020_2
 
         static DelayedEntryPoint()
         {
+            LogManager.Instance.Initialize();
+
             SearchEverywhereWindow.Settings = SearchWindowSettings.instance;
             RecentFilesCacheController.Cache = RecentFilesCache.instance;
             ProgressManagerOwner.ProgressManager = new ProgressManager();
+
+            GameObjectUtils.GlobalObjectIdentifiersToInstanceIDsSlow = GlobalObjectId.GlobalObjectIdentifiersToInstanceIDsSlow;
+            
+            OpenedPrefabPreviewTrackerIntegration.Initialize();
+            BackendInstallationProgress.Initialize();
             OnEnable();
         }
-        
+
         protected static void OnEnable()
         {
             if (!IsPrimaryUnityProcess())

@@ -4,7 +4,7 @@ namespace JetBrains.RiderFlow.Since2019_4
 {
     public class LogProgressManager : IProgressManager
     {
-        public int CreateProgress(string name, string description = null)
+        public int CreateProgress(string name, string description = null, bool isIndefinite = false)
         {
             //nope
             return -1;

@@ -50,10 +50,15 @@ namespace JetBrains.RiderFlow.Since2021_2.SceneIntegration
                 RegisterCallback<GeometryChangedEvent>(OnGeometryChanged);
                 myParentSet.Advise(myDefinition.Lifetime, SetUpChildElements);
                 mySceneOccurrenceExplorerTool = ComponentContainer.GetComponent<SceneOccurrenceExplorerTool>();
-                mySceneOccurrenceExplorerTool.Session.Advise(myDefinition.Lifetime, session =>
+                mySceneOccurrenceExplorerTool.Session.View(myDefinition.Lifetime, (lf, session) =>
                 {
-                    if (!myShowingFindUsages) 
-                        AddFindUsages();
+                    if (session == null)
+                        return;
+                    
+                    if (!myShowingFindUsages)
+                    {
+                        lf.Bracket(() => AddFindUsages(session), RemoveFindUsages);
+                    }
                 });
                 
                 RegisterCallback<DetachFromPanelEvent>(OnDestroy);
@@ -65,7 +70,6 @@ namespace JetBrains.RiderFlow.Since2021_2.SceneIntegration
             if (Event.current.keyCode == KeyCode.Escape)
             {
                 mySceneOccurrenceExplorerTool.CloseSession();
-                RemoveFindUsages();
                 SceneView.duringSceneGui -= OnEscape;
             }
         }
@@ -147,10 +151,11 @@ namespace JetBrains.RiderFlow.Since2021_2.SceneIntegration
             style.marginRight = 0;
         }
 
-        private void AddFindUsages()
+        private void AddFindUsages(SceneOccurrenceExplorerTool.SceneOccurrenceExplorerSession session)
         {
-            if (!mySceneOccurrenceExplorerTool.Session.Value.Lifetime.IsAlive)
+            if (session.Lifetime.IsNotAlive)
                 return;
+            
             myControls = mySceneOccurrenceExplorerTool.MakeVisualElements(myDefinition.Lifetime, HasHorizontalAlignment).ToList();
             myRiderFlowToolbarElements.AddRange(myControls);
             foreach (var visualElement in myControls)

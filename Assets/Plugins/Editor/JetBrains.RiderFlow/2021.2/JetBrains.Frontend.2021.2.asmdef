@@ -16,7 +16,7 @@
     ],
     "autoReferenced": false,
     "defineConstraints": [
-        "UNITY_2021_2_OR_NEWER"
+        "UNITY_2021 || UNITY_2022_1"
     ],
     "versionDefines": [],
     "noEngineReferences": false

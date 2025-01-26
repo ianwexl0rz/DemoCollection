@@ -10,10 +10,11 @@ namespace JetBrains.RiderFlow.Since2020_2
         private int myProgressesCount;
         private int myRootProgressId = -1;
 
-        public int CreateProgress(string name, string description = null)
+        public int CreateProgress(string name, string description = null, bool isIndefinite = false)
         {
             var rootProgressId = CreateOrGetRootProgressId();
-            var id = Progress.Start(name, description, parentId: rootProgressId);
+            var options = isIndefinite ? Progress.Options.Indefinite : Progress.Options.None;
+            var id = Progress.Start(name, description, options, rootProgressId);
             myProgressesCount++;
             return id;
         }

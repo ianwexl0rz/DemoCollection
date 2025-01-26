@@ -11,7 +11,8 @@
     "allowUnsafeCode": true,
     "overrideReferences": true,
     "precompiledReferences": [
-        "JetBrains.RiderFlow.Repacked.dll"
+        "JetBrains.RiderFlow.Repacked.dll",
+        "JetBrains.Lifetimes.dll"
     ],
     "autoReferenced": false,
     "defineConstraints": [

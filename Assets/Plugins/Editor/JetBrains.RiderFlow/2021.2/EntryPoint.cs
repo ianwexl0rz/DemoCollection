@@ -1,6 +1,7 @@
 using JetBrains.Collections.Viewable;
 using JetBrains.Lifetimes;
 using JetBrains.RiderFlow.Core.Launchers;
+using JetBrains.RiderFlow.Core.Logging;
 using JetBrains.RiderFlow.Core.ReEditor.Notifications;
 using JetBrains.RiderFlow.Core.Requirements;
 using JetBrains.RiderFlow.Core.Services.Caches.RecentFiles;
@@ -9,6 +10,7 @@ using JetBrains.RiderFlow.Core.UI.SceneIntegration;
 using JetBrains.RiderFlow.Core.UI.SceneIntegration.Tools.SceneHighlighting;
 using JetBrains.RiderFlow.Core.UI.SearchEverywhere;
 using JetBrains.RiderFlow.Core.Utils;
+using JetBrains.RiderFlow.Since2021_2.EnhancedHierarchyIntegration;
 using JetBrains.RiderFlow.Since2021_2.SceneIntegration;
 using UnityEditor;
 using UnityEditor.Overlays;
@@ -22,19 +24,26 @@ namespace JetBrains.RiderFlow.Since2021_2
 
         static DelayedEntryPoint()
         {
+            LogManager.Instance.Initialize();
+            
             SearchEverywhereWindow.Settings = SearchWindowSettings.instance;
             RecentFilesCacheController.Cache = RecentFilesCache.instance;
-            ProgressManagerOwner.ProgressManager = new ProgressManager();
-            UnityEditorUtils.ExecuteOnceOnUpdateCall(OnEnable);
+            ProgressManagerOwner.ProgressManager = ProgressManager.Instance;
+            
+            GameObjectUtils.GlobalObjectIdentifiersToInstanceIDsSlow = GlobalObjectId.GlobalObjectIdentifiersToInstanceIDsSlow;
+
+            OpenedPrefabPreviewTrackerIntegration.Initialize();
+            BackendInstallationProgress.Initialize();
+            OnEnable();
             SceneIntegrationSettings.IsClassicToolboxEnabled = false;
         }
-        
+
         protected static void OnEnable()
         {
             if (!IsPrimaryUnityProcess())
                 return;
             
-            InstallBackendRequirement.Instance.IsReady.AdviseUntil(Lifetime.Eternal, v =>
+            ContainerReadyRequirement.Instance.IsReady.AdviseUntil(Lifetime.Eternal, v =>
             {
                 if (v)
                 {
