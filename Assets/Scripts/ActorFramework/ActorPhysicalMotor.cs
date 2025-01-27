@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using ActorFramework;
 using UnityEngine;
 
 [RequireComponent(typeof(Actor))]
-public class ActorPhysicalMotor : EntityPhysics
+public class ActorPhysicalMotor : EntityPhysics, IActorMotor
 {
 	private const float MaxAngularVelocity = 50f;
 	public event Action<AnimatedMotorProperties> OnAnimatedPropertiesChanged;
@@ -50,11 +49,31 @@ public class ActorPhysicalMotor : EntityPhysics
 	private int _remainingJumps;
 	private Quaternion _desiredRotation;
 	
-	public Vector3 Move { get; set; }
-	public Vector3 Facing { get; set; }
+	private Vector3 _moveDirection;
+	private Vector3 _facingDirection;
+	private bool _preferRunning;
+	private bool _isRunning;
 	
-	public bool Run { get; set; }
-	public bool IsRunning { get; private set; }
+	public bool IsRunning => _isRunning;
+	
+	public void SetInputs(ref CharacterInputs inputs)
+	{
+		_moveDirection = inputs.Move;
+		_facingDirection = inputs.Look;
+		_preferRunning = inputs.Run;
+
+		// Jump
+		if (inputs.BeginJump)
+		{
+			_actor.InputBuffer.Add(PlayerAction.Jump, 0.1f);
+		}
+
+		// Roll
+		if (inputs.BeginRoll)
+		{
+			_actor.InputBuffer.Add(PlayerAction.Evade, 0.25f);
+		}
+	}
 	
 	public CapsuleCollider CapsuleCollider { get; private set; }
 
@@ -112,7 +131,7 @@ public class ActorPhysicalMotor : EntityPhysics
 
 		if (_actor.InputEnabled)
 		{
-			desiredVelocity += (_isGrounded ? acceleration : airAcceleration) * deltaTime * Move;
+			desiredVelocity += (_isGrounded ? acceleration : airAcceleration) * deltaTime * _moveDirection;
 		}
 
 		var speed = desiredVelocity.magnitude;
@@ -127,7 +146,7 @@ public class ActorPhysicalMotor : EntityPhysics
 		{
 			// Speed is only variable when NOT sprinting.
 			//var normalSpeed = Mathf.Max(minSpeed, walkSpeed * move.sqrMagnitude);
-			var shouldRun = Run && _rollAngle < Mathf.Epsilon && _actor.Stamina.Current > 0;
+			var shouldRun = _preferRunning && _rollAngle < Mathf.Epsilon && _actor.Stamina.Current > 0;
 			var targetSpeed = shouldRun ? runSpeed : walkSpeed;
 
 			// Slower while walking backwards...
@@ -159,7 +178,7 @@ public class ActorPhysicalMotor : EntityPhysics
 		if (_isGrounded)
 		{
 			// Considered running if moving closer to runSpeed than walkSpeed
-			IsRunning = _groundVelocity.magnitude > (walkSpeed + runSpeed) * 0.5f;
+			_isRunning = _groundVelocity.magnitude > (walkSpeed + runSpeed) * 0.5f;
 			
 			// Reset remaining jumps if we just landed.
 			if (!wasGrounded) _remainingJumps = jumpCount;
@@ -241,14 +260,14 @@ public class ActorPhysicalMotor : EntityPhysics
 		var maxTurnRate = _isGrounded && _rollAngle < Mathf.Epsilon ? maxTurnGround : maxTurnAir;
 		var rollAxis = Vector3.right;
 
-		var validLookInput = _isGrounded && Facing.normalized != Vector3.zero && !_actor.HitReaction.InProgress;
+		var validLookInput = _isGrounded && _facingDirection.normalized != Vector3.zero && !_actor.HitReaction.InProgress;
 		if (validLookInput)
 		{
-			_lookDirection = Facing.normalized;
+			_lookDirection = _facingDirection.normalized;
 		}
 
 		var trackedTarget = _actor.Controller ? _actor.Controller.TrackedTarget : null;
-		if (trackedTarget && !Run)
+		if (trackedTarget && !_preferRunning)
 		{
 			var lockOnOrientation = Quaternion.LookRotation(_actor.DirectionToTrackable(trackedTarget));
 			_desiredRotation = Quaternion.RotateTowards(_desiredRotation, lockOnOrientation, maxTurnRate);

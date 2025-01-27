@@ -32,10 +32,10 @@ public class PlayerController : ActorController
 	private Trackable _trackableCandidate;
 	private Vector3 _facingDirection;
 	private Vector2 _lookInput;
+	private CharacterInputs _inputs = new();
 	
 	// Cached actor components
-	private ActorKinematicMotor _locomotion;
-	private ActorPhysicalMotor _legacyMotor;
+	private IActorMotor _motor;
 	private MeleeWeaponUser _meleeWeaponUser;
 
 	public void Init(PlayerControllerContext context)
@@ -47,8 +47,7 @@ public class PlayerController : ActorController
 	
 	public override void Possess(Actor actor, object context = null)
 	{
-		_locomotion = actor.GetComponent<ActorKinematicMotor>();
-		_legacyMotor = actor.GetComponent<ActorPhysicalMotor>();
+		_motor = actor.GetComponent<IActorMotor>();
 		_meleeWeaponUser = actor.GetComponent<MeleeWeaponUser>();
 
 		if (_meleeWeaponUser) _meleeWeaponUser.RegisterPlayerCallbacks(this);
@@ -64,17 +63,7 @@ public class PlayerController : ActorController
 		OnReleaseActor?.Invoke(actor);
 
 		if (_meleeWeaponUser) _meleeWeaponUser.UnregisterPlayerCallbacks(this);
-
-		if (_locomotion != null)
-		{
-			var inputs = new CharacterInputs();
-			_locomotion.SetInputs(ref inputs);
-		}
-		else if (_legacyMotor != null)
-		{
-			_legacyMotor.Move = Vector3.zero;
-			_legacyMotor.Run = false;
-		}
+		_motor?.SetInputs(ref _inputs);
 	}
 
 	public override void Tick(Actor actor, float deltaTime)
@@ -87,34 +76,16 @@ public class PlayerController : ActorController
 
 		var isRunning = _player.GetButtonLongPress(PlayerAction.Evade);
 		CalculateMoveAndOrientation(actor, isRunning, out var move);
-
-		if (_locomotion != null)
+		
+		if (_motor != null)
 		{
-			var inputs = new CharacterInputs()
-			{
-				Move = move,
-				Look = _facingDirection,
-				Run = isRunning,
-				BeginRoll = _player.GetButtonShortPressUp(PlayerAction.Evade),
-				BeginJump = _player.GetButtonDown(PlayerAction.Jump),
-				IsInHitStun = actor.HitReaction.InProgress
-			};
+			_inputs.Move = move;
+			_inputs.Look = _facingDirection;
+			_inputs.Run = isRunning;
+			_inputs.BeginRoll = _player.GetButtonShortPressUp(PlayerAction.Evade);
+			_inputs.BeginJump = _player.GetButtonDown(PlayerAction.Jump);
 
-			_locomotion.SetInputs(ref inputs);
-		}
-		else if (_legacyMotor != null)
-		{
-			_legacyMotor.Move = move;
-			_legacyMotor.Facing = _facingDirection;
-			_legacyMotor.Run = isRunning;
-			
-			// Roll
-			if(_player.GetButtonShortPressUp(PlayerAction.Evade))
-				actor.InputBuffer.Add(PlayerAction.Evade, 0.25f);
-
-			// Jump
-			if(_player.GetButtonDown(PlayerAction.Jump))
-				actor.InputBuffer.Add(PlayerAction.Jump, 0.1f);
+			_motor.SetInputs(ref _inputs);
 		}
 	}
 

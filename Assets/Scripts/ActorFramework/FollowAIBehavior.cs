@@ -8,6 +8,8 @@ public class FollowAIBehavior : AIBehavior
 	public float stopDistance = 2f;
 	public float startRunDistance = 6f;
 	public float stopRunDistance = 4f;
+	
+	private CharacterInputs _inputs = new();
 
 	public override void Tick(ActorController controller, Actor actor)
 	{
@@ -15,63 +17,31 @@ public class FollowAIBehavior : AIBehavior
 
 		var toTarget = (controller.TrackedTarget.GetEyesPosition() - actor.Trackable.GetEyesPosition()).WithY(0f);
 
-		if (actor.GetComponent<ActorKinematicMotor>() is ActorKinematicMotor kinematicMotor)
+		IActorMotor motor = actor.GetComponent<IActorMotor>();
+		if (motor != null)
 		{
-			var move = Vector3.zero;
-			var look = kinematicMotor.transform.forward;
-			var shouldRun = kinematicMotor.IsRunning;
-			
-			if (toTarget.magnitude > startDistance)
-			{
-				move = toTarget.normalized;
-				look = move;
+			var targetDistance = toTarget.magnitude;
+			var normalizedTarget = toTarget.normalized;
 
-				if (!shouldRun && toTarget.magnitude > startRunDistance)
-					shouldRun = true;
-				
-				if (shouldRun && toTarget.magnitude < stopRunDistance)
-					shouldRun = false;
-			}
-
-			var inputs = new CharacterInputs()
+			if (_inputs.Move == Vector3.zero)
 			{
-				Move = move,
-				Look = look,
-				Run = shouldRun
-			};
-
-			kinematicMotor.SetInputs(ref inputs);
-		}
-		else if (actor.GetComponent<ActorPhysicalMotor>() is ActorPhysicalMotor physicalMotor)
-		{
-			if (physicalMotor.Move == Vector3.zero)
-			{
-				if (toTarget.magnitude > startDistance)
+				if (targetDistance > startDistance)
 				{
-					physicalMotor.Move = toTarget.normalized;
-					physicalMotor.Facing = toTarget.normalized;
+					_inputs.Move = normalizedTarget;
+					_inputs.Look = normalizedTarget;
 				}
 			}
-			else if (toTarget.magnitude > stopDistance)
+			else if (targetDistance > stopDistance)
 			{
-				if (!physicalMotor.Run && toTarget.magnitude > startRunDistance)
-				{
-					// Start running
-					physicalMotor.Run = true;
-				}
-				else if (physicalMotor.Run && toTarget.magnitude < stopRunDistance)
-				{
-					// Stop running
-					physicalMotor.Run = false;
-				}
-
-				physicalMotor.Move = toTarget.normalized;
-				physicalMotor.Facing = toTarget.normalized;
+				_inputs.Move = normalizedTarget;
+				_inputs.Look = normalizedTarget;
+				_inputs.Run = targetDistance > startRunDistance || (_inputs.Run && targetDistance > stopRunDistance);
 			}
 			else
 			{
-				physicalMotor.Move = Vector3.zero;
+				_inputs.Move = Vector3.zero;
 			}
+			motor.SetInputs(ref _inputs);
 		}
 	}
 }
