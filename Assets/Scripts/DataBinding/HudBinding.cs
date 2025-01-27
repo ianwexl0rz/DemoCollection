@@ -1,15 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
 using ActorFramework;
-using JetBrains.Annotations;
-using UnityEngine;
-using Noesis;
 
 namespace DemoCollection.DataBinding
 {
+    // TODO: Bring back targeting display and enemy health bars using Unity UI
     [Serializable]
     public class HudBinding : ObservableObject
     {
