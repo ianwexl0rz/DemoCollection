@@ -8,17 +8,15 @@ namespace ActorFramework
 {
     public class EntityResource : ObservableMonobehaviour
     {
-        private const float EchoLifespan = 0.5f;
+        private const float EchoLifespan = 1.0f;
         private const float EchoResetRate = 0.5f;
 
-        public event Action<int, int> OnValueChanged;
         public event Action Depleted;
 
-        [SerializeField] private int _current = 100;
-        [SerializeField] private int _maximum = 100;
-        [SerializeField] private UnityEvent OnDepleted = new UnityEvent();
+        [SerializeField] private int current = 100;
+        [SerializeField] private int maximum = 100;
+        [SerializeField] private UnityEvent onDepleted = new();
         
-        protected bool HasEcho = false;
         protected Entity Entity;
 
         private float _echo;
@@ -28,25 +26,20 @@ namespace ActorFramework
         public float Echo
         {
             get => _echo;
-            set { if (_echo != value) { _echo = value; OnPropertyChanged("Echo"); } }
+            set { if (!Mathf.Approximately(_echo, value)) { _echo = value; OnPropertyChanged(); } }
         }
         
         public int Current
         {
-            get => _current;
-            set { if (_current != value) { _current = value; OnPropertyChanged("Current"); } }
+            get => current;
+            set { if (current != value) { current = value; OnPropertyChanged(); } }
         }
 
         public int Maximum
         {
-            get => _maximum;
-            set { if (_maximum != value) { _maximum = value; OnPropertyChanged("Maximum"); } }
+            get => maximum;
+            set { if (maximum != value) { maximum = value; OnPropertyChanged(); } }
         }
-
-        // public void OnValueChanged(int newValue)
-        // {
-        //     
-        // }
         
         protected virtual void Awake()
         {
@@ -66,7 +59,6 @@ namespace ActorFramework
                 _resetEcho = StartCoroutine(ResetEcho());
             }
         }
-
 
         private IEnumerator ResetEcho()
         {
@@ -92,24 +84,22 @@ namespace ActorFramework
         protected void ApplyChange(int delta)
         {
             // Calculate new health (un-clamped so we can do "overkill" events, etc.)
-            var newValue = _current + delta;
+            var newValue = current + delta;
 
             // Clamp new health.
-            newValue = Mathf.Clamp(newValue, 0, _maximum);
+            newValue = Mathf.Clamp(newValue, 0, maximum);
         
             // Early out if no change...
-            if (newValue == _current) return;
+            if (newValue == current) return;
 
             // Update health.
             Current = newValue;
-            
-            OnValueChanged?.Invoke(Current, Maximum);
             
             // Destroy if health is zero.
             if (newValue < Mathf.Epsilon)
             {
                 Depleted?.Invoke();
-                OnDepleted.Invoke();
+                onDepleted.Invoke();
             }
         }
     }

@@ -5171,7 +5171,6 @@ GameObject:
   m_Component:
   - component: {fileID: 2130144783}
   - component: {fileID: 2130144782}
-  - component: {fileID: 2130144781}
   - component: {fileID: 2130144784}
   m_Layer: 0
   m_Name: UI Camera
@@ -5180,39 +5179,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &2130144781
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2130144780}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 29355477be96127469aed699dd82b4be, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _xaml: {fileID: -8414808784256213763, guid: 649433c6f63c4c94ea27ee59210377a9, type: 3}
-  _texture: {fileID: 0}
-  _isPPAAEnabled: 0
-  _tessellationMaxPixelError: 0.2
-  _renderFlags: 16
-  _dpiScale: 0
-  _continuousRendering: 1
-  _enableExternalUpdate: 0
-  _enableKeyboard: 1
-  _enableMouse: 1
-  _enableTouch: 1
-  _enableActions: 1
-  _emulateTouch: 0
-  _useRealTimeClock: 1
-  _actions: {fileID: -944628639613478452, guid: 9f67088567c2b5040b62090c14e352e3,
-    type: 3}
-  _actionMap: Gamepad
-  _actionsRepeatDelay: 0.5
-  _actionsRepeatRate: 0.1
-  _xrTrackingOrigin: {fileID: 0}
-  _renderPassEvent: 550
 --- !u!20 &2130144782
 Camera:
   m_ObjectHideFlags: 0
@@ -5287,7 +5253,6 @@ MonoBehaviour:
   playerController: {fileID: 11400000, guid: 197438d32256b794faf42212dfaf46b5, type: 2}
   gameSettings: {fileID: 11400000, guid: 491122bfc34e6724c90d93067bb4cc0d, type: 2}
   pauseOverlay: {fileID: 1547840083}
-  noesisEnabled: 0
   playerHealth: {fileID: 135485910}
   playerStamina: {fileID: 943727615}
 --- !u!1001 &404712118455313752
