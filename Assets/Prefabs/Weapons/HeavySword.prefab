@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 6534926288131114343}
   - component: {fileID: 6895388633802375867}
   - component: {fileID: 3465301755573819374}
+  - component: {fileID: 5051777970625245303}
   m_Layer: 0
   m_Name: HeavySword
   m_TagString: Untagged
@@ -62,6 +63,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Color: {r: 0.740566, g: 0.92660755, b: 1, a: 1}
   Material: {fileID: 2100000, guid: 681571f3fdc7f094694615d03a1adc5f, type: 2}
+--- !u!54 &5051777970625245303
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3450633854991776217}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 1
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1001 &6816705381906727324
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -112,6 +129,26 @@ PrefabInstance:
     m_RemovedComponents:
     - {fileID: 9500000, guid: 7b7f8fb6656b34f448c2b04c6a0e3ccc, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 7b7f8fb6656b34f448c2b04c6a0e3ccc, type: 3}
+--- !u!1 &6816705381906695996 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 100000, guid: 7b7f8fb6656b34f448c2b04c6a0e3ccc,
+    type: 3}
+  m_PrefabInstance: {fileID: 6816705381906727324}
+  m_PrefabAsset: {fileID: 0}
+--- !u!64 &1614495875971753347
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6816705381906695996}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 1
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 4300000, guid: 7b7f8fb6656b34f448c2b04c6a0e3ccc, type: 3}
 --- !u!4 &6816705381906864924 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400000, guid: 7b7f8fb6656b34f448c2b04c6a0e3ccc,

@@ -1,5 +1,6 @@
 ﻿using System;
 
+[Serializable]
 public class Timer
 {
 	private readonly Action onStart;
@@ -9,7 +10,7 @@ public class Timer
 	public float Current { get; private set; }
 	public float Duration { get; private set; }
 	public bool Persistent { get; }
-	public bool InProgress => Current < Duration;
+	public bool InProgress => Current < Duration && Duration > 0;
 	public float NormalizedTime => Current / Duration;
 	
 	private readonly bool useNormalizedTime;

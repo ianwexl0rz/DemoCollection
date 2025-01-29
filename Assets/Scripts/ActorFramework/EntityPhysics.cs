@@ -1,4 +1,5 @@
 ﻿using System;
+using Rewired;
 using UnityEngine;
 
 namespace ActorFramework
@@ -66,14 +67,18 @@ namespace ActorFramework
 
         private void HandleGetHit(CombatEvent combatEvent)
         {
-            // TODO: Use precise knockback when ragdolling on death
-            var preciseKnockback = false;
-            var knockbackDir = preciseKnockback
-                ? combatEvent.Direction
-                : Vector3.Normalize(Rigidbody.position - combatEvent.Instigator.transform.position);
-
-            var velocity = knockbackDir * (combatEvent.AttackData.knockback / Time.fixedDeltaTime);
-            Rigidbody.AddForceAtPosition(velocity, combatEvent.Point, ForceMode.Impulse);
+            var speed = combatEvent.AttackData.knockback / Time.fixedDeltaTime;
+            if (combatEvent.Target is Actor)
+            {
+                var direction = Vector3.Normalize(Rigidbody.position - combatEvent.Instigator.transform.position);
+                var velocity = speed * direction;
+                Rigidbody.AddForce(velocity, ForceMode.Impulse);
+            }
+            else
+            { 
+                var velocity = speed * combatEvent.Direction;
+                Rigidbody.AddForceAtPosition(velocity, combatEvent.Point, ForceMode.Impulse);
+            }
         }
     }
 }

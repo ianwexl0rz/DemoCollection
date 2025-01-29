@@ -40,7 +40,9 @@ namespace ActorFramework
         private bool _cachedMotorEnabled;
         private Vector3 _moveInputVector;
         private Vector3 _lookInputVector;
+        public bool IsGrounded => Motor.GroundingStatus.FoundAnyGround;
         public bool IsRunning { get; private set; }
+        
         private bool _shouldBeginJump;
         private bool _shouldBeginAttack;
         private bool _rollRequested = false;

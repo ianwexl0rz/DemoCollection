@@ -21,6 +21,8 @@ public class MeleeWeapon : MonoBehaviour
 		_user = user;
 		attackDataSet = this.attackDataSet;
 	}
+	
+	public void UnregisterUser() => _user = null;
 
 	public void NewAttack(string attackName)
 	{

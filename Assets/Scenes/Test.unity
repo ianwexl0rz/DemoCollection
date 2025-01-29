@@ -3250,6 +3250,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Heavy Alt
       objectReference: {fileID: 0}
+    - target: {fileID: 982690226841982542, guid: 1c5f6642e322e4158a26ee6c7822d86b,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 984651303598389436, guid: 1c5f6642e322e4158a26ee6c7822d86b,
         type: 3}
       propertyPath: m_RootOrder
@@ -4246,7 +4251,7 @@ MonoBehaviour:
   mainMode:
     gameCamera: {fileID: 198612201}
     playerBrain: {fileID: 11400000, guid: 197438d32256b794faf42212dfaf46b5, type: 2}
-    followerBrain: {fileID: 11400000, guid: 3bd6e43a756db3642bc08e8a5ba40b8e, type: 2}
+    followerBrain: {fileID: 11400000, guid: 74f1afebb7d9527499848e5d4038a7ec, type: 2}
     blueHitSparkPrefab: {fileID: 1312546261970878, guid: bc7a4bb76e52cad4c8ac1a9c9b37ed1c,
       type: 3}
     orangeHitSparkPrefab: {fileID: 1985286972383262, guid: 55973eedeec3c49499c7b31f6fb2037e,
@@ -5262,6 +5267,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 404712119602611280, guid: 740f876ee4bbc4e81b13712384d6c56c,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 404712119602611294, guid: 740f876ee4bbc4e81b13712384d6c56c,
         type: 3}
       propertyPath: m_RootOrder
@@ -5464,6 +5474,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8125766878842264555, guid: be3c8f37947e6448fb6a67ab09142c4b,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8125766878842264556, guid: be3c8f37947e6448fb6a67ab09142c4b,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: be3c8f37947e6448fb6a67ab09142c4b, type: 3}

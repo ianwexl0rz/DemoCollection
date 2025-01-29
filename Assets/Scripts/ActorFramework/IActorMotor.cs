@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace ActorFramework
@@ -13,8 +14,11 @@ namespace ActorFramework
     
     public interface IActorMotor
     {
+        event Action<AnimatedMotorProperties> OnAnimatedPropertiesChanged;
+        
         void SetInputs(ref CharacterInputs inputs);
         
+        public bool IsGrounded { get; }
         public bool IsRunning { get; }
     }
 }

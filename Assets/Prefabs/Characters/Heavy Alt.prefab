@@ -76,6 +76,12 @@ PrefabInstance:
       propertyPath: m_LocalPosition.x
       value: 0.15508354
       objectReference: {fileID: 0}
+    - target: {fileID: 4193483838583071648, guid: 09e76c50c237c544bab6b4d67100a8dc,
+        type: 3}
+      propertyPath: ragdollPrefab
+      value: 
+      objectReference: {fileID: 130438425184107493, guid: 8fa2723a089b54b8691e0e7ea486c806,
+        type: 3}
     - target: {fileID: 5595153552627926668, guid: 09e76c50c237c544bab6b4d67100a8dc,
         type: 3}
       propertyPath: m_Materials.Array.data[0]

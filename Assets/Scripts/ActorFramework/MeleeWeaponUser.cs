@@ -26,12 +26,13 @@ public class MeleeWeaponUser : MonoBehaviour
 
 	private AttackDataSet _attackDataSet;
 
-	private void Awake()
+	private void Start()
 	{
 		Actor = GetComponent<Actor>();
 		Actor.ConsumeInput += HandleInput;
 		Actor.LateTick += ProcessAttackAnimation;
 		Actor.GetHit += HandleGetHit;
+		Actor.OnDeath += DropWeapon;
 
 		if (defaultWeaponPrefab != null)
 			EquipWeapon(defaultWeaponPrefab);
@@ -51,18 +52,21 @@ public class MeleeWeaponUser : MonoBehaviour
 
 	public void NewAttack(AnimationEvent animEvent)
 	{
+		if (!_weapon) return;
 		_weapon.NewAttack(animEvent.stringParameter);
 		BeginAttack?.Invoke(Actor);
 	}
 	
 	public void NewHit(AnimationEvent animEvent)
 	{
+		if (!_weapon) return;
 		_hasActiveHit = true;
 		_weapon.NewHit(WeaponBone, animEvent.stringParameter);
 	}
 
 	public void EndHit()
 	{
+		if (!_weapon) return;
 		_hasActiveHit = false;
 		_weapon.EndHit();
 	}
@@ -81,14 +85,47 @@ public class MeleeWeaponUser : MonoBehaviour
 	
 	private void EquipWeapon(MeleeWeapon weaponPrefab)
 	{
-		for (var i = WeaponBone.childCount; i-- > 0;)
-		{
-			DestroyImmediate(WeaponBone.GetChild(i).gameObject);
-		}
+		DropWeapon();
 
 		_weapon = Instantiate(weaponPrefab, WeaponBone);
+		var meshCollider = _weapon.GetComponentInChildren<MeshCollider>();
+		if (meshCollider) meshCollider.enabled = false;
+		
+		var rb = _weapon.GetComponent<Rigidbody>();
+		if (rb) Destroy(rb);
+		
 		_weapon.transform.localRotation = Quaternion.LookRotation(weaponBoneForward, weaponBoneUp);
 		_weapon.RegisterUser(this, out _attackDataSet);
+	}
+
+	private void DropWeapon()
+	{
+		if (!_weapon) return;
+		
+		if( _isAttacking ) _isAttacking = false;
+		if( _hasActiveHit ) EndHit();
+		_weapon.UnregisterUser();
+		_weapon.transform.parent = null;
+		
+		var meshCollider = _weapon.GetComponentInChildren<MeshCollider>();
+		if (meshCollider) meshCollider.enabled = true;
+		
+		var weaponRb = _weapon.GetComponent<Rigidbody>();
+		if (!weaponRb) weaponRb = _weapon.gameObject.AddComponent<Rigidbody>();
+		
+		weaponRb.isKinematic = false;
+		weaponRb.useGravity = true;
+		weaponRb.interpolation = RigidbodyInterpolation.Interpolate;
+		
+		// Impart velocity from actor
+		var actorRb = Actor.GetComponent<Rigidbody>();
+		if (actorRb)
+		{
+			weaponRb.velocity = actorRb.velocity;
+		}
+
+		_weapon = null;
+		_attackDataSet = null;
 	}
 
 	private bool HasRequiredStamina(int actionId, out int staminaCost)
@@ -112,6 +149,7 @@ public class MeleeWeaponUser : MonoBehaviour
 	
 	private void ProcessAttackAnimation(float deltaTime)
 	{
+		if (!_weapon) return;
 		if (!_hasActiveHit) return;
 		_weapon.CheckHits(WeaponBone, weaponBoneUp, distThreshold);
 	}

@@ -1,22 +1,23 @@
 ﻿using UnityEngine;
 using System;
-using System.Collections.Generic;
 using System.Collections;
-using System.Linq;
 using ActorFramework;
-using DemoCollection;
 
 public class Actor : Entity, IDamageable
 {
 	private static readonly int DamageFlash = Shader.PropertyToID("_DamageFlash");
 
 	public event Action<InputBuffer> ConsumeInput;
+	public event Action OnDeath;
 
 	[SerializeField] private ActorController controller;
+	[SerializeField] private Transform rig;
+	[SerializeField] private Ragdoll ragdollPrefab;
 
 	private Renderer[] _renderers;
 	private Coroutine _damageFlash;
-	private TimerGroup _actorTimerGroup;
+	private TimerGroup _inputTimerGroup;
+	private Ragdoll _ragdoll;
 
 	public Animator Animator { get; private set; }
 
@@ -24,6 +25,7 @@ public class Actor : Entity, IDamageable
 
 	public Health Health { get; private set; }
 	public Stamina Stamina { get; private set; }
+	public bool IsAlive() => Health.Current > 0;
 
 	public readonly InputBuffer InputBuffer = new InputBuffer();
 	public Timer HitReaction { get; private set; }
@@ -42,19 +44,19 @@ public class Actor : Entity, IDamageable
 		Animator = GetComponent<Animator>();
 		Health = GetComponent<Health>();
 		Stamina = GetComponent<Stamina>();
-		Health.Depleted += Die;
 
 		_renderers = GetComponentsInChildren<Renderer>();
 
-		_actorTimerGroup = new TimerGroup();
-		_actorTimerGroup.AddRange( new Timer[]
+		_inputTimerGroup = new TimerGroup();
+		_inputTimerGroup.AddRange( new Timer[]
 		{
-			HitReaction = new Timer(0f, () => InputEnabled = false, () => InputEnabled = true,true),
 			JumpAllowance = new Timer()
 		});
-		
+
+		HitReaction = new Timer(0f, () => InputEnabled = false, () => InputEnabled = true, true);
 		InputEnabled = true;
 
+		Health.Depleted += Die;
 		GetHit += HandleGetHit;
 		SetPaused += SetAnimatorPaused;
 	}
@@ -94,10 +96,11 @@ public class Actor : Entity, IDamageable
 	public override void OnTick(float deltaTime)
 	{
 		base.OnTick(deltaTime);
-
+		_inputTimerGroup.Tick(deltaTime);
+		
+		if (!IsAlive()) return;
 		if (Controller) Controller.Tick(this, deltaTime);
 		InputBuffer.Tick(deltaTime);
-		_actorTimerGroup.Tick(deltaTime);
 	}
 
 	public override void OnLateTick(float deltaTime)
@@ -109,6 +112,27 @@ public class Actor : Entity, IDamageable
 	public override void OnFixedTick(float deltaTime)
 	{
 		base.OnFixedTick(deltaTime);
+		HitReaction.Tick(deltaTime);
+
+		if (!IsAlive())
+		{
+			if (_deathCoroutine != null && !_deathCoroutine.MoveNext())
+			{
+				_deathCoroutine = null;
+			}
+
+			if (_ragdoll)
+			{
+				var rb = GetComponent<Rigidbody>();
+				var ragdollRb = _ragdoll.GetComponentInChildren<Rigidbody>();
+				var capsuleCollider = GetComponent<CapsuleCollider>();
+				if (rb && ragdollRb && capsuleCollider)
+				{
+					rb.MovePosition(ragdollRb.position - Vector3.up * (capsuleCollider.height * 0.5f));
+				}
+			}
+			return;
+		}
 		if (InputEnabled) ConsumeInput?.Invoke(InputBuffer);
 	}
 
@@ -122,13 +146,48 @@ public class Actor : Entity, IDamageable
 		if (Controller != null)
 			Controller.Release(this);
 
-		newController.Possess(this, context);
+		if (newController != null)
+			newController.Possess(this, context);
+		
 		Controller = newController;
 	}
 
 	public Vector3 DirectionToTrackable(Trackable trackable) => (trackable.GetEyesPosition() - Trackable.GetEyesPosition()).WithY(0f).normalized;
 
-	public void Die() => this.WaitForEndOfFrameThen(() => Destroy(gameObject));
+	void InitRagdoll()
+	{
+		var rb = GetComponent<Rigidbody>();
+		if (rb && ragdollPrefab && rig)
+		{
+			_ragdoll = Instantiate(ragdollPrefab, transform.position, transform.rotation);
+			_ragdoll.CopyTransforms(rig, rb, _ragdoll.targetRig);
+			
+			rb.isKinematic = true;
+			rb.detectCollisions = false;
+			rb.velocity = Vector3.zero;
+			rb.angularVelocity = Vector3.zero;
+		}
+		
+		foreach (var r in _renderers)
+		{
+			r.enabled = false;
+		}
+	}
+	
+	IEnumerator DeathCoroutine()
+	{
+		// Wait a frame for physics to be applied
+		yield return null;
+		OnDeath?.Invoke();
+		InitRagdoll();
+	}
+	
+	private IEnumerator _deathCoroutine;
+	
+	public void Die()
+	{
+		_deathCoroutine = DeathCoroutine();
+	}
 
 	private void HandleGetHit(CombatEvent combatEvent)
 	{

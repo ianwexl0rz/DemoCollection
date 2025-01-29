@@ -31,14 +31,17 @@ namespace ActorFramework
 
         private void UpdateStamina(float deltaTime)
         {
-            if (_motor is { IsRunning: true })
+            var actor = Entity as Actor;
+            if (!actor || _motor == null) return;
+            
+            if (_motor.IsRunning )
             {
                 _staminaLastSpentTime = Time.time;
                 _accumulator += runningBurnRate * deltaTime;
                 ApplyChange(-Mathf.FloorToInt(_accumulator));
                 _accumulator %= 1.0f;
             }
-            else if (Current < Maximum && Time.time >= _staminaLastSpentTime + minRestTime)
+            else if (_motor.IsGrounded &&  Current < Maximum && Time.time >= _staminaLastSpentTime + minRestTime)
             {
                 _accumulator += regenRate * deltaTime;
                 ApplyChange(Mathf.FloorToInt(_accumulator));

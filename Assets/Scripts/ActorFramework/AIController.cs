@@ -30,10 +30,10 @@ public class AIController : ActorController
 
 	public override void Tick(Actor actor, float deltaTime)
 	{
-		//actor.lockOnTarget = PlayerController.instance.Actor;
+		if (TrackedTarget && TrackedTarget.Health.Current <= 0) TrackedTarget = null;
+		if (!TrackedTarget) return;
 		
 		// TODO: Make sure lockon target stays current.
-		
 		foreach(AIConditionalBehaviorGroup group in behaviorGroups)
 		{
 			if(EvaluateCondition(actor, group.condition, group.threshold))

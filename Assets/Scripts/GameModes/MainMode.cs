@@ -27,6 +27,7 @@ public class MainMode : GameMode
     private Actor _playerActor = null;
     private int _actorIndex;
     private List<Actor> _actorsInScene;
+    private float _hitPauseDuration;
     
     public Camera MainCamera { get; private set; }
 
@@ -68,7 +69,16 @@ public class MainMode : GameMode
 
     public override void FixedTick(float deltaTime)
     {
-        foreach (var entity in _entities) entity.OnFixedTick(Time.fixedDeltaTime);
+        if (_hitPause != null && !_hitPause.MoveNext())
+            _hitPause = null;
+        
+        ResolveCombatEvents();
+        
+        foreach (var entity in _entities)
+        {
+            if (!entity.IsPaused)
+                entity.OnFixedTick(Time.fixedDeltaTime);
+        }
     }
 
     public override void Tick(float deltaTime)
@@ -78,11 +88,8 @@ public class MainMode : GameMode
 
         // TODO: Player input should be received even if hit pause is active.
 
-        // Wait for hit pause to conclude.
-        if (_hitPause != null && _hitPause.MoveNext()) return;
-
         // Hold the right bumper for slow-mo!
-        Time.timeScale = player.GetButton(PlayerAction.SlowMo) ? 0.01f : 1f;
+        Time.timeScale = player.GetButton(PlayerAction.SlowMo) ? 0.2f : 1f;
 
         // (Debug) Adjust health.
         if (Input.GetKeyDown(KeyCode.RightBracket)) _playerActor.Health.TakeDamage(-5);
@@ -94,8 +101,6 @@ public class MainMode : GameMode
     public override void LateTick(float deltaTime)
     {
         foreach (var entity in _entities) entity.OnLateTick(deltaTime);
-        
-        ResolveCombatEvents();
 
         // Pause game if requested.
         if (player.GetButtonDown(PlayerAction.Pause))
@@ -167,14 +172,11 @@ public class MainMode : GameMode
     
     private static IEnumerator HitPause(float duration)
     {
-        // HACK: Wait two physics updates to ensure knockback is applied first
-        yield return new WaitForFixedUpdate();
-        yield return new WaitForFixedUpdate();
         SetPhysicsPaused(true);
 
         while (duration > 0)
         {
-            duration -= Time.deltaTime;
+            duration -= Time.fixedDeltaTime;
             player.SetVibration(0, 0.5f);
             player.SetVibration(1, 0.5f);
             yield return null;

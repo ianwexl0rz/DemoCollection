@@ -332,6 +332,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   controller: {fileID: 0}
+  rig: {fileID: 5595153552641103788}
+  ragdollPrefab: {fileID: 1487923385683786532, guid: 75135c74e84b5f1449230af29025dc4f,
+    type: 3}
 --- !u!114 &1306851918
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -419,9 +422,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b542462a5c324b839af5971dae578305, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _current: 100
-  _maximum: 100
-  OnDepleted:
+  current: 40
+  maximum: 40
+  onDepleted:
     m_PersistentCalls:
       m_Calls: []
 --- !u!114 &398818058
@@ -436,9 +439,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 42cd8d6b837f421588d1721583c158f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _current: 100
-  _maximum: 100
-  OnDepleted:
+  current: 100
+  maximum: 100
+  onDepleted:
     m_PersistentCalls:
       m_Calls: []
   regenRate: 15
@@ -808,6 +811,12 @@ Transform:
 --- !u!4 &5595153552641103766 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400058, guid: 8c96fbc477da0405b9c477725bb7a7fe,
+    type: 3}
+  m_PrefabInstance: {fileID: 5595153552641494316}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &5595153552641103788 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 400000, guid: 8c96fbc477da0405b9c477725bb7a7fe,
     type: 3}
   m_PrefabInstance: {fileID: 5595153552641494316}
   m_PrefabAsset: {fileID: 0}
