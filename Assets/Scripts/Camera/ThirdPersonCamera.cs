@@ -121,7 +121,7 @@ public class ThirdPersonCamera : MonoBehaviour
 			trackPos = player.GetCenter();
 		}
 
-		var shouldLockOn = trackedTarget != null;
+		var shouldLockOn = (bool)trackedTarget;
 		if (shouldLockOn && !lockedOn)
 		{
 			lockedOn = true;
@@ -173,7 +173,7 @@ public class ThirdPersonCamera : MonoBehaviour
 		else
 		{
 			// Initialize manual control mode.
-			if (lockedOn)
+			if (lockedOn || !trackedTarget)
 			{
 				lockedOn = false;
 				targetEulerAngles = transform.eulerAngles;

@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using ActorFramework;
 
 [System.Serializable]
 public class AIConditionalBehaviorGroup
@@ -30,8 +31,20 @@ public class AIController : ActorController
 
 	public override void Tick(Actor actor, float deltaTime)
 	{
-		if (TrackedTarget && TrackedTarget.Health.Current <= 0) TrackedTarget = null;
-		if (!TrackedTarget) return;
+		if (!actor.IsAlive()) return;
+		
+		if (TrackedTarget && TrackedTarget.Owner.Health.Current <= 0) TrackedTarget = null;
+		if (!TrackedTarget)
+		{
+			var motor = actor.GetComponent<IActorMotor>();
+			if (motor != null)
+			{
+				// TODO: We shouldn't make garbage
+				var inputs = new CharacterInputs();
+				motor.SetInputs( ref inputs);
+			}
+			return;
+		}
 		
 		// TODO: Make sure lockon target stays current.
 		foreach(AIConditionalBehaviorGroup group in behaviorGroups)
@@ -59,7 +72,7 @@ public class AIController : ActorController
 
 	private bool ProximityCheck(Actor actor, float threshold)
 	{
-		if(TrackedTarget == null) { return false; }
+		if (!TrackedTarget) { return false; }
 
 		var vector = (TrackedTarget.GetEyesPosition() - actor.Trackable.GetEyesPosition()).WithY(0f);
 		return vector.magnitude <= threshold;

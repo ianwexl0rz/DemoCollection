@@ -97,8 +97,6 @@ public class Actor : Entity, IDamageable
 	{
 		base.OnTick(deltaTime);
 		_inputTimerGroup.Tick(deltaTime);
-		
-		if (!IsAlive()) return;
 		if (Controller) Controller.Tick(this, deltaTime);
 		InputBuffer.Tick(deltaTime);
 	}

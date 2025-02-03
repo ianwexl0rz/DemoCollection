@@ -54,7 +54,8 @@ public class ActorPhysicalMotor : EntityPhysics, IActorMotor
 	private bool _preferRunning;
 	private bool _isRunning;
 	
-	public bool IsRunning => _isRunning;
+	public bool IsGrounded => _isGrounded;
+	public bool IsRunning => _isRunning && _isGrounded && _actor.IsAlive();
 	
 	public void SetInputs(ref CharacterInputs inputs)
 	{
@@ -109,6 +110,8 @@ public class ActorPhysicalMotor : EntityPhysics, IActorMotor
 
 	protected void UpdatePhysics(float deltaTime)
 	{
+		if (!_actor.IsAlive()) return;
+		
 		Vector3 desiredVelocity;
 
 		// Stop angular velocity if animation has root motion.

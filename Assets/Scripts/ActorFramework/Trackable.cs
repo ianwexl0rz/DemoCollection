@@ -23,9 +23,6 @@ public struct TrackingData
 [RequireComponent(typeof(Entity))]
 public class Trackable : ObservableMonobehaviour
 {
-	[SerializeField] private Health health;
-
-	private Entity _owner;
 	private TrackingData _trackingData;
 	private TrackingData TrackingData
 	{
@@ -33,9 +30,9 @@ public class Trackable : ObservableMonobehaviour
 		set
 		{
 			_trackingData = value;
-			OnPropertyChanged("ScreenPosX");
-			OnPropertyChanged("ScreenPosY");
-			OnPropertyChanged("OnScreen");
+			OnPropertyChanged(nameof(ScreenPosX));
+			OnPropertyChanged(nameof(ScreenPosY));
+			OnPropertyChanged(nameof(OnScreen));
 		}
 	}
 
@@ -46,12 +43,8 @@ public class Trackable : ObservableMonobehaviour
 	public float ScreenPosX => _trackingData.ScreenPos.x;
 
 	public float ScreenPosY => Screen.height - _trackingData.ScreenPos.y;
-
-	public Health Health
-	{
-		get => health;
-		private set => SetProperty(ref health, value);
-	}
+	
+	public IDamageable Owner { get; private set; }
 
 	public virtual Vector3 GetEyesPosition() => transform.position;
 
@@ -65,9 +58,7 @@ public class Trackable : ObservableMonobehaviour
 
 	protected virtual void Awake()
 	{
-		
-		_owner = GetComponent<Entity>();
-		Health = _owner.GetComponent<Health>();
+		Owner = GetComponentInParent<IDamageable>();
 		PlayerController.PotentialTargets.Add(this);
 	}
 

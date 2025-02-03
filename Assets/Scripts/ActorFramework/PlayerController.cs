@@ -68,6 +68,14 @@ public class PlayerController : ActorController
 
 	public override void Tick(Actor actor, float deltaTime)
 	{
+		var isDead = !actor.IsAlive();
+		if (isDead || (TrackedTarget && TrackedTarget.Owner?.Health.Current <= 0))
+		{
+			TrackedTarget = null;
+		}
+		
+		if (isDead) return;
+
 		if(_player.GetButtonDown(PlayerAction.LockOn)) 
 			HandleLockOnInput(actor);
 		
@@ -98,8 +106,9 @@ public class PlayerController : ActorController
 			PlayerAction.LookVertical);
 		
 		_gameCamera.UpdatePositionAndRotation(_lookInput, TrackedTarget);
-
 		UpdateRecentlyHitList();
+
+		if (!actor.IsAlive()) return;
 		UpdatePotentialTargets(actor);
 		UpdateTrackingReticle(wasNeutral && _lookInput != Vector2.zero);
 	}
@@ -121,7 +130,7 @@ public class PlayerController : ActorController
 	public void AddTargetToRecentlyHitList(CombatEvent combatEvent)
 	{
 		var trackable = combatEvent.Target.GetComponent<Trackable>();
-		if (!trackable || !trackable.Health) return;
+		if (!trackable || trackable.Owner == null) return;
 
 		if (RecentlyHit.TryAdd(trackable, Time.time))
 		{
@@ -230,7 +239,8 @@ public class PlayerController : ActorController
 
 		foreach (var trackable in PotentialTargets)
 		{
-			if (!trackable.OnScreen) continue;
+			if (!trackable.OnScreen || trackable.Owner?.Health.Current <= 0)
+				continue;
 		    
 			var distanceFromCenter = Vector2.Distance(trackable.ScreenPos, mainCamera.pixelRect.size * 0.5f);
 			if (distanceFromCenter >= bestDistance) continue;
@@ -247,9 +257,10 @@ public class PlayerController : ActorController
 		Trackable bestTrackable = null;
 		var smallestAngle = Mathf.Infinity;
 
-		foreach(var trackable in PotentialTargets)
+		foreach (var trackable in PotentialTargets)
 		{
-			if (trackable == currentTarget || !trackable.OnScreen) continue;
+			if (trackable == currentTarget || !trackable.OnScreen || trackable.Owner?.Health.Current <= 0)
+				continue;
 			
 			var fromCurrentTarget = (Vector2)(trackable.ScreenPos - currentTarget.ScreenPos);
 			var angle = Vector2.Angle(lookInput.normalized, fromCurrentTarget.normalized);

@@ -15,7 +15,7 @@ namespace DemoCollection.DataBinding
         public bool HasTarget => _trackedTarget != null;
         public float TargetX => HasTarget ? _trackedTarget.ScreenPosX : 0;
         public float TargetY => HasTarget ? _trackedTarget.ScreenPosY : 0;
-        public Health EnemyHealth => HasTarget ? _trackedTarget.Health : null;
+        public Health EnemyHealth => HasTarget ? _trackedTarget.Owner?.Health : null;
 
         private Health _health;
         public Health Health
