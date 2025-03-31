@@ -1,17 +1,18 @@
-﻿using System;
-using System.Linq;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace ActorFramework
 {
-    public class TrackableSphere : Trackable
+    public class TrackableSphere : Trackable, IDamageable
     {
         private SphereCollider _sphereCollider;
+        
+        public Health Health { get; private set; }
 
         protected override void Awake()
         {
             base.Awake();
             _sphereCollider = GetComponent<SphereCollider>();
+            Health = GetComponent<Health>();
         }
 
         public override Vector3 GetEyesPosition()
@@ -27,5 +28,10 @@ namespace ActorFramework
         public override Vector3 GetCenter() => transform.TransformPoint(_sphereCollider.center);
 
         public override float GetHeight() => _sphereCollider.radius * 2;
+        
+        public void Die()
+        {
+            Debug.Log("Destroyed Sphere!");
+        }
     }
 }

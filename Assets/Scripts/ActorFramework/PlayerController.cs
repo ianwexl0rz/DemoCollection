@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using ActorFramework;
+using DemoCollection;
 using UnityEngine;
 using Rewired;
 
@@ -25,7 +26,7 @@ public class PlayerController : ActorController
 	[field: SerializeField] public float LockOnRange { get; private set; } = 10f;
 	[field: SerializeField] public float ChangeTargetAngleLimit { get; private set; } = 90f;
 	public Dictionary<Trackable, float> RecentlyHit { get; } = new();
-
+	
 	private Player _player;
 	private Camera _mainCamera;
 	private ThirdPersonCamera _gameCamera;
@@ -111,6 +112,8 @@ public class PlayerController : ActorController
 		if (!actor.IsAlive()) return;
 		UpdatePotentialTargets(actor);
 		UpdateTrackingReticle(wasNeutral && _lookInput != Vector2.zero);
+
+		UIController.Instance.UpdateHud();
 	}
 
 	private void UpdateTrackingReticle(bool freshInput)

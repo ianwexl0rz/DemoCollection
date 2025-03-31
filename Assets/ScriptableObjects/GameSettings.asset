@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: GameSettings
   m_EditorClassIdentifier: 
   deadZone: 0
-  _lookSensitivityX: 300
-  _lookSensitivityY: 150
+  _lookSensitivityX: 600
+  _lookSensitivityY: 300
   InvertX: 0
-  InvertY: 0
+  InvertY: 1
